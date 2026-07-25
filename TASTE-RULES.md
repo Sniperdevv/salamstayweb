@@ -137,8 +137,10 @@ that open a breakdown (`PKR 12,500 total` underlined) — and only those.
 
 - **Search pill**: white, `rounded-full`, `elevation.floating`, NO border;
   segments divided by INSET hairlines (shorter than the pill); the submit is a
-  green circle, diameter = pill height − 12, flush right. Labels 16/400-500
-  ink — no uppercase, no micro-labels in the collapsed state.
+  green circle, diameter = pill height − 12, flush right. COLLAPSED pills
+  (header) carry summary text only — no micro-labels. The FULL hero pill is a
+  real form and its segments MAY carry `overline` form-labels (§7's sanctioned
+  role — founder-ruled 2026-07-25).
 - **Featured card**: white, `2xl`, `elevation.floating`, ~12px padding,
   concentric `lg` image; four text rows at ~22px pitch, one deliberate 16px
   break before the price row.
