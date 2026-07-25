@@ -69,7 +69,7 @@ export const ROUTES: readonly RouteEntry[] = [
     path: "/search",
     status: "page",
     robots: "noindex,follow",
-    canonical: `${ORIGIN}/`,
+    canonical: ORIGIN, // Next normalises a root canonical to the bare origin (see helper note)
     card: "gw-005",
     title: "Search results",
   },

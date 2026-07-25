@@ -19,9 +19,9 @@ import { focusRing } from "./ui";
 
 function Segment({ label, value }: { readonly label: string; readonly value: string }) {
   return (
-    <span className="flex flex-col justify-center border-b border-hairline px-5 py-3 sm:border-b-0 sm:border-r">
+    <span className="flex min-w-0 flex-col justify-center border-b border-hairline px-5 py-3 md:basis-0 md:grow md:border-b-0 md:border-r">
       <span className="text-overline uppercase text-secondary">{label}</span>
-      <span className="mt-1 whitespace-nowrap text-bodyMd text-secondary">{value}</span>
+      <span className="mt-1 truncate text-bodyMd text-secondary">{value}</span>
     </span>
   );
 }
@@ -33,14 +33,17 @@ export function HomeSearchPill() {
       aria-label="Search stays"
       action="/search"
       method="get"
-      className="mt-8 flex max-w-full flex-col overflow-hidden rounded-xl border border-border-default bg-canvas shadow-card sm:inline-flex sm:flex-row sm:items-stretch sm:rounded-full"
+      /* `container.prose` is the pill's ceiling so the three segments divide
+         one fixed measure evenly, the way the card draws them, instead of
+         each sizing to its own placeholder and reading ragged. */
+      className="mt-8 flex w-full max-w-prose flex-col overflow-hidden rounded-xl border border-border-default bg-canvas shadow-card md:flex-row md:items-stretch md:rounded-full"
     >
       <Segment label="Where" value="Choose a city" />
       <Segment label="Dates" value="Add dates" />
       <Segment label="Guests" value="Add guests" />
       <button
         type="submit"
-        className={`m-2 inline-flex h-12 shrink-0 select-none items-center justify-center gap-2 self-stretch whitespace-nowrap rounded-full bg-interactive px-6 text-bodyMd font-semibold text-on-brand transition-[transform,background-color] duration-instant ease-decelerate hover:bg-interactive-hover active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 sm:self-center ${focusRing}`}
+        className={`m-2 inline-flex h-12 shrink-0 select-none items-center justify-center gap-2 self-stretch whitespace-nowrap rounded-full bg-interactive px-6 text-bodyMd font-semibold text-on-brand transition-[transform,background-color] duration-instant ease-decelerate hover:bg-interactive-hover active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 md:self-center ${focusRing}`}
       >
         <SearchIcon className="size-5" stroke={iconStroke.bold} />
         Search stays
