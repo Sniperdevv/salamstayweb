@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@/components/icons";
 import { focusRing, inlineAction } from "@/components/ui";
@@ -79,6 +80,21 @@ export interface StayRailProps {
   readonly headingId: string;
   /** Optional single line under the heading. */
   readonly sub?: string;
+  /**
+   * One promoted element between the heading row and the scroller — in
+   * practice a `FeaturedStayCard`, the horizontal card from the TASTE-RULES
+   * §10 recipe carrying the first home of the row.
+   *
+   * It sits OUTSIDE the scroller deliberately. The featured card is the one
+   * card family on the site that genuinely floats (§1: shadow means the
+   * element is above the page you are scrolling), and a floating card inside
+   * an `overflow-x: auto` box has its shadow clipped on three sides by the
+   * scroll port — which is the difference between a card that is lifted and a
+   * card with a smudge under it. Above the track it keeps its elevation, it
+   * keeps the section's single `<h2>`, and the row beneath it stays a plain
+   * eight-card rail.
+   */
+  readonly lead?: ReactNode;
   readonly stays: readonly FeaturedStay[];
   /** Optional trailing link, e.g. all stays in this city. */
   readonly viewAll?: { readonly href: string; readonly label: string };
@@ -92,6 +108,7 @@ export function StayRail({
   heading,
   headingId,
   sub,
+  lead,
   stays,
   viewAll,
   newChip,
@@ -107,7 +124,10 @@ export function StayRail({
           beside its second line, which reads as a broken column rather than a
           caption. */}
       <div className="flex items-center justify-between gap-4">
-        <h2 id={headingId} className="min-w-0 truncate text-h4 text-primary">
+        {/* `h5` (20), not `h4` (24) — TASTE-RULES §7 puts content-page section
+            headings at ≈22, and this is the role every other section heading
+            on every discovery surface reads from `components/discovery/shell`. */}
+        <h2 id={headingId} className="min-w-0 truncate text-h5 text-primary">
           {heading}
         </h2>
 
@@ -122,6 +142,12 @@ export function StayRail({
         </div>
       </div>
       {sub ? <p className="mt-1 text-bodySm text-secondary">{sub}</p> : null}
+
+      {/* `mt-5` is the shared heading-to-content gap; the scroller's own `mt-5`
+          then becomes the gap from the lead card down to the row. One value,
+          twice, so the promoted card sits in the section's rhythm rather than
+          on a spacing of its own. */}
+      {lead ? <div className="mt-5">{lead}</div> : null}
 
       <div id={scrollerId} className={`${scroller} ${hideScrollbar}`}>
         {/* `w-max` is load-bearing: an auto-width flex container fills the

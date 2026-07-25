@@ -49,11 +49,16 @@ export const islamabad: CityContent = {
   support:
     "Verified homes and rooms from central F-6 and F-7 to the Margalla foothills of E-7.",
 
+  /**
+   * Three, not four. The fourth was "Nightly price · PKR —", and §12 does not
+   * allow a dash to stand in for a number on the live site: the cell is
+   * suppressed until live pricing ships, and the cards in the rail carry the
+   * skeleton placeholder where a number is actually on its way.
+   */
   facts: [
     { icon: "season", label: "Best season", value: "Spring & autumn", muted: "· cool, clear" },
     { icon: "transit", label: "Getting around", value: "Metrobus", muted: "+ ride-hailing" },
     { icon: "areas", label: "Popular areas", value: "F-6 · F-7 · E-7", muted: "· Blue Area" },
-    { icon: "price", label: "Nightly price", value: "PKR —", muted: "· live pricing" },
   ],
 
   stays: {

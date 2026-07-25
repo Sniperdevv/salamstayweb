@@ -1,5 +1,5 @@
 import type { AreaContent } from "@/lib/content/areas/types";
-import { shell, rhythm } from "./area-shell";
+import { shell, rhythm } from "@/components/discovery/shell";
 
 /**
  * Area intro — two elements: the single `<h1>` and one support line.
@@ -19,9 +19,11 @@ import { shell, rhythm } from "./area-shell";
  * names F-7, and the support line names it again in its first clause and then
  * says where in it you are. What §3.3 does not ask for is length.
  *
- * Type is the homepage's H1 role, not the v1 `text-h2 md:text-h1`. At 40px the
- * heading out-shouts the rail heading 24px below it; at 34 the two read as a
- * page title and a section title, which is what they are.
+ * Type is `h3` flat (28) — not the v1 `text-h2 md:text-h1`, and no longer the
+ * homepage's `md:text-h2` step either. §7's content-page ladder is H1 ≈ 26 ·
+ * sections ≈ 22 · card titles 16; at 34 over 20 the H1 was a marketing hero on
+ * a page that is not one. The homepage keeps its step up because a homepage H1
+ * is the one heading on the site allowed to shout.
  *
  * Top padding is one step under the city page's `pt-8 md:pt-10`, and that is
  * the breadcrumb's doing: it pays `pt-4` above this block and adds a line of
@@ -32,7 +34,7 @@ import { shell, rhythm } from "./area-shell";
 export function AreaIntro({ area }: { readonly area: AreaContent }) {
   return (
     <section className={`${shell} pt-6 md:pt-8 ${rhythm}`}>
-      <h1 className="text-h3 font-semibold text-primary md:text-h2">{area.h1}</h1>
+      <h1 className="text-h3 font-semibold text-primary">{area.h1}</h1>
       <p className="mt-3 max-w-prose text-bodyMd text-secondary">{area.support}</p>
     </section>
   );

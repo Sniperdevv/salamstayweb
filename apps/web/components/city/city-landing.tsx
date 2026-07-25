@@ -1,7 +1,7 @@
+import { DiscoveryFaq } from "@/components/discovery/faq";
 import { JsonLdScript, faqPage, itemList } from "@/lib/seo/jsonld";
 import type { CityContent } from "@/lib/content/cities/types";
 import { CityAreas } from "./city-areas";
-import { CityFaq } from "./city-faq";
 import { CityIntro } from "./city-intro";
 import { CityPractical } from "./city-practical";
 import { CityRelated } from "./city-related";
@@ -21,8 +21,9 @@ import { CityStays } from "./city-stays";
  * went away, the prose tightened, and the inventory moved to second position.
  *
  * Order, and the job of each block:
- *  1. Intro — H1, one support line, four facts. Three elements, and it shares
- *     the first fold with the rail's cards at 1280×900.
+ *  1. Intro — H1, one support line, three things to know in open space (no
+ *     plate: §1 says content blocks carry neither shadow nor border). It
+ *     shares the first fold with the rail's cards at 1280×900.
  *  2. Featured stays — the rail. Six homes, six across at this shell's width,
  *     first card `priority` and now the LCP element.
  *  3. Popular areas — six wayfinding tiles in one dense row, the homepage city
@@ -76,7 +77,7 @@ export function CityLandingPage({ city }: { readonly city: CityContent }) {
         <CityStays city={city} />
         <CityAreas city={city} />
         <CityPractical city={city} />
-        <CityFaq city={city} />
+        <DiscoveryFaq heading={city.faq.heading} items={city.faq.items} />
         <CityRelated city={city} />
       </main>
     </>

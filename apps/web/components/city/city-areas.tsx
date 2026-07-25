@@ -4,7 +4,7 @@ import { focusRing } from "@/components/ui";
 import { LandmarkIcon } from "@/components/stays/icons";
 import { image } from "@/lib/content/image-manifest";
 import type { CityArea, CityContent } from "@/lib/content/cities/types";
-import { shell, rhythm, sectionH2, headingGap, TILE_SIZES } from "./city-shell";
+import { shell, rhythm, sectionH2, headingGap, TILE_SIZES } from "@/components/discovery/shell";
 
 /**
  * Popular areas — a dense six-across row of wayfinding tiles.

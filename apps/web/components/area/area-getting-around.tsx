@@ -1,17 +1,19 @@
 import type { AreaContent } from "@/lib/content/areas/types";
+import { DisclosureCard } from "@/components/discovery/disclosure-card";
 import { AREA_NOTE_ICONS } from "./area-icons";
-import { DisclosureCard } from "./disclosure-card";
-import { shell, rhythm, sectionH2, headingGap } from "./area-shell";
+import { shell, rhythm, sectionH2, headingGap } from "@/components/discovery/shell";
 
 /**
  * Getting around {area} — three practical notes, on the same `DisclosureCard`
  * as "About {area}" directly above it.
  *
- * v1 handed this to the shared `components/stays/notes-section.tsx`: a 40px
- * glyph bubble over a full four-line paragraph, three across, under an
- * eyebrow. Two blocks of that shape back to back was the reading tail that
- * pushed the FAQ onto the fourth screen. One card family for both blocks means
- * the tail reads as one register rather than as two competing ones.
+ * v1 handed this to a shared `notes-section.tsx` (since deleted): a 40px glyph
+ * bubble over a full four-line paragraph, three across, under an eyebrow. Two
+ * blocks of that shape back to back was the reading tail that pushed the FAQ
+ * onto the fourth screen. One card family for both blocks means the tail reads
+ * as one register rather than as two competing ones — and that card family is
+ * now `components/discovery/disclosure-card.tsx`, which the city page's
+ * practical notes draw from too.
  *
  * Three across from `md` because there are three of them; "About" is two
  * across because there are four. Both are rectangles, and the column count

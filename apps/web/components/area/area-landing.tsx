@@ -1,8 +1,8 @@
+import { DiscoveryFaq } from "@/components/discovery/faq";
 import { JsonLdScript, breadcrumbList, faqPage, itemList } from "@/lib/seo/jsonld";
 import type { AreaContent } from "@/lib/content/areas/types";
 import { AreaAbout } from "./area-about";
 import { AreaBreadcrumb } from "./area-breadcrumb";
-import { AreaFaq } from "./area-faq";
 import { AreaGettingAround } from "./area-getting-around";
 import { AreaIntro } from "./area-intro";
 import { AreaNearby } from "./area-nearby";
@@ -97,7 +97,7 @@ export function AreaLandingPage({ area }: { readonly area: AreaContent }) {
         <AreaAbout area={area} />
         <AreaGettingAround area={area} />
         <AreaNearby area={area} />
-        <AreaFaq area={area} />
+        <DiscoveryFaq heading={area.faq.heading} items={area.faq.items} />
       </main>
     </>
   );

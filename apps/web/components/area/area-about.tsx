@@ -1,6 +1,6 @@
 import type { AreaContent } from "@/lib/content/areas/types";
 import { AREA_CONTEXT_ICONS } from "./area-icons";
-import { shell, rhythm, sectionH2, headingGap } from "./area-shell";
+import { shell, rhythm, sectionH2, headingGap } from "@/components/discovery/shell";
 
 /**
  * About {area} — the ≥5 locally-true facts GATE 19 requires and that the

@@ -3,7 +3,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@/components/icons";
 import { focusRing } from "@/components/ui";
 import { inlineLink } from "@/components/stays/styles";
 import type { AreaContent } from "@/lib/content/areas/types";
-import { shell, rhythm, sectionH2, siblingPanel } from "./area-shell";
+import { shell, rhythm, sectionH2, siblingPanel } from "@/components/discovery/shell";
 
 /**
  * "Which nearby areas can I book instead of {area}?" — the question-shaped H2

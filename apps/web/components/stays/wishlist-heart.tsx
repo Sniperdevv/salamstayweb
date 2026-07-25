@@ -47,17 +47,27 @@ const heartBase =
  *   there is no photograph to survive and a shadowed stroke would be a shadow
  *   cast onto a flat surface for no reason. The featured card is the one place
  *   this form is correct.
+ *
+ * `chromeFromSm` is the third because the featured card is the one card on the
+ * site whose LAYOUT changes which of those two surfaces the heart lands on: it
+ * stacks below `sm` (photograph across the top, so the heart is on the
+ * photograph) and runs horizontal from `sm` (photograph on the left, so the
+ * heart is on the card's own white padding). It is not a third treatment — it
+ * is the same rule answering the same question twice, on one button rather than
+ * two, because two hearts in the DOM is two controls to a screen reader.
  */
-export type WishlistHeartVariant = "media" | "chrome";
+export type WishlistHeartVariant = "media" | "chrome" | "chromeFromSm";
 
 const glyph: Record<WishlistHeartVariant, string> = {
   media: "size-5 text-slate-0 drop-shadow-on-media",
   chrome: "size-5 text-primary",
+  chromeFromSm: "size-5 text-slate-0 drop-shadow-on-media sm:text-primary sm:drop-shadow-none",
 };
 
 const plate: Record<WishlistHeartVariant, string> = {
   media: "grid size-8 place-items-center",
   chrome: "grid size-8 place-items-center rounded-full bg-raised",
+  chromeFromSm: "grid size-8 place-items-center sm:rounded-full sm:bg-raised",
 };
 
 export function WishlistHeart({

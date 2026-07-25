@@ -2,7 +2,7 @@ import Link from "next/link";
 import { focusRing } from "@/components/ui";
 import { inlineLink } from "@/components/stays/styles";
 import type { CityContent } from "@/lib/content/cities/types";
-import { shell, sectionH2, headingGap } from "./city-shell";
+import { shell, sectionH2, headingGap } from "@/components/discovery/shell";
 
 /**
  * Related links — one tight row of three link groups, taking the reader one
@@ -19,6 +19,13 @@ import { shell, sectionH2, headingGap } from "./city-shell";
  * column is short because its pages have not published yet, the column says so
  * rather than shipping links that 404.
  *
+ * Those headings were set in `overline` — 11px, 600, uppercase, tracked. §7 is
+ * explicit that `overline` is a FORM-LABEL token (CHECK-IN, GUESTS) and never a
+ * section eyebrow, and §11.20 bans eyebrows outright; three uppercase micro-caps
+ * over three link columns is exactly the tic. They are 14/600 ink now — the
+ * shared footer-column treatment, which does the same grouping work at the same
+ * size as the links it groups, without shouting. The strings are unchanged.
+ *
  * This is the last block on the page, so it owns the closing space rather than
  * the shared bottom rhythm.
  */
@@ -34,7 +41,7 @@ export function CityRelated({ city }: { readonly city: CityContent }) {
       <div className={`${headingGap} grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-3`}>
         {related.columns.map((col) => (
           <nav key={col.heading} aria-label={col.heading}>
-            <h3 className="mb-2.5 text-overline uppercase text-tertiary">{col.heading}</h3>
+            <h3 className="mb-2.5 text-bodySm font-semibold text-primary">{col.heading}</h3>
             <ul className="flex flex-col gap-1.5">
               {col.links.map((link) => (
                 <li key={link.href}>

@@ -60,19 +60,25 @@ import type {
  */
 export type { AttributeIcon, RelatedLink } from "@/lib/content/stays";
 
-/** Quick-facts strip glyphs. */
-export type FactIcon = "season" | "transit" | "areas" | "price";
+/**
+ * "Things to know" column glyphs. No `price`: the nightly-price column is
+ * suppressed until live pricing ships, because §12 does not allow "PKR —" to
+ * stand in for a number on the live site.
+ */
+export type FactIcon = "season" | "transit" | "areas";
 
 /** Practical-notes glyphs. */
 export type NoteIcon = "power" | "transit" | "weather";
 
 export interface CityFact {
   readonly icon: FactIcon;
-  /** Uppercase micro-label, e.g. "Best season". */
+  /** Column title, 14/600 ink, e.g. "Best season". Sentence case, never caps:
+   *  `overline` is a FORM-LABEL token and never a section micro-label (§7). */
   readonly label: string;
-  /** The fact itself, in primary ink. */
+  /** The fact itself. */
   readonly value: string;
-  /** The qualifier that trails it, in secondary ink, e.g. "· cool, clear". */
+  /** The qualifier that trails it, e.g. "· cool, clear". Both render as one
+   *  gray body line under the title. */
   readonly muted: string;
 }
 
@@ -151,6 +157,11 @@ export interface CityContent {
    * wording, and on this template that means the FAQ.
    */
   readonly support: string;
+  /**
+   * The "things to know" columns under the support line — three of them, drawn
+   * in open space with no box (§1). There is no price column and there will not
+   * be one until live pricing ships.
+   */
   readonly facts: readonly CityFact[];
 
   readonly stays: {

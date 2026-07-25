@@ -21,17 +21,32 @@ import { WishlistHeart } from "./wishlist-heart";
  *   inner radius follows from the outer one and the padding rather than being
  *   picked. Equal radii nested inside each other is the tell that a card was
  *   assembled instead of drawn.
- * - **~40% of the width, 3:2.** The photograph is the identifying element, not
- *   the content; the reading half is where the card does its work.
+ * - **~40% of the width, 3:2, from `sm`.** The photograph is the identifying
+ *   element, not the content; the reading half is where the card does its work.
+ *   Below `sm` it STACKS — photograph across the top, text under it. Kept
+ *   horizontal on a 375 phone the frame measures 128 × 85, which is a third of
+ *   the photograph the ordinary 208px rail tile shows eight pixels below it,
+ *   and a promoted card that shows LESS home than the tile it is promoting has
+ *   the hierarchy backwards. Stacked, it shows 319 × 213 and leads properly.
  * - **Four text rows at ~22px pitch, then ONE deliberate 16px break.** The
  *   break is the whole typographic idea. Title / meta / meta run as one block
  *   at the type's natural leading; the price row is a different KIND of
  *   statement, and one extra step of space says so more clearly than a rule, a
  *   tint or a weight change would.
- * - **Circular neutral-fill heart.** §10 gives the naked stroke-plus-drop-shadow
- *   heart to cards whose photograph runs to the card edge, and the plated
- *   circular one to hearts sitting on white chrome. This heart sits in the
- *   padding, on the card's own surface, so it takes the plate.
+ * - **The text column is centred against the photograph, from `sm`.** Four
+ *   honest rows come to about 100px and the 3:2 photograph to about 185, so
+ *   top-aligning them leaves eighty pixels of void under the price row and the
+ *   card reads as unfinished rather than as spare. Airbnb's version of this
+ *   card fills that height with a rating, a review count and a nightly rate;
+ *   §12 says we do not have those and will not invent them, so the honest fix
+ *   is to centre what we do have rather than to pad it out.
+ * - **Circular neutral-fill heart, from `sm`.** §10 gives the naked
+ *   stroke-plus-drop-shadow heart to hearts sitting on a photograph and the
+ *   plated circular one to hearts sitting on white chrome. Which of those this
+ *   heart is depends on the layout, because the card's top-right corner is the
+ *   card's own padding when it runs horizontal and the photograph's corner when
+ *   it stacks. `chromeFromSm` is that one rule, answered at the one breakpoint
+ *   where the answer changes.
  *
  * Honesty (§12): no price, no rating, no review count, no "featured" superlative
  * burnt into the card. The price row is the shared skeleton placeholder — a
@@ -44,7 +59,8 @@ import { WishlistHeart } from "./wishlist-heart";
  * differently on the same page read as two design systems — and this one in
  * particular must not lift, because it is already the thing that is up.
  *
- * Pass 2 places it. This file only defines it.
+ * Placed by `app/page.tsx`, leading rail 1: one Islamabad home lifted out of
+ * the row, the other eight running as the ordinary rail beneath it.
  */
 
 const cardShell =
@@ -54,12 +70,13 @@ const cardShell =
   "motion-reduce:ease-decelerate";
 
 const cardLink =
-  "group flex items-start gap-4 rounded-xl transition-transform duration-instant ease-decelerate active:scale-[0.99] " +
+  "group flex flex-col items-start gap-3 rounded-xl transition-transform duration-instant ease-decelerate active:scale-[0.99] " +
+  "sm:flex-row sm:items-center sm:gap-4 " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 /** Concentric with the `2xl` shell at `space-3` padding (§4 rule 1). */
-const mediaFrame = "relative block w-2/5 shrink-0 overflow-hidden rounded-lg";
+const mediaFrame = "relative block w-full shrink-0 overflow-hidden rounded-lg sm:w-2/5";
 
 const mediaImage =
   "aspect-[3/2] w-full object-cover transition-transform duration-normal ease-decelerate group-hover:scale-[1.03] " +
@@ -103,9 +120,11 @@ export function FeaturedStayCard({ stay, sizes, priority = false }: FeaturedStay
           />
         </span>
 
-        {/* `pr-11` reserves the heart's 44px target so a long title cannot run
-            under it. Reserved space, not a truncation guess. */}
-        <span className="flex min-w-0 flex-1 flex-col pr-11">
+        {/* `sm:pr-11` reserves the heart's 44px target so a long title cannot
+            run under it. Reserved space, not a truncation guess — and only from
+            `sm`, because in the stacked layout the heart is up on the
+            photograph and the text column owns its full width. */}
+        <span className="flex w-full min-w-0 flex-1 flex-col sm:pr-11">
           <span className="truncate text-bodyMd font-semibold text-primary">{stay.name}</span>
           <span className="truncate text-bodySm text-secondary">{stay.area}</span>
           {stay.attributes ? (
@@ -126,7 +145,7 @@ export function FeaturedStayCard({ stay, sizes, priority = false }: FeaturedStay
           `absolute right-0 top-0` lands on the card's 12px padding edge rather
           than on a zero-size anchor. */}
       <span className="absolute right-3 top-3 size-11">
-        <WishlistHeart stayName={stay.name} variant="chrome" />
+        <WishlistHeart stayName={stay.name} variant="chromeFromSm" />
       </span>
     </div>
   );

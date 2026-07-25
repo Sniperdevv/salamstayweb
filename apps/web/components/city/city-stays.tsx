@@ -1,7 +1,7 @@
 import { StayRail } from "@/components/stays/stay-rail";
 import { fromStayCard } from "@/lib/content/featured-stays";
 import type { CityContent } from "@/lib/content/cities/types";
-import { shell, rhythm } from "./city-shell";
+import { shell, rhythm } from "@/components/discovery/shell";
 
 /**
  * Featured stays — the rail, and the second thing on the page.

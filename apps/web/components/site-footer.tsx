@@ -145,8 +145,13 @@ export function SiteFooter() {
             <div className="text-h5 font-semibold tracking-tight text-primary">
               Salam<span className="text-interactive">.</span>Stay
             </div>
+            {/* Two sentences, no em-dash. The dash was doing the work a full
+                stop does, and §12's exception list covers claims and card
+                contracts, not chrome copy — so there is nothing here to
+                protect and no reason for the site's one remaining em-dash to
+                sit under the wordmark. Same words, same facts, same length. */}
             <p className="mt-2 max-w-[44ch] text-bodySm text-secondary">
-              SalamStay, a home-sharing marketplace for Pakistan — verified homes and rooms
+              SalamStay, a home-sharing marketplace for Pakistan. Verified homes and rooms
               across six cities.
             </p>
           </div>

@@ -1,7 +1,7 @@
 import { StayRail } from "@/components/stays/stay-rail";
 import { fromStayCard } from "@/lib/content/featured-stays";
 import type { AreaContent } from "@/lib/content/areas/types";
-import { shell, rhythm } from "./area-shell";
+import { shell, rhythm } from "@/components/discovery/shell";
 
 /**
  * Stays in {area} — the rail, and the second thing on the page.
@@ -39,7 +39,41 @@ import { shell, rhythm } from "./area-shell";
  * place line rather than the fixture's `location` ("Entire apartment · 2
  * bedrooms · 6 guests"), so a home rendered here and the same home rendered in
  * the homepage's F-7 rail cannot drift.
+ *
+ * ── The supply note is an info strip ──────────────────────────────────────
+ * TASTE-RULES §6 gives `bg.raised` five jobs, and one of them is exactly this:
+ * an info strip at `radius.md` with only the payload bolded. The note was a
+ * bare gray caption floating under the rail, which is the shape of a footnote
+ * nobody reads; on the tint it reads as a small standing statement about the
+ * row above it, which is what it is. §11.14 is the same rule from the other
+ * side: contextual micro-strips are `bg.raised`, tiny, factual.
+ *
+ * The payload is "New chip", because that is the thing on the screen the
+ * sentence is about — it is drawn eight pixels above, six times over. §7 and
+ * §11.12: bold the payload word only, never a whole sentence.
  */
+
+/**
+ * The substring the strip emphasises. It lives here rather than in the content
+ * file because it is a typographic decision about this strip, not a fact about
+ * the sector — and if a future area's note does not contain it, the strip
+ * simply renders plain rather than breaking.
+ */
+const NOTE_PAYLOAD = "New chip";
+
+function SupplyNote({ text }: { readonly text: string }) {
+  const at = text.indexOf(NOTE_PAYLOAD);
+  if (at < 0) return <>{text}</>;
+
+  return (
+    <>
+      {text.slice(0, at)}
+      <strong className="font-semibold text-primary">{NOTE_PAYLOAD}</strong>
+      {text.slice(at + NOTE_PAYLOAD.length)}
+    </>
+  );
+}
+
 export function AreaStays({ area }: { readonly area: AreaContent }) {
   const { stays } = area;
   const place = `${area.name}, ${area.cityName}`;
@@ -58,7 +92,9 @@ export function AreaStays({ area }: { readonly area: AreaContent }) {
       {/* The `.supplynote`, under the rail rather than under a grid: it
           explains the chip drawn eight pixels above it, and a reader who never
           scrolls past the rail has still read it. */}
-      <p className="mt-4 max-w-[76ch] text-caption text-tertiary">{stays.note}</p>
+      <p className="mt-4 max-w-[76ch] rounded-md bg-raised px-4 py-3 text-caption text-secondary">
+        <SupplyNote text={stays.note} />
+      </p>
     </div>
   );
 }

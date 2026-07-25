@@ -20,6 +20,7 @@ import {
 } from "@/components/home-icons";
 import { ArrowRightIcon } from "@/components/icons";
 import { CITY_GRID, CityCardCompact } from "@/components/stays/city-card-compact";
+import { FeaturedStayCard } from "@/components/stays/featured-stay-card";
 import { StayRail } from "@/components/stays/stay-rail";
 import { btnBase, btnLg, btnPrimary, focusRing, gutter } from "@/components/ui";
 import { F7_STAYS, FEATURED_STAYS } from "@/lib/content/featured-stays";
@@ -28,6 +29,14 @@ import { F7_STAYS, FEATURED_STAYS } from "@/lib/content/featured-stays";
 // a repeated frame 340px apart reads as thin inventory; review A5).
 const RAIL_ONE_HREFS = new Set(FEATURED_STAYS.islamabad.map((s) => s.href));
 const F7_RAIL = F7_STAYS.filter((s) => !RAIL_ONE_HREFS.has(s.href));
+
+/**
+ * Rail 1 leads with ONE promoted home drawn as the §10 featured card, and the
+ * remaining eight run as the ordinary rail beneath it. Same nine homes, same
+ * order, same section, same `<h2>` — the first one is simply lifted out of the
+ * row and given the card that floats.
+ */
+const [ISLAMABAD_FEATURED, ...ISLAMABAD_RAIL] = FEATURED_STAYS.islamabad;
 import { CITY_CARDS, GUIDE_CARDS, HOST_IMAGES, image } from "@/lib/content/image-manifest";
 import { JsonLdScript, organization, webSite } from "@/lib/seo/jsonld";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -47,7 +56,9 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *  1. Hero — H1, one descriptive line, the search pill. Three elements, and it
  *     shares the first fold with rail 1 at 1280×900.
  *  2/3. Two Islamabad rails (city, then F-7) — depth in the one place we have
- *     depth, which is what a marketplace shows first.
+ *     depth, which is what a marketplace shows first. Rail 1 leads with one
+ *     home drawn as the floating §10 featured card and runs the other eight as
+ *     the ordinary row.
  *  4. City grid — six tiles, one line each; breadth as a glance, not a section.
  *  5/6. Karachi and Lahore rails — the breadth made concrete. Two more cities
  *     of real cards is the difference between "six cities" as a claim and as a
@@ -61,7 +72,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *  · JSON-LD is Organization + WebSite only, via the lib/seo builders (G74);
  *  · every internal href resolves in the route registry (G37);
  *  · images carry manifest alt + intrinsic dimensions (G57), and exactly one
- *    image on the page is `priority`: the first card of the first rail, which
+ *    image on the page is `priority`: the featured card leading rail 1, which
  *    is now the LCP element. The old hero preload is gone with the hero photo.
  *
  * Copy: the nine registry claims appear once each, verbatim, in the trust
@@ -208,8 +219,15 @@ const PROPERTY_TYPES = [
 const shell = `mx-auto max-w-wide ${gutter}`;
 const rhythm = "pb-8 md:pb-10";
 
-/** Every section heading is the rail heading's role, so the page has one voice. */
-const sectionH2 = "text-h4 text-primary";
+/**
+ * Every section heading is the rail heading's role, so the page has one voice.
+ *
+ * `h5` (20), not `h4` (24): TASTE-RULES §7 puts section headings at ≈22 and
+ * reserves the loud end of the ladder for the H1. At 24 under a 34px H1 the
+ * page read as a column of near-equal shouts; at 20 the H1 leads and the
+ * sections sit under it, which is the relationship they actually have.
+ */
+const sectionH2 = "text-h5 text-primary";
 
 /** Standard gap from a section heading to its content — the rail's own. */
 const headingGap = "mt-5";
@@ -227,6 +245,15 @@ const CITY_TILE_SIZES =
 const GUIDE_TILE_SIZES = "(min-width: 1280px) 400px, (min-width: 640px) 31vw, 100vw";
 
 const HOST_TEASER_SIZES = "(min-width: 1280px) 470px, (min-width: 768px) 37vw, 100vw";
+
+/**
+ * The featured card's photograph. The card is capped at `container.prose`
+ * (720) — the same measure the search pill and the hero line above it run at,
+ * so the promoted card lands on a column the page has already established
+ * rather than on a width of its own. Inside it: 12px padding, a 2/5 media
+ * column, so the frame is (720 − 24) × 0.4 ≈ 280px and never grows.
+ */
+const FEATURED_MEDIA_SIZES = "(min-width: 640px) 280px, calc(40vw - 22px)";
 
 /* Guide tiles reuse the compact-card motion verbatim: the photograph scales
    under the pointer, the tile presses, nothing lifts. A second hover grammar on
@@ -274,17 +301,57 @@ export default function HomePage() {
           <HomeSearchPill />
         </section>
 
-        {/* RAIL 1 — Islamabad. First card is the LCP element. The "New" chip
-            rides only here: it is honest on every listing we have, so drawing
-            it on all twenty-four would just be twenty-four identical chips. */}
+        {/* RAIL 1 — Islamabad, led by one featured card.
+
+            The lead card is the §10 recipe: white, 2xl, `elevation.floating`,
+            no border, a concentric lg photograph at 3:2, four text rows and one
+            deliberate break before the price row. It is the only floating card
+            on the page and the only one that is allowed to be — everything else
+            here is content, and §1 says content carries neither shadow nor
+            border.
+
+            Why lead with one at all: a row of nine identical 208px tiles says
+            "we have inventory" and nothing else. One home shown at reading
+            scale says what a home on SalamStay actually looks like, and the
+            row behind it then reads as "and eight more", which is the sentence
+            the homepage is trying to say. It is the same object as the tiles —
+            same photography, same wording, same motion — at a different size,
+            not a second card system.
+
+            It does NOT fill the 1232 measure. It runs at `container.prose`,
+            which is the width of the search pill directly above it, so the air
+            to its right is a column the page already drew rather than a gap.
+            Widening it to the shell would make the photograph 493px and the
+            card 350px deep, which buys nothing and costs the fold.
+
+            `priority` moved onto this card's photograph with the promotion —
+            it is the LCP element now, and exactly one image on the page carries
+            it, as before.
+
+            The "New" chip stays off in this section: it is honest on every
+            listing we have, so drawing it on all thirty-two tiles would just be
+            thirty-two identical chips. */}
         <div className={`${shell} ${rhythm}`}>
           <StayRail
             heading="Stays in Islamabad"
             headingId="rail-islamabad"
-            stays={FEATURED_STAYS.islamabad}
+            lead={
+              /* Guarded rather than asserted: the fixture set is nine today,
+                 and a city that ever ships an empty one gets no lead card
+                 instead of a crash. */
+              ISLAMABAD_FEATURED ? (
+                <div className="max-w-prose">
+                  <FeaturedStayCard
+                    stay={ISLAMABAD_FEATURED}
+                    sizes={FEATURED_MEDIA_SIZES}
+                    priority
+                  />
+                </div>
+              ) : undefined
+            }
+            stays={ISLAMABAD_RAIL}
             viewAll={{ href: "/stays-in-islamabad", label: "All stays in Islamabad" }}
             newChip={false}
-            priority
           />
         </div>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { focusRing } from "@/components/ui";
 import type { AreaContent } from "@/lib/content/areas/types";
-import { shell } from "./area-shell";
+import { shell } from "@/components/discovery/shell";
 
 /**
  * Breadcrumb — mandatory at area depth (§2/§3.3, G40). The stays trail begins

@@ -4,11 +4,11 @@ import { ChevronRightIcon } from "@/components/icons";
 /**
  * DisclosureCard — two lines of body, and the rest opens in place.
  *
- * Both reading blocks on the area page use it: the four "About F-7" context
- * cards and the three "Getting around F-7" notes. v1 drew each of those as a
- * 40px glyph bubble over a four-to-five-line paragraph, three or four across;
- * together they were two full screens of prose sitting between the inventory
- * and the FAQ, and nobody read them.
+ * Three reading blocks use it: the city page's "Practical notes", and the area
+ * page's "About {area}" notes and "Getting around {area}" notes. v1 drew each
+ * of those as a 40px glyph bubble over a four-to-five-line paragraph, three or
+ * four across; together they were two full screens of prose sitting between the
+ * inventory and the FAQ, and nobody read them.
  *
  * It is a native `<details>`, with the body inside the `<summary>` so the copy
  * is ALWAYS in the served HTML, always in the accessibility tree, and always
@@ -30,24 +30,31 @@ import { ChevronRightIcon } from "@/components/icons";
  * does not do. The content is simply there on the next frame, which is what a
  * disclosure that is not trying to be a modal should do.
  *
- * The class strings below are the city template's (`components/city/
- * city-practical.tsx`), copied rather than imported: Phase 4 does not touch
- * the shipped city page, and reaching into another template's internals is a
- * worse coupling than a documented duplicate. Promoting both to a shared
- * discovery module is the follow-up.
+ * This file is the convergence the city and area copies of it both promised:
+ * `components/city/city-practical.tsx` and `components/area/disclosure-card.tsx`
+ * carried the same class strings with one difference between them, and that
+ * difference is now the `surface` prop below.
  */
 
 /**
  * The ring is drawn on the CARD, not on the `<summary>` that takes the focus.
  * The summary fills the card's content box, so the shared `focusRing`'s 4px
- * offset would land astride the card border. `:has()` moves the same 2px
- * `interactive` ring and the same offset out to the card edge, where the
- * offset colour is the page canvas the card actually sits on.
+ * offset would land astride the card border and paint a halo in the wrong
+ * colour. `:has()` moves the same 2px `interactive` ring and the same offset
+ * out to the card edge — where the offset colour has to be whatever the card
+ * is actually sitting on, which is the one thing that differs between the two
+ * call sites: the area page's cards sit on the page canvas, the city page's
+ * sit on the tinted practical-notes band.
  */
 const card =
   "group rounded-lg border border-hairline bg-canvas " +
   "has-[summary:focus-visible]:ring-2 has-[summary:focus-visible]:ring-interactive " +
-  "has-[summary:focus-visible]:ring-offset-4 has-[summary:focus-visible]:ring-offset-canvas";
+  "has-[summary:focus-visible]:ring-offset-4";
+
+const RING_OFFSET = {
+  canvas: "has-[summary:focus-visible]:ring-offset-canvas",
+  raised: "has-[summary:focus-visible]:ring-offset-raised",
+} as const;
 
 const summary =
   "block cursor-pointer list-none p-4 focus-visible:outline-none [&::-webkit-details-marker]:hidden";
@@ -80,11 +87,18 @@ export interface DisclosureCardProps {
   readonly heading: string;
   readonly body: string;
   readonly Icon: (props: { readonly className?: string }) => ReactElement;
+  /** What the card is sitting on, which is what its focus-ring offset paints. */
+  readonly surface?: keyof typeof RING_OFFSET;
 }
 
-export function DisclosureCard({ heading: title, body: text, Icon }: DisclosureCardProps) {
+export function DisclosureCard({
+  heading: title,
+  body: text,
+  Icon,
+  surface = "canvas",
+}: DisclosureCardProps) {
   return (
-    <details className={card}>
+    <details className={`${card} ${RING_OFFSET[surface]}`}>
       <summary className={summary}>
         <h3 className={heading}>
           <Icon className="size-5 shrink-0 text-secondary" />
