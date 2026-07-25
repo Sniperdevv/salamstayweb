@@ -33,7 +33,7 @@ import { focusRing } from "@/components/ui";
 const heartBase =
   "absolute right-0 top-0 z-raised grid size-11 place-items-center rounded-full " +
   "transition-transform duration-instant ease-decelerate active:scale-[0.88] " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 export function WishlistHeart({ stayName }: { readonly stayName: string }) {
@@ -47,8 +47,8 @@ export function WishlistHeart({ stayName }: { readonly stayName: string }) {
       onClick={() => router.push("/signup")}
       className={`${heartBase} ${focusRing}`}
     >
-      <span className="grid size-8 place-items-center rounded-full bg-scrim dark:bg-scrim-dark">
-        <HeartIcon className="size-4 text-slate-0" />
+      <span className="grid size-8 place-items-center rounded-full bg-scrim dark: -dark">
+        <HeartIcon className="text-white drop-shadow-[0_1px_2px_rgba(16,25,27,0.45)] size-4 text-slate-0" />
       </span>
     </button>
   );

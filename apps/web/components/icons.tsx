@@ -106,7 +106,7 @@ export function MenuBars({ open }: { readonly open: boolean }) {
   // outer two need exactly `translate-y-1.5` (6px) to land on the middle one
   // before they rotate. Transform only — nothing here animates layout.
   const bar =
-    "absolute inset-x-0 h-0.5 origin-center rounded-full bg-primary transition-transform duration-fast ease-decelerate motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
+    "absolute inset-x-0 h-0.5 origin-center rounded-full bg-primary transition-transform duration-fast ease-decelerate motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
   return (
     <span aria-hidden="true" className="relative block h-3.5 w-5">
       <span className={`${bar} top-0 ${open ? "translate-y-1.5 rotate-45" : ""}`} />

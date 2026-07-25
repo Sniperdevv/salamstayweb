@@ -23,6 +23,11 @@ import { CITY_GRID, CityCardCompact } from "@/components/stays/city-card-compact
 import { StayRail } from "@/components/stays/stay-rail";
 import { btnBase, btnLg, btnPrimary, focusRing, gutter } from "@/components/ui";
 import { F7_STAYS, FEATURED_STAYS } from "@/lib/content/featured-stays";
+
+// Rail 2 hides stays already shown in rail 1 (same city, adjacent rails —
+// a repeated frame 340px apart reads as thin inventory; review A5).
+const RAIL_ONE_HREFS = new Set(FEATURED_STAYS.islamabad.map((s) => s.href));
+const F7_RAIL = F7_STAYS.filter((s) => !RAIL_ONE_HREFS.has(s.href));
 import { CITY_CARDS, GUIDE_CARDS, HOST_IMAGES, image } from "@/lib/content/image-manifest";
 import { JsonLdScript, organization, webSite } from "@/lib/seo/jsonld";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -231,19 +236,19 @@ const mediaFrame = "relative block overflow-hidden rounded-lg border border-hair
 
 const mediaImage =
   "aspect-video w-full object-cover transition-transform duration-normal ease-decelerate group-hover:scale-[1.03] " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:group-hover:scale-100";
 
 const cardLink =
   "group block rounded-lg transition-transform duration-instant ease-decelerate active:scale-[0.99] " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 const typeChip =
   "group inline-flex h-10 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-4 " +
   "text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate " +
   "hover:border-border-brand hover:text-interactive active:scale-[0.97] " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 export default function HomePage() {
@@ -278,7 +283,7 @@ export default function HomePage() {
             headingId="rail-islamabad"
             stays={FEATURED_STAYS.islamabad}
             viewAll={{ href: "/stays-in-islamabad", label: "All stays in Islamabad" }}
-            newChip
+            newChip={false}
             priority
           />
         </div>
@@ -289,7 +294,7 @@ export default function HomePage() {
           <StayRail
             heading="Stays in F-7, Islamabad"
             headingId="rail-f7"
-            stays={F7_STAYS}
+            stays={F7_RAIL}
             viewAll={{ href: "/stays-in-islamabad/f-7", label: "All stays in F-7" }}
             newChip={false}
           />

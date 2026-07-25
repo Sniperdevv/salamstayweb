@@ -37,7 +37,7 @@ export function AreaBreadcrumb({ area }: { readonly area: AreaContent }) {
                 ) : (
                   <Link
                     href={crumb.path}
-                    className={`rounded-sm text-secondary underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-primary hover:underline motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate ${focusRing}`}
+                    className={`rounded-sm text-secondary underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-primary hover:underline motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate ${focusRing}`}
                   >
                     {crumb.name}
                   </Link>

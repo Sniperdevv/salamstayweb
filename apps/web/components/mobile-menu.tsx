@@ -65,7 +65,7 @@ const CITIES: readonly { readonly href: string; readonly name: string }[] = [
 const menuLink =
   "flex min-h-11 items-center rounded-md py-2 text-bodyMd text-primary " +
   "transition-colors duration-instant ease-decelerate hover:text-interactive " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
 
 /**
@@ -86,10 +86,10 @@ function Row({
 }) {
   return (
     <li
-      style={{ transitionDelay: `${index * STAGGER_MS}ms` }}
+      style={{ transitionDelay: `${Math.min(index, 5) * STAGGER_MS}ms` }}
       className={
         "transition-[transform,opacity] duration-normal ease-decelerate " +
-        "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+        "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
         "motion-reduce:ease-decelerate " +
         (open ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0") +
         (className ? ` ${className}` : "")
@@ -192,7 +192,7 @@ export function MobileMenu() {
         onClick={close}
         className={
           "fixed inset-0 z-overlay bg-scrim transition-opacity duration-normal ease-decelerate " +
-          "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+          "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
           "motion-reduce:ease-decelerate dark:bg-scrim-dark " +
           (open ? "opacity-100" : "pointer-events-none opacity-0")
         }
@@ -206,9 +206,9 @@ export function MobileMenu() {
         aria-label="Menu"
         inert={!open}
         className={
-          "fixed inset-y-0 right-0 z-sheet flex w-full max-w-xs flex-col bg-canvas shadow-modal " +
+          "fixed inset-y-0 right-0 z-sheet flex w-full w-[88%] max-w-sm flex-col bg-canvas shadow-modal " +
           "transition-transform duration-normal ease-decelerate " +
-          "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+          "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
           "motion-reduce:ease-decelerate " +
           (open ? "translate-x-0" : "translate-x-full")
         }

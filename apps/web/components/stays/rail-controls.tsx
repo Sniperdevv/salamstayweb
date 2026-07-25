@@ -25,7 +25,7 @@ const arrowButton =
   "transition-[transform,border-color,color,opacity] duration-instant ease-decelerate " +
   "hover:border-border-strong active:scale-[0.92] " +
   "disabled:pointer-events-none disabled:border-hairline disabled:text-disabled disabled:opacity-40 " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 export interface RailControlsProps {
@@ -85,10 +85,15 @@ export function RailControls({ scrollerId, label }: RailControlsProps) {
     });
   }, []);
 
+  // Pointer affordance only, so it is hidden where there is no pointer to
+  // afford. Touch flings the rail; the keyboard already pages a focused
+  // scroller with the arrow keys. Neither route depends on these buttons.
+  // When the track fits (atStart && atEnd) the rail is not a scroller and the
+  // controls must not exist: greyed-out pairs on every wide desktop read as a
+  // broken build (review B1).
+  if (atStart && atEnd) return null;
+
   return (
-    // Pointer affordance only, so it is hidden where there is no pointer to
-    // afford. Touch flings the rail; the keyboard already pages a focused
-    // scroller with the arrow keys. Neither route depends on these buttons.
     <div className="hidden shrink-0 items-center gap-2 lg:flex">
       <button
         type="button"

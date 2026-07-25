@@ -35,7 +35,7 @@ export interface SiteHeaderProps {
 
 /** The pill is a link, not a button — it still answers a press. */
 const pressablePill =
-  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 const navLink =
   "hidden rounded-md py-3 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary md:inline-flex";

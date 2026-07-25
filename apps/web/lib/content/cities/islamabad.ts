@@ -2,21 +2,37 @@ import { ISLAMABAD_AREAS, LISTING_THUMBS } from "@/lib/content/image-manifest";
 import type { CityContent } from "./types";
 
 /**
- * Islamabad — the GW-002 instance, at `/stays-in-islamabad`.
+ * Islamabad — the GW-002 instance, at `/stays-in-islamabad`, on the v2
+ * inventory-first contract.
  *
- * Every string is the card's own copy (design-system/cards/screens/
- * gw-002-city-islamabad.html, LIGHT panel — the authoritative semantic page).
  * Local facts trace to screens-research/sections/city-facts.md §1: real
  * sectors (F-6, F-7, F-8, E-7, Blue Area), real landmarks (Faisal Mosque,
  * Daman-e-Koh, Pakistan Monument, Rawal Lake, Centaurus), qualitative
  * load-shedding and the Metrobus Red Line. Items the research file marked
  * "[verify before publish]" — G-sectors, named hospitals — are OMITTED.
  *
- * Deliberate absences, all load-bearing:
+ * What moved in the v2 rewrite, string by string:
+ * - The five-line intro is gone. Its three `<strong>` §5 claims are NOT
+ *   restated in shorter words anywhere: "CNIC-verified guests and hosts via
+ *   NADRA Verisys" and "load-shedding hours and backup power" are already
+ *   verbatim in FAQ answers 2 and 3, which G49 pins in place; the no-alcohol
+ *   claim leaves the page body and stays where it is checkable, in the
+ *   `no_alcohol=1` filter chip and in the meta description. `support` is one
+ *   plain line about where in the capital the homes are.
+ * - The hero photograph is gone, so `hero` is gone with it. The LCP element is
+ *   the first card of the featured rail.
+ * - Area blurbs became one-line labels. Every sector detail they carried is
+ *   still on the page, verbatim, in FAQ answer 1 — which reads as a paragraph
+ *   about F-6, F-7, F-8, E-7 and Blue Area precisely because it was written to
+ *   answer that question in full.
+ * - Note bodies, filter labels, FAQ questions and answers, related links and
+ *   the meta description are BYTE-IDENTICAL to v1.
+ *
+ * Deliberate absences, all load-bearing and all unchanged:
  * - NO price figure. "PKR —" is the card's own data-driven placeholder; a
  *   nightly rate ships only when live pricing does (G14 / §5).
  * - NO ratings, review counts, listing counts or "X homes from Y". Pre-launch,
- *   none of those numbers exist.
+ *   none of those numbers exists.
  * - NO breadcrumb. A top-level city page is the head of its trail (§2/§3.2).
  * - Claims appear only in their SEO-RULES §5 registry wording.
  */
@@ -28,25 +44,10 @@ export const islamabad: CityContent = {
     "Find verified stays in Islamabad. Filter by no-alcohol listings, halal kitchen, women-only stays, and prayer space — with load-shedding hours and backup power shown on each home.",
 
   h1: "Stays in Islamabad",
-  intro: [
-    "Find verified stays in Islamabad — homes and rooms across the capital’s leafy sectors, from central F-6 and F-7 to the Margalla foothills of E-7. SalamStay lists ",
-    { strong: "CNIC-verified guests and hosts via NADRA Verisys" },
-    ", keeps ",
-    { strong: "no-alcohol listings by default" },
-    ", and shows ",
-    { strong: "load-shedding hours and backup power" },
-    " on each home — so you know what you’re booking before you pay.",
-  ],
-  /**
-   * Named directly rather than through `CITY_HEROES`. That alias points at the
-   * homepage city-grid frame, which is currently `islamabad-sector-grid-aerial`
-   * — the same frame `ISLAMABAD_AREAS["blue-area"]` uses for the Blue Area
-   * thumbnail on this page, and whose alt text describes Blue Area
-   * specifically, not the city. Rawal Lake is authentic, city-wide, declares
-   * `/stays-in-islamabad` in its manifest `pages`, and appears nowhere else
-   * here. A city page picks its own hero; it does not inherit a card crop.
-   */
-  hero: "islamabad-rawal-lake-sunset",
+  /** Fifteen words. Names the sectors the inventory actually sits in, which is
+   *  the one thing the H1 does not already say. */
+  support:
+    "Verified homes and rooms from central F-6 and F-7 to the Margalla foothills of E-7.",
 
   facts: [
     { icon: "season", label: "Best season", value: "Spring & autumn", muted: "· cool, clear" },
@@ -55,66 +56,8 @@ export const islamabad: CityContent = {
     { icon: "price", label: "Nightly price", value: "from PKR —", muted: "· live pricing" },
   ],
 
-  areas: {
-    eyebrow: "Neighbourhoods",
-    heading: "Popular areas in Islamabad",
-    intro:
-      "Islamabad is laid out in lettered, numbered sectors at the foot of the Margalla Hills — greener and more orderly than the plains cities. These are the sectors travellers stay in most.",
-    items: [
-      {
-        name: "F-6",
-        blurb:
-          "One of the oldest, most established sectors — central and leafy, walkable to Kohsar Market and popular with first-time visitors.",
-        href: "/stays-in-islamabad/f-6",
-        linkLabel: "View stays in F-6",
-        image: ISLAMABAD_AREAS["f-6"],
-      },
-      {
-        name: "F-7",
-        blurb:
-          "Very central, with F-7 Markaz and Jinnah Super Market for dining and shopping — calm by day, livelier in the evening, and embassy-adjacent.",
-        href: "/stays-in-islamabad/f-7",
-        linkLabel: "View stays in F-7",
-        image: ISLAMABAD_AREAS["f-7"],
-      },
-      {
-        name: "F-8",
-        blurb:
-          "A secure, upscale residential sector with its own markaz and cafés — quiet and convenient across the Kashmir Highway.",
-        href: "/stays-in-islamabad/f-8",
-        linkLabel: "View stays in F-8",
-        image: ISLAMABAD_AREAS["f-8"],
-      },
-      {
-        name: "E-7",
-        blurb:
-          "A premium sector set against the Margalla foothills, adjacent to the diplomatic enclave — quiet, green and high-end.",
-        href: "/stays-in-islamabad/e-7",
-        linkLabel: "View stays in E-7",
-        image: ISLAMABAD_AREAS["e-7"],
-      },
-      {
-        name: "Blue Area",
-        blurb:
-          "The city’s main commercial spine along Jinnah Avenue — banks, offices and hotels. Convenient for business, if less residential and scenic.",
-        href: "/stays-in-islamabad/blue-area",
-        linkLabel: "View stays in Blue Area",
-        image: ISLAMABAD_AREAS["blue-area"],
-      },
-      {
-        // Not a place you book — a navigation aid, so no photograph and no link.
-        name: "Wayfinding landmarks",
-        blurb:
-          "Navigate by Faisal Mosque, Daman-e-Koh and the Margalla viewpoints, the Pakistan Monument at Shakarparian, Rawal Lake, and Centaurus Mall.",
-      },
-    ],
-  },
-
   stays: {
-    eyebrow: "Verified homes",
     heading: "Featured stays in Islamabad",
-    intro:
-      "A sample of verified Islamabad homes. Every listing shows its own load-shedding hours and backup power; pricing is live and confirmed at booking.",
     items: [
       {
         href: "/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market",
@@ -174,8 +117,61 @@ export const islamabad: CityContent = {
     viewAll: { href: "/search?city=islamabad", label: "View all stays in Islamabad" },
   },
 
+  areas: {
+    heading: "Popular areas in Islamabad",
+    intro:
+      "Islamabad is laid out in lettered, numbered sectors at the foot of the Margalla Hills — greener and more orderly than the plains cities. These are the sectors travellers stay in most.",
+    items: [
+      {
+        name: "F-6",
+        line: "Central, leafy, Kohsar Market",
+        href: "/stays-in-islamabad/f-6",
+        linkLabel: "View stays in F-6",
+        image: ISLAMABAD_AREAS["f-6"],
+      },
+      {
+        name: "F-7",
+        line: "F-7 Markaz and Jinnah Super",
+        href: "/stays-in-islamabad/f-7",
+        linkLabel: "View stays in F-7",
+        image: ISLAMABAD_AREAS["f-7"],
+      },
+      {
+        name: "F-8",
+        line: "Upscale, quiet, own markaz",
+        href: "/stays-in-islamabad/f-8",
+        linkLabel: "View stays in F-8",
+        image: ISLAMABAD_AREAS["f-8"],
+      },
+      {
+        name: "E-7",
+        line: "Margalla foothills, high-end",
+        href: "/stays-in-islamabad/e-7",
+        linkLabel: "View stays in E-7",
+        image: ISLAMABAD_AREAS["e-7"],
+      },
+      {
+        name: "Blue Area",
+        line: "Banks, offices, Jinnah Avenue",
+        href: "/stays-in-islamabad/blue-area",
+        linkLabel: "View stays in Blue Area",
+        image: ISLAMABAD_AREAS["blue-area"],
+      },
+      {
+        /**
+         * Not a place you book — a navigation aid, so no photograph and no
+         * link. Its line keeps the full landmark sentence rather than a
+         * shortened one: Faisal Mosque, Daman-e-Koh, the Pakistan Monument,
+         * Rawal Lake and Centaurus appear nowhere else on this page, and the
+         * tile clamps to two lines without dropping any of them from the HTML.
+         */
+        name: "Wayfinding landmarks",
+        line: "Navigate by Faisal Mosque, Daman-e-Koh and the Margalla viewpoints, the Pakistan Monument at Shakarparian, Rawal Lake, and Centaurus Mall.",
+      },
+    ],
+  },
+
   notes: {
-    eyebrow: "Good to know",
     heading: "Practical notes for staying in Islamabad",
     items: [
       {
@@ -192,7 +188,7 @@ export const islamabad: CityContent = {
         icon: "weather",
         heading: "Weather & season",
         // The space before °C is U+00A0, as the card’s `40&nbsp;°C` is.
-        body: "Hot summers peaking near 40 °C in June, monsoon rains in July and August, and pleasant spring and autumn with cool winters. The air is cleaner and cooler than the Punjab plains.",
+        body: "Hot summers peaking near 40 °C in June, monsoon rains in July and August, and pleasant spring and autumn with cool winters. The air is cleaner and cooler than the Punjab plains.",
       },
     ],
   },
@@ -230,7 +226,6 @@ export const islamabad: CityContent = {
   },
 
   faq: {
-    eyebrow: "Before you book",
     heading: "Frequently asked questions",
     items: [
       {
@@ -257,7 +252,6 @@ export const islamabad: CityContent = {
   },
 
   related: {
-    eyebrow: "Keep exploring",
     heading: "More ways to plan your Islamabad stay",
     columns: [
       {

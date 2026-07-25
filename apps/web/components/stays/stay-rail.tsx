@@ -53,7 +53,7 @@ import { StayCardCompact } from "./stay-card-compact";
 const viewAllLink =
   "hidden sm:inline-flex items-center gap-1 rounded-sm text-bodySm font-medium text-link underline-offset-4 " +
   "transition-colors duration-instant ease-decelerate hover:text-link-strong hover:underline " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
 
 /**

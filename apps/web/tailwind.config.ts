@@ -35,7 +35,7 @@ const scrimColors = { scrim: scrim.light, "scrim-dark": scrim.dark };
  * the corpus `.lcard` measure (ga-016 §Listing card) and lands on the 4px
  * spacing grid at 46 steps, so it is derived from `spaceBase`, not typed in.
  */
-const railWidth = { "rail-card": `${spaceBase * 46}px` };
+const railWidth = { "rail-card": `${spaceBase * 52}px` };
 
 const config: Config = {
   presets: [tailwindPreset as unknown as Config],

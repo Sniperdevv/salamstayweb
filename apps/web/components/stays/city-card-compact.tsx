@@ -26,12 +26,12 @@ const mediaFrame =
 
 const mediaImage =
   "aspect-[4/3] w-full object-cover transition-transform duration-normal ease-decelerate group-hover:scale-[1.03] " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:group-hover:scale-100";
 
 const cardLink =
   "group block rounded-lg transition-transform duration-instant ease-decelerate active:scale-[0.99] " +
-  "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 export interface CityCardCompactProps {

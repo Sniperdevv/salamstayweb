@@ -1,38 +1,45 @@
-import Link from "next/link";
-import { ArrowRightIcon } from "@/components/icons";
-import { btnBase, btnGhost, btnLg } from "@/components/ui";
-import { StayGrid } from "@/components/stays/stay-card";
-import { eyebrow, sectionHeading, sectionRule, sectionShell, sectionSub } from "@/components/stays/styles";
+import { StayRail } from "@/components/stays/stay-rail";
+import { fromStayCard } from "@/lib/content/featured-stays";
 import type { CityContent } from "@/lib/content/cities/types";
+import { shell, rhythm } from "./city-shell";
 
 /**
- * Featured stays — the card's `.listgrid`. The tile itself lives in
- * `components/stays/stay-card.tsx` because the area template (gw-003) draws the
- * identical object; this file owns only the section around it.
+ * Featured stays — the rail, and the second thing on the page.
+ *
+ * v1 drew this as `StayGrid`: six 4:3 reading tiles with attribute pills and a
+ * price row, three across, under a section eyebrow, a heading and a two-line
+ * intro. It was the fourth block on the page and it filled two screens. The
+ * rail is the same six homes at browsing scale — near-square photograph, name,
+ * sector, price line — six across at this shell's width, arriving directly
+ * under the H1.
+ *
+ * `priority` marks the first card only: it is the LCP element now that the
+ * hero photograph is gone, and a second priority image on the page would only
+ * compete with it for the same connection.
+ *
+ * `newChip` is on. The chip means one checkable thing — this home has no
+ * published two-way review — and pre-launch that is true of every listing, so
+ * six chips in a row are six true statements rather than a ranking. The
+ * homepage turns it off on its second, third and fourth rails because four
+ * rails of chips is wallpaper; one rail is not.
+ *
+ * The projection through `fromStayCard` is the mapper the homepage rails use,
+ * so a home rendered here and the same home rendered on `/` cannot drift.
  */
 export function CityStays({ city }: { readonly city: CityContent }) {
   const { stays } = city;
 
   return (
-    <section aria-labelledby="stays-h" className={sectionRule}>
-      <div className={sectionShell}>
-        <p className={eyebrow}>{stays.eyebrow}</p>
-        <h2 id="stays-h" className={`mt-2 ${sectionHeading}`}>
-          {stays.heading}
-        </h2>
-        <p className={sectionSub}>{stays.intro}</p>
-
-        <StayGrid
-          stays={stays.items}
-          sizes="(min-width: 1024px) 344px, (min-width: 640px) 50vw, 100vw"
-        />
-
-        <Link href={stays.viewAll.href} className={`mt-8 ${btnBase} ${btnGhost} ${btnLg}`}>
-          {stays.viewAll.label}
-          <ArrowRightIcon className="size-5" />
-        </Link>
-      </div>
-    </section>
+    <div className={`${shell} ${rhythm}`}>
+      <StayRail
+        heading={stays.heading}
+        headingId="stays-h"
+        stays={stays.items.map((s) => fromStayCard(s))}
+        viewAll={{ href: stays.viewAll.href, label: stays.viewAll.label }}
+        newChip
+        priority
+      />
+    </div>
   );
 }
 

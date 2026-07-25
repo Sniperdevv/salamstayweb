@@ -1,4 +1,5 @@
 import { iconStroke } from "@salamstay/design-tokens/icons";
+import Link from "next/link";
 import { SearchIcon } from "./icons";
 import { focusRing } from "./ui";
 
@@ -28,6 +29,7 @@ function Segment({ label, value }: { readonly label: string; readonly value: str
 
 export function HomeSearchPill() {
   return (
+    <>
     <form
       role="search"
       aria-label="Search stays"
@@ -36,19 +38,31 @@ export function HomeSearchPill() {
       /* `container.prose` is the pill's ceiling so the three segments divide
          one fixed measure evenly, the way the card draws them, instead of
          each sizing to its own placeholder and reading ragged. */
-      className="mt-8 flex w-full max-w-prose flex-col overflow-hidden rounded-xl border border-border-default bg-canvas shadow-card md:flex-row md:items-stretch md:rounded-full"
+      className="mt-8 hidden w-full max-w-prose overflow-hidden rounded-full border border-border-default bg-canvas shadow-card md:flex md:flex-row md:items-stretch"
     >
       <Segment label="Where" value="Choose a city" />
       <Segment label="Dates" value="Add dates" />
       <Segment label="Guests" value="Add guests" />
       <button
         type="submit"
-        className={`m-2 inline-flex h-12 shrink-0 select-none items-center justify-center gap-2 self-stretch whitespace-nowrap rounded-full bg-interactive px-6 text-bodyMd font-semibold text-on-brand transition-[transform,background-color] duration-instant ease-decelerate hover:bg-interactive-hover active:scale-[0.97] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100 md:self-center ${focusRing}`}
+        className={`m-2 inline-flex h-12 shrink-0 select-none items-center justify-center gap-2 self-stretch whitespace-nowrap rounded-full bg-interactive px-6 text-bodyMd font-semibold text-on-brand transition-[transform,background-color] duration-instant ease-decelerate hover:bg-interactive-hover active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100 md:self-center ${focusRing}`}
       >
         <SearchIcon className="size-5" stroke={iconStroke.bold} />
         Search stays
       </button>
     </form>
+    {/* Below md the three-field pill would stack into ~350px of hero — the
+        mobile fold belongs to inventory (review A1). One collapsed pill,
+        Airbnb-style, links straight to /search. */}
+    <Link
+      href="/search"
+      aria-label="Search stays"
+      className={`mt-6 flex h-14 w-full items-center gap-3 rounded-full border border-border-default bg-canvas px-5 text-bodyMd text-secondary shadow-card transition-[transform,border-color] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100 md:hidden ${focusRing}`}
+    >
+      <SearchIcon className="size-5 text-interactive" stroke={iconStroke.bold} />
+      <span className="truncate">Where to? · Any week · Add guests</span>
+    </Link>
+    </>
   );
 }
 

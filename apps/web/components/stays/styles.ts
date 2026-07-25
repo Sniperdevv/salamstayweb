@@ -38,11 +38,11 @@ export const sectionSub = "mt-3 max-w-[66ch] text-bodyMd text-secondary";
  * lift off touch devices, so a tap never leaves a tile floating.
  */
 export const cardLift =
-  "transition-[transform,border-color] duration-fast ease-decelerate hover:-translate-y-0.5 active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100";
+  "transition-[transform,border-color] duration-fast ease-decelerate hover:-translate-y-0.5 active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100";
 
 /** Pill control: filter chips. Border and label go brand on hover. */
 export const chip =
-  "group inline-flex h-10 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-4 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "group inline-flex h-10 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-4 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 /**
  * Static attribute pill on a listing tile. Not interactive — no hover state.
@@ -63,8 +63,8 @@ export const attributePill =
  * drops the transform, per the shipped `pressable` pattern in `ui.ts`.
  */
 export const panelLink =
-  "group block rounded-lg border border-hairline bg-canvas p-5 transition-[transform,border-color] duration-instant ease-decelerate hover:border-border-brand active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "group block rounded-lg border border-hairline bg-canvas p-5 transition-[transform,border-color] duration-instant ease-decelerate hover:border-border-brand active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 /** Inline brand link (area "View stays in …", related columns). */
 export const inlineLink =
-  "inline-flex items-center gap-2 rounded-sm text-bodySm font-medium text-link underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-link-strong hover:underline motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
+  "inline-flex items-center gap-2 rounded-sm text-bodySm font-medium text-link underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-link-strong hover:underline motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";

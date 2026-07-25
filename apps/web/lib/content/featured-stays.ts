@@ -63,24 +63,26 @@ export type CitySlug =
  * card drops the attribute pills and the price row, so the mapper drops them
  * too rather than inventing a shorter version of either.
  */
-export function fromStayCard(stay: StayCardContent): FeaturedStay {
+export function fromStayCard(stay: StayCardContent, area?: string): FeaturedStay {
   return {
     href: stay.href,
     name: stay.title,
-    area: stay.location,
+    area: area ?? stay.location,
     image: stay.image,
     isNew: true,
   };
 }
 
 /** Islamabad — the six the city page already ships, verbatim. */
-const ISLAMABAD_STAYS: readonly FeaturedStay[] = islamabad.stays.items.map(fromStayCard);
+const ISLAMABAD_STAYS: readonly FeaturedStay[] = islamabad.stays.items.map((s) => fromStayCard(s));
 
 /**
  * F-7, Islamabad — the six the area page already ships, verbatim. Exported for
  * an area rail; not part of the six-city collection, since F-7 is a sector.
  */
-export const F7_STAYS: readonly FeaturedStay[] = f7Islamabad.stays.items.map(fromStayCard);
+export const F7_STAYS: readonly FeaturedStay[] = f7Islamabad.stays.items.map((s) =>
+  fromStayCard(s, "F-7, Islamabad"),
+);
 
 /**
  * The five template cities. Names follow the corpus' own naming style: what
