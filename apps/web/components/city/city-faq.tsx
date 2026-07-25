@@ -25,8 +25,12 @@ import { shell, rhythm, sectionH2, headingGap } from "./city-shell";
  * the note is a glance, and the full read of load-shedding and getting around
  * is here, in the block a reader who wants detail scrolls to.
  *
- * Answers keep the measure the shared block uses (76ch). It is the one place
- * on the page where a wide line of text would actually hurt.
+ * Two columns from `lg`, one below it. A single 76ch column inside a 1232
+ * shell leaves half the width empty and runs the block six hundred pixels
+ * deep, which on an inventory page is the tallest thing after the rail. Split,
+ * each column measures about 66 characters — inside the readable band — and
+ * the block halves in height. The DOM order is unchanged (1, 2 / 3, 4), so
+ * schema order and reading order still agree.
  */
 export function CityFaq({ city }: { readonly city: CityContent }) {
   const { faq } = city;
@@ -37,11 +41,13 @@ export function CityFaq({ city }: { readonly city: CityContent }) {
         {faq.heading}
       </h2>
 
-      <div className={`${headingGap} max-w-[76ch]`}>
+      <div
+        className={`${headingGap} grid max-w-[76ch] grid-cols-1 gap-x-10 lg:max-w-none lg:grid-cols-2`}
+      >
         {faq.items.map((item) => (
           <div
             key={item.question}
-            className="border-t border-hairline py-4 first:border-t-0 first:pt-0"
+            className="border-t border-hairline py-4 first:border-t-0 first:pt-0 lg:[&:nth-child(2)]:border-t-0 lg:[&:nth-child(2)]:pt-0"
           >
             <h3 className="flex items-start gap-3 text-bodyMd font-semibold text-primary">
               {/* The glyph sits in a line-box-tall cell so it optically

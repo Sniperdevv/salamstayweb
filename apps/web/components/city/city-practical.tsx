@@ -43,17 +43,33 @@ import { shell, rhythm, bandRhythm, sectionH2, headingGap } from "./city-shell";
  * disclosure that is not trying to be a modal should do.
  */
 
-const noteCard = "group rounded-lg border border-hairline bg-canvas";
+/**
+ * The ring is drawn on the CARD, not on the `<summary>` that takes the focus.
+ * The summary fills the card's content box, so the shared `focusRing`'s 4px
+ * offset would land astride the card border and paint a canvas-coloured halo
+ * over the tinted plate. `:has()` moves the same 2px `interactive` ring and the
+ * same offset out to the card edge, where the offset colour is the plate's own.
+ */
+const noteCard =
+  "group rounded-lg border border-hairline bg-canvas " +
+  "has-[summary:focus-visible]:ring-2 has-[summary:focus-visible]:ring-interactive " +
+  "has-[summary:focus-visible]:ring-offset-4 has-[summary:focus-visible]:ring-offset-raised";
 
 const noteSummary =
-  "block cursor-pointer list-none p-4 [&::-webkit-details-marker]:hidden " +
-  focusRing;
+  "block cursor-pointer list-none p-4 focus-visible:outline-none [&::-webkit-details-marker]:hidden";
 
 const noteHeading = "flex items-center gap-2.5 text-bodySm font-semibold text-primary";
 
-/** Two lines closed, all of them open. `group-[[open]]` = `.group[open] &`. */
+/**
+ * Two lines closed, all of them open. `group-[[open]]` compiles to
+ * `.group[open] &`, which is how a `<details>` state reaches a descendant.
+ *
+ * NO `block` here, deliberately: `line-clamp-2` sets `display: -webkit-box`,
+ * and Tailwind emits `.block` after it, so adding both silently defeats the
+ * clamp. `line-clamp-none` restores `display: block` on its own when open.
+ */
 const noteBody =
-  "mt-2 block line-clamp-2 text-bodySm text-secondary group-[[open]]:line-clamp-none";
+  "mt-2 line-clamp-2 text-bodySm text-secondary group-[[open]]:line-clamp-none";
 
 const noteAffordance =
   "mt-2 items-center gap-1 text-caption font-medium text-link " +
