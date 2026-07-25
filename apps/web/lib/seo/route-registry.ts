@@ -92,11 +92,20 @@ export const ROUTES: readonly RouteEntry[] = [
 
   // ——— Editorial / help ———
   page("/authors/salamstay-editorial", "gw-019", "SalamStay Editorial — author profile"),
+  /**
+   * The help hub. §3.10 gives it a contract of its own — title "Help center —
+   * SalamStay", H1, one indexable section per category — and states plainly
+   * that "the /help hub is index, follow". It shipped as a resolver stub only
+   * because no page implemented that contract yet; `app/help/page.tsx` now
+   * does, so the entry moves up to `page()` and gains its self-canonical.
+   * It has no gw-* card of its own: the hub's contract is §3.10 itself, which
+   * is what the `card` field records.
+   */
+  page("/help", "SEO-RULES §3.10 (help hub)", "Help center — SalamStay"),
   page("/help/cantonment-stays", "gw-020", "How cantonment rules work — SalamStay Help"),
 
   // ——— Resolver stubs (shipped card links with no card of their own yet) ———
   stub("/legal/host-terms", "Host terms — SalamStay"),
-  stub("/help", "Help center — SalamStay"),
   stub("/help/contact", "Contact SalamStay"),
   stub("/help/report", "Report a problem — SalamStay Help"),
   stub("/help/cancellation", "Cancellation options — SalamStay Help"),
@@ -124,6 +133,10 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/trips", "Your trips — SalamStay"),
   stub("/rooms/is-f7-2bed/reserve", "Reserve — Margalla View Apartment"),
   stub("/host/help/regulations/cantonment-noc", "Cantonment NOC — SalamStay hosting help"),
+  // Linked from ha-001. HA-002 is a designed card awaiting its build wave;
+  // /host/help/fees is the payout breakdown the fees block points at.
+  stub("/become-a-host/earnings-estimator", "Estimate your hosting earnings — SalamStay"),
+  stub("/host/help/fees", "How host fees and payouts are calculated — SalamStay"),
   // Area siblings linked from gw-002/gw-003/gw-009 (area cards not yet designed):
   stub("/stays-in-islamabad/f-6", "Stays in F-6, Islamabad"),
   stub("/stays-in-islamabad/f-8", "Stays in F-8, Islamabad"),
