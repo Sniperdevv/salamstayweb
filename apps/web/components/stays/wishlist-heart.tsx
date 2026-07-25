@@ -47,8 +47,10 @@ export function WishlistHeart({ stayName }: { readonly stayName: string }) {
       onClick={() => router.push("/signup")}
       className={`${heartBase} ${focusRing}`}
     >
-      <span className="grid size-8 place-items-center rounded-full bg-scrim dark: -dark">
-        <HeartIcon className="text-white drop-shadow-[0_1px_2px_rgba(16,25,27,0.45)] size-4 text-slate-0" />
+      {/* Naked stroke heart, no plate — the drop shadow alone separates it from
+          any photo (the Airbnb grid-card treatment; plates are for white chrome). */}
+      <span className="grid size-8 place-items-center">
+        <HeartIcon className="size-5 text-slate-0 drop-shadow-on-media" />
       </span>
     </button>
   );

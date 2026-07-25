@@ -3,6 +3,7 @@ import { tailwindPreset } from "@salamstay/design-tokens/tailwind-preset";
 import { container, zIndex } from "@salamstay/design-tokens/layout";
 import { scrim } from "@salamstay/design-tokens/backgrounds";
 import { spaceBase } from "@salamstay/design-tokens/spacing";
+import { RAIL_CARD_PX } from "./components/stays/rail-metrics";
 
 /**
  * The shared preset maps color / type / spacing / radii / elevation / motion.
@@ -31,11 +32,10 @@ const scrimColors = { scrim: scrim.light, "scrim-dark": scrim.dark };
 /**
  * Rail item width. A horizontally-scrolling rail cannot use a fluid card: the
  * constant width is exactly what decides how much of the next card peeks past
- * the gutter, and that peek is the affordance that says "this scrolls". 184 is
- * the corpus `.lcard` measure (ga-016 §Listing card) and lands on the 4px
- * spacing grid at 46 steps, so it is derived from `spaceBase`, not typed in.
+ * the gutter, and that peek is the affordance that says "this scrolls".
+ * See components/stays/rail-metrics.ts — the single source for this width.
  */
-const railWidth = { "rail-card": `${spaceBase * 52}px` };
+const railWidth = { "rail-card": `${RAIL_CARD_PX}px` };
 
 const config: Config = {
   presets: [tailwindPreset as unknown as Config],
@@ -54,6 +54,12 @@ const config: Config = {
       zIndex: zIndexScale,
       colors: scrimColors,
       width: railWidth,
+      // Legibility shadow for stroke glyphs sitting on photographs (hearts,
+      // carousel dots). Bridged here until the tokens package ships an
+      // elevation.onMedia role (recalibration backlog).
+      dropShadow: {
+        "on-media": "0 1px 2px rgb(22 25 27 / 0.45)",
+      },
     },
   },
 };

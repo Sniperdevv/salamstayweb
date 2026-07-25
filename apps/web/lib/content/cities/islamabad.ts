@@ -53,7 +53,7 @@ export const islamabad: CityContent = {
     { icon: "season", label: "Best season", value: "Spring & autumn", muted: "· cool, clear" },
     { icon: "transit", label: "Getting around", value: "Metrobus", muted: "+ ride-hailing" },
     { icon: "areas", label: "Popular areas", value: "F-6 · F-7 · E-7", muted: "· Blue Area" },
-    { icon: "price", label: "Nightly price", value: "from PKR —", muted: "· live pricing" },
+    { icon: "price", label: "Nightly price", value: "PKR —", muted: "· live pricing" },
   ],
 
   stays: {

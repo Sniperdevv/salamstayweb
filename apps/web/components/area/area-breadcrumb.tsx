@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { focusRing, gutter } from "@/components/ui";
+import { focusRing } from "@/components/ui";
 import type { AreaContent } from "@/lib/content/areas/types";
+import { shell } from "./area-shell";
 
 /**
  * Breadcrumb — mandatory at area depth (§2/§3.3, G40). The stays trail begins
@@ -15,12 +16,19 @@ import type { AreaContent } from "@/lib/content/areas/types";
  *
  * The separator is a `::after` on the list item, not a character in the markup:
  * a literal "/" between anchors is read aloud by screen readers as content.
+ *
+ * The ONLY thing Phase 4 changed here is the container: `max-w-page` became
+ * the page's own `max-w-wide` shell. Nothing semantic moved — same nav, same
+ * `aria-label`, same list, same `aria-current`, same array. At the old measure
+ * the trail sat eighty pixels right of the wordmark above it and eighty pixels
+ * right of the H1 below it, which is the step the homepage and city comments
+ * both call a bug rather than two measures.
  */
 export function AreaBreadcrumb({ area }: { readonly area: AreaContent }) {
   const { crumbs } = area;
 
   return (
-    <div className={`mx-auto max-w-page pt-4 ${gutter}`}>
+    <div className={`${shell} pt-4`}>
       <nav aria-label="Breadcrumb">
         <ol className="flex flex-wrap items-center text-bodySm text-tertiary">
           {crumbs.map((crumb, i) => {

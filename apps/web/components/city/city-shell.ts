@@ -12,8 +12,8 @@ import { gutter } from "@/components/ui";
  * serving GW-003; nothing here changes it.
  *
  * Why `max-w-wide` and not `max-w-page`:
- *  · The rail needs it. At a 1232 content box the rail holds 6.28 compact
- *    cards (184 wide, 12 gap) against 5.8 at `container.page` — which is the
+ * At 208px cards the 1232 box shows five full cards with the sixth peeking
+ * (the scroll affordance); `container.page` would show only 4.9.
  *    difference between six homes on one row and five plus a stub.
  *  · The shared header is `max-w-wide` (components/site-header.tsx). Running
  *    the H1 at `container.page` sets it eighty pixels right of the wordmark

@@ -40,7 +40,7 @@ export function CityIntro({ city }: { readonly city: CityContent }) {
                 {fact.label}
               </dt>
               <dd className="mt-1.5 text-bodySm font-semibold text-primary">
-                {fact.value} <span className="font-normal text-secondary">{fact.muted}</span>
+                <span className="num">{fact.value}</span> <span className="font-normal text-secondary">{fact.muted}</span>
               </dd>
             </div>
           );

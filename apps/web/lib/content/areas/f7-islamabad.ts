@@ -2,14 +2,37 @@ import { LISTING_THUMBS } from "@/lib/content/image-manifest";
 import type { AreaContent } from "./types";
 
 /**
- * F-7, Islamabad — the GW-003 instance, at `/stays-in-islamabad/f-7`.
+ * F-7, Islamabad — the GW-003 instance, at `/stays-in-islamabad/f-7`, on the
+ * v2 inventory-first contract.
  *
- * Every string is the card's own copy (design-system/cards/screens/
- * gw-003-area-template.html, LIGHT panel — the authoritative semantic page).
  * Local facts trace to screens-research/sections/city-facts.md §1a and the
  * shipped prayer card (ga-030): real markets (F-7 Markaz, Jinnah Super
  * Market), real masjids with the shipped walking figures, real roads (Kashmir
  * Highway), real transport (Metrobus Red Line, Careem / inDrive / Yango).
+ *
+ * What moved in the v2 rewrite, string by string:
+ * - The five-line lede is gone. Its two `<strong>` §5 claims are NOT restated
+ *   in shorter words anywhere: "Halal-kitchen, prayer-space, and Qibla
+ *   direction shown on listings" is already verbatim in FAQ answer 2, and
+ *   "load-shedding hours and backup power" is verbatim in FAQ answer 4 and in
+ *   the meta description. `support` is one plain line about where in the sector
+ *   the homes are, and it still names F-7 in its first clause.
+ * - The four-fact strip is gone. F-7 Markaz and Jinnah Super are in `about`
+ *   item 1 and FAQ answer 1; the four-minute masjid walk is in `about` item 2
+ *   and FAQ answer 2; walkability and ride-hailing are in `around` items 1 and
+ *   2; "PKR —" is on every card in the rail.
+ * - The two "About F-7" lede paragraphs are gone. FAQ answer 1 already carries
+ *   the whole first one verbatim (central sector, the lettered-and-numbered
+ *   grid, the Margalla Hills, the markaz built around Jinnah Super Market
+ *   holding the sector's food and shopping, the embassies alongside), and
+ *   "quiet by day … busy enough in the evening" is verbatim in FAQ answer 3.
+ *   The second paragraph, about which travellers the sector "suits", is
+ *   dropped outright: it named no checkable local fact and so counted for
+ *   nothing against GATE 19's uniqueness bar.
+ * - "Every home below is a verified F-7 listing …" is gone with `stays.intro`.
+ *   Why the sector has a page at all is still on the page, in `parentNote`.
+ * - `crumbs`, `h1`, `stays.items`, `stays.note`, `around`, `nearby` and the
+ *   whole FAQ are BYTE-IDENTICAL to v1.
  *
  * Deliberate absences, all load-bearing:
  * - NO price figure. "PKR —" is the card's own data-driven placeholder.
@@ -37,6 +60,8 @@ import type { AreaContent } from "./types";
  *            (ga-030 shipped figure).
  *         e. Street 12 Masjid, F-7/2 — about a 9-minute walk, ~700 m, near
  *            Jinnah Super (ga-030 shipped figure).
+ *       All five survive the v2 rewrite: a, c, d and e in `about.items` and in
+ *       the FAQ; b in `about.items` item 3 and in FAQ answer 3.
  *   Disposition if any condition fails: the GATE 19 six — keep · improve ·
  *   merge into the city page · redirect · noindex temporarily · remove.
  *   "Never decide from word count alone."
@@ -70,70 +95,14 @@ export const f7Islamabad: AreaContent = {
   ],
 
   h1: "Stays in F-7, Islamabad",
-  intro: [
-    "F-7 sits in the middle of Islamabad’s sector grid — F-7 Markaz and Jinnah Super Market for food and shopping, the Margalla Hills behind it. SalamStay is a home-sharing marketplace for Pakistan, and every verified F-7 home here shows its ",
-    { strong: "load-shedding hours and backup power" },
-    ", the walk to the nearest masjid, and the ",
-    { strong: "Qibla direction" },
-    ".",
-  ],
-
-  facts: [
-    { icon: "sector", label: "Sector centre", value: "F-7 Markaz", muted: "· Jinnah Super" },
-    { icon: "masjid", label: "Nearest masjid", value: "4-min walk", muted: "· F-7 Markaz" },
-    {
-      icon: "transit",
-      label: "Getting around",
-      value: "Walkable markaz",
-      muted: "· ride-hailing",
-    },
-    { icon: "price", label: "Nightly price", value: "from PKR —", muted: "· live pricing" },
-  ],
-
-  about: {
-    eyebrow: "The sector",
-    heading: "About F-7",
-    paragraphs: [
-      [
-        "F-7 is one of Islamabad’s most central sectors. Its markaz — ",
-        { strong: "F-7 Markaz" },
-        ", built around ",
-        { strong: "Jinnah Super Market" },
-        " — carries most of the sector’s food, groceries and shopping, and the streets stay calm through the day before getting livelier in the evening. Several embassies sit alongside it, and the Margalla Hills rise directly behind the F sectors.",
-      ],
-      [
-        "Stays here suit travellers who want to walk to dinner and a grocery run rather than drive across the city: government and corporate visitors, families, and overseas-Pakistani guests using Islamabad as a base before heading north.",
-      ],
-    ],
-    items: [
-      {
-        icon: "market",
-        heading: "F-7 Markaz & Jinnah Super Market",
-        body: "The sector’s dining and shopping core — restaurants, bakeries, pharmacies and a grocery run, all within the markaz block.",
-      },
-      {
-        icon: "masjid",
-        heading: "Jamia Masjid, F-7 Markaz",
-        body: "Roughly a four-minute walk — about 300 m — from the blocks around the markaz. Street 12 Masjid in F-7/2 is about nine minutes on foot, near Jinnah Super.",
-      },
-      {
-        icon: "civic",
-        heading: "Embassy-adjacent, quiet by day",
-        body: "The diplomatic enclave and E-7 sit to the west, which keeps the residential streets orderly and calm outside markaz hours.",
-      },
-      {
-        icon: "hills",
-        heading: "Margalla Hills at your back",
-        body: "Daman-e-Koh and the Margalla viewpoints sit above the sector; Faisal Mosque, the Pakistan Monument and Centaurus Mall are the wider city’s wayfinding anchors.",
-      },
-    ],
-  },
+  /** Thirteen words, and one line at the 720px prose measure. Says what the
+   *  inventory is and where in the sector it sits — the markaz block and the
+   *  hills the sector backs onto — in the city page's own register. */
+  support:
+    "Verified homes around F-7 Markaz and Jinnah Super Market, below the Margalla Hills.",
 
   stays: {
-    eyebrow: "Verified homes",
     heading: "Stays in F-7",
-    intro:
-      "Every home below is a verified F-7 listing. F-7 has its own page because the sector carries enough verified homes, from enough separate hosts, to give you a real choice — pricing is live and confirmed at booking.",
     items: [
       {
         href: "/stays-in-islamabad/f-7/is-f7-2bed",
@@ -194,8 +163,33 @@ export const f7Islamabad: AreaContent = {
     note: "New listings show a New chip until their first two-way review is published — SalamStay never shows a rating a home has not earned.",
   },
 
+  about: {
+    heading: "About F-7",
+    items: [
+      {
+        icon: "market",
+        heading: "F-7 Markaz & Jinnah Super Market",
+        body: "The sector’s dining and shopping core — restaurants, bakeries, pharmacies and a grocery run, all within the markaz block.",
+      },
+      {
+        icon: "masjid",
+        heading: "Jamia Masjid, F-7 Markaz",
+        body: "Roughly a four-minute walk — about 300 m — from the blocks around the markaz. Street 12 Masjid in F-7/2 is about nine minutes on foot, near Jinnah Super.",
+      },
+      {
+        icon: "civic",
+        heading: "Embassy-adjacent, quiet by day",
+        body: "The diplomatic enclave and E-7 sit to the west, which keeps the residential streets orderly and calm outside markaz hours.",
+      },
+      {
+        icon: "hills",
+        heading: "Margalla Hills at your back",
+        body: "Daman-e-Koh and the Margalla viewpoints sit above the sector; Faisal Mosque, the Pakistan Monument and Centaurus Mall are the wider city’s wayfinding anchors.",
+      },
+    ],
+  },
+
   around: {
-    eyebrow: "Good to know",
     heading: "Getting around F-7",
     items: [
       {
@@ -217,7 +211,6 @@ export const f7Islamabad: AreaContent = {
   },
 
   nearby: {
-    eyebrow: "Keep exploring",
     heading: "Which nearby areas can I book instead of F-7?",
     intro:
       "Three sectors sit within a few minutes of F-7 and carry their own stays: F-6 to the east, F-8 across the Kashmir Highway, and E-7 against the Margalla foothills. If none of them fits, the Islamabad page lists every verified home in the city.",
@@ -247,7 +240,6 @@ export const f7Islamabad: AreaContent = {
   },
 
   faq: {
-    eyebrow: "Before you book",
     heading: "Frequently asked questions",
     items: [
       {

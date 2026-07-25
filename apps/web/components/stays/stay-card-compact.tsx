@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { spaceBase } from "@salamstay/design-tokens/spacing";
+import { RAIL_CARD_SIZES } from "./rail-metrics";
 import { focusRing } from "@/components/ui";
 import { image } from "@/lib/content/image-manifest";
 import type { FeaturedStay } from "@/lib/content/featured-stays";
@@ -51,7 +51,6 @@ import { WishlistHeart } from "./wishlist-heart";
  * intrinsic width is known and the browser never has to guess. Derived from the
  * same spacing base as the Tailwind bridge so the two cannot drift.
  */
-const RAIL_CARD_SIZES = `${spaceBase * 46}px`;
 
 /** Chip treatment shared with the shipped card's area pin: reads on any photo. */
 const overlayChip =

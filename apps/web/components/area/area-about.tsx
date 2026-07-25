@@ -1,77 +1,76 @@
-import { eyebrow, sectionHeading, sectionRule, sectionShell } from "@/components/stays/styles";
 import type { AreaContent } from "@/lib/content/areas/types";
-import type { RichText } from "@/lib/content/stays";
 import { AREA_CONTEXT_ICONS } from "./area-icons";
+import { shell, rhythm, sectionH2, headingGap } from "./area-shell";
 
 /**
- * About {area} — the card's entity/context block, and the reason the page is
- * allowed to exist at all: the ≥5 locally-true facts that GATE 19 requires and
- * that the parent city page does not already carry. Every line here traces to
+ * About {area} — the ≥5 locally-true facts GATE 19 requires and that the
+ * parent city page does not already carry. Every line here traces to
  * `city-facts.md §1a` or a shipped card; nothing is atmosphere.
  *
- * §3.3 fixes this block ahead of the commercial one, and G69 may not rewrite a
- * value §3 fixes — so "About F-7" comes first and is not a competing sales
- * section.
+ * v1 opened this block with two lede paragraphs and then drew the four rows as
+ * a hairline-divided two-column list with 40px glyph tiles, about 520px deep.
+ * The paragraphs are gone (see the content file's header for where each fact
+ * in them survives) and the rows are now four tight cards in one dense strip,
+ * the shape the city page gives its area tiles one level up.
  *
- * The four rows are `<h3>` under this `<h2>`, which is the outline the card
- * draws and the one G78 expects.
+ * Tight cards, NOT the `DisclosureCard` the notes below use, and the reason is
+ * measured rather than stylistic: these four bodies are twenty to thirty words,
+ * so at any card width this grid can produce they either fit inside a two-line
+ * clamp or miss it by a line. A "Read more" that expands a card by nothing is a
+ * false affordance, and a page that offers one teaches a reader to ignore the
+ * real one three inches below. The notes block earns its disclosure because its
+ * bodies are forty words and genuinely clip; this one does not, so the copy is
+ * simply all there.
+ *
+ * Four across from `lg`, two from `sm`. Four is the count, and a strip of four
+ * reads as context you take in at a glance rather than as four short articles —
+ * which is what the two-column list was.
+ *
+ * From `sm` the heading reserves two line-boxes (`sm:min-h-[2lh]`). At the
+ * widths this grid produces, "F-7 Markaz & Jinnah Super Market" wraps and the
+ * other three do not, so without the reserve one body starts a line lower than
+ * its neighbours and the row reads ragged. `lh` is the element's OWN computed
+ * line-height, so the reserve is the type token's value rather than a pixel
+ * guess, and a browser without the unit ignores the rule and gets today's
+ * behaviour back. It is gated at `sm` because below that the grid is one
+ * column, where there is nothing to align and the reserve would only spend
+ * four dead lines on the narrowest viewport.
+ *
+ * The four card headings are `<h3>` under this `<h2>`, which is the outline
+ * §3.3 draws and the one G78 expects.
  */
-
-function Paragraph({ runs }: { readonly runs: RichText }) {
-  return (
-    <p className="mt-4 max-w-[72ch] text-bodyMd text-secondary">
-      {runs.map((run, i) =>
-        typeof run === "string" ? (
-          <span key={i}>{run}</span>
-        ) : (
-          <strong key={i} className="font-semibold text-primary">
-            {run.strong}
-          </strong>
-        ),
-      )}
-    </p>
-  );
-}
-
 export function AreaAbout({ area }: { readonly area: AreaContent }) {
   const { about } = area;
 
   return (
-    <section aria-labelledby="about-h" className={sectionRule}>
-      <div className={sectionShell}>
-        <p className={eyebrow}>{about.eyebrow}</p>
-        <h2 id="about-h" className={`mt-2 ${sectionHeading}`}>
-          {about.heading}
-        </h2>
+    <section aria-labelledby="about-h" className={`${shell} ${rhythm}`}>
+      <h2 id="about-h" className={sectionH2}>
+        {about.heading}
+      </h2>
 
-        {about.paragraphs.map((runs, i) => (
-          <Paragraph key={i} runs={runs} />
-        ))}
-
-        {/* Two columns of hairline-divided rows. The rule is on the row's top
-            edge and suppressed for the first row of each column, so the grid
-            reads as two lists rather than one list wrapped — and the same
-            markup collapses to a single divided column on mobile. */}
-        <div className="mt-8 grid grid-cols-1 gap-x-8 md:grid-cols-2">
-          {about.items.map((item) => {
-            const Icon = AREA_CONTEXT_ICONS[item.icon];
-            return (
-              <div
-                key={item.heading}
-                className="flex gap-4 border-t border-hairline py-5 first:border-t-0 first:pt-1 md:[&:nth-child(2)]:border-t-0 md:[&:nth-child(2)]:pt-1"
-              >
-                <span className="grid size-10 shrink-0 place-items-center rounded-md bg-brand-subtle text-interactive">
-                  <Icon className="size-5" />
+      <ul
+        className={`${headingGap} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4`}
+      >
+        {about.items.map((item) => {
+          const Icon = AREA_CONTEXT_ICONS[item.icon];
+          return (
+            <li
+              key={item.heading}
+              className="rounded-lg border border-hairline bg-canvas p-4"
+            >
+              <h3 className="flex items-start gap-2.5 text-bodySm font-semibold text-primary sm:min-h-[2lh]">
+                {/* The glyph sits in a line-box-tall cell so it optically
+                    centres on the first line of a heading that wraps. */}
+                <span className="grid h-5 shrink-0 place-items-center">
+                  <Icon className="size-5 text-secondary" />
                 </span>
-                <div className="min-w-0">
-                  <h3 className="text-bodyMd font-semibold text-primary">{item.heading}</h3>
-                  <p className="mt-1 text-bodySm text-secondary">{item.body}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+                {item.heading}
+              </h3>
+              <p className="mt-2 text-bodySm text-secondary">{item.body}</p>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }
