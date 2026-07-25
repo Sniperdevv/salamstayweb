@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { SearchIcon } from "./icons";
 import { LanguageGroup } from "./language-group";
 import { MobileMenu } from "./mobile-menu";
-import { btnBase, btnGhost, btnMd, btnPrimary, focusRing, gutter } from "./ui";
+import { headerCtaYields } from "./header-cta";
+import { btnBase, btnGhost, btnMd, btnOutline, btnPrimary, focusRing, gutter } from "./ui";
 
 /**
  * SiteHeader — the shipped web chrome (design corpus: the gw-001 light panel is
@@ -109,6 +110,7 @@ function derivePill(pathname: string): PillTarget | undefined {
 export function SiteHeader({ search }: SiteHeaderProps) {
   const pathname = usePathname();
   const pill = derivePill(pathname);
+  const ctaYields = headerCtaYields(pathname);
   const pillSummary = search ?? pill?.summary;
   const sentinel = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -182,7 +184,14 @@ export function SiteHeader({ search }: SiteHeaderProps) {
             <Link href="/login" className={`hidden md:inline-flex ${btnBase} ${btnGhost} ${btnMd}`}>
               Log in
             </Link>
-            <Link href="/signup" className={`${btnBase} ${btnPrimary} ${btnMd}`}>
+            {/* Green doctrine: the header CTA yields to a page-owned primary.
+                See `header-cta.ts` — the same test drives the copy of this
+                button inside `MobileMenu`, so the control is one treatment at
+                both widths. */}
+            <Link
+              href="/signup"
+              className={`${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnMd}`}
+            >
               Sign up
             </Link>
           </nav>

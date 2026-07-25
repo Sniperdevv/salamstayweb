@@ -1,0 +1,39 @@
+import { routeByPath } from "@/lib/seo/route-registry";
+
+/**
+ * GREEN DOCTRINE (TASTE-RULES §2, founder-ruled 2026-07-25): **the header CTA
+ * yields to a page-owned primary.**
+ *
+ * §2 budgets brand green at four roles per surface and exactly ONE primary CTA
+ * among them. The header is shared chrome that arrives with every route, so on
+ * a route whose own body already spends the primary-CTA green, a green Sign up
+ * makes two — and the page's call, which is the one the visitor came for, ends
+ * up competing with navigation. On those routes Sign up renders as the
+ * outline/ink `btnOutline`; everywhere else it keeps the green fill, because
+ * everywhere else it IS the surface's one primary CTA.
+ *
+ * The three demote routes, and what owns the green on each:
+ *  · `/stays-in-islamabad/f-7/is-f7-2bed` — the booking card's Reserve.
+ *  · `/become-a-host` — the funnel hero pill's submit circle.
+ *  · not-found — its "Go to the SalamStay homepage" `btnPrimary`.
+ *
+ * 404 DETECTION. `usePathname()` on a not-found render returns the URL that did
+ * not resolve, not a literal "/404", so the test is registry membership. The
+ * route registry is already the single source of truth for every URL the site
+ * serves — anything outside it renders `app/not-found.tsx` (see
+ * `app/[...registered]/page.tsx`), which is exactly the set this needs. A new
+ * page added to the registry therefore keeps the green Sign up by default and
+ * appears in the list above only if it draws a primary of its own.
+ *
+ * IT LIVES IN ITS OWN MODULE because two components answer to it: the header
+ * bar and, below `md`, the menu sheet the same bar opens. One control, one
+ * treatment, at both widths.
+ */
+const CTA_OWNED_BY_PAGE: ReadonlySet<string> = new Set([
+  "/stays-in-islamabad/f-7/is-f7-2bed",
+  "/become-a-host",
+]);
+
+export function headerCtaYields(pathname: string): boolean {
+  return CTA_OWNED_BY_PAGE.has(pathname) || !routeByPath.has(pathname);
+}

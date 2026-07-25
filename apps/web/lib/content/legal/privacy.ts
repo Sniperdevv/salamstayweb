@@ -25,10 +25,9 @@ export const privacyPage: LegalPageContent = {
     { name: "Privacy Policy", path: "/legal/privacy" },
   ],
   lede: [
-    "What SalamStay collects, why it collects it, and who it goes to — set out row by row, so you can check any single fact without reading the whole page. ",
-    bold(
-      "You can export or delete your data anytime; your NADRA verification documents stay redacted, always.",
-    ),
+    "What SalamStay collects, why it collects it, and who it goes to — set out row by row, so you can check any single fact without reading the whole page. You can ",
+    bold("export or delete your data anytime"),
+    "; your NADRA verification documents stay redacted, always.",
   ],
   lastUpdated: "24 July 2026",
 
@@ -105,8 +104,9 @@ export const privacyPage: LegalPageContent = {
                   ".",
                 ],
                 [
-                  "You only. The document confirms your booking type and is then kept encrypted. ",
-                  bold("Your host never sees it, and it is never published on your profile."),
+                  "You only. The document confirms your booking type and is then kept encrypted. Your host ",
+                  bold("never sees it"),
+                  ", and it is never published on your profile.",
                 ],
               ],
             },
@@ -164,8 +164,9 @@ export const privacyPage: LegalPageContent = {
                   " and your host.",
                 ],
                 [
-                  "Islamabad Capital Territory (ICT) Police, or Punjab Police via Hotel Eye. ",
-                  bold("Only the details the registration process asks for are shared — nothing more."),
+                  "Islamabad Capital Territory (ICT) Police, or Punjab Police via Hotel Eye. Only the details the registration process asks for are shared — ",
+                  bold("nothing more"),
+                  ".",
                   " Your host sees names and guest count with CNIC numbers masked; the full number goes to the police portal, never to another guest or host.",
                 ],
               ],
@@ -241,10 +242,9 @@ export const privacyPage: LegalPageContent = {
             {
               title: ["WhatsApp and SMS — needed for your bookings"],
               body: [
-                "Booking confirmations, verification codes, messages from your host; SMS is the backup channel if WhatsApp can't reach you. ",
-                bold(
-                  "These two stay on — they carry the messages every booking needs, and you'll always be told why before one arrives.",
-                ),
+                "Booking confirmations, verification codes, messages from your host; SMS is the backup channel if WhatsApp can't reach you. These two ",
+                bold("stay on"),
+                " — they carry the messages every booking needs, and you'll always be told why before one arrives.",
               ],
               state: "Always on",
               locked: true,
@@ -253,9 +253,8 @@ export const privacyPage: LegalPageContent = {
               title: ["Offers & tips — marketing"],
               body: [
                 "Occasional deals and travel ideas, by WhatsApp or SMS. ",
-                bold(
-                  "Off unless you turn it on. Turning it on is entirely your choice, and never needed to book or host.",
-                ),
+                bold("Off unless you turn it on."),
+                " Turning it on is entirely your choice, and never needed to book or host.",
               ],
               state: "Off",
             },
@@ -357,8 +356,9 @@ export const privacyPage: LegalPageContent = {
           kind: "p",
           text: [
             "We'll gather your bookings, messages, reviews, and profile into one file you can download — as JSON, which keeps the full structure, or as CSV if you'd rather open it in a spreadsheet. Preparing it takes a little while; we'll message you when it's ready. ",
-            bold("The file stays available for a limited period and is then deleted for you"),
-            " — the exact date is shown beside the download.",
+            "The file stays available for a ",
+            bold("limited period"),
+            " and is then deleted for you — the exact date is shown beside the download.",
           ],
         },
         {

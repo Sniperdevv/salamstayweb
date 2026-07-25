@@ -1,5 +1,6 @@
 import type { CityContent } from "@/lib/content/cities/types";
 import { FACT_ICONS } from "./city-icons";
+import { Num } from "@/components/numerals";
 import { shell, rhythm } from "@/components/discovery/shell";
 
 /**
@@ -60,8 +61,15 @@ export function CityIntro({ city }: { readonly city: CityContent }) {
                 <Icon className="size-4 shrink-0 text-secondary" />
                 {fact.label}
               </dt>
+              {/* `.num` isolates DIGIT RUNS, not values. The blanket span this
+                  replaces wrapped whole strings — "Spring & autumn",
+                  "Metrobus" — in an LTR isolate, which does nothing in English
+                  and forces prose out of the paragraph direction under RTL.
+                  `Num` finds the real runs ("F-6 · F-7 · E-7" isolates its
+                  three numerals and leaves the sector letters and the separator
+                  in the text flow) and leaves everything else alone. */}
               <dd className="mt-1.5 text-bodySm text-secondary">
-                <span className="num">{fact.value}</span> {fact.muted}
+                <Num>{fact.value}</Num> {fact.muted}
               </dd>
             </div>
           );

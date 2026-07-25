@@ -24,10 +24,12 @@ import { CityStays } from "./city-stays";
  *  1. Intro — H1, one support line, three things to know in open space (no
  *     plate: §1 says content blocks carry neither shadow nor border). It
  *     shares the first fold with the rail's cards at 1280×900.
- *  2. Featured stays — the rail. Six homes, six across at this shell's width,
+ *  2. Featured stays — the rail. Nine homes, six across at this shell's width,
  *     first card `priority` and now the LCP element.
- *  3. Popular areas — six wayfinding tiles in one dense row, the homepage city
- *     tile's exact shape and motion one level down.
+ *  3. Popular areas — five sectors in one dense row (tiles where the sector is
+ *     photographed, open rows where it is not — the homepage city tile's exact
+ *     shape and motion one level down), then the wayfinding note on a
+ *     full-width row of its own beneath them.
  *  4/5. Practical notes + popular filters — the utility register, on the one
  *     tinted plate the page carries.
  *  6. FAQ — flat, verbatim, the page's long-form read.

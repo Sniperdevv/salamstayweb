@@ -19,6 +19,7 @@ import {
   WholeHomeIcon,
 } from "@/components/home-icons";
 import { ArrowRightIcon } from "@/components/icons";
+import { Num } from "@/components/numerals";
 import { CITY_GRID, CityCardCompact } from "@/components/stays/city-card-compact";
 import { FeaturedStayCard } from "@/components/stays/featured-stay-card";
 import { RAIL_CARD_SIZES } from "@/components/stays/rail-metrics";
@@ -349,7 +350,18 @@ export default function HomePage() {
                   <div className="grid grid-cols-2 gap-3 lg:flex lg:shrink-0">
                     {ISLAMABAD_LEAD_PAIR.map((stay) => (
                       <div key={stay.href} className="lg:w-rail-card">
-                        <StayCardCompact stay={stay} sizes={LEAD_PAIR_SIZES} />
+                        {/* `titleSize="rail"`: these two ARE rail tiles. From
+                            `lg` they are `w-rail-card` sitting eight pixels
+                            above a rail of the same object, and below `lg` they
+                            are narrower still (50vw ≈ 165px at 375). §7's
+                            exception is written for exactly that width, and
+                            drawing a 16px title here would put two sizes of one
+                            card in the same composition. */}
+                        <StayCardCompact
+                          stay={stay}
+                          sizes={LEAD_PAIR_SIZES}
+                          titleSize="rail"
+                        />
                       </div>
                     ))}
                   </div>
@@ -436,7 +448,9 @@ export default function HomePage() {
                       across a tinted plate, which is a green field with text in
                       it. The claims are the content; the glyphs point at them. */}
                   <Icon className="mt-0.5 size-5 shrink-0 text-secondary" />
-                  <span className="text-bodySm text-primary">{claim}</span>
+                  <span className="text-bodySm text-primary">
+                    <Num>{claim}</Num>
+                  </span>
                 </li>
               ))}
             </ul>

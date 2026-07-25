@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
+import { Num } from "@/components/numerals";
 import {
   FeesReceiptIcon,
   HalalKitchenIcon,
@@ -54,9 +55,12 @@ import { shell } from "@/components/discovery/shell";
  *    wall" still holds: the arithmetic, the fees and the FAQ are all readable
  *    without an account.
  *
- * Green (§2): the pill's submit circle is this page's ONE primary-CTA green.
- * The header's wordmark dot and Sign up button are shared chrome and arrive
- * with every route; nothing else in the page body is brand-coloured, which is
+ * Green (§2): the pill's submit circle is this page's ONE primary-CTA green,
+ * and the shared header's Sign up yields to it — the doctrine is that the
+ * header CTA yields to a page-owned primary, implemented route-aware in
+ * `site-header.tsx` (`/become-a-host` is on the demote list, so Sign up renders
+ * outline/ink here). The wordmark dot is the only other brand mark that arrives
+ * with the chrome. Nothing else in the page body is brand-coloured, which is
  * why the claim glyphs below are gray and the two trust links further down are
  * ink and underlined instead of green.
  *
@@ -159,7 +163,9 @@ export function HostClaims() {
         return (
           <li key={claim} className="flex items-start gap-3">
             <Icon className="mt-0.5 size-5 shrink-0 text-secondary" />
-            <span className="text-bodySm font-medium text-primary">{claim}</span>
+            <span className="text-bodySm font-medium text-primary">
+              <Num>{claim}</Num>
+            </span>
           </li>
         );
       })}

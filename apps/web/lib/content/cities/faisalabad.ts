@@ -160,6 +160,7 @@ export const faisalabad: CityContent = {
          * clamps to two lines without dropping any of it from the HTML.
          */
         name: "Wayfinding landmarks",
+        wayfinding: true,
         line: "Navigate by Ghanta Ghar, whose eight bazaars radiate outward, plus Lyallpur Museum, Jinnah Garden and the University of Agriculture.",
       },
     ],

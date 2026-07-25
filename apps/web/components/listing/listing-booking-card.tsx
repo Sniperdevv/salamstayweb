@@ -35,19 +35,37 @@ import { Copy, Plain, priceSkeleton, stickyUnderAnchorBar } from "./shell";
  * are hairlines, so the group reads as one control with three fields rather
  * than three controls in a row.
  *
- * **One green thing.** The CTA. Not the trust glyphs, which the card draws in
- * brand: §2 spends green on the wordmark dot, the search-submit circle, ONE
- * primary CTA per surface, and verification marks — and this page's single
- * verification mark is the shield on the host's avatar, twenty lines up the
- * page, where it means a specific person has been verified. Three green ticks
- * beside three sentences would spend the whole budget on reassurance and leave
- * the CTA competing with its own footnotes.
+ * **One green thing, and this card owns it.** Reserve is this page's single
+ * primary CTA, and the shared header's Sign up yields to it: the doctrine is
+ * that the header CTA yields to a page-owned primary, implemented route-aware
+ * in `site-header.tsx` (`/stays-in-islamabad/f-7/is-f7-2bed` is on the demote
+ * list, so Sign up renders outline/ink here). Green on this page is therefore
+ * the wordmark dot, the header search-submit circle, this CTA, and nothing
+ * else.
+ *
+ * Not the trust glyphs, which the card draws in brand: §2 also allows
+ * verification marks, and this page's single verification mark is the shield on
+ * the host's avatar, twenty lines up the page, where it means a specific person
+ * has been verified. Three green ticks beside three sentences would spend the
+ * whole budget on reassurance and leave the CTA competing with its own
+ * footnotes.
  *
  * Sticky from `lg` only. Below that the column collapses and the card lands at
  * the foot of the body, which is why the anchor bar carries a copy of the CTA
  * from the first paint on a phone.
  */
 
+/**
+ * MICRO RUNG: `label` (13), not `caption` (12).
+ *
+ * §7's ladder ends at 13 — there is no 12 on it — and this card's small type
+ * was the whole `caption` rung: the live-pricing note, the info strip, the
+ * reassurance line and the three trust rows, one of which carries the page's
+ * only route to a person ("Questions before you book? Help center"). Moving one
+ * of them would have left a three-row group with its last row a size larger, so
+ * the card moves as a card. It gains a few pixels of height and stops asking
+ * anyone to read a booking's fine print at 12.
+ */
 const overline = "block text-overline uppercase text-secondary";
 
 const field =
@@ -77,7 +95,7 @@ export function ListingBookingCard({ listing, id }: ListingBookingCardProps) {
           <span aria-hidden="true" className={priceSkeleton} />
           <span className="text-bodySm text-secondary">{booking.per}</span>
         </p>
-        <p className="mt-1.5 text-caption text-secondary">
+        <p className="mt-1.5 text-label text-secondary">
           <Plain>{booking.live}</Plain>
         </p>
 
@@ -111,7 +129,7 @@ export function ListingBookingCard({ listing, id }: ListingBookingCardProps) {
         {/* §6 job three: an info strip on `bg.raised` at `radius.md`, with only
             the payload bolded (§7/§11.12) — the number the sentence is about,
             never the sentence. */}
-        <p className="mt-4 rounded-md bg-raised px-4 py-3 text-caption text-secondary">
+        <p className="mt-4 rounded-md bg-raised px-4 py-3 text-label text-secondary">
           <Copy {...booking.strip} />
         </p>
 
@@ -119,13 +137,13 @@ export function ListingBookingCard({ listing, id }: ListingBookingCardProps) {
           {booking.cta.label}
         </Link>
 
-        <p className="mt-3 text-center text-caption text-secondary">
+        <p className="mt-3 text-center text-label text-secondary">
           <Plain>{booking.note}</Plain>
         </p>
 
         <div className="mt-5 flex flex-col gap-3 border-t border-hairline pt-5">
           {booking.trust.map((claim, i) => (
-            <p key={claim.text} className="flex gap-2.5 text-caption text-secondary">
+            <p key={claim.text} className="flex gap-2.5 text-label text-secondary">
               {i === 0 ? (
                 <ShieldCheckIcon className="mt-px size-4 shrink-0 text-secondary" />
               ) : (
@@ -136,7 +154,7 @@ export function ListingBookingCard({ listing, id }: ListingBookingCardProps) {
               </span>
             </p>
           ))}
-          <p className="flex gap-2.5 text-caption text-secondary">
+          <p className="flex gap-2.5 text-label text-secondary">
             <MessageIcon className="mt-px size-4 shrink-0 text-secondary" />
             <span>
               {booking.help.lead}{" "}

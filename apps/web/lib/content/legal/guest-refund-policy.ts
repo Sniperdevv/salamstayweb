@@ -55,7 +55,8 @@ export const guestRefundPolicyPage: LegalPageContent = {
             "Because your payment is held in ",
             term("amanah"),
             " until you check in, ",
-            bold("your refund comes straight back from that hold — no waiting on the host"),
+            "your refund comes straight back from that hold — ",
+            bold("no waiting on the host"),
             " — for whatever the stay's cancellation policy allows.",
           ],
         },
@@ -309,10 +310,9 @@ export const guestRefundPolicyPage: LegalPageContent = {
         {
           kind: "p",
           text: [
-            "A host can change the cancellation policy on their home at any time. It never reaches back to you: ",
-            bold(
-              "policy changes apply to new bookings only — guests who already booked keep the policy they booked under.",
-            ),
+            "A host can change the cancellation policy on their home at any time. It never reaches back to you: policy changes apply to ",
+            bold("new bookings only"),
+            " — guests who already booked keep the policy they booked under.",
           ],
         },
       ],

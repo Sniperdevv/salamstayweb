@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import {
   ChatIcon,
   DocumentDateIcon,
@@ -310,7 +311,11 @@ export function HostTrust() {
           return (
             <li key={claim}>
               <Icon className="size-6 text-secondary" />
-              <p className={`mt-3 ${itemTitle}`}>{claim}</p>
+              {/* Claim 8 carries "24/7": every digit run is isolated, or it
+                  reverses under RTL (the shipped `.num` canon). */}
+              <p className={`mt-3 ${itemTitle}`}>
+                <Num>{claim}</Num>
+              </p>
               <p className={itemBody}>{body}</p>
             </li>
           );

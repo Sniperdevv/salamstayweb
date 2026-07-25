@@ -1,30 +1,34 @@
 import { gutter } from "@/components/ui";
 
 /**
- * The policy-document grammar, for the two §3.8 pages that are NOT one of the
- * five clause documents: GW-017 (editorial and fact-check policy) and GW-018
- * (corrections policy).
+ * THE POLICY-DOCUMENT GRAMMAR — one module, the whole legal family.
  *
- * WHY THIS FILE EXISTS AND WHAT IT IS: every value below is lifted, unchanged,
- * from `components/legal/legal-page.tsx` — the template that renders GW-010 …
- * GW-014 at `/legal/*`. Those two pages sit in the same directory, in the same
- * footer group, one click from each other; if they were re-measured they would
- * read as a different site. They do not go through `LegalPage` itself because
- * neither is a clause document: gw-017 is a sourcing table plus a process, and
- * gw-018 turns on a real `<table>` in a real EMPTY state plus a labelled format
- * specimen, and neither shape is in that template's block union. Adding two
- * one-off block kinds to a shared union to serve two pages is how a template
- * stops being a template.
+ * Every §3.8 surface reads its measures, roles and rules from here:
  *
- * So: same measures, same roles, same rules, different assembly. If
- * `legal-page.tsx` moves, this file moves with it — that is the whole contract,
- * and it is why the strings are here rather than retyped inside each page.
+ *  · `components/legal/legal-page.tsx` — the clause-document template that
+ *    renders GW-010 … GW-014 at `/legal/*`.
+ *  · `app/legal/editorial-policy/page.tsx` (GW-017) and
+ *    `app/legal/corrections/page.tsx` (GW-018), which are NOT clause documents
+ *    — gw-017 is a sourcing table plus a process, gw-018 turns on a real
+ *    `<table>` in a real EMPTY state plus a labelled format specimen, and
+ *    neither shape is in `LegalPage`'s block union. Adding two one-off block
+ *    kinds to a shared union to serve two pages is how a template stops being a
+ *    template, so they assemble their own blocks out of these strings.
+ *  · `app/help/cantonment-stays/page.tsx`, for the table roles.
  *
- * The v2 bar those values encode, in one place:
+ * WHY IT IS ONE MODULE. It was two: this file was a byte-for-byte copy of the
+ * constants inside `legal-page.tsx`, kept in sync by a comment. Those pages sit
+ * in the same directory, in the same footer group, one click from each other;
+ * the moment the copy drifted they would read as two sites. A comment is not a
+ * mechanism. The style grammar now lives here exactly once and the template
+ * imports it, so `LegalPage` keeps its component logic and nothing keeps a
+ * duplicate of its measures. (Closing review, 2026-07-25.)
+ *
+ * The v2 bar these values encode, in one place:
  *  · `container.wide` shell, `container.prose` (720px ≈ 72ch) reading column
  *    left-aligned inside it, so the H1 starts under the wordmark.
- *  · H1 at `h3` (28), sections at `h5` (20), block titles 16/500-600, body 14 —
- *    never 14-on-14 (TASTE-RULES §7).
+ *  · H1 at `h3` (28), sections at `h5` (20), block titles 16/500-600, and the
+ *    reading body at **16** — see `bodyText` below.
  *  · Zero eyebrows. Sections are separated by a hairline rule, never a plate:
  *    §1 puts content blocks in open space with neither border nor shadow.
  *  · `bg.raised` only where §6 sanctions it — the date strip and info strips.
@@ -57,8 +61,33 @@ export const sectionH2 = "text-h5 text-primary";
  */
 export const subH3 = "mt-8 text-bodyMd font-semibold text-primary";
 
-export const bodyText = "text-bodySm leading-relaxed text-secondary";
+/**
+ * THE READING RUNG: 16, not 14 (closing-review ruling, 2026-07-25).
+ *
+ * These are the longest documents on the site — four hundred lines of terms, a
+ * refund policy, a privacy notice — and they shipped their body copy at 14 on
+ * the argument that a policy page is reference material. It is not: somebody
+ * reading the guest refund policy is reading it because money is involved, and
+ * §7's ladder puts BODY at 16/400 with 14 reserved for meta. A whole document
+ * set at the meta rung tells the reader, before they have read a word, that
+ * nothing here is meant to be read.
+ *
+ * 14 survives at exactly one job on these pages — `detailText` below.
+ */
+export const bodyText = "text-bodyMd leading-relaxed text-secondary";
 export const paraText = `mt-4 ${bodyText}`;
+
+/**
+ * The one surviving 14: the detail line UNDER a 16/500 fact title, and meta of
+ * the same kind (a quote's source, a ledger line's note).
+ *
+ * It is a real step down from its own title — §7's "never 14-on-14" is about a
+ * title and its body sharing one size, and here they do not. Two rows of a
+ * six-item fact grid are a scan target, not a paragraph, and setting them at
+ * the same 16 as the prose above them collapses the difference between the
+ * document's argument and its index.
+ */
+export const detailText = "text-bodySm leading-relaxed text-secondary";
 
 /**
  * Fact rows: a rule between rows, never a box around each one. The first row
@@ -70,7 +99,7 @@ export const factGridSingle = "mt-6 grid gap-x-10";
 export const factRow = "border-t border-hairline py-4 first:border-t-0 first:pt-0";
 export const factRowTwoCol = `${factRow} md:[&:nth-child(2)]:border-t-0 md:[&:nth-child(2)]:pt-0`;
 
-/** 16/500 title over 14 body. Never 14-on-14. */
+/** 16/500 title over 14 detail. Never 14-on-14. */
 export const factTitle = "text-bodyMd font-medium text-primary";
 /** 16/600 — a strip heading or a block that names itself. */
 export const blockTitle = "text-bodyMd font-semibold text-primary";

@@ -137,10 +137,8 @@ export const communityStandardsPage: LegalPageContent = {
           heading: "Separate — what the host asks",
           note: [
             "Some hosts add their own requests for their home. These are ",
-            bold(
-              "the host's preferences, stated by them and shown on the listing before you book",
-            ),
-            " — please read them the same way as the rest of the house rules. They are not SalamStay rules, and SalamStay does not assess or certify them.",
+            bold("the host's preferences"),
+            ", stated by them and shown on the listing before you book — please read them the same way as the rest of the house rules. They are not SalamStay rules, and SalamStay does not assess or certify them.",
           ],
           items: [
             {
@@ -483,8 +481,9 @@ export const communityStandardsPage: LegalPageContent = {
         {
           kind: "p",
           text: [
-            "Beyond those, a report goes to the safety team and a person reviews it. ",
-            bold("We don't state a reply time we can't keep, so none is stated."),
+            "Beyond those, a report goes to the safety team and a person reviews it. We don't state a ",
+            bold("reply time"),
+            " we can't keep, so none is stated.",
           ],
         },
         {

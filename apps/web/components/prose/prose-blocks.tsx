@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { btnSecondary, focusRing } from "@/components/ui";
 import { inlineLink } from "@/components/stays/styles";
 import {
@@ -108,7 +109,13 @@ export function FactList({ items }: { readonly items: readonly FactRow[] }) {
     <dl className={`${headingGap} ${column}`}>
       {items.map((item) => (
         <div key={item.term} className={factRow}>
-          <dt className="text-bodyMd font-semibold text-primary">{item.term}</dt>
+          {/* `Num` on the term, not on the detail: a term is a short label and
+              the digit runs in it ("24/7", "1-2 days") are the ones a reader
+              scans. The shipped `.num` canon isolates every run so RTL cannot
+              reorder it. */}
+          <dt className="text-bodyMd font-semibold text-primary">
+            <Num>{item.term}</Num>
+          </dt>
           <dd className="mt-1.5 text-bodySm text-secondary [&_strong]:font-semibold [&_strong]:text-primary">
             {item.detail}
           </dd>
@@ -157,7 +164,12 @@ export function NoteStrip({
 }) {
   return (
     <div className={`mt-6 ${strip}`}>
-      <p className="text-bodyMd font-semibold text-primary">{heading}</p>
+      {/* The heading is a §5 claim on most of these strips, and claim 8 carries
+          "24/7". A string heading gets its digit runs isolated; a ReactNode
+          heading has already composed its own. */}
+      <p className="text-bodyMd font-semibold text-primary">
+        {typeof heading === "string" ? <Num>{heading}</Num> : heading}
+      </p>
       <p className="mt-2 text-bodySm text-secondary [&_strong]:font-semibold [&_strong]:text-primary">
         {children}
       </p>
@@ -206,10 +218,12 @@ export function LinkRow({ links }: { readonly links: readonly ProseLink[] }) {
  * Two decisions worth stating.
  *
  * The action is the SECONDARY button — §5's one gray-fill plate, imported
- * whole — and not the card's green `btn-primary`. §2 allows exactly one
- * primary CTA per surface and the shared header already spends it on Sign up;
- * a second green button at the foot of a trust page would put the page over
- * its green budget in order to open a help ticket. Same target, ink label.
+ * whole — and not the card's green `btn-primary`. §2 allows exactly one primary
+ * CTA per surface, and the doctrine is that the header CTA yields to a
+ * PAGE-OWNED primary (`site-header.tsx`). Greening this button would claim that
+ * slot for "open a help ticket" on every trust page that ships this block, and
+ * demote the header's Sign up on all of them, to promote the least important
+ * action on the page. The claim is not worth making. Same target, ink label.
  *
  * It sits in open space rather than on the card's `bg.raised` plate. A plate
  * under a plate does not work — the §5 button IS `bg.raised`, so on a raised

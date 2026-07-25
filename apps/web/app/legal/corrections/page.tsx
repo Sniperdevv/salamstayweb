@@ -3,6 +3,7 @@ import { ProseBreadcrumb } from "@/components/prose/prose-breadcrumb";
 import {
   blockTitle,
   bodyText,
+  detailText,
   closingBlock,
   column,
   dateStrip,
@@ -151,7 +152,8 @@ const ENTRY_FORMAT = [
 ] as const;
 
 const bold = "font-semibold text-primary";
-const richBody = `${bodyText} [&_strong]:font-semibold [&_strong]:text-primary`;
+/** Fact-row detail with inline emphasis. The 14 rung (see `detailText`). */
+const richBody = `${detailText} [&_strong]:font-semibold [&_strong]:text-primary`;
 
 export default function CorrectionsPage() {
   return (
@@ -167,13 +169,11 @@ export default function CorrectionsPage() {
               <h1 className={pageH1}>Corrections policy</h1>
               <p className={ledeText}>
                 If something SalamStay published is factually wrong, tell us and we’ll fix
-                the page.{" "}
-                <strong className={bold}>
-                  Corrections are made on the page itself, marked with what changed, and
-                  listed in the log at the bottom of this page.
-                </strong>{" "}
-                We don’t quietly rewrite a fact and leave it looking like it always said
-                that.
+                the page. Corrections are made{" "}
+                <strong className={bold}>on the page itself</strong>, marked with what
+                changed, and listed in the{" "}
+                <strong className={bold}>log at the bottom of this page</strong>. We don’t
+                quietly rewrite a fact and leave it looking like it always said that.
               </p>
 
               <dl className={dateStrip}>
@@ -212,7 +212,7 @@ export default function CorrectionsPage() {
                 {IS_A_CORRECTION.map((c) => (
                   <li key={c.title} className={factRowTwoCol}>
                     <p className={factTitle}>{c.title}</p>
-                    <p className={`mt-1 ${bodyText}`}>{c.body}</p>
+                    <p className={`mt-1 ${detailText}`}>{c.body}</p>
                   </li>
                 ))}
               </ul>
@@ -221,14 +221,14 @@ export default function CorrectionsPage() {
               <ul className={factGrid}>
                 <li className={factRowTwoCol}>
                   <p className={factTitle}>A host updating their own listing</p>
-                  <p className={`mt-1 ${bodyText}`}>
+                  <p className={`mt-1 ${detailText}`}>
                     A host changing their price, rules, photos or availability is an update
                     to their home, not an error we made. It isn’t logged here.
                   </p>
                 </li>
                 <li className={factRowTwoCol}>
                   <p className={factTitle}>A typo or a broken link</p>
-                  <p className={`mt-1 ${bodyText}`}>
+                  <p className={`mt-1 ${detailText}`}>
                     Fixed as soon as we see it, without a log entry — nothing about the
                     meaning changed. If a typo did change a fact, it’s a correction and it’s
                     logged.
@@ -236,14 +236,14 @@ export default function CorrectionsPage() {
                 </li>
                 <li className={factRowTwoCol}>
                   <p className={factTitle}>A disagreement with a policy</p>
-                  <p className={`mt-1 ${bodyText}`}>
+                  <p className={`mt-1 ${detailText}`}>
                     “This rule shouldn’t exist” is feedback, and welcome — but the page
                     describing the rule accurately isn’t an error. Write to us anyway.
                   </p>
                 </li>
                 <li className={factRowTwoCol}>
                   <p className={factTitle}>Something a guest or host wrote</p>
-                  <p className={`mt-1 ${bodyText}`}>
+                  <p className={`mt-1 ${detailText}`}>
                     Reviews and host descriptions are their authors’ words. If one breaks the{" "}
                     <Link
                       href="/legal/community-standards"
@@ -274,7 +274,7 @@ export default function CorrectionsPage() {
                       Contact support about a page
                     </Link>
                   </p>
-                  <p className={`mt-1 ${bodyText}`}>
+                  <p className={`mt-1 ${detailText}`}>
                     For anything SalamStay wrote — a city page, an area page, a help article,
                     a policy. Write in Urdu or English. A person reads every ticket.
                   </p>
@@ -285,7 +285,7 @@ export default function CorrectionsPage() {
                       Report something on a listing
                     </Link>
                   </p>
-                  <p className={`mt-1 ${bodyText}`}>
+                  <p className={`mt-1 ${detailText}`}>
                     For what a host wrote about their own home, or anything that breaks the
                     community standards. Reporting is private — the person you report is
                     never told who reported them.

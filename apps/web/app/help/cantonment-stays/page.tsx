@@ -8,6 +8,7 @@ import {
   tableRowHead,
   tableScroll,
 } from "@/components/editorial/prose";
+import { HelpfulVote } from "@/components/prose/helpful-vote";
 import {
   ClosingNote,
   NoteStrip,
@@ -17,7 +18,7 @@ import {
 } from "@/components/prose/prose-blocks";
 import { ProseBreadcrumb } from "@/components/prose/prose-breadcrumb";
 import { column, factRow, headingGap, prose, sectionGap, shell } from "@/components/prose/shell";
-import { btnSecondary, focusRing, inlineAction } from "@/components/ui";
+import { focusRing, inlineAction } from "@/components/ui";
 import { JsonLdScript, article, breadcrumbList, type Crumb } from "@/lib/seo/jsonld";
 import { pageMetadata } from "@/lib/seo/metadata";
 
@@ -61,7 +62,9 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *
  * "WAS THIS HELPFUL" ships as two plain, equal buttons with NO counts, NO
  * percentage and NO score — a helpfulness statistic would be a number we do
- * not have.
+ * not have. The answer is recorded in `localStorage` on the reader's own
+ * device and acknowledged in a live region; nothing is posted anywhere,
+ * because there is nowhere honest to post it to yet.
  *
  * VISUAL: the v2 prose bar shared with the trust pages. The card's green
  * eyebrows, "In short" label, brand-tinted step discs and green closing CTA are
@@ -357,19 +360,15 @@ export default function CantonmentStaysArticlePage() {
               replace it, and it doesn’t apply to any of your other homes.
             </NoteStrip>
 
-            {/* Two plain, equal buttons. No counts, no percentage, no score. */}
+            {/* Two plain, equal buttons. No counts, no percentage, no score —
+                and, since the closing review, no dead controls either: the
+                island records the answer on this device and says so. See
+                `components/prose/helpful-vote.tsx`. */}
             <div className={`mt-8 border-t border-hairline pt-6 ${column}`}>
               <p className="text-bodyMd font-semibold text-primary">
                 Was this article helpful?
               </p>
-              <div className="mt-3 flex gap-3">
-                <button type="button" className={`${btnSecondary} w-24`}>
-                  Yes
-                </button>
-                <button type="button" className={`${btnSecondary} w-24`}>
-                  No
-                </button>
-              </div>
+              <HelpfulVote slug="cantonment-stays" />
             </div>
           </ProseSection>
         </article>

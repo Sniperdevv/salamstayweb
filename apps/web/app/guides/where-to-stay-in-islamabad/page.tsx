@@ -394,10 +394,14 @@ export default function WhereToStayInIslamabadGuide() {
                 car.
               </p>
               <p>
+                {/* The one address specimen on the page, and the reason `.num`
+                    exists: an unisolated "F-7/2" reverses to "2/7-F" under RTL,
+                    and "Street 12" loses its numeral to the end of the line. */}
                 The grid of lettered and numbered sectors is the real convenience: an address like
-                &ldquo;F-7/2, Street 12&rdquo; tells you almost exactly where you are going before
-                you have set off, which makes Islamabad one of the easiest Pakistani cities to
-                navigate for the first time.
+                &ldquo;F-<span className="num">7/2</span>, Street{" "}
+                <span className="num">12</span>&rdquo; tells you almost exactly where you are
+                going before you have set off, which makes Islamabad one of the easiest Pakistani
+                cities to navigate for the first time.
               </p>
             </Prose>
           </ProseSection>
@@ -412,12 +416,21 @@ export default function WhereToStayInIslamabadGuide() {
                 times — dress modestly and remove your shoes at the entrance, as you would
                 anywhere.
               </p>
+              {/* The three practical facts, in plain neutral description — NOT
+                  as claim 6. The FAQ answer below states that claim byte-exact
+                  and G49 pins it there against the FAQPage JSON-LD; running the
+                  same sentence twice on one scroll, once as prose and once as
+                  the answer, made the page read as though it were padding for
+                  the phrase rather than for the reader. §12: a claim is
+                  byte-exact WHERE IT IS CLAIMED, and plain description
+                  everywhere else. Claims 4 and 5 stay — they are claimed here
+                  and nowhere else on this page. */}
               <p>
-                On the practical side of a stay, three things are stated on the listing rather than
-                left to chance:{" "}
-                <strong>halal-kitchen, prayer-space, and Qibla direction shown on listings</strong>.
-                Homes are <strong>no-alcohol listings by default</strong>, and a host who allows
-                alcohol has to opt in and say so. If you are travelling as a group of women,{" "}
+                On the practical side of a stay, three things sit on the listing itself rather
+                than being left to chance: what the kitchen is set up for, whether there is a
+                place to pray, and which way Qibla faces. Homes are{" "}
+                <strong>no-alcohol listings by default</strong>, and a host who allows alcohol
+                has to opt in and say so. If you are travelling as a group of women,{" "}
                 <strong>women-only stays hosted by women</strong> are a filter rather than a phone
                 call.
               </p>

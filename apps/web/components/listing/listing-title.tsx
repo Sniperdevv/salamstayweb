@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import { PinIcon } from "@/components/icons";
-import { SparkIcon } from "@/components/stays/icons";
 import { inlineAction, focusRing } from "@/components/ui";
 import { shell } from "@/components/discovery/shell";
 import type { ListingContent } from "@/lib/content/listings/is-f7-2bed";
@@ -25,11 +24,12 @@ import { Plain } from "./shell";
  * is a hard structured-data failure rather than a taste problem. The chip means
  * one checkable thing: no two-way review has been published for this home.
  *
- * Treatment: the §10 badge pill minus its shadow. It sits on the canvas rather
- * than on a photograph, and §1 is the reason the shadow goes — a chip on white
- * is not floating over anything, so it casts nothing. The `bg.raised` fill and
- * the 14/600 INK label are the badge's own; brand green is not available to a
- * status chip (§2 spends it on four roles, and this is not one of them).
+ * Treatment: the §10 badge pill minus its shadow AND minus its glyph. It sits
+ * on the canvas rather than on a photograph, and §1 is the reason the shadow
+ * goes — a chip on white is not floating over anything, so it casts nothing.
+ * The `bg.raised` fill and the 14/600 INK label are the badge's own; brand
+ * green is not available to a status chip (§2 spends it on four roles, and this
+ * is not one of them).
  *
  * **The meta line is inline flow, never flex.** A flex row with a gap splits
  * the bare text runs between the links, and "F-7, Islamabad" arrives as two
@@ -48,8 +48,18 @@ import { Plain } from "./shell";
  * ours to reword. Left as the greedy algorithm sets it.
  */
 
+/**
+ * Text only — no glyph (closing review).
+ *
+ * The card's sparkle was decoration standing next to the two words that already
+ * say the thing. §11.20 puts the site's decoration budget at zero, and a chip
+ * whose whole content is "New listing" needs no icon to be read as a chip: the
+ * pill shape and the `bg.raised` fill are the container, and the label is the
+ * information. The compact stay card keeps its glyph because its chip sits over
+ * a photograph, where the mark is doing legibility work this one is not.
+ */
 const chip =
-  "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-raised px-3 py-1 text-bodySm font-semibold text-primary";
+  "inline-flex shrink-0 items-center rounded-full bg-raised px-3 py-1 text-bodySm font-semibold text-primary";
 
 export function ListingTitle({ listing }: { readonly listing: ListingContent }) {
   const { place } = listing;
@@ -58,10 +68,7 @@ export function ListingTitle({ listing }: { readonly listing: ListingContent }) 
     <div className={`${shell} pt-6 md:pt-8`}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <h1 className="text-h3 font-semibold text-primary">{listing.title}</h1>
-        <span className={chip}>
-          <SparkIcon className="size-3.5 shrink-0" />
-          {listing.newChip}
-        </span>
+        <span className={chip}>{listing.newChip}</span>
       </div>
 
       <p className="mt-3 text-bodySm leading-relaxed text-secondary">

@@ -154,10 +154,9 @@ export const cookiePolicyPage: LegalPageContent = {
             {
               title: ["Essential"],
               body: [
-                "Sign-in, a booking in progress, your language, and this choice. ",
-                bold(
-                  "These stay on — they carry what the site needs to work at all, and you'll always be told they're here rather than finding them later.",
-                ),
+                "Sign-in, a booking in progress, your language, and this choice. These ",
+                bold("stay on"),
+                " — they carry what the site needs to work at all, and you'll always be told they're here rather than finding them later.",
               ],
               state: "Always on",
               locked: true,
@@ -174,9 +173,8 @@ export const cookiePolicyPage: LegalPageContent = {
               title: ["Marketing"],
               body: [
                 "Measures whether an advert brought you here. ",
-                bold(
-                  "Off unless you turn it on. Turning it on is entirely your choice, and never needed to book or host.",
-                ),
+                bold("Off unless you turn it on."),
+                " Turning it on is entirely your choice, and never needed to book or host.",
               ],
               state: "Off",
             },

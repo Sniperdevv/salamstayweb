@@ -150,7 +150,12 @@ export function StayRail({
       {lead ? <div className="mt-5">{lead}</div> : null}
 
       <div id={scrollerId} className={`${scroller} ${hideScrollbar}`}>
-        {/* `w-max` is load-bearing: an auto-width flex container fills the
+        {/* `data-rail-item` on each card: `RailControls` observes them to derive
+            the §10 "1 / N" counter. A data attribute rather than a ref array,
+            for the same reason the arrows find the scroller by id — it keeps
+            the rail and every card in it a server component.
+
+            `w-max` is load-bearing: an auto-width flex container fills the
             scroller's content box and lets the cards overflow it, which would
             put the end marker in the middle of the track and leave the forward
             arrow permanently disabled. Sized to its content, the track's right
@@ -162,10 +167,17 @@ export function StayRail({
           {stays.map((stay, i) => (
             <li
               key={`${stay.href}-${stay.image}`}
+              data-rail-item=""
               className="w-rail-card shrink-0 snap-start"
             >
+              {/* `titleSize="rail"` — §7's ONE sanctioned 14/600 title, and
+                  the only place on the site that claims it: these tiles are
+                  `w-rail-card` (208px), which is the exact width the exception
+                  is written for. Every other call site of this card draws a
+                  grid tile and gets the ladder's 16. */}
               <StayCardCompact
                 stay={stay}
+                titleSize="rail"
                 {...(newChip === undefined ? {} : { newChip })}
                 priority={priority && i === 0}
               />

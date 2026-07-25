@@ -1,7 +1,34 @@
 import Link from "next/link";
 import { ConsentResetButton } from "@/components/consent-banner";
+import {
+  blockTitle,
+  bodyText,
+  closingBlock,
+  dateStrip,
+  detailText,
+  documentColumn,
+  documentHead,
+  factGrid,
+  factGridSingle,
+  factRow,
+  factRowTwoCol,
+  factTitle,
+  ledeText,
+  pageH1,
+  sectionBlock,
+  sectionH2,
+  shell,
+  strip,
+  subH3,
+  tableCaption,
+  tableCell,
+  tableEl,
+  tableHeadCell,
+  tableRow,
+  tableRowHead,
+} from "@/components/editorial/prose";
 import { ArrowRightIcon, CalendarIcon, ClockIcon } from "@/components/icons";
-import { btnSecondary, focusRing, gutter, inlineAction } from "@/components/ui";
+import { btnSecondary, focusRing, inlineAction } from "@/components/ui";
 import { JsonLdScript, breadcrumbList } from "@/lib/seo/jsonld";
 import type {
   Block,
@@ -54,9 +81,18 @@ import type {
  *  · **One measure.** `container.prose` (720px ≈ 72ch), left-aligned inside the
  *    `container.wide` shell so the H1 starts under the wordmark rather than
  *    three hundred pixels right of it.
- *  · **Type ladder** (§7): H1 at `h3` (28), sections at `h5` (20), body 16/15.
- *    A content page never shouts; `display` is funnel-only.
+ *  · **Type ladder** (§7): H1 at `h3` (28), sections at `h5` (20), body 16/400,
+ *    fact-row detail 14. A content page never shouts; `display` is funnel-only.
  *  · **`.num` on every figure**, by construction — see `lib/content/legal/types`.
+ *
+ * WHERE THE CLASSES LIVE. Not here. Every measure, role and rule above is
+ * imported from `components/editorial/prose.ts`, which is the ONE grammar the
+ * whole legal family reads — this template plus GW-017 and GW-018, which cannot
+ * use this template but must not look like a different site. This file keeps
+ * the component logic (the run/block/section renderers and the semantic
+ * contract); it keeps no copy of the style strings, because the copy it used to
+ * keep was byte-identical and held in sync by a comment. See that file's header
+ * for the reasoning.
  *
  * MOTION: none, deliberately. The only moving parts are the shared press/hover
  * feedback on links and buttons. Anchor jumps are not animated: a reader who
@@ -100,28 +136,22 @@ function Runs({ runs }: { readonly runs: Rich }) {
 
 /* ── shared block furniture ──────────────────────────────────────────────── */
 
-/** `bg.raised`, `radius.md` — TASTE §6, job three. No border, no shadow: it is not a form and it does not float. */
-const strip = "mt-6 rounded-md bg-raised p-5";
-
-const bodyText = "text-bodySm leading-relaxed text-secondary";
-
 /**
  * A fact row. §1's "icon + title + body in open space" with the icon dropped:
  * on a prose page these lists run four and six items deep, and forty decorative
  * glyphs down a legal document is texture, not information. The hairline does
  * the separating; the row keeps the card's title and body verbatim.
+ *
+ * 16/500 title over 14 detail — the one place the 14 rung survives on these
+ * pages (see `detailText`).
  */
 function FactRow({ item, single }: { readonly item: Entry; readonly single: boolean }) {
   return (
-    <li
-      className={`border-t border-hairline py-4 first:border-t-0 first:pt-0 ${
-        single ? "" : "md:[&:nth-child(2)]:border-t-0 md:[&:nth-child(2)]:pt-0"
-      }`}
-    >
-      <p className="text-bodyMd font-medium text-primary">
+    <li className={single ? factRow : factRowTwoCol}>
+      <p className={factTitle}>
         <Runs runs={item.title} />
       </p>
-      <p className={`mt-1 ${bodyText}`}>
+      <p className={`mt-1 ${detailText}`}>
         <Runs runs={item.body} />
       </p>
     </li>
@@ -178,11 +208,11 @@ function BlockNode({ block }: { readonly block: Block }) {
       );
 
     case "h3":
-      return <h3 className="mt-8 text-bodyMd font-semibold text-primary">{block.text}</h3>;
+      return <h3 className={subH3}>{block.text}</h3>;
 
     case "facts":
       return (
-        <ul className={`mt-6 grid gap-x-10 ${block.single ? "" : "md:grid-cols-2"}`}>
+        <ul className={block.single ? factGridSingle : factGrid}>
           {block.items.map((item, i) => (
             <FactRow key={i} item={item} single={block.single === true} />
           ))}
@@ -197,11 +227,11 @@ function BlockNode({ block }: { readonly block: Block }) {
               key={i}
               className="border-t border-hairline py-4 first:border-t-0 first:pt-0 sm:[&:nth-child(2)]:border-t-0 sm:[&:nth-child(2)]:pt-0"
             >
-              <p className="text-bodyMd font-medium text-primary">
+              <p className={factTitle}>
                 <span className="num mr-2 text-secondary">{i + 1}</span>
                 <Runs runs={item.title} />
               </p>
-              <p className={`mt-1 ${bodyText}`}>
+              <p className={`mt-1 ${detailText}`}>
                 <Runs runs={item.body} />
               </p>
             </li>
@@ -212,7 +242,7 @@ function BlockNode({ block }: { readonly block: Block }) {
     case "callout":
       return (
         <aside className={strip}>
-          <p className="text-bodyMd font-semibold text-primary">
+          <p className={blockTitle}>
             <Runs runs={block.title} />
           </p>
           <p className={`mt-1.5 ${bodyText}`}>
@@ -234,7 +264,7 @@ function BlockNode({ block }: { readonly block: Block }) {
           <p className="border-b border-hairline pb-3 text-bodySm font-semibold text-secondary">
             {block.label}
           </p>
-          <p className="mt-3 text-bodyMd font-semibold text-primary">
+          <p className={`mt-3 ${blockTitle}`}>
             <Runs runs={block.title} />
           </p>
           <p className={`mt-1.5 ${bodyText}`}>
@@ -264,43 +294,33 @@ function BlockNode({ block }: { readonly block: Block }) {
     case "table":
       return (
         <div className="mt-6">
-          <p id={block.captionId} className="mb-3 text-bodySm text-secondary">
+          <p id={block.captionId} className={tableCaption}>
             {block.caption}
           </p>
           <div className="overflow-x-auto">
-          <table
-            aria-describedby={block.captionId}
-            className="w-full min-w-[34rem] border-collapse text-left"
-          >
-            <thead>
-              <tr>
-                {block.head.map((h) => (
-                  <th
-                    key={h}
-                    scope="col"
-                    className="border-b border-border-default pb-2 pr-4 align-bottom text-bodySm font-semibold text-primary last:pr-0"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {block.rows.map((row, i) => (
-                <tr key={i} className="border-b border-hairline align-top last:border-b-0">
-                  <th
-                    scope="row"
-                    className="py-3 pr-4 text-left text-bodySm font-medium text-primary"
-                  >
-                    <Runs runs={row.header} />
-                  </th>
-                  {row.cells.map((cell, j) => (
-                    <td key={j} className="py-3 pr-4 text-bodySm text-secondary last:pr-0">
-                      <Runs runs={cell} />
-                    </td>
+            <table aria-describedby={block.captionId} className={`${tableEl} min-w-[34rem]`}>
+              <thead>
+                <tr>
+                  {block.head.map((h) => (
+                    <th key={h} scope="col" className={tableHeadCell}>
+                      {h}
+                    </th>
                   ))}
                 </tr>
-              ))}
+              </thead>
+              <tbody>
+                {block.rows.map((row, i) => (
+                  <tr key={i} className={tableRow}>
+                    <th scope="row" className={tableRowHead}>
+                      <Runs runs={row.header} />
+                    </th>
+                    {row.cells.map((cell, j) => (
+                      <td key={j} className={tableCell}>
+                        <Runs runs={cell} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -322,10 +342,10 @@ function BlockNode({ block }: { readonly block: Block }) {
               className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2 border-t border-hairline py-4 first:border-t-0 first:pt-0"
             >
               <span className="min-w-0 flex-1">
-                <span className="block text-bodyMd font-medium text-primary">
+                <span className={`block ${factTitle}`}>
                   <Runs runs={item.title} />
                 </span>
-                <span className={`mt-1 block ${bodyText}`}>
+                <span className={`mt-1 block ${detailText}`}>
                   <Runs runs={item.body} />
                 </span>
               </span>
@@ -346,7 +366,7 @@ function BlockNode({ block }: { readonly block: Block }) {
     case "ledger":
       return (
         <div className="mt-6">
-          <p className="text-bodyMd font-medium text-primary">
+          <p className={factTitle}>
             <Runs runs={block.title} />
           </p>
           <p className="mt-1 text-bodySm text-secondary">
@@ -371,7 +391,7 @@ function BlockNode({ block }: { readonly block: Block }) {
     case "hostGroup":
       return (
         <div className="mt-6 rounded-md bg-raised p-5 md:p-6">
-          <h3 className="text-bodyMd font-semibold text-primary">{block.heading}</h3>
+          <h3 className={blockTitle}>{block.heading}</h3>
           <p className={`mt-1.5 ${bodyText}`}>
             <Runs runs={block.note} />
           </p>
@@ -394,7 +414,8 @@ function BlockNode({ block }: { readonly block: Block }) {
           <p className="text-bodyMd text-primary">
             <Runs runs={block.text} />
           </p>
-          <p className={`mt-2 ${bodyText}`}>
+          {/* Attribution is meta, not body: it stays on the 14 rung. */}
+          <p className={`mt-2 ${detailText}`}>
             <Runs runs={block.source} />
           </p>
         </blockquote>
@@ -411,7 +432,7 @@ function BlockNode({ block }: { readonly block: Block }) {
       return (
         <div className="mt-6">
           <div className="rounded-md bg-raised p-5">
-            <p className="text-bodyMd font-semibold text-primary">
+            <p className={blockTitle}>
               <Runs runs={block.title} />
             </p>
             <p className={`mt-1.5 ${bodyText}`}>
@@ -430,12 +451,8 @@ function BlockNode({ block }: { readonly block: Block }) {
 
 function SectionNode({ section, index }: { readonly section: Section; readonly index: number }) {
   return (
-    <section
-      id={section.id}
-      aria-labelledby={`${section.id}-h`}
-      className="scroll-mt-24 border-t border-hairline py-8 md:py-10"
-    >
-      <h2 id={`${section.id}-h`} className="text-h5 text-primary">
+    <section id={section.id} aria-labelledby={`${section.id}-h`} className={sectionBlock}>
+      <h2 id={`${section.id}-h`} className={sectionH2}>
         {section.heading}
       </h2>
       {section.blocks.map((block, i) => (
@@ -446,8 +463,6 @@ function SectionNode({ section, index }: { readonly section: Section; readonly i
 }
 
 export function LegalPage({ page }: { readonly page: LegalPageContent }) {
-  const shell = `mx-auto max-w-wide ${gutter}`;
-
   return (
     <>
       {/* BreadcrumbList and nothing else (§3.8 / G74). Same array as the trail. */}
@@ -486,10 +501,10 @@ export function LegalPage({ page }: { readonly page: LegalPageContent }) {
 
       <main className="indexable">
         <div className={shell}>
-          <div className="max-w-prose pb-12 md:pb-16">
-            <div className="pt-6 md:pt-8">
-              <h1 className="text-h3 text-primary">{page.h1}</h1>
-              <p className="mt-4 text-bodyLg leading-relaxed text-secondary">
+          <div className={documentColumn}>
+            <div className={documentHead}>
+              <h1 className={pageH1}>{page.h1}</h1>
+              <p className={ledeText}>
                 <Runs runs={page.lede} />
               </p>
 
@@ -501,7 +516,7 @@ export function LegalPage({ page }: { readonly page: LegalPageContent }) {
                 publication — and the absence of the bold payload weight is the
                 signal that nothing has been settled yet.
               */}
-              <dl className="mt-6 rounded-md bg-raised p-4">
+              <dl className={dateStrip}>
                 <div className="flex items-center gap-3">
                   <CalendarIcon className="size-5 shrink-0 text-tertiary" />
                   <dt className="text-bodySm text-secondary">Last updated</dt>
@@ -525,7 +540,7 @@ export function LegalPage({ page }: { readonly page: LegalPageContent }) {
               */}
               <nav aria-label="On this page" className="mt-8 border-t border-hairline pt-6">
                 {/* 16/600 label over 14 entries: one full step, never 14-on-14. */}
-                <p className="text-bodyMd font-semibold text-primary">On this page</p>
+                <p className={blockTitle}>On this page</p>
                 <ol className="mt-3 grid gap-x-10 gap-y-2 sm:grid-cols-2">
                   {page.sections.map((section, i) => (
                     <li key={section.id} className="flex items-baseline gap-2.5">
@@ -546,10 +561,14 @@ export function LegalPage({ page }: { readonly page: LegalPageContent }) {
             {/*
               Closing contact block. The action is the §5 gray-fill secondary
               button, NOT a green primary: green is budgeted at four roles per
-              surface (§2) and the header's Sign up already holds the CTA one.
+              surface (§2), one of them the surface's single primary CTA, and
+              the doctrine is that the header CTA yields to a PAGE-OWNED
+              primary. A policy document owns none — nobody arrives at the terms
+              to open a support ticket — so the header keeps its green and this
+              stays ink.
             */}
-            <div className="border-t border-hairline pt-8 md:pt-10">
-              <p className="text-bodyMd font-semibold text-primary">{page.closing.title}</p>
+            <div className={closingBlock}>
+              <p className={blockTitle}>{page.closing.title}</p>
               <p className={`mt-1.5 ${bodyText}`}>
                 <Runs runs={page.closing.body} />
               </p>

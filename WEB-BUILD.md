@@ -35,6 +35,7 @@ Loop: `frontend-designer` builds (skills loaded first, then **TASTE-RULES.md**) 
 | Pass | Date | Scope | Result |
 |---|---|---|---|
 | RECAL | 2026-07-25 | Full recalibration: TASTE-RULES.md (Airbnb-inventory craft bar) + tokens v0.1.0 + craft layer + page pass + closing review fixes. Verdict: "system is unicorn-grade" — elevation/imagery/motion/color discipline beat the reference | committed |
+| REVIEW | 2026-07-25 | Consolidated 3-reviewer wave over all new surfaces: listing = "best surface on the project" (unicorn YES), become-a-host YES, anti-doorway PASS with measurement (Jaccard 0.30-0.43, zero shared body prose), consent banner "best-engineered surface", /about + /help + corrections exemplary. 6 blockers + ~20 advisories → consolidated fixer applied all 18 items (route-aware header CTA, legal 16px body + de-fork, honest alt-text + verifier split, live helpful-votes, .num Num component, wayfinding flag, table a11y, rail counter, banner 322→220px). FINAL: 25 routes · 0 HARD · images PASS · typecheck clean | **SITE COMPLETE — founder demo at localhost:3003** |
 | WAVE | 2026-07-25 | 8-agent parallel wave: 5 city instances (city-facts, anti-doorway), listing detail (mosaic/booking-card/anchor-bar, LodgingBusiness only), search shell (GATE 76 proof), become-a-host (displayLg+squircle), trust cluster+guide, legal set+consent banner, editorial+help hub, review fixer. Mid-flight consistency broadcasts ×2. FULL SITE: 25 routes · 0 HARD · images PASS · typecheck clean | committed — consolidated review wave next |
 
 

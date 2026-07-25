@@ -65,7 +65,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  * (§12), and the map is a note explaining that a pin needs a price.
  *
  * ── HEADING OUTLINE (§3.5, a11y-only since the page is noindex) ───────────
- *   h1 "Search results" → h2 "Filters" → h2 "Results" → h3 "Browse stays by
+ *   h1 "Search results" → h2 "Filters" → h2 "Results" → h2 "Browse stays by
  *   city". The H1 stays "Search results" even with a city set: `/stays-in-
  *   {city}` owns the "stays in {City}" query (G13/G69), and this view must
  *   never read as a competing answer to it.

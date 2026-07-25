@@ -162,6 +162,7 @@ export const peshawar: CityContent = {
          * clamps to two lines without dropping any of them from the HTML.
          */
         name: "Wayfinding landmarks",
+        wayfinding: true,
         line: "Navigate by Bala Hisar Fort, Qissa Khwani Bazaar, Mahabat Khan Mosque, Chowk Yadgar, and the Peshawar Museum's Gandhara collection.",
       },
     ],

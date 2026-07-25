@@ -169,6 +169,7 @@ export const rawalpindi: CityContent = {
          * that those places read as genuine wayfinding anchors.
          */
         name: "Wayfinding landmarks",
+        wayfinding: true,
         line: "Navigate by Murree Road and 6th Road, the Committee Chowk Metrobus station, Raja Bazaar in the old city, and the Faizabad interchange into Islamabad.",
       },
     ],

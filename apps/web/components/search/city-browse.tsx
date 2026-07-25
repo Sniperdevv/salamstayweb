@@ -1,5 +1,5 @@
 import { CITY_GRID, CityCardCompact } from "@/components/stays/city-card-compact";
-import { TILE_SIZES } from "@/components/discovery/shell";
+import { sectionH2, TILE_SIZES } from "@/components/discovery/shell";
 import { BETA_CITIES } from "@/lib/content/beta-cities";
 
 /**
@@ -19,6 +19,16 @@ import { BETA_CITIES } from "@/lib/content/beta-cities";
  *
  * The tiles are the homepage's, at the homepage's measures, reading the shared
  * `BETA_CITIES` list — one card family, one grid, one set of six descriptors.
+ *
+ * **An H2, not an H3** (closing review). It shipped as an `<h3>` because it was
+ * rendered inside the Results section, and a level-three heading inside a
+ * level-two section is a subsection of it. This block is not a subsection of
+ * the results: it is the only crawlable content on the page, it renders in BOTH
+ * states, and when a city is chosen it sits beside a grid it has nothing to do
+ * with. It is a peer of Filters and Results, so it is an `<h2>` in a section of
+ * its own, at the same `sectionH2` role the other two use — a heading that
+ * announces itself as a peer while drawing four points smaller is a third
+ * signal disagreeing with the first two.
  */
 
 export interface CityBrowseProps {
@@ -34,8 +44,10 @@ export interface CityBrowseProps {
 export function CityBrowse({ priority = false }: CityBrowseProps) {
   return (
     <>
-      <h3 className="text-bodyMd font-semibold text-primary">Browse stays by city</h3>
-      <ul className={`mt-4 ${CITY_GRID}`}>
+      <h2 id="browse-h" className={sectionH2}>
+        Browse stays by city
+      </h2>
+      <ul className={`mt-5 ${CITY_GRID}`}>
         {BETA_CITIES.map((c, i) => (
           <li key={c.href}>
             <CityCardCompact

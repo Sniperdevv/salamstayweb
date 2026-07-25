@@ -11,7 +11,7 @@ import {
 } from "@/components/prose/prose-blocks";
 import { ProseFaq } from "@/components/prose/prose-faq";
 import { column, headingGap, prose, sectionGap, shell, strip } from "@/components/prose/shell";
-import { inlineAction } from "@/components/ui";
+import { focusRing, inlineAction } from "@/components/ui";
 import {
   JsonLdScript,
   breadcrumbList,
@@ -317,8 +317,24 @@ export default function ShariahPolicyPage() {
 
           {/* The one block on these pages allowed past the reading measure:
               three columns of document names do not fit in 65 characters. It
-              scrolls inside its own box rather than widening the page. */}
-          <div className={`${headingGap} max-w-[76ch] overflow-x-auto`}>
+              scrolls inside its own box rather than widening the page.
+
+              A scroll container that only a pointer can scroll is content a
+              keyboard user cannot reach — on a phone-width viewport two of the
+              three columns are off-screen, and this is the table that says
+              which document a booking needs. `tabIndex={0}` puts the box in the
+              tab order so the arrow keys scroll it; `role="region"` plus
+              `aria-labelledby` give that stop a name, so a screen reader
+              announces "Verification by booking type, region" rather than a
+              nameless group. The focus ring is the shared one — a focusable
+              element with no visible focus is the same defect one step later.
+              (WAI-ARIA APG, scrollable-region pattern.) */}
+          <div
+            tabIndex={0}
+            role="region"
+            aria-labelledby="verification-h"
+            className={`${headingGap} max-w-[76ch] overflow-x-auto ${focusRing}`}
+          >
             <table className="w-full min-w-[42rem] border-collapse text-left">
               <caption className={`mb-4 text-left text-bodySm text-secondary ${column}`}>
                 Which document each booking type needs, and who issues it. Documents confirm your

@@ -171,6 +171,7 @@ export const islamabad: CityContent = {
          * tile clamps to two lines without dropping any of them from the HTML.
          */
         name: "Wayfinding landmarks",
+        wayfinding: true,
         line: "Navigate by Faisal Mosque, Daman-e-Koh and the Margalla viewpoints, the Pakistan Monument at Shakarparian, Rawal Lake, and Centaurus Mall.",
       },
     ],

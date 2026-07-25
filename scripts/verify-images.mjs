@@ -45,8 +45,46 @@ for (const e of ALL_IMAGES) {
   if (/image\d+\.|img\d+\.|untitled|^photo\d/i.test(base)) errors.push(`${e.id}: non-descriptive filename`);
   if (!/^[a-z0-9]+(-[a-z0-9]+)*\.jpg$/.test(base)) errors.push(`${e.id}: filename is not lowercase kebab`);
   if (!e.alt || e.alt.length < 20) errors.push(`${e.id}: alt too short / empty`);
-  if (!/ — /.test(e.alt)) errors.push(`${e.id}: alt does not follow "{subject}, {area}, {city} — {attribute}"`);
   if (e.alt.length > 125) errors.push(`${e.id}: alt is ${e.alt.length} chars (keep under ~125)`);
+
+  // ——— alt pattern, split by authenticity (founder ruling 2026-07-25) ———
+  //
+  // §8's "{subject}, {area}, {city} — {attribute}" pattern names a PLACE, and a
+  // place name is a factual assertion about the photograph. It is therefore the
+  // rule for `authentic:true` frames only — the ones that genuinely depict the
+  // place they are named after.
+  //
+  // An `authentic:false` frame is a declared stand-in. Writing "Bedroom of a
+  // 1-bed flat, Nazimabad, Karachi" over a licensed stock interior photographed
+  // somewhere else asserts, in the one string a screen-reader user and an image
+  // crawler both receive, a fact the manifest's own `note` denies two lines
+  // below. So a stand-in's alt is SUBJECT-DERIVED: it describes the room and
+  // what is visible in the frame, and it asserts no place.
+  //
+  // "Subject-derived" is checked mechanically rather than against a gazetteer of
+  // Pakistani place names, which would need maintaining and would still miss the
+  // next invented one: every capitalised word in the alt (other than the opening
+  // word) must also appear in `subject`. A proper noun the photograph's own
+  // description does not carry is, by construction, something the alt invented.
+  //
+  // The " — {attribute}" tail stays welcome on both — it is what turns a label
+  // into a description — but it is only REQUIRED on the authentic frames, where
+  // it completes the §8 pattern.
+  if (e.authentic) {
+    if (!/^[^—,]+,[^—]+ — .+$/.test(e.alt))
+      errors.push(`${e.id}: authentic alt does not follow "{subject}, {area}, {city} — {attribute}"`);
+  } else {
+    const subjectWords = new Set((e.subject ?? '').toLowerCase().match(/[a-z0-9]+/g) ?? []);
+    const proper = (e.alt.slice(1).match(/\b[A-Z][A-Za-z]*/g) ?? []).filter(
+      (w) => !subjectWords.has(w.toLowerCase()),
+    );
+    if (proper.length)
+      errors.push(
+        `${e.id}: stand-in alt asserts something its subject does not say -> ${[...new Set(proper)].join(', ')}`,
+      );
+    if (/\b[A-Z]-\d/.test(e.alt))
+      errors.push(`${e.id}: stand-in alt names a sector (a place assertion on a declared stand-in)`);
+  }
   if (!e.credit) errors.push(`${e.id}: missing credit`);
   if (!e.pages?.length) errors.push(`${e.id}: no pages assigned`);
   if (e.authentic === false && !e.note) errors.push(`${e.id}: authentic:false without a note`);

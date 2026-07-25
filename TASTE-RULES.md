@@ -42,6 +42,13 @@ Brand green appears in **exactly four roles** per surface, nowhere else:
 
 - Links are **ink, underlined** — never green. Prices are ink. Icons are ink or
   gray. Selected states are ink (rule 3). Section headings are ink.
+- **The header CTA yields to a page-owned primary** (founder-ruled 2026-07-25).
+  Role 3 is ONE primary CTA per surface, and the header's Sign up arrives with
+  every route. On a route whose own body already spends that role — the
+  listing's Reserve, the host funnel's submit circle, the 404's recovery button
+  — Sign up renders as an outline/ink button instead of a green fill. It is
+  green everywhere else, because everywhere else it IS the surface's one primary
+  CTA. Chrome yields; the page's own call never does.
 - **Flat green, never gradient.** (Airbnb's gradient CTA is their call; a green
   gradient reads cheap and breaks quiet-modern.)
 - Mechanical check: grep a page's compiled classes for interactive/link-green
@@ -112,6 +119,13 @@ section-tinting exists (theme lock).
   a line. Never bold whole sentences.
 - `overline` (11/600/uppercase/+0.04em) is a **form-label token** (CHECK-IN,
   GUESTS). It is NEVER a section eyebrow. Zero eyebrows, everywhere.
+  **The one sanctioned exception: the status line on an error page** — the
+  `Error 404` / `Error 500` line above the H1 on the not-found and error
+  surfaces. It is not an eyebrow: an eyebrow categorises the section under it,
+  and this states the HTTP status the browser is already holding, which is
+  metadata about the response rather than a label for the heading. Both card
+  contracts (gw-015, gw-016) ship it, it is `text.tertiary` and never brand, and
+  it exists on exactly two routes (founder-ruled 2026-07-25).
 - `·` is the metadata separator: exactly one per gap, spaces both sides, never
   decorative, never chained.
 - Display sizes track to −0.02em; body tracks 0; nothing else is tracked.
@@ -172,9 +186,12 @@ that open a breakdown (`PKR 12,500 total` underlined) — and only those.
 - **Sticky anchor bar**: tabs 16/500 ink, hairline bottom, NO shadow ever;
   price + CTA cluster fades in only after the booking card scrolls away.
 - **Pagination**: ink circle current page; bare-text others; ~48px pitch.
-- **Footer**: `bg.raised` band, hairline top; 15/600 column headings; links
-  16/400 INK (not gray), no underline at rest here, **36px row pitch** — the
-  most generous repeated gap on the site.
+- **Footer**: `bg.raised` band, hairline top; **14/600 column headings — the
+  nearest token rung below the 16px links** (there is no 15 on the scale, and a
+  heading must step DOWN from its links here, not up: the links are the
+  destinations and the heading is the shelf they sit on; founder-ruled
+  2026-07-25); links 16/400 INK (not gray), no underline at rest here, **36px
+  row pitch** — the most generous repeated gap on the site.
 - **Funnel split hero**: 50/50; `displayLg` two lines max; 20/400 gray sub;
   `rounded-full` input (hairline, NO shadow); one `heroMedia` squircle photo;
   chrome stripped to the wordmark. Nothing else.

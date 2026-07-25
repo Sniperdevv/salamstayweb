@@ -1,4 +1,5 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment } from "react";
+import { withNumerals } from "@/components/numerals";
 import { inlineAction } from "@/components/ui";
 import type { RichText } from "@/lib/content/listings/is-f7-2bed";
 
@@ -91,32 +92,6 @@ export const stickyUnderAnchorBar = "top-36";
  * heading behind 120px of sticky chrome.
  */
 export const anchorOffset = "scroll-mt-32";
-
-/**
- * Digit isolation (`.num`, the shipped canon). Every digit run on the page is
- * wrapped, automatically rather than by hand, because a hand-tagged run is a
- * run somebody forgets: this page carries clock times, bearings, distances,
- * speeds, hour counts and dates in forty-odd strings, and one missed run is one
- * number that reverses under RTL.
- *
- * The run deliberately swallows an interior separator — `1–2`, `24/7`, `2:00`,
- * `7/2` — so a range never splits into two isolates that RTL can reorder past
- * each other. A run must START with a digit, so `F-7` isolates its `7` and
- * leaves the sector prefix in the text flow where it belongs.
- */
-const DIGIT_RUN = /(\d+(?:[.,:/–-]\d+)*[°%]?)/g;
-
-function withNumerals(text: string, keyPrefix: string): ReactNode[] {
-  return text.split(DIGIT_RUN).map((part, i) =>
-    i % 2 === 1 ? (
-      <span key={`${keyPrefix}-n${i}`} className="num">
-        {part}
-      </span>
-    ) : (
-      <Fragment key={`${keyPrefix}-t${i}`}>{part}</Fragment>
-    ),
-  );
-}
 
 const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

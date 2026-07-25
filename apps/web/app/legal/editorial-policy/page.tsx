@@ -3,6 +3,7 @@ import { ProseBreadcrumb } from "@/components/prose/prose-breadcrumb";
 import {
   blockTitle,
   bodyText,
+  detailText,
   closingBlock,
   column,
   dateStrip,
@@ -253,14 +254,12 @@ export default function EditorialPolicyPage() {
               <h1 className={pageH1}>Editorial and fact-check policy</h1>
               <p className={ledeText}>
                 This policy says what SalamStay is allowed to put on a page and how each fact
-                gets there.{" "}
-                <strong className={bold}>
-                  Every claim comes from one closed list. Every local fact — a named area, a
-                  distance, a document rule — is traced to a source before the page
-                  publishes.
-                </strong>{" "}
-                Anything that can’t be traced doesn’t ship: the sentence goes, not the
-                source.
+                gets there. Every claim comes from{" "}
+                <strong className={bold}>one closed list</strong>. Every local fact — a named
+                area, a distance, a document rule — is{" "}
+                <strong className={bold}>traced to a source</strong> before the page
+                publishes. Anything that can’t be traced doesn’t ship: the sentence goes, not
+                the source.
               </p>
 
               {/* Both dates are real and both are the card's. `bg.raised` info
@@ -386,11 +385,10 @@ export default function EditorialPolicyPage() {
               </h2>
               <p className={paraText}>
                 Each kind of fact has one source, one check, and one thing that makes us look
-                at it again. Nothing here is on a calendar —{" "}
-                <strong className={bold}>
-                  a date on a SalamStay page moves when the fact was actually re-checked
-                </strong>
-                , not when the month changed.
+                at it again. Nothing here is on a calendar — a date on a SalamStay page moves
+                when the fact was{" "}
+                <strong className={bold}>actually re-checked</strong>, not when the month
+                changed.
               </p>
 
               <div className={tableScroll}>
@@ -467,7 +465,7 @@ export default function EditorialPolicyPage() {
                       {p.title}
                     </p>
                     <p
-                      className={`mt-1 ${bodyText} [&_strong]:font-semibold [&_strong]:text-primary`}
+                      className={`mt-1 ${detailText} [&_strong]:font-semibold [&_strong]:text-primary`}
                     >
                       {p.body}
                     </p>
@@ -489,7 +487,7 @@ export default function EditorialPolicyPage() {
                 {NEVER.map((n) => (
                   <li key={n.title} className={factRowTwoCol}>
                     <p className={factTitle}>{n.title}</p>
-                    <p className={`mt-1 ${bodyText}`}>{n.body}</p>
+                    <p className={`mt-1 ${detailText}`}>{n.body}</p>
                   </li>
                 ))}
               </ul>
@@ -514,10 +512,9 @@ export default function EditorialPolicyPage() {
                 author.
               </p>
               <p className={paraText}>
-                <strong className={bold}>
-                  We do not put a person’s name on a page they did not write.
-                </strong>{" "}
-                Where a guide is written by someone with genuine first-hand knowledge of a
+                We do not put a person’s name on{" "}
+                <strong className={bold}>a page they did not write</strong>. Where a guide is
+                written by someone with genuine first-hand knowledge of a
                 city, that guide carries their name and their profile page is published
                 alongside it, saying who they are and what they actually know at first hand.{" "}
                 <strong className={bold}>No guide currently carries a personal byline</strong>{" "}
@@ -583,7 +580,11 @@ export default function EditorialPolicyPage() {
             </section>
 
             {/* Closing action. The §5 gray-fill secondary button, not a green
-                primary: the header's Sign up already holds the one CTA (§2). */}
+                primary: §2 allows one primary CTA per surface, and the doctrine
+                is that the header CTA yields to a PAGE-OWNED primary. This page
+                owns none — a policy document's closing contact link is not the
+                thing a reader came for — so the header keeps its green and this
+                stays ink. */}
             <div className={closingBlock}>
               <p className={blockTitle}>Tell us about a page</p>
               <p className={`mt-1.5 ${bodyText} ${column}`}>

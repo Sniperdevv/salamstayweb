@@ -155,6 +155,7 @@ export const lahore: CityContent = {
          * dropping any of them from the HTML.
          */
         name: "Wayfinding landmarks",
+        wayfinding: true,
         line: "Navigate by Badshahi Mosque and Lahore Fort, Minar-e-Pakistan, Wazir Khan Mosque, the Shalimar Gardens, and the Fort Road and Gawalmandi food streets.",
       },
     ],

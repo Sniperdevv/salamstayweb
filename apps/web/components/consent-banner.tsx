@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { btnSecondary, focusRing, gutter, inlineAction } from "./ui";
+import { duration } from "@salamstay/design-tokens/motion";
+import { btnSecondary, focusRing, inlineAction } from "./ui";
 
 /**
  * GW-014 — the root-layout consent banner.
@@ -21,9 +22,12 @@ import { btnSecondary, focusRing, gutter, inlineAction } from "./ui";
  * pre-selected option and no reject route hidden behind a second screen.
  *
  * This is also why neither button is green. TASTE §2 allows brand green in four
- * roles per surface and the header's Sign up already spends the CTA one; a
- * green Accept here would both break the budget and re-introduce the visual
- * hierarchy the rule above exists to remove.
+ * roles per surface and exactly one primary CTA among them; the doctrine is
+ * that the header CTA yields to a PAGE-OWNED primary, and a consent bar is
+ * chrome on every route rather than any page's own call. Promoting Accept would
+ * therefore not demote the header — it would add a second green CTA on top of
+ * whatever the route already owns, and re-introduce the visual hierarchy the
+ * rule above exists to remove.
  *
  * ELEVATION (§1): the bar floats over the page the reader scrolls, so it casts
  * `elevation.floating` and carries NO border. `radius.xl`, the overlay rung.
@@ -64,8 +68,12 @@ function writeChoice(choice: Choice): void {
   }
 }
 
-/** Exit duration — kept in sync with `duration-fast` (180ms) on the panel. */
-const EXIT_MS = 180;
+/**
+ * Exit duration. Read from the token rather than typed: the panel's exit is
+ * `duration-fast`, and a hand-copied 180 here is a number that silently stops
+ * matching the CSS the day the ladder moves.
+ */
+const EXIT_MS = duration.fast;
 
 export function ConsentBanner() {
   const [open, setOpen] = useState(false);
@@ -117,41 +125,80 @@ export function ConsentBanner() {
     <aside
       aria-label="Cookie choices"
       data-visible={visible ? "true" : "false"}
-      className={`fixed inset-x-0 bottom-0 z-toast mx-auto max-w-wide pb-4 md:pb-6 ${gutter}
+      className={`fixed inset-x-0 bottom-0 z-toast mx-auto max-w-wide px-0 pb-0 sm:px-4 sm:pb-4 md:px-6 md:pb-6
         translate-y-3 opacity-0 transition-[transform,opacity] duration-slow ease-decelerate
         data-[visible=true]:translate-y-0 data-[visible=true]:opacity-100
         data-[visible=false]:pointer-events-none data-[visible=false]:duration-fast
         motion-reduce:translate-y-0 motion-reduce:transition-[opacity] motion-reduce:duration-instant`}
     >
-      <div className="flex flex-col gap-5 rounded-xl bg-canvas p-5 shadow-floating md:flex-row md:items-center md:gap-8 md:p-6">
+      {/*
+        MOBILE IS A FLUSH BOTTOM SHEET, not a floating card in a gutter.
+
+        Below `sm` the inset card spent 32px of a 375px screen on a page gutter
+        it did not need — the banner is not in the page's column, it is over it —
+        and every pixel it gave back went into a third and fourth line of body
+        copy. Flush, the measure is 343 instead of 279 and the same sentence
+        fits in two lines instead of four. `rounded-t-xl` only, because the
+        bottom corners are off-screen and rounding a corner nobody can see is
+        two pixels of nothing. From `sm` up the floating card returns unchanged.
+
+        §1 is satisfied either way: this floats over the page the reader
+        scrolls, so it casts `elevation.floating` and draws no border.
+      */}
+      <div className="flex flex-col gap-3 rounded-t-xl bg-canvas p-4 shadow-floating sm:gap-5 sm:rounded-xl sm:p-5 md:flex-row md:items-center md:gap-8 md:p-6">
         <div className="flex-1">
           <p className="text-bodyMd font-semibold text-primary">
-            Choose what SalamStay stores in your browser
+            What SalamStay stores in your browser
           </p>
+          {/*
+            Two sentences, down from three (closing review). What went: the
+            worked example of what "essential" buys ("so you can sign in and
+            finish a booking" → "keep you signed in"), and the enumeration of
+            the three optional categories.
+
+            The enumeration is not a loss — "the rest" is a STRONGER statement
+            than a list of three, because a list invites the question of what
+            the fourth thing is, and the four categories are named in full on
+            the page this links to. Nothing here nudges: the two sentences say
+            what runs and what does not, in that order, and the control below is
+            still one pair at one weight.
+
+            Measured, not eyeballed: 28 words to 18, and at a flush 375 the
+            paragraph is two lines rather than four.
+          */}
           <p className="mt-1.5 max-w-[62ch] text-bodySm text-secondary">
-            We keep the essentials so you can sign in and finish a booking. Analytics,
-            marketing and preferences are <strong className="font-semibold text-primary">off</strong>{" "}
-            until you turn them on. Read the{" "}
+            Essentials keep you signed in and booking. The rest stays{" "}
+            <strong className="font-semibold text-primary">off</strong> until you turn it on.{" "}
             <Link href="/legal/cookie-policy" className={inlineAction}>
-              cookie policy
+              Cookie policy
             </Link>
-            .
           </p>
         </div>
 
         {/*
-          Identical weight, identical size, side by side. Decline sits first:
-          the reader meets the quieter choice before the broader one.
+          Identical weight, identical size. Decline sits first: the reader meets
+          the quieter choice before the broader one.
 
           A two-column grid rather than a flex row, because the page's own copy
           says "the two buttons are the same size" and flex would size each to
           its own label — 200px next to 124px, which is a visible hierarchy the
           anti-dark-pattern rule exists to remove. `grid-cols-2` on an auto-width
           track makes both columns the width of the longer label, so the pair is
-          matched by construction. Below `sm` they stack full-width, which keeps
-          the longer label on one line (a wrapped CTA is its own defect).
+          matched by construction.
+
+          THEY STACK BELOW `sm`, AND THAT IS ARITHMETIC RATHER THAN TASTE.
+          "Only what's needed" measures 152px at the §5 button role (16/500) in
+          Inter; half of a flush 375px sheet, less the gap, is 167px, which
+          leaves 15px for the button's own horizontal padding — against the §5
+          plate's 24px each side. Side by side, the label wraps to two lines,
+          and a wrapped CTA is a defect of its own. The pair therefore stacks,
+          on a `gap-2` rather than the `gap-3` it used to carry: tighter, since
+          the two are read as one choice.
+
+          The labels are card canon (gw-014 §banner: "rendered at identical
+          visual weight") and are not ours to shorten to make a row fit.
         */}
-        <div className="grid w-full shrink-0 grid-cols-1 gap-3 sm:w-auto sm:grid-cols-2">
+        <div className="grid w-full shrink-0 grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2 sm:gap-3">
           <button
             type="button"
             onClick={() => choose("essential")}

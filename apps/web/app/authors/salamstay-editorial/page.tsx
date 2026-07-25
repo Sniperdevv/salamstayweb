@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import {
   ClosingNote,
   FactList,
@@ -341,9 +342,11 @@ export default function SalamStayEditorialProfilePage() {
           <ul className={`${headingGap} ${column}`}>
             {PAGES.map((p) => (
               <li key={p.href} className={factRow}>
+                {/* "Stays in F-7, Islamabad" is a title with a digit run in it;
+                    `Num` isolates the numeral so RTL cannot reorder the sector. */}
                 <p className="text-bodyMd font-medium text-primary">
                   <Link href={p.href} className={`${inlineAction} ${focusRing}`}>
-                    {p.title}
+                    <Num>{p.title}</Num>
                   </Link>
                 </p>
                 <p className="mt-1.5 text-bodySm text-secondary">

@@ -174,9 +174,13 @@ export function SiteFooter() {
         </div>
 
         {/* `text.tertiary` is AA-large only (≥18.66px per the token's own note);
-            at `caption` it under-runs 4.5:1 on either surface, so the bottom
-            rule is set in `text.secondary`. */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-5 text-caption text-secondary">
+            at this size it under-runs 4.5:1 on either surface, so the bottom
+            rule is set in `text.secondary`.
+
+            `label` (13), not `caption` (12): the row carries the copyright and
+            four real links, and §7's ladder bottoms out at 13. Twelve is the
+            size a footer uses when it wants the links unread. */}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-5 text-label text-secondary">
           <span>
             © <span className="num">2026</span> SalamStay
           </span>

@@ -21,7 +21,7 @@ import { RelaxRail } from "./relax-rail";
  * component.
  *
  * The §3.5 heading outline is fixed here and in `app/search/page.tsx`:
- *   h1 "Search results" → h2 "Filters" → h2 "Results" → h3 "Browse stays by
+ *   h1 "Search results" → h2 "Filters" → h2 "Results" → h2 "Browse stays by
  *   city". A11y-only, since the page is noindex — but it is still the only
  *   structure a screen-reader user has to navigate a page whose content
  *   changes under them.
@@ -119,7 +119,7 @@ export function SearchShell({ city, cityName, stays, browse }: SearchShellProps)
         </p>
       </section>
 
-      <section aria-labelledby="results-h" className={`${shell} pb-14 md:pb-16`}>
+      <section aria-labelledby="results-h" className={shell}>
         <h2 id="results-h" className={sectionH2}>
           Results
         </h2>
@@ -188,7 +188,15 @@ export function SearchShell({ city, cityName, stays, browse }: SearchShellProps)
           </div>
         )}
 
-        <div className="mt-10">{browse}</div>
+      </section>
+
+      {/* The browse block is a SIBLING of Results, not a child of it. It owns
+          an `<h2>` (see `city-browse.tsx`), and a level-two heading inside a
+          section labelled by a different level-two heading is a structure no
+          reader — human or crawler — can make sense of. It also carries the
+          page's bottom space, being the last thing on it. */}
+      <section aria-labelledby="browse-h" className={`${shell} mt-10 pb-14 md:pb-16`}>
+        {browse}
       </section>
     </>
   );

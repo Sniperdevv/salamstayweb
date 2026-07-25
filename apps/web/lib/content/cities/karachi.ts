@@ -159,6 +159,7 @@ export const karachi: CityContent = {
          * tile clamps to two lines without dropping any of them from the HTML.
          */
         name: "Wayfinding landmarks",
+        wayfinding: true,
         line: "Navigate by Mazar-e-Quaid, Clifton Sea View and the Abdullah Shah Ghazi shrine, Mohatta Palace, Empress Market in Saddar, and the National Museum of Pakistan.",
       },
     ],

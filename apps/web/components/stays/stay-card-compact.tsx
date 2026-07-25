@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { RAIL_CARD_SIZES } from "./rail-metrics";
+import { Num } from "@/components/numerals";
 import { focusRing } from "@/components/ui";
 import { image } from "@/lib/content/image-manifest";
 import type { FeaturedStay } from "@/lib/content/featured-stays";
@@ -35,13 +36,21 @@ import { WishlistHeart } from "./wishlist-heart";
  *   shadowed rather than tinted or scrimmed, because §9 is absolute that
  *   nothing darkens a photograph — chrome on an image earns its legibility
  *   from its own container, never by degrading what is underneath.
- * - **Three tight rows.** Name (14px, clamped to TWO lines per the closing
- *   review: a title cut mid-word at a card's width tells the reader less than
- *   a second line costs the grid, and "Whole apartment in DHA Phase 5" is the
- *   normal length here rather than the exception, with the box for BOTH lines
- *   reserved so a one-line card's area line does not start a line above its
- *   neighbour's), area line, attribute line. 4px between them; they read as
- *   one block, not three fields.
+ * - **Three tight rows.** Name (see `titleSize` below), clamped to TWO lines
+ *   per the closing review: a title cut mid-word at a card's width tells the
+ *   reader less than a second line costs the grid, and "Whole apartment in DHA
+ *   Phase 5" is the normal length here rather than the exception, with the box
+ *   for BOTH lines reserved so a one-line card's area line does not start a
+ *   line above its neighbour's. Then the area line and the attribute line, 4px
+ *   apart; the three read as one block, not three fields.
+ * - **Meta rows at 13, not 12.** `label` (13) is the site's micro rung; §7's
+ *   ladder bottoms out there and `caption` (12) is below the floor for a line
+ *   a reader is expected to actually read. The area and attribute lines are
+ *   information, not fine print.
+ * - **Digits isolated on the area line.** "Clifton Block 2", "DHA Phase 5",
+ *   "F-10, Islamabad" — every one of these carries a digit run, and an
+ *   unisolated run reverses under RTL. `Num` wraps the runs and leaves the
+ *   prose in the text flow (the shipped `.num` canon).
  * - **The attribute line.** Two real attributes from the home's own list, in
  *   the shipped `ATTRIBUTES` wording, joined by ONE `·` (§7: one separator per
  *   gap, never chained). It replaced a third line that said "PKR — night", and
@@ -136,13 +145,41 @@ export interface StayCardCompactProps {
   readonly newChip?: boolean;
   /** LCP escape hatch for a first, above-the-fold rail. */
   readonly priority?: boolean;
+  /**
+   * Which title rung this instance draws (TASTE-RULES §7, founder-ruled
+   * 2026-07-25).
+   *
+   * §7's ladder puts every card title on the site at 16/500-600 and grants ONE
+   * exception: **rail cards at 208px carry their title at 14/600**. A
+   * horizontally-scrolling rail is a browsing surface, not a reading one, and
+   * at `w-rail-card` a normal Pakistani listing name turns into two clamped
+   * lines on most cards — so the exception buys back the row's baseline rhythm
+   * rather than saving a pixel.
+   *
+   * The same component also draws a 296px search tile, a 400px guide tile and
+   * the homepage's lead pair, and at those widths 16 fits and the exception has
+   * nothing to buy. `"grid"` is therefore the DEFAULT: the exception has to be
+   * asked for, so a new grid call site lands on the ladder rather than
+   * inheriting a rail's compensation.
+   */
+  readonly titleSize?: "rail" | "grid";
 }
+
+/**
+ * `line-clamp-2` sets `display: -webkit-box`, so neither rung may carry
+ * `block` — a `block` emitted after it in the cascade kills the clamp.
+ */
+const TITLE_SIZE = {
+  rail: "text-bodySm font-semibold",
+  grid: "text-bodyMd font-semibold",
+} as const;
 
 export function StayCardCompact({
   stay,
   sizes = RAIL_CARD_SIZES,
   newChip = false,
   priority = false,
+  titleSize = "grid",
 }: StayCardCompactProps) {
   const img = image(stay.image);
 
@@ -180,16 +217,20 @@ export function StayCardCompact({
 
             No `block`: `line-clamp-2` sets `display: -webkit-box`, and a
             `block` emitted after it in the cascade would kill the clamp. */}
-        <span className="mt-2.5 line-clamp-2 min-h-[2lh] text-bodySm font-semibold text-primary">
+        <span
+          className={`mt-2.5 line-clamp-2 min-h-[2lh] text-primary ${TITLE_SIZE[titleSize]}`}
+        >
           {stay.name}
         </span>
-        <span className="mt-1 block truncate text-caption text-tertiary">{stay.area}</span>
+        <span className="mt-1 block truncate text-label text-tertiary">
+          <Num>{stay.area}</Num>
+        </span>
         {stay.attributes ? (
-          <span className="mt-1 block truncate text-caption text-secondary">
+          <span className="mt-1 block truncate text-label text-secondary">
             {stay.attributes[0]} &middot; {stay.attributes[1]}
           </span>
         ) : null}
-        <span className="mt-1 block text-caption">
+        <span className="mt-1 block text-label">
           <span aria-hidden="true" className={skeletonBar} />
         </span>
       </Link>

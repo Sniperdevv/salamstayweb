@@ -102,8 +102,22 @@ export interface CityArea {
    * Required whenever `href` is set. Omitted on the wayfinding tile.
    */
   readonly linkLabel?: string;
-  /** Omitted on the wayfinding tile, which renders its glyph instead. */
+  /** Omitted on the wayfinding note, which renders its glyph instead. */
   readonly image?: ImageId;
+  /**
+   * Marks the ONE entry per city that is not a place you can book — the
+   * landmark list a visitor navigates by.
+   *
+   * It is declared rather than inferred. "No `href` and no `image`" identifies
+   * it on Islamabad, where the five sectors have both, and identifies nothing
+   * on the other five cities, where no area page or verified sector photograph
+   * exists yet and every entry looks the same. The template needs to know which
+   * row is the note on ALL six — it draws it full width, under the others, with
+   * the landmark glyph — so the content says which one it is.
+   *
+   * Exactly one per city. `href` and `image` are always absent when this is set.
+   */
+  readonly wayfinding?: true;
 }
 
 /** A featured-stay tile. Same object the area template lists (`StayCardContent`). */

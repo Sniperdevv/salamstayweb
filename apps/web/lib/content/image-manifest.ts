@@ -8,13 +8,24 @@
  *   filename. Never `image123.jpg` (G57 HARD).
  * - `width`/`height` are the REAL on-disk pixel dimensions, so every consumer
  *   can reserve an aspect-ratio box and hold CLS at 0 (SEO-RULES §8).
- * - `alt` follows the §8 pattern `{subject}, {area}, {city} — {one real
- *   attribute}` and names only attributes visible in the frame. Decorative
- *   usage passes `alt=""` at the call site instead of using an entry here.
  * - `authentic` is an honesty flag, not a quality flag. `true` means the
  *   photograph genuinely depicts the place it is named after (verified against
  *   the Pexels title/description). `false` means it is a declared stand-in and
  *   `note` says what it actually is. Nothing here is ever mislabelled.
+ * - **`alt` follows the flag** (founder ruling 2026-07-25, enforced by
+ *   `scripts/verify-images.mjs`):
+ *     · `authentic: true` → the §8 pattern `{subject}, {area}, {city} — {one
+ *       real attribute}`. The place name is a fact about the photograph and
+ *       these are the frames entitled to state one.
+ *     · `authentic: false` → SUBJECT-DERIVED. The alt describes the room and
+ *       what is visible in the frame, and it names NO place. A stand-in whose
+ *       alt read "Bedroom of a 1-bed flat, Nazimabad, Karachi" asserted, in the
+ *       one string a screen-reader user and an image crawler both receive, the
+ *       exact fact the `note` two lines below denies. The verifier holds the
+ *       line by construction: no capitalised word may appear in the alt that
+ *       the entry's own `subject` does not also carry.
+ *   Either way alt names only attributes visible in the frame, and decorative
+ *   usage passes `alt=""` at the call site instead of using an entry here.
  *
  * Attribution (photographer + source URL per file) lives beside the assets in
  * `apps/web/public/images/ATTRIBUTIONS.md`.
@@ -139,7 +150,7 @@ export const IMAGES = {
     id: "host-home-living-room-daylight",
     file: "/images/host-home-living-room-daylight.jpg",
     subject: "Bright living room with pendant lights and a painted brick wall",
-    alt: "Living room of a home listed for hosting — pendant lighting over a low seating group",
+    alt: "Bright living room with a painted brick wall — pendant lights over a low seating group",
     width: 1880,
     height: 1255,
     pages: ["/", "/become-a-host"],
@@ -152,7 +163,7 @@ export const IMAGES = {
     id: "host-home-courtyard-villa-sunny",
     file: "/images/host-home-courtyard-villa-sunny.jpg",
     subject: "Two-storey house with a lawn and paved approach on a clear day",
-    alt: "Two-storey house with a front lawn — paved approach to the main entrance",
+    alt: "Two-storey house on a clear day — front lawn beside a paved approach to the entrance",
     width: 1880,
     height: 1255,
     pages: ["/become-a-host"],
@@ -289,7 +300,7 @@ export const IMAGES = {
     id: "pakistan-market-street-motorcycles",
     file: "/images/pakistan-market-street-motorcycles.jpg",
     subject: "Small-town Pakistani market street with motorcycles and rickshaws",
-    alt: "Market street with motorcycles and rickshaws, Pakistan — low shopfronts along the road",
+    alt: "Small-town Pakistani market street — motorcycles and rickshaws outside low shopfronts",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-rawalpindi"],
@@ -302,7 +313,7 @@ export const IMAGES = {
     id: "residential-neighbourhood-aerial",
     file: "/images/residential-neighbourhood-aerial.jpg",
     subject: "Rooftop view across a dense old-city neighbourhood with minarets on the skyline",
-    alt: "Rooftops across a dense old-city neighbourhood, Pakistan — minarets on the skyline",
+    alt: "Rooftop view across a dense old-city neighbourhood — minarets on the skyline",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-lahore"],
@@ -321,7 +332,7 @@ export const IMAGES = {
     id: "tree-lined-residential-street",
     file: "/images/tree-lined-residential-street.jpg",
     subject: "Quiet residential avenue lined with mature pines, hills in the distance",
-    alt: "Tree-lined residential avenue, Islamabad — mature pines along both kerbs",
+    alt: "Quiet residential avenue with hills in the distance — mature pines along both kerbs",
     width: 1376,
     height: 1300,
     /* HELD, not drawn: the F-6 tile took the Margalla boulevard vista in the
@@ -339,7 +350,7 @@ export const IMAGES = {
     id: "quiet-sector-road-autumn-trees",
     file: "/images/quiet-sector-road-autumn-trees.jpg",
     subject: "Wide sector road with street lighting and pines on both sides",
-    alt: "Sector road with street lighting, Islamabad — pines set back behind the kerb",
+    alt: "Wide road with street lighting on both sides — pines set back behind the kerb",
     width: 1342,
     height: 1300,
     /* HELD, not drawn — same reason as the frame above it. */
@@ -353,7 +364,7 @@ export const IMAGES = {
     id: "apartment-block-exterior-blue-sky",
     file: "/images/apartment-block-exterior-blue-sky.jpg",
     subject: "Low-rise brick apartment blocks behind a line of trees under a clear sky",
-    alt: "Low-rise apartment blocks behind trees, F-8, Islamabad — brick facades on a clear day",
+    alt: "Low-rise brick apartment blocks under a clear sky — a line of trees along the frontage",
     width: 1733,
     height: 1300,
     pages: [
@@ -370,7 +381,7 @@ export const IMAGES = {
     id: "apartment-complex-with-gardens",
     file: "/images/apartment-complex-with-gardens.jpg",
     subject: "Residential blocks set around landscaped lawns and walkways",
-    alt: "Residential blocks around landscaped lawns, F-7, Islamabad — walkways between the gardens",
+    alt: "Residential blocks set around landscaped lawns — walkways between the gardens",
     width: 1733,
     height: 1300,
     pages: [
@@ -391,7 +402,7 @@ export const IMAGES = {
     id: "living-room-bright-open-plan",
     file: "/images/living-room-bright-open-plan.jpg",
     subject: "Sunlit living room with full-height curtained windows and a low sectional",
-    alt: "Living room of a sunlit 2-bed home, F-6, Islamabad — full-height windows behind the seating",
+    alt: "Sunlit living room with a low sectional — full-height curtained windows behind the seating",
     width: 1880,
     height: 1253,
     pages: [
@@ -408,7 +419,7 @@ export const IMAGES = {
     id: "house-frontage-with-garden",
     file: "/images/house-frontage-with-garden.jpg",
     subject: "House frontage with a boundary wall, timber gate and planted bed",
-    alt: "Frontage of a garden guest house, F-6, Islamabad — timber gate set into the boundary wall",
+    alt: "House frontage with a planted bed — timber gate set into the boundary wall",
     width: 1880,
     height: 1255,
     pages: [
@@ -425,7 +436,7 @@ export const IMAGES = {
     id: "studio-apartment-kitchen-and-bed",
     file: "/images/studio-apartment-kitchen-and-bed.jpg",
     subject: "Compact studio with a kitchenette, dining corner and wall-mounted air conditioning",
-    alt: "Studio with kitchenette, F-7, Islamabad — wall-mounted air conditioning above the dining corner",
+    alt: "Compact studio with a kitchenette — wall-mounted air conditioning above the dining corner",
     width: 1880,
     height: 1261,
     pages: [
@@ -442,7 +453,7 @@ export const IMAGES = {
     id: "living-room-cozy-couch",
     file: "/images/living-room-cozy-couch.jpg",
     subject: "Large family sitting room with a timber staircase and tiled floor",
-    alt: "Family sitting room, F-8, Islamabad — timber staircase rising from the tiled floor",
+    alt: "Large family sitting room — timber staircase rising from the tiled floor",
     width: 1880,
     height: 1255,
     pages: [
@@ -459,7 +470,7 @@ export const IMAGES = {
     id: "balcony-lounge-above-city",
     file: "/images/balcony-lounge-above-city.jpg",
     subject: "Roof terrace seating group looking out over a city with hills behind",
-    alt: "Terrace seating above the city, E-7, Islamabad — hills on the far horizon",
+    alt: "Roof terrace seating group looking out over a city — hills on the far horizon",
     width: 1880,
     height: 1255,
     pages: [
@@ -476,7 +487,7 @@ export const IMAGES = {
     id: "studio-apartment-compact-interior",
     file: "/images/studio-apartment-compact-interior.jpg",
     subject: "Compact studio with a kitchen island, bed alcove and exposed brick pier",
-    alt: "Business studio, Blue Area, Islamabad — kitchen island beside the bed alcove",
+    alt: "Compact studio with an exposed brick pier — kitchen island beside the bed alcove",
     width: 1880,
     height: 1255,
     pages: [
@@ -497,7 +508,7 @@ export const IMAGES = {
     id: "living-room-home-interior-warm",
     file: "/images/living-room-home-interior-warm.jpg",
     subject: "Sitting room with timber doors onto a garden and a patterned rug",
-    alt: "Sitting room of a whole home, F-7, Islamabad — timber doors opening onto the garden",
+    alt: "Sitting room with a patterned rug — timber doors opening onto the garden",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-islamabad/f-7", "/stays-in-islamabad/f-7/cedar-lodge-f7"],
@@ -510,7 +521,7 @@ export const IMAGES = {
     id: "living-room-family-seating",
     file: "/images/living-room-family-seating.jpg",
     subject: "Timber-panelled sitting room with a sofa and patterned cushions",
-    alt: "Sitting room of a family portion, F-7, Islamabad — timber panelling behind the sofa",
+    alt: "Sitting room with a sofa and patterned cushions — timber panelling behind the seating",
     width: 1880,
     height: 1255,
     pages: [
@@ -526,7 +537,7 @@ export const IMAGES = {
     id: "bedroom-and-kitchen-open-interior",
     file: "/images/bedroom-and-kitchen-open-interior.jpg",
     subject: "One-bed flat with the sleeping area open to a compact kitchen",
-    alt: "One-bed flat, F-7, Islamabad — sleeping area open to the compact kitchen",
+    alt: "One-bed flat interior — sleeping area open to the compact kitchen",
     width: 1880,
     height: 1255,
     pages: [
@@ -542,7 +553,7 @@ export const IMAGES = {
     id: "living-room-with-kitchen-zone-flat",
     file: "/images/living-room-with-kitchen-zone-flat.jpg",
     subject: "Bright upper-floor flat with a sitting area and kitchen along one wall",
-    alt: "Upper portion, F-7, Islamabad — kitchen run along the wall beside the sitting area",
+    alt: "Bright upper-floor flat — kitchen run along the wall beside the sitting area",
     width: 1880,
     height: 1255,
     pages: [
@@ -563,7 +574,7 @@ export const IMAGES = {
     id: "living-room-interior-design-neutral",
     file: "/images/living-room-interior-design-neutral.jpg",
     subject: "White sitting room with a ceiling fan, wooden floor and a patterned rug",
-    alt: "Sitting room of a verified stay — ceiling fan above a patterned rug",
+    alt: "White sitting room with a wooden floor — ceiling fan above a patterned rug",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-karachi", "/stays-in-lahore"],
@@ -576,7 +587,7 @@ export const IMAGES = {
     id: "living-room-light-couch-window",
     file: "/images/living-room-light-couch-window.jpg",
     subject: "Small sitting area with a grey sofa against a deep blue wall",
-    alt: "Sitting area of a verified stay — grey sofa against a deep blue wall",
+    alt: "Small sitting area beside a window — grey sofa against a deep blue wall",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-peshawar", "/stays-in-rawalpindi"],
@@ -589,7 +600,7 @@ export const IMAGES = {
     id: "living-room-wooden-furniture-sofa-bed",
     file: "/images/living-room-wooden-furniture-sofa-bed.jpg",
     subject: "Studio with a sofa bed, framed prints and a built-in timber shelf",
-    alt: "Studio of a verified stay — sofa bed below a built-in timber shelf",
+    alt: "Studio with framed prints on the wall — sofa bed below a built-in timber shelf",
     width: 1880,
     height: 1261,
     pages: ["/stays-in-lahore", "/stays-in-faisalabad"],
@@ -602,7 +613,7 @@ export const IMAGES = {
     id: "bedroom-white-linen",
     file: "/images/bedroom-white-linen.jpg",
     subject: "Bedroom with white linen, a ceiling fan and two shuttered windows",
-    alt: "Bedroom of a verified stay — ceiling fan between two shuttered windows",
+    alt: "Bedroom made up with white linen — ceiling fan between two shuttered windows",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-karachi", "/stays-in-faisalabad"],
@@ -615,7 +626,7 @@ export const IMAGES = {
     id: "bedroom-minimalist-neutral",
     file: "/images/bedroom-minimalist-neutral.jpg",
     subject: "Neutral bedroom with an upholstered headboard and a bank of windows",
-    alt: "Bedroom of a verified stay — upholstered headboard beside a bank of windows",
+    alt: "Neutral bedroom — upholstered headboard beside a bank of windows",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-lahore", "/stays-in-rawalpindi"],
@@ -628,7 +639,7 @@ export const IMAGES = {
     id: "bedroom-wooden-bed-warm",
     file: "/images/bedroom-wooden-bed-warm.jpg",
     subject: "Warm bedroom with a dark wooden bed, ceiling fan and bedside lamps",
-    alt: "Bedroom of a verified stay — ceiling fan above a dark wooden bed",
+    alt: "Warm bedroom with bedside lamps — ceiling fan above a dark wooden bed",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-peshawar", "/stays-in-faisalabad"],
@@ -641,7 +652,7 @@ export const IMAGES = {
     id: "bedroom-wooden-cabinets-white-linen",
     file: "/images/bedroom-wooden-cabinets-white-linen.jpg",
     subject: "Traditional bedroom with a carved wardrobe and a moulded ceiling",
-    alt: "Bedroom of a verified stay — carved wardrobe below a moulded ceiling",
+    alt: "Traditional bedroom — carved wardrobe below a moulded ceiling",
     width: 1880,
     height: 1276,
     pages: ["/stays-in-lahore", "/stays-in-peshawar"],
@@ -654,7 +665,7 @@ export const IMAGES = {
     id: "bedroom-two-single-beds",
     file: "/images/bedroom-two-single-beds.jpg",
     subject: "Guest room with two single beds, a stone wall and wall-mounted air conditioning",
-    alt: "Guest room of a verified stay — two single beds under wall-mounted air conditioning",
+    alt: "Guest room with a stone wall — two single beds under wall-mounted air conditioning",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-karachi", "/stays-in-rawalpindi"],
@@ -667,7 +678,7 @@ export const IMAGES = {
     id: "bedroom-simple-side-table",
     file: "/images/bedroom-simple-side-table.jpg",
     subject: "Plain bedroom with a timber headboard and a lamp on each bedside table",
-    alt: "Bedroom of a verified stay — a lamp on each side of a timber headboard",
+    alt: "Plain bedroom — a lamp on each side of a timber headboard",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-faisalabad", "/stays-in-rawalpindi"],
@@ -680,7 +691,7 @@ export const IMAGES = {
     id: "bedroom-villa-warm-neutral",
     file: "/images/bedroom-villa-warm-neutral.jpg",
     subject: "Bedroom corner with a panelled headboard, table lamp and a large potted plant",
-    alt: "Bedroom of a verified stay — table lamp beside a panelled headboard",
+    alt: "Bedroom corner with a large potted plant — table lamp beside a panelled headboard",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-peshawar", "/stays-in-karachi"],
@@ -693,7 +704,7 @@ export const IMAGES = {
     id: "kitchen-white-cabinets-daylight",
     file: "/images/kitchen-white-cabinets-daylight.jpg",
     subject: "White fitted kitchen with an oven, sink run and tiled floor",
-    alt: "Kitchen of a verified stay — full run of white fitted units around the oven",
+    alt: "White fitted kitchen on a tiled floor — a run of units around the oven and sink",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-karachi", "/stays-in-lahore"],
@@ -706,7 +717,7 @@ export const IMAGES = {
     id: "kitchen-modern-clean-counter",
     file: "/images/kitchen-modern-clean-counter.jpg",
     subject: "Kitchen with a stone worktop, tall units and a dining table alongside",
-    alt: "Kitchen of a verified stay — dining table set alongside the stone worktop",
+    alt: "Kitchen with tall units — dining table set alongside the stone worktop",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-faisalabad", "/stays-in-peshawar"],
@@ -719,7 +730,7 @@ export const IMAGES = {
     id: "kitchen-bar-counter-contemporary",
     file: "/images/kitchen-bar-counter-contemporary.jpg",
     subject: "Kitchen with a timber splashback and a narrow breakfast counter",
-    alt: "Kitchen of a verified stay — narrow breakfast counter below a timber splashback",
+    alt: "Kitchen interior — narrow breakfast counter below a timber splashback",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-rawalpindi", "/stays-in-lahore"],
@@ -732,7 +743,7 @@ export const IMAGES = {
     id: "dining-room-apartment-minimal",
     file: "/images/dining-room-apartment-minimal.jpg",
     subject: "Apartment dining room with a long timber table open to the sitting area",
-    alt: "Dining room of a verified stay — long timber table open to the sitting area",
+    alt: "Apartment dining room — long timber table open to the sitting area",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-karachi", "/stays-in-peshawar"],
@@ -745,7 +756,7 @@ export const IMAGES = {
     id: "dining-area-with-balcony-doors",
     file: "/images/dining-area-with-balcony-doors.jpg",
     subject: "Bright dining corner beside full-height balcony doors",
-    alt: "Dining corner of a verified stay — full-height balcony doors beside the table",
+    alt: "Bright dining corner — full-height balcony doors beside the table",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-lahore", "/stays-in-faisalabad"],
@@ -758,7 +769,7 @@ export const IMAGES = {
     id: "terrace-seating-with-large-windows",
     file: "/images/terrace-seating-with-large-windows.jpg",
     subject: "Enclosed balcony with cane chairs and curtained glazing on three sides",
-    alt: "Enclosed balcony of a verified stay — cane chairs against curtained glazing",
+    alt: "Enclosed balcony glazed on three sides — cane chairs against curtained windows",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-rawalpindi", "/stays-in-karachi"],
@@ -771,7 +782,7 @@ export const IMAGES = {
     id: "balcony-apartment-seating",
     file: "/images/balcony-apartment-seating.jpg",
     subject: "Open balcony with two chairs and a mountain range on the horizon",
-    alt: "Balcony of a verified stay — two chairs facing a mountain range on the horizon",
+    alt: "Open balcony — two chairs facing a mountain range on the horizon",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-rawalpindi", "/stays-in-peshawar"],
@@ -784,7 +795,7 @@ export const IMAGES = {
     id: "courtyard-with-plants",
     file: "/images/courtyard-with-plants.jpg",
     subject: "Enclosed courtyard filled with potted plants outside a tiled-roof house",
-    alt: "Courtyard of a verified stay — potted plants along a tiled-roof veranda",
+    alt: "Enclosed courtyard outside a tiled-roof house — potted plants along the veranda",
     width: 1880,
     height: 1190,
     pages: ["/stays-in-lahore", "/stays-in-peshawar"],
@@ -797,7 +808,7 @@ export const IMAGES = {
     id: "hallway-apartment-wooden",
     file: "/images/hallway-apartment-wooden.jpg",
     subject: "Apartment hallway with a timber mosaic feature wall and a full-height mirror",
-    alt: "Hallway of a verified stay — timber mosaic wall facing a full-height mirror",
+    alt: "Apartment hallway — timber mosaic wall facing a full-height mirror",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-karachi", "/stays-in-faisalabad"],
@@ -810,7 +821,7 @@ export const IMAGES = {
     id: "guest-house-exterior-with-garden",
     file: "/images/guest-house-exterior-with-garden.jpg",
     subject: "Low-rise guest-house block behind a planted garden walkway",
-    alt: "Guest house of a verified stay — planted walkway to the ground-floor entrance",
+    alt: "Low-rise guest-house block — planted walkway to the ground-floor entrance",
     width: 1880,
     height: 1251,
     pages: ["/stays-in-karachi", "/stays-in-rawalpindi"],
@@ -838,7 +849,7 @@ export const IMAGES = {
     file: "/images/sitting-room-with-leather-sofas.jpg",
     subject:
       "Sitting room with leather sofas, a ceiling fan and a staircase rising behind the seating",
-    alt: "Sitting room of a family home, F-10, Islamabad — staircase rising behind the seating group",
+    alt: "Sitting room with leather sofas and a ceiling fan — staircase rising behind the seating",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-islamabad"],
@@ -852,7 +863,7 @@ export const IMAGES = {
     file: "/images/dining-room-with-long-table-and-cabinet.jpg",
     subject:
       "Dining room with a long table, a run of chairs and a timber display cabinet",
-    alt: "Dining room of a whole portion, G-11, Islamabad — timber display cabinet behind the long table",
+    alt: "Dining room with a run of chairs — timber display cabinet behind the long table",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-islamabad"],
@@ -866,7 +877,7 @@ export const IMAGES = {
     file: "/images/bedroom-with-large-window-greenery.jpg",
     subject:
       "Bedroom with a ceiling fan, wall-mounted air conditioning and sliding doors onto a green hillside",
-    alt: "Bedroom of a hillside 1-bed, Bani Gala, Islamabad — ceiling fan above the bed, balcony doors alongside",
+    alt: "Bedroom with sliding doors onto a green hillside — ceiling fan above the bed",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-islamabad"],
@@ -881,7 +892,7 @@ export const IMAGES = {
     id: "apartment-building-with-balconies",
     file: "/images/apartment-building-with-balconies.jpg",
     subject: "Front elevation of a low-rise apartment block with cantilevered balconies",
-    alt: "Apartment block frontage, Gulistan-e-Johar, Karachi — cantilevered balconies down the elevation",
+    alt: "Front elevation of a low-rise apartment block — cantilevered balconies down the facade",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-karachi"],
@@ -894,7 +905,7 @@ export const IMAGES = {
     id: "patio-with-wicker-seating",
     file: "/images/patio-with-wicker-seating.jpg",
     subject: "Covered veranda with square columns, a ceiling fan and cane seating",
-    alt: "Covered veranda of a whole portion, DHA Phase 6, Karachi — ceiling fan above the cane seating",
+    alt: "Covered veranda with square columns — ceiling fan above the cane seating",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-karachi"],
@@ -908,7 +919,7 @@ export const IMAGES = {
     file: "/images/bedroom-with-tall-wardrobe.jpg",
     subject:
       "Bedroom with wall-mounted air conditioning above the bed, a padded headboard and a full-height wardrobe",
-    alt: "Bedroom of a 1-bed flat, Nazimabad, Karachi — wall-mounted air conditioning above the headboard",
+    alt: "Bedroom with a full-height wardrobe — wall-mounted air conditioning above the padded headboard",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-karachi"],
@@ -924,7 +935,7 @@ export const IMAGES = {
     file: "/images/living-room-with-timber-slat-wall.jpg",
     subject:
       "Sitting room with a timber slat wall, a low sofa and an enclosed balcony beyond the glazing",
-    alt: "Sitting room of a bright flat, Askari 11, Lahore — enclosed balcony beyond the seating",
+    alt: "Sitting room with a timber slat wall and a low sofa — enclosed balcony beyond the glazing",
     width: 1584,
     height: 1056,
     pages: ["/stays-in-lahore"],
@@ -938,7 +949,7 @@ export const IMAGES = {
     file: "/images/bedroom-with-red-curtains.jpg",
     subject:
       "Bedroom with red curtains across a bay window, a printed bedspread and a terrazzo floor",
-    alt: "Bedroom of a marble-floor room, Samanabad, Lahore — red curtains across the bay window",
+    alt: "Bedroom with a printed bedspread and terrazzo floor — red curtains across the bay window",
     width: 1880,
     height: 1265,
     pages: ["/stays-in-lahore"],
@@ -952,7 +963,7 @@ export const IMAGES = {
     file: "/images/entrance-with-carved-door.jpg",
     subject:
       "Entrance hall with green double doors set in perforated brass panels, the kitchen open alongside",
-    alt: "Entrance of a whole house, Allama Iqbal Town, Lahore — green double doors beside the open kitchen",
+    alt: "Entrance hall with perforated brass panels — green double doors beside the open kitchen",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-lahore"],
@@ -968,7 +979,7 @@ export const IMAGES = {
     file: "/images/bedroom-with-carved-window-screen.jpg",
     subject:
       "Plain bedroom with a frosted window above the bed, brown bedding and a luggage rack",
-    alt: "Bedroom of a single room, Dalazak Road, Peshawar — frosted window set above the bed",
+    alt: "Plain bedroom with brown bedding and a luggage rack — frosted window set above the bed",
     width: 1880,
     height: 1254,
     pages: ["/stays-in-peshawar"],
@@ -982,7 +993,7 @@ export const IMAGES = {
     file: "/images/kitchen-with-red-cabinets-and-gas-stove.jpg",
     subject:
       "Kitchen with red cabinets, a granite worktop, a gas hob and a mesh window over the sink",
-    alt: "Kitchen of a family portion, Board Bazaar, Peshawar — gas hob at the end of a granite run",
+    alt: "Kitchen with red cabinets and a mesh window over the sink — gas hob on a granite run",
     width: 1880,
     height: 1254,
     pages: ["/stays-in-peshawar"],
@@ -996,7 +1007,7 @@ export const IMAGES = {
     file: "/images/house-facade-with-plants-and-terrace.jpg",
     subject:
       "Single-storey house with a tiled roof, a covered porch and planting along the drive",
-    alt: "Frontage of a garden bungalow, Nasir Bagh Road, Peshawar — covered porch across the front of the house",
+    alt: "Single-storey house with planting along the drive — covered porch under a tiled roof",
     width: 1880,
     height: 1254,
     pages: ["/stays-in-peshawar"],
@@ -1012,7 +1023,7 @@ export const IMAGES = {
     file: "/images/living-room-with-ceiling-fan-and-tv-wall.jpg",
     subject:
       "Sitting room with a ceiling fan, two facing sofas and a wall-mounted television",
-    alt: "Sitting room of a whole house, Batala Colony, Faisalabad — ceiling fan above two facing sofas",
+    alt: "Sitting room with a wall-mounted television — ceiling fan above two facing sofas",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-faisalabad"],
@@ -1026,7 +1037,7 @@ export const IMAGES = {
     file: "/images/bedroom-with-bay-window-seat.jpg",
     subject:
       "Guest bedroom with a metal-framed bed, striped bedding and a cushioned seat in the window bay",
-    alt: "Bedroom of a guest room, Millat Town, Faisalabad — cushioned seat built into the window bay",
+    alt: "Guest bedroom with a metal-framed bed and striped bedding — cushioned seat in the window bay",
     width: 1880,
     height: 1274,
     pages: ["/stays-in-faisalabad"],
@@ -1039,7 +1050,7 @@ export const IMAGES = {
     id: "dining-corner-with-round-table",
     file: "/images/dining-corner-with-round-table.jpg",
     subject: "Dining corner with a round table, four chairs and an open door to the kitchen",
-    alt: "Dining corner of a compact flat, Jaranwala Road, Faisalabad — round table beside the kitchen door",
+    alt: "Dining corner with four chairs — round table beside an open door to the kitchen",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-faisalabad"],
@@ -1055,7 +1066,7 @@ export const IMAGES = {
     file: "/images/living-room-with-city-view-windows.jpg",
     subject:
       "Sitting room with full-height curtains, low seating and a balcony looking over the city",
-    alt: "Sitting room of a high-floor flat, Askari 14, Rawalpindi — full-height curtains onto the balcony",
+    alt: "Sitting room with low seating and a balcony over the city — full-height curtains at the glazing",
     width: 1733,
     height: 1300,
     pages: ["/stays-in-rawalpindi"],
@@ -1069,7 +1080,7 @@ export const IMAGES = {
     file: "/images/bedroom-with-wooden-furniture-daylight.jpg",
     subject:
       "Bedroom with a timber wardrobe run and a deep window seat looking over rooftops",
-    alt: "Bedroom of an upper room, Gulraiz, Rawalpindi — deep window seat looking over the rooftops",
+    alt: "Bedroom with a timber wardrobe run — deep window seat looking over the rooftops",
     width: 1880,
     height: 1253,
     pages: ["/stays-in-rawalpindi"],
@@ -1083,7 +1094,7 @@ export const IMAGES = {
     file: "/images/kitchen-with-marble-counter-and-tap.jpg",
     subject:
       "Kitchen with a marble island, fitted units and wall-mounted air conditioning above the doorway",
-    alt: "Kitchen of a whole portion, Peshawar Road, Rawalpindi — wall-mounted air conditioning above the doorway",
+    alt: "Kitchen with a marble island and fitted units — wall-mounted air conditioning above the doorway",
     width: 1880,
     height: 1255,
     pages: ["/stays-in-rawalpindi"],
@@ -1101,7 +1112,7 @@ export const IMAGES = {
     id: "is-f7-living",
     file: "/images/is-f7-living.jpg",
     subject: "Living room with a corner sofa, open kitchen and wall-mounted air conditioning",
-    alt: "Living room of a 2-bed apartment, F-7, Islamabad — open kitchen beyond the corner sofa",
+    alt: "Living room with wall-mounted air conditioning — open kitchen beyond the corner sofa",
     width: 1880,
     height: 1255,
     pages: [
@@ -1118,7 +1129,7 @@ export const IMAGES = {
     id: "is-f7-dining",
     file: "/images/is-f7-dining.jpg",
     subject: "Dining table set beside a tall sash window",
-    alt: "Dining area of a 2-bed apartment, F-7, Islamabad — table set beside a tall window",
+    alt: "Dining area with a tall sash window — table and chairs set beside the glazing",
     width: 1880,
     height: 1254,
     pages: [
@@ -1134,7 +1145,7 @@ export const IMAGES = {
     id: "is-f7-kitchen",
     file: "/images/is-f7-kitchen.jpg",
     subject: "White fitted kitchen with an integrated oven and track lighting",
-    alt: "Kitchen of a 2-bed apartment, F-7, Islamabad — integrated oven under track lighting",
+    alt: "White fitted kitchen — integrated oven under track lighting",
     width: 1880,
     height: 1255,
     pages: [
@@ -1151,7 +1162,7 @@ export const IMAGES = {
     id: "is-f7-bedroom",
     file: "/images/is-f7-bedroom.jpg",
     subject: "Main bedroom with an upholstered headboard and an open clothing rail",
-    alt: "Main bedroom of a 2-bed apartment, F-7, Islamabad — open clothing rail beside the bed",
+    alt: "Main bedroom with an upholstered headboard — open clothing rail beside the bed",
     width: 1880,
     height: 1255,
     pages: [
@@ -1167,7 +1178,7 @@ export const IMAGES = {
     id: "is-f7-bedroom-2",
     file: "/images/is-f7-bedroom-2.jpg",
     subject: "Second bedroom with a padded headboard, wall lights and a long timber console",
-    alt: "Second bedroom of a 2-bed apartment, F-7, Islamabad — wall lights either side of the bed",
+    alt: "Second bedroom with a long timber console — wall lights either side of the padded headboard",
     width: 1880,
     height: 1255,
     pages: [
@@ -1183,7 +1194,7 @@ export const IMAGES = {
     id: "is-f7-bath",
     file: "/images/is-f7-bath.jpg",
     subject: "Bathroom with a glass shower enclosure, heated towel rail and vanity unit",
-    alt: "Bathroom of a 2-bed apartment, F-7, Islamabad — glass shower enclosure beside the vanity",
+    alt: "Bathroom with a heated towel rail — glass shower enclosure beside the vanity unit",
     width: 1880,
     height: 1255,
     pages: [
@@ -1199,7 +1210,7 @@ export const IMAGES = {
     id: "is-f7-balcony",
     file: "/images/is-f7-balcony.jpg",
     subject: "Enclosed balcony with two chairs and glazing across the city",
-    alt: "Balcony of a 2-bed apartment, F-7, Islamabad — glazing across the city on two sides",
+    alt: "Enclosed balcony with two chairs — glazing across the city on two sides",
     width: 1880,
     height: 1255,
     pages: [
@@ -1215,7 +1226,7 @@ export const IMAGES = {
     id: "is-f7-entrance",
     file: "/images/is-f7-entrance.jpg",
     subject: "Entrance hall with panelled walls, a console table and a mirror",
-    alt: "Entrance hall of a 2-bed apartment, F-7, Islamabad — console table below the hall mirror",
+    alt: "Entrance hall with panelled walls — console table below the hall mirror",
     width: 1880,
     height: 1255,
     pages: [
@@ -1231,7 +1242,7 @@ export const IMAGES = {
     id: "is-f7-workspace",
     file: "/images/is-f7-workspace.jpg",
     subject: "Timber desk and chair at a curtained window with open shelving alongside",
-    alt: "Workspace in a 2-bed apartment, F-7, Islamabad — desk set at a curtained window",
+    alt: "Workspace with open shelving alongside — timber desk and chair at a curtained window",
     width: 1880,
     height: 1253,
     pages: [

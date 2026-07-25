@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { ProseBreadcrumb } from "@/components/prose/prose-breadcrumb";
 import {
   ClosingNote,
@@ -157,7 +158,7 @@ export default function AboutPage() {
           <ul className="mt-8 grid grid-cols-1 gap-x-8 gap-y-3 border-t border-hairline pt-5 sm:grid-cols-3">
             {HERO_CLAIMS.map((claim) => (
               <li key={claim} className="text-bodySm font-medium text-primary">
-                {claim}
+                <Num>{claim}</Num>
               </li>
             ))}
           </ul>
@@ -301,8 +302,10 @@ export default function AboutPage() {
               <li key={entry.claim} className={`flex gap-4 ${factRow}`}>
                 <span className="num w-4 shrink-0 text-bodySm text-tertiary">{i + 1}</span>
                 <span>
+                  {/* Claim 8 carries "24/7": every digit run is isolated, or
+                      it reverses under RTL. */}
                   <span className="block text-bodyMd font-semibold text-primary">
-                    {entry.claim}
+                    <Num>{entry.claim}</Num>
                   </span>
                   <span className="mt-1.5 block text-bodySm text-secondary">{entry.note}</span>
                 </span>

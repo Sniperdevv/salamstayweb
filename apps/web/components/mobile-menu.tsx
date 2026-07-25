@@ -4,9 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { duration } from "@salamstay/design-tokens/motion";
+import { headerCtaYields } from "./header-cta";
 import { MenuBars } from "./icons";
 import { LanguageGroup } from "./language-group";
-import { btnBase, btnGhost, btnLg, btnPrimary, focusRing } from "./ui";
+import { btnBase, btnGhost, btnLg, btnOutline, btnPrimary, focusRing } from "./ui";
 
 /**
  * MobileMenu — the header's below-`md` navigation.
@@ -103,6 +104,7 @@ function Row({
 export function MobileMenu() {
   const panelId = `${useId()}-menu`;
   const pathname = usePathname();
+  const ctaYields = headerCtaYields(pathname);
   const root = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -254,8 +256,17 @@ export function MobileMenu() {
                 Log in
               </Link>
             </Row>
+            {/* Same green doctrine as the bar this sheet opens from
+                (`header-cta.ts`): on a route whose body owns the primary CTA,
+                Sign up is outline/ink here too. The sheet covers the page, so
+                only one of the two is ever on screen — but the reader closes it
+                and finds the same control, and a control that changes colour
+                when a panel closes is two controls. */}
             <Row open={open} index={next()}>
-              <Link href="/signup" className={`w-full ${btnBase} ${btnPrimary} ${btnLg}`}>
+              <Link
+                href="/signup"
+                className={`w-full ${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnLg}`}
+              >
                 Sign up
               </Link>
             </Row>

@@ -83,7 +83,7 @@ export function BoltIcon(props: GlyphProps) {
   );
 }
 
-/** Claim 2 — Nikah Nama-verified couples' bookings. */
+/** Claim 2 — Nikah Nama–verified couples' bookings. */
 export function DocumentDateIcon(props: GlyphProps) {
   return (
     <Glyph {...props}>

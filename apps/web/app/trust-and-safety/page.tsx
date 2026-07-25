@@ -97,7 +97,10 @@ export default function TrustAndSafetyPage() {
             path: PATH,
             name: "Trust & safety at SalamStay",
             description:
-              "How SalamStay keeps stays trustworthy: CNIC-verified guests and hosts via NADRA Verisys, Nikah Nama-verified couples' bookings, FRC-verified family bookings, payments held in amanah until check-in, reporting and blocking, trip-safety privacy defaults, guest registration filed with local police, and dispute mediation that hears both sides.",
+              // §5 claim 2 is "Nikah Nama–verified couples' bookings" with a U+2013
+              // EN DASH, and a claim is byte-exact wherever it is claimed — including
+              // inside a JSON-LD description, which is machine-read copy about the page.
+              "How SalamStay keeps stays trustworthy: CNIC-verified guests and hosts via NADRA Verisys, Nikah Nama–verified couples' bookings, FRC-verified family bookings, payments held in amanah until check-in, reporting and blocking, trip-safety privacy defaults, guest registration filed with local police, and dispute mediation that hears both sides.",
             significantLink: [
               "/shariah-policy",
               "/about",
@@ -121,7 +124,9 @@ export default function TrustAndSafetyPage() {
             both sides — <strong>CNIC-verified guests and hosts via NADRA Verisys</strong> — your
             payment is held in <Term>amanah</Term>, a
             trust, until you check in, and every stay carries{" "}
-            <strong>two-way reviews and 24/7 Urdu + English support</strong>. This page explains
+            <strong>
+              two-way reviews and <span className="num">24/7</span> Urdu + English support
+            </strong>. This page explains
             how each of those actually works.
           </p>
 
@@ -284,7 +289,9 @@ export default function TrustAndSafetyPage() {
         <ProseSection id="reporting" heading="Reporting, blocking and support">
           <Prose>
             <p>
-              <strong>Two-way reviews and 24/7 Urdu + English support.</strong> Guests and hosts
+              <strong>
+                Two-way reviews and <span className="num">24/7</span> Urdu + English support.
+              </strong> Guests and hosts
               review each other after a stay, and help is reachable at any hour in either
               language. Reporting and blocking are separate tools, and you never have to justify
               using either one.

@@ -102,15 +102,39 @@ These rules are **imperatives, not suggestions**. When a rule and a visual insti
 - **Indexability:** `index, follow` when active & bookable; **`noindex`** when unlisted, paused, or removed.
 
 ### 3.5 Search results
-- **URL:** `/search?city={city}&…` (canonical points to the clean city/area page, not the query string).
-- **Title:** `Search stays in {City}` (dynamic) — generic when no city.
-- **Meta:** `Browse verified stays in {City}. Filter by no-alcohol, halal kitchen, women-only, prayer space, load-shedding hours, and backup power.`
-- **H1:** `Search results` or `Stays in {City}` when a city is set.
-- **Required blocks:** filter summary → result list (viewport images only, §8) → map (clustered) → pagination or "load more".
+
+> **AMENDED 2026-07-25 (founder ruling), to match shipped gate-justified behaviour.**
+> This section originally let the search shell take the city's own title, H1 and
+> query (`Search stays in {City}` / `Stays in {City}`). **GATE 76 (HARD, S0)**
+> fixes `/search` at `noindex, follow` at every URL it will ever have and names
+> the clean `/stays-in-{city}` page as the indexable surface, and **G13/G69** give
+> that page sole ownership of the "stays in {City}" query. A `noindex` shell
+> that borrows the same title and the same H1 is a second answer to a question
+> one page is supposed to own — so the shell keeps a label of its own and points
+> its canonical away. An extension gate may only tighten; the stricter reading
+> governs, and the amended rules are:
+
+- **URL:** `/search?city={city}&…`.
+- **Canonical:** points **AWAY**, at the site ORIGIN — never at itself and never
+  at the city page. (Next normalises a root-pathname canonical down to the bare
+  origin; the route registry records the form that actually ships, so the G6
+  gate compares like with like.)
+- **Title:** `Search results` — **always**, with or without a city. Not `Search
+  stays in {City}` (G13/G69: the city page owns that phrasing).
+- **Meta:** a generic shell description. No city-specific meta: the description
+  a SERP would show for "stays in {City}" belongs to the city page.
+- **H1:** `Search results` — **always**, with or without a city. Never `Stays in
+  {City}` (G13/G69).
+- **Required blocks:** filter summary → result list (viewport images only, §8) →
+  map (clustered) → pagination or "load more" → **city browse block**, whose six
+  `/stays-in-{city}` anchors are the `follow` half of the contract and this
+  page's entire SEO job.
 - **Heading outline (a11y only — this page is `noindex`):**
-  - `H1: Stays in {City}` (or `Search results` when no city is set)
+  - `H1: Search results`
   - `H2: Filters`
   - `H2: Results`
+  - `H2: Browse stays by city` — an H2, not an H3: the block is a peer of Filters
+    and Results, renders in both states, and is the page's only crawl payload.
 - **Internal links out:** individual listings, city/area pages. **In:** nav search box.
 - **JSON-LD:** none required (results are transient). Do **not** emit `AggregateRating` or per-listing schema here.
 - **Indexability:** **`noindex, follow`** for parameterized/faceted result URLs (avoids index bloat & duplicate/doorway risk). The clean `/stays-in-{city}` page is the indexable surface.

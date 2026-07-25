@@ -37,6 +37,25 @@ export const btnGhost =
   "border-border-default bg-transparent text-primary hover:border-border-strong";
 
 /**
+ * The demoted primary — an OUTLINE/INK button, for the one case where a green
+ * fill would be the second green CTA on the surface.
+ *
+ * TASTE §2 budgets brand green at four roles and exactly ONE primary CTA per
+ * surface, and the header is shared chrome: on a route whose own body owns the
+ * green (the listing's Reserve, the host funnel's submit circle, the 404's
+ * "Go to the SalamStay homepage"), the header CTA yields rather than the page
+ * losing its call. See `site-header.tsx`.
+ *
+ * It is NOT `btnGhost`: Log in is already ghost, and two identical outlines
+ * side by side is a pair with no rank. This one carries `border.strong` at rest
+ * — one border rung above Log in — and answers a pointer by filling to
+ * `bg.raised` rather than by darkening a border it has already spent. Ink label
+ * either way; §2 keeps green off both.
+ */
+export const btnOutline =
+  "border-border-strong bg-transparent text-primary hover:bg-raised";
+
+/**
  * The gray-fill secondary button (TASTE-RULES §5) — ONE component carrying
  * every secondary action on every surface: Show more, Show all N reviews,
  * Message host, Save & exit. If an action is not the surface's single primary

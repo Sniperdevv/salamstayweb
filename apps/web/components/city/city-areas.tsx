@@ -37,14 +37,27 @@ import { shell, rhythm, sectionH2, headingGap } from "@/components/discovery/she
  * false`); the alt text describes what the frame actually shows, never what we
  * wish it showed.
  *
- * The wayfinding entry is NOT one of the tiles. It is not a place you can book,
- * it has no photograph and no link, and drawing it in the media tile's
- * footprint — a 4:3 grey box with a glyph in it — spent a whole photographic
- * slot saying "there is no photograph here". Six cells for five bookable
- * sectors also left the row's last cell reading as a load failure. It is now an
- * open note row under the five tiles: glyph, name, sentence, no frame, the same
- * grammar the homepage's trust rows use. Its full landmark sentence stops being
- * clamped in the process, so nothing is lost and one dead box goes.
+ * The wayfinding entry is NOT one of the tiles, and it is not one of the rows
+ * either. It is not a place you can book, it has no photograph and no link, and
+ * drawing it in the media tile's footprint — a 4:3 grey box with a glyph in it
+ * — spent a whole photographic slot saying "there is no photograph here". Six
+ * cells for five bookable sectors also left the row's last cell reading as a
+ * load failure.
+ *
+ * It now gets a FULL-WIDTH row of its own, under everything else, on ALL SIX
+ * cities (closing review A2). Islamabad landed there first because five tiles
+ * left exactly one row over; the other five cities were putting a
+ * three-sentence landmark list into one cell of a three-column grid beside two
+ * four-word lines, which is the ragged grid the review named. One sentence that
+ * runs the measure is not a grid cell — the row is the only shape that fits it,
+ * and it is the same shape on every city now rather than a consequence of how
+ * many sectors happen to be photographed.
+ *
+ * The landmark glyph rides WITH the note and nowhere else: its job is to say
+ * "this one is not a place you book", which is a distinction only the note
+ * draws. It used to be gated on `tiles.length > 0`, which put it on Islamabad's
+ * note and on none of the other five — the same row, marked on one page and
+ * bare on five.
  */
 
 const mediaFrame = "relative block overflow-hidden rounded-lg border border-hairline";
@@ -66,8 +79,16 @@ const tileLink =
  */
 const tileName = "mt-2.5 truncate text-bodyMd font-semibold text-primary";
 
-/** Two lines, so a longer line stays in the HTML without stretching the row. */
-const tileLine = "mt-1 line-clamp-2 text-caption text-tertiary";
+/**
+ * Two lines, so a longer line stays in the HTML without stretching the row.
+ *
+ * 14, matching `AreaRow`'s line below. It is the SAME FIELD — `area.line` — and
+ * it was set at 12 in the tile and 14 in the row, which meant one city page
+ * printed the same sentence at two sizes depending only on whether a
+ * photograph existed for that sector. §7 also puts 12 below the floor for a
+ * line a reader is expected to read.
+ */
+const tileLine = "mt-1 line-clamp-2 text-bodySm text-tertiary";
 
 /**
  * The photo row's column count follows the number of PHOTOGRAPHED areas, not a
@@ -151,10 +172,10 @@ function AreaTile({
  * six places. A row that has no photograph simply has no photograph: name,
  * one line, open space (§1 — content carries neither shadow nor border).
  *
- * `glyph` is on only when the section ALSO draws photo tiles, i.e. when this
- * row is the odd one out in a photographic row and the mark is saying "this
- * one is not a place you book". On a page where nothing is photographed there
- * is nothing to be odd against, and six identical glyphs would be wallpaper.
+ * `glyph` marks the WAYFINDING NOTE and nothing else. The mark means "this one
+ * is not a place you book", so it belongs to the one entry that answers to that
+ * description; on the sector rows there is nothing for it to distinguish, and
+ * five identical glyphs down a column would be wallpaper.
  */
 function AreaRow({
   area,
@@ -207,13 +228,16 @@ function AreaRow({
 export function CityAreas({ city }: { readonly city: CityContent }) {
   const { areas } = city;
 
-  /* Photographed areas draw tiles; everything else draws an open row, in
-     source order. Islamabad is five tiles plus the wayfinding note; the other
-     five cities are all rows until their sector photography is verified. */
+  /* Three shapes, in this order: photographed areas draw tiles, unphotographed
+     areas draw open rows in a grid, and the ONE declared wayfinding note draws
+     a full-width row of its own beneath both. Islamabad is five tiles + the
+     note; the other five cities are five rows + the note, until their sector
+     photography is verified. */
   const tiles = areas.items.filter(
     (a): a is CityArea & { image: NonNullable<CityArea["image"]> } => Boolean(a.image),
   );
-  const rows = areas.items.filter((a) => !a.image);
+  const rows = areas.items.filter((a) => !a.image && !a.wayfinding);
+  const note = areas.items.find((a) => a.wayfinding);
 
   return (
     <section aria-labelledby="areas-h" className={`${shell} ${rhythm}`}>
@@ -244,10 +268,22 @@ export function CityAreas({ city }: { readonly city: CityContent }) {
         >
           {rows.map((area) => (
             <li key={area.name}>
-              <AreaRow area={area} glyph={tiles.length > 0} />
+              <AreaRow area={area} />
             </li>
           ))}
         </ul>
+      ) : null}
+
+      {/* The note, on its own line, at the reading measure rather than in a
+          grid cell — its sentence is three clauses long and a third of a row is
+          not where a sentence goes. `max-w-[76ch]` is the section intro's own
+          measure, so the two prose runs on this section line up. */}
+      {note ? (
+        <div
+          className={`${tiles.length > 0 || rows.length > 0 ? "mt-6 border-t border-hairline pt-5" : headingGap} max-w-[76ch]`}
+        >
+          <AreaRow area={note} glyph />
+        </div>
       ) : null}
     </section>
   );

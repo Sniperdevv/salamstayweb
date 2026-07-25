@@ -337,10 +337,9 @@ export const termsPage: LegalPageContent = {
         {
           kind: "p",
           text: [
-            bold(
-              "You can export or delete it anytime; your NADRA verification documents stay redacted, always.",
-            ),
-            " Your CNIC is encrypted and used only for verification — hosts and guests never see it.",
+            "You can ",
+            bold("export or delete it anytime"),
+            "; your NADRA verification documents stay redacted, always. Your CNIC is encrypted and used only for verification — hosts and guests never see it.",
           ],
         },
         {
