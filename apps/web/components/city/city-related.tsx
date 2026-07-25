@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
 import { focusRing } from "@/components/ui";
 import type { CityContent } from "@/lib/content/cities/types";
-import { eyebrow, inlineLink, sectionHeading, sectionRule, sectionShell } from "./styles";
+import { eyebrow, inlineLink, sectionHeading, sectionRule, sectionShell } from "@/components/stays/styles";
 
 /**
  * Related links — the card's `.related`: three labelled columns taking the

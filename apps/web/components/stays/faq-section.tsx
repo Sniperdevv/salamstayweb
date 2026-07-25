@@ -1,32 +1,38 @@
-import type { CityContent } from "@/lib/content/cities/types";
-import { QuestionIcon } from "./city-icons";
+import { HelpIcon } from "@/components/icons";
+import type { FaqEntry } from "@/lib/content/stays";
 import { eyebrow, sectionHeading, sectionRule, sectionShell } from "./styles";
 
 /**
- * Frequently asked questions — the card's `.faq`.
+ * Frequently asked questions — the `.faq` block both discovery cards draw.
  *
  * Rendered flat, not as an accordion. Two reasons, in order: the answers are
  * short enough that hiding them buys nothing, and G49 requires the FAQPage
- * markup to match text that is genuinely visible. Both the markup and this
- * list read the same `city.faq.items` array, so "verbatim" is a property of
- * the data, not something a reviewer has to re-check by eye.
+ * markup to match text that is genuinely visible. Both the markup and this list
+ * read the same `items` array, so "verbatim" is a property of the data, not
+ * something a reviewer has to re-check by eye.
  *
  * Questions are `<h3>` under the section's `<h2>`, which is the outline the
- * card draws and the one G78 expects.
+ * cards draw and the one G78 expects.
  */
-export function CityFaq({ city }: { readonly city: CityContent }) {
-  const { faq } = city;
-
+export function FaqSection({
+  eyebrow: label,
+  heading,
+  items,
+}: {
+  readonly eyebrow: string;
+  readonly heading: string;
+  readonly items: readonly FaqEntry[];
+}) {
   return (
     <section aria-labelledby="faq-h" className={sectionRule}>
       <div className={sectionShell}>
-        <p className={eyebrow}>{faq.eyebrow}</p>
+        <p className={eyebrow}>{label}</p>
         <h2 id="faq-h" className={`mt-2 ${sectionHeading}`}>
-          {faq.heading}
+          {heading}
         </h2>
 
         <div className="mt-6 max-w-[76ch]">
-          {faq.items.map((item) => (
+          {items.map((item) => (
             <div
               key={item.question}
               className="border-t border-hairline py-5 first:border-t-0 first:pt-1"
@@ -35,7 +41,7 @@ export function CityFaq({ city }: { readonly city: CityContent }) {
                 {/* The glyph sits in a line-box-tall cell so it optically
                     centres on the first line of a question that wraps. */}
                 <span className="grid h-6 shrink-0 place-items-center">
-                  <QuestionIcon className="size-5 text-interactive" />
+                  <HelpIcon className="size-5 text-interactive" />
                 </span>
                 {item.question}
               </h3>
@@ -50,4 +56,4 @@ export function CityFaq({ city }: { readonly city: CityContent }) {
   );
 }
 
-export default CityFaq;
+export default FaqSection;

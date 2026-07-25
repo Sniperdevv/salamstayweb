@@ -9,8 +9,8 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 | chrome (Header/Footer) | web-header-footer + GW §3.12 footer | done | reviewer: approve-with-fixes → applied (404 title inline, skip-link z-toast, footer comment honesty); motion+tokens+copy verbatim-clean |
 | /404 + /500 | gw-015 / gw-016 | built | contract-clean; KNOWN: Next 15 404 body ships in RSC payload not initial HTML (framework layer; prod static serving expected to resolve) |
 | / | gw-001 | done | review: approve-with-fixes → applied (receipt glyph, reduced-motion dampening across 7 sites, hero crop, lede size, manifest reshuffle) · re-gated 0 HARD |
-| /stays-in-islamabad | gw-002 | gated | 0 HARD · template-shaped (CityContent contract) · route-aware search pill wired · review in flight |
-| /stays-in-islamabad/f-7 | gw-003 | todo | Wave 1 |
+| /stays-in-islamabad | gw-002 | done | review: Block (B1 pill href, B2 reduced-motion, B3 hover shadow) → all fixed + A1 num/A6 easing/BLUE-AREA label · re-gated 0 HARD |
+| /stays-in-islamabad/f-7 | gw-003 | gated | 0 HARD · AreaContent template + shared components/stays layer · typographic hero (all F-7 frames authentic:false) · design-review superseded by the Airbnb-gap redesign plan |
 | /stays-in-islamabad/f-7/is-f7-2bed | gw-004 | todo | Wave 1 · LodgingBusiness only |
 | /search | gw-005 | todo | Wave 1 · noindex,follow |
 | /stays-in-{karachi,lahore,peshawar,faisalabad,rawalpindi} | gw-002 template | todo | Wave 1b · §3.2 bar per city |
@@ -36,6 +36,10 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 |---|---|---|---|
 | W0.5 | 2026-07-25 | Images: 61 localized (14 authentic-city, 30 listing, 10 gallery), ATTRIBUTIONS.md, verify-images.mjs PASS. Chrome+404/500 by frontend-designer (skills: emil-design-eng, design-taste-frontend): ui.ts shared press/focus grammar, IntersectionObserver scroll sentinel, hover behind (hover:hover), .num canon in globals. Token-gaps logged: focusRing unexposed, layout.ts absent from preset, elevationDark never emitted (latent dark bug), no 44px step, no 16px icon, Nastaliq unloaded. DEV SERVER: port 3003 | chrome awaiting review |
 | W0 | 2026-07-25 | Scaffold: Next 15 + tokens preset + theme emitter · route registry (24 pages + 47 stubs) · lib/seo builders (G74 matrix by construction) · robots/sitemap · catch-all stub resolver · validate-pages.mjs (G30/41/42/43/6/4/76/44/74/49/40/37/57/53/5) · dev server live, stub=200, unknown=404 | foundation green |
+
+## LOOP PAUSED (founder-ordered, 2026-07-25)
+
+After gw-003 landed the founder ordered: stop dispatching pages; diagnose the Airbnb gap (our pages read editorial/text-heavy vs inventory-first) with the taste skills in plan mode; improve the existing design language before resuming waves. /search, listing page, Wave 1b–4 all wait on that plan.
 
 ## Parked (founder / follow-up)
 

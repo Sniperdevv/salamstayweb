@@ -4,8 +4,8 @@ import { ArrowRightIcon } from "@/components/icons";
 import { focusRing } from "@/components/ui";
 import { image } from "@/lib/content/image-manifest";
 import type { CityArea, CityContent } from "@/lib/content/cities/types";
-import { LandmarkIcon } from "./city-icons";
-import { eyebrow, inlineLink, sectionHeading, sectionRule, sectionShell, sectionSub } from "./styles";
+import { LandmarkIcon } from "@/components/stays/icons";
+import { eyebrow, inlineLink, sectionHeading, sectionRule, sectionShell, sectionSub } from "@/components/stays/styles";
 
 /**
  * Popular areas — the card's `.arealist`: a two-column hairline-divided list,

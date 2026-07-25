@@ -33,7 +33,7 @@ export interface SiteHeaderProps {
 
 /** The pill is a link, not a button — it still answers a press. */
 const pressablePill =
-  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:active:scale-100";
+  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 const navLink =
   "hidden rounded-md py-3 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary md:inline-flex";
@@ -82,26 +82,54 @@ const CITY_LABELS: Record<string, string> = {
  * marketing, legal and error surfaces do not. Derived from the route so the
  * root layout stays surface-agnostic; an explicit `search` prop still wins.
  */
-function derivePillSummary(pathname: string): string | undefined {
-  if (pathname === "/search") return "Anywhere \u00b7 Any week \u00b7 Add guests";
+interface PillTarget {
+  readonly summary: string;
+  readonly href: string;
+  readonly aria: string;
+}
+
+function derivePill(pathname: string): PillTarget | undefined {
+  if (pathname === "/search")
+    return {
+      summary: "Anywhere \u00b7 Any week \u00b7 Add guests",
+      href: "/search",
+      aria: "Search stays",
+    };
   const m = pathname.match(/^\/stays-in-([a-z-]+)(\/([a-z0-9-]+))?/);
   if (m) {
-    const city = CITY_LABELS[m[1] ?? ""];
+    const slug = m[1] ?? "";
+    const city = CITY_LABELS[slug];
     if (!city) return undefined;
     const area = m[3];
-    const label = area ? `${area.toUpperCase().replace(/-(\d)/, "-$1")}, ${city}` : city;
-    return `${label} \u00b7 Any week \u00b7 Add guests`;
+    const areaLabel = area
+      ? /^[a-z]-\d+$/.test(area)
+        ? area.toUpperCase()
+        : area.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+      : undefined;
+    const label = areaLabel ? `${areaLabel}, ${city}` : city;
+    return {
+      summary: `${label} \u00b7 Any week \u00b7 Add guests`,
+      href: area ? `/search?city=${slug}&area=${area}` : `/search?city=${slug}`,
+      aria: `Search stays in ${area ? `${label}` : city}`,
+    };
   }
   if (pathname.startsWith("/guides/where-to-stay-in-")) {
-    const city = CITY_LABELS[pathname.split("where-to-stay-in-")[1] ?? ""];
-    if (city) return `${city} \u00b7 Any week \u00b7 Add guests`;
+    const slug = pathname.split("where-to-stay-in-")[1] ?? "";
+    const city = CITY_LABELS[slug];
+    if (city)
+      return {
+        summary: `${city} \u00b7 Any week \u00b7 Add guests`,
+        href: `/search?city=${slug}`,
+        aria: `Search stays in ${city}`,
+      };
   }
   return undefined;
 }
 
 export function SiteHeader({ search }: SiteHeaderProps) {
   const pathname = usePathname();
-  const pillSummary = search ?? derivePillSummary(pathname);
+  const pill = derivePill(pathname);
+  const pillSummary = search ?? pill?.summary;
   const sentinel = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -144,7 +172,8 @@ export function SiteHeader({ search }: SiteHeaderProps) {
 
           {pillSummary ? (
             <Link
-              href="/search"
+              href={pill?.href ?? "/search"}
+              aria-label={pill?.aria ?? "Search stays"}
               className={`mx-auto hidden h-12 max-w-md flex-1 items-center gap-3 rounded-full border border-border-default bg-canvas pl-5 pr-2 shadow-subtle md:flex ${focusRing} ${pressablePill}`}
             >
               <SearchIcon className="size-5 shrink-0 text-secondary" />

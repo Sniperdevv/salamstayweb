@@ -1,7 +1,7 @@
+import { FaqSection } from "@/components/stays/faq-section";
 import { JsonLdScript, faqPage, itemList } from "@/lib/seo/jsonld";
 import type { CityContent } from "@/lib/content/cities/types";
 import { CityAreas } from "./city-areas";
-import { CityFaq } from "./city-faq";
 import { CityHero } from "./city-hero";
 import { CityFilters, CityNotes } from "./city-practical";
 import { CityRelated } from "./city-related";
@@ -51,7 +51,7 @@ export function CityLandingPage({ city }: { readonly city: CityContent }) {
         <CityStays city={city} />
         <CityNotes city={city} />
         <CityFilters city={city} />
-        <CityFaq city={city} />
+        <FaqSection eyebrow={city.faq.eyebrow} heading={city.faq.heading} items={city.faq.items} />
         <CityRelated city={city} />
       </main>
     </>

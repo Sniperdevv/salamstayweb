@@ -56,6 +56,16 @@ export function ArrowRightIcon(props: GlyphProps) {
   );
 }
 
+/** Back / up-a-level. The gw-003 mirror of `ArrowRightIcon`. */
+export function ArrowLeftIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.bold} {...props}>
+      <path d="M19 12H5" />
+      <path d="M11 18l-6-6 6-6" />
+    </Glyph>
+  );
+}
+
 export function ChevronRightIcon(props: GlyphProps) {
   return (
     <Glyph stroke={iconStroke.bold} {...props}>

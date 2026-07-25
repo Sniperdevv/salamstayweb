@@ -20,32 +20,23 @@
  */
 
 import type { ImageId } from "@/lib/content/image-manifest";
+import type {
+  AttributeIcon,
+  FaqEntry,
+  RelatedLink,
+  RichText,
+  StayCardContent,
+} from "@/lib/content/stays";
 
 /**
- * A run of copy where one phrase carries primary ink. The card's answer-first
- * intro sets its registry claims in `<strong>`; this is that, as data.
+ * The vocabulary this model shares with the area template lives in
+ * `lib/content/stays.ts` and is re-exported here so a city content file still
+ * has one import.
  */
-export interface Emphasis {
-  readonly strong: string;
-}
-export type RichText = readonly (string | Emphasis)[];
+export type { Emphasis, RichText, AttributeIcon, RelatedLink } from "@/lib/content/stays";
 
 /** Quick-facts strip glyphs (card §hero `.facts`). */
 export type FactIcon = "season" | "transit" | "areas" | "price";
-
-/**
- * Cultural / practical attribute glyphs. The set is closed: these are the
- * corpus attributes, and a listing badge or filter chip may only be one of
- * them. Labels live with the icon map, not in city content, so "Halal kitchen"
- * reads identically on all six city pages.
- */
-export type AttributeIcon =
-  | "halal-kitchen"
-  | "no-alcohol"
-  | "backup-power"
-  | "prayer-space"
-  | "women-only"
-  | "family-friendly";
 
 /** Practical-notes glyphs (card §Practical notes). */
 export type NoteIcon = "power" | "transit" | "weather";
@@ -72,24 +63,8 @@ export interface CityArea {
   readonly image?: ImageId;
 }
 
-export interface CityStay {
-  /** Listing route. Must be registry-resolvable (G37). */
-  readonly href: string;
-  readonly title: string;
-  /** Short area label shown over the photograph, e.g. "F-6". */
-  readonly areaPin: string;
-  /** Full location line under the title, e.g. "F-6, Islamabad". */
-  readonly location: string;
-  readonly image: ImageId;
-  /** Attribute pills, in card order. No ratings, no review counts. */
-  readonly attributes: readonly AttributeIcon[];
-  /**
-   * Name for the ItemList JSON-LD entry. Carried explicitly because schema
-   * names the stay AND its city ("… — F-6, Islamabad") while the visible card
-   * splits the two across title and location line.
-   */
-  readonly schemaName: string;
-}
+/** A featured-stay tile. Same object the area template lists (`StayCardContent`). */
+export type CityStay = StayCardContent;
 
 export interface CityNote {
   readonly icon: NoteIcon;
@@ -104,15 +79,7 @@ export interface CityFilter {
 }
 
 /** Question and answer, rendered visibly AND as FAQPage from this one source. */
-export interface CityFaq {
-  readonly question: string;
-  readonly answer: string;
-}
-
-export interface RelatedLink {
-  readonly href: string;
-  readonly label: string;
-}
+export type CityFaq = FaqEntry;
 
 export interface RelatedColumn {
   readonly heading: string;

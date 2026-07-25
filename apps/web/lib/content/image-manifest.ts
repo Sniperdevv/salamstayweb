@@ -307,11 +307,7 @@ export const IMAGES = {
     alt: "Sector road with street lighting, F-7, Islamabad — pines set back behind the kerb",
     width: 1342,
     height: 1300,
-    pages: [
-      "/stays-in-islamabad",
-      "/stays-in-islamabad/f-7",
-      "/guides/where-to-stay-in-islamabad",
-    ],
+    pages: ["/stays-in-islamabad"],
     credit: "Ali Hamza Tullah",
     category: "area",
     authentic: false,
