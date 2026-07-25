@@ -74,6 +74,48 @@ export function ChevronRightIcon(props: GlyphProps) {
   );
 }
 
+/** Mirror of ChevronRightIcon — the rail's previous control. */
+export function ChevronLeftIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.bold} {...props}>
+      <path d="M15 6l-6 6 6 6" />
+    </Glyph>
+  );
+}
+
+/**
+ * Wishlist heart, drawn with the corpus path (ga-016 §Wishlist heart). Outline
+ * only: SalamStay has no signed-in state on the web yet, so the filled/saved
+ * variant has nothing true to render.
+ */
+export function HeartIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.bold} {...props}>
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+    </Glyph>
+  );
+}
+
+/**
+ * Hamburger / close morph for the mobile menu. Three bars that rotate into an
+ * X — the animation lives in `mobile-menu.tsx` because it is a transform on
+ * three DOM nodes, not a path morph.
+ */
+export function MenuBars({ open }: { readonly open: boolean }) {
+  // 20 × 14 box, three 2px bars on a 6px pitch: centres at 1 / 7 / 13, so the
+  // outer two need exactly `translate-y-1.5` (6px) to land on the middle one
+  // before they rotate. Transform only — nothing here animates layout.
+  const bar =
+    "absolute inset-x-0 h-0.5 origin-center rounded-full bg-primary transition-transform duration-fast ease-decelerate motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
+  return (
+    <span aria-hidden="true" className="relative block h-3.5 w-5">
+      <span className={`${bar} top-0 ${open ? "translate-y-1.5 rotate-45" : ""}`} />
+      <span className={`${bar} top-1.5 ${open ? "scale-x-0" : ""}`} />
+      <span className={`${bar} bottom-0 ${open ? "-translate-y-1.5 -rotate-45" : ""}`} />
+    </span>
+  );
+}
+
 export function PinIcon(props: GlyphProps) {
   return (
     <Glyph stroke={iconStroke.thin} {...props}>

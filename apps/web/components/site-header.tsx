@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SearchIcon } from "./icons";
+import { LanguageGroup } from "./language-group";
+import { MobileMenu } from "./mobile-menu";
 import { btnBase, btnGhost, btnMd, btnPrimary, focusRing, gutter } from "./ui";
 
 /**
@@ -37,36 +39,6 @@ const pressablePill =
 
 const navLink =
   "hidden rounded-md py-3 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary md:inline-flex";
-
-/**
- * v1 language control. `/ur` does not exist yet, so اردو is a plain span rather
- * than a dead link — the corpus' EN/اردو affordance without a promise the
- * router cannot keep. EN is the active language on every shipped route.
- */
-function LanguageGroup({ className = "" }: { readonly className?: string }) {
-  return (
-    <span
-      role="group"
-      aria-label="Language"
-      className={`items-center overflow-hidden rounded-full border border-border-default ${className}`}
-    >
-      <span
-        lang="en"
-        aria-current="true"
-        className="flex items-center bg-interactive px-3 py-2 text-label font-semibold leading-none text-on-brand"
-      >
-        EN
-      </span>
-      <span
-        lang="ur"
-        className="flex items-center px-3 py-2 font-urdu text-label leading-none text-secondary"
-      >
-        اردو
-      </span>
-    </span>
-  );
-}
-
 
 const CITY_LABELS: Record<string, string> = {
   islamabad: "Islamabad",
@@ -194,13 +166,24 @@ export function SiteHeader({ search }: SiteHeaderProps) {
 
             <LanguageGroup className="hidden md:inline-flex" />
 
-            <Link href="/login" className={`${btnBase} ${btnGhost} ${btnMd}`}>
+            {/* Below `md` the auth pair would leave a 375px bar with no room
+                for anything else, so Log in moves into the menu and Sign up —
+                the primary action — stays on the bar. Both are in the menu too;
+                a duplicated sign-up entry costs nothing and a missing one costs
+                a signup. */}
+            <Link href="/login" className={`hidden md:inline-flex ${btnBase} ${btnGhost} ${btnMd}`}>
               Log in
             </Link>
             <Link href="/signup" className={`${btnBase} ${btnPrimary} ${btnMd}`}>
               Sign up
             </Link>
           </nav>
+
+          {/* Sibling of the primary nav, not a child: the menu contains its own
+              labelled <nav>, and nesting one inside the other would give
+              assistive tech two navigation landmarks describing the same set of
+              destinations at two different breakpoints. */}
+          <MobileMenu />
         </div>
       </header>
     </>

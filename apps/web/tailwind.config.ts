@@ -1,13 +1,15 @@
 import type { Config } from "tailwindcss";
 import { tailwindPreset } from "@salamstay/design-tokens/tailwind-preset";
 import { container, zIndex } from "@salamstay/design-tokens/layout";
+import { scrim } from "@salamstay/design-tokens/backgrounds";
+import { spaceBase } from "@salamstay/design-tokens/spacing";
 
 /**
  * The shared preset maps color / type / spacing / radii / elevation / motion.
- * It does NOT yet map `layout.ts`, so container widths (`max-w-page`,
- * `max-w-wide`) and the z-index ladder (`z-header`) are bridged here — still
- * token-sourced, never a literal. Fold this into the package preset when a
- * second app needs it.
+ * It does NOT yet map `layout.ts` or `backgrounds.ts`, so container widths
+ * (`max-w-page`, `max-w-wide`), the z-index ladder (`z-header`) and the overlay
+ * scrim are bridged here — still token-sourced, never a literal. Fold these
+ * into the package preset when a second app needs them.
  */
 const maxWidth = Object.fromEntries(
   Object.entries(container).map(([k, v]) => [k, typeof v === "number" ? `${v}px` : v]),
@@ -16,6 +18,24 @@ const maxWidth = Object.fromEntries(
 const zIndexScale = Object.fromEntries(
   Object.entries(zIndex).map(([k, v]) => [k, String(v)]),
 );
+
+/**
+ * Overlay scrim, from `backgrounds.scrim`. Alpha-only, so it dims whatever sits
+ * underneath: the sheet backdrop dims the page, the wishlist bubble dims the
+ * photograph behind the glyph. Both themes are exposed because the sheet
+ * backdrop flips with the theme; media overlays pair `bg-scrim dark:bg-scrim-dark`
+ * the same way so one scrim role covers both uses.
+ */
+const scrimColors = { scrim: scrim.light, "scrim-dark": scrim.dark };
+
+/**
+ * Rail item width. A horizontally-scrolling rail cannot use a fluid card: the
+ * constant width is exactly what decides how much of the next card peeks past
+ * the gutter, and that peek is the affordance that says "this scrolls". 184 is
+ * the corpus `.lcard` measure (ga-016 §Listing card) and lands on the 4px
+ * spacing grid at 46 steps, so it is derived from `spaceBase`, not typed in.
+ */
+const railWidth = { "rail-card": `${spaceBase * 46}px` };
 
 const config: Config = {
   presets: [tailwindPreset as unknown as Config],
@@ -32,6 +52,8 @@ const config: Config = {
     extend: {
       maxWidth,
       zIndex: zIndexScale,
+      colors: scrimColors,
+      width: railWidth,
     },
   },
 };
