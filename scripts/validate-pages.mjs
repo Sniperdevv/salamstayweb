@@ -57,6 +57,10 @@ const SCHEMA_MATRIX = {
   "/legal/editorial-policy": ["BreadcrumbList"],
   "/legal/corrections": ["BreadcrumbList"],
   "/authors/salamstay-editorial": ["BreadcrumbList", "ProfilePage"],
+  // The help hub (SEO-RULES §3.10). BreadcrumbList only: the hub is an index of
+  // topics, so there is no Article to describe and no genuine multi-Q&A block,
+  // which is the only thing that would license FAQPage (G49/G72).
+  "/help": ["BreadcrumbList"],
   "/help/cantonment-stays": ["BreadcrumbList", "Article"],
 };
 
@@ -114,7 +118,35 @@ const attr = (tag, name) => {
   return m ? m[1] : null;
 };
 
-const stripTags = (html) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+/**
+ * HTML character references → the characters they stand for.
+ *
+ * Serving `&` inside a <title> as `&amp;`, or `"` inside body text as `&quot;`,
+ * is not a defect — it is what the HTML spec requires and what React emits. But
+ * every comparison below is against a JS string that holds the real character:
+ * the registry's title ("Trust & safety — SalamStay"), or a JSON-LD value that
+ * `JSON.parse` has already unescaped. Comparing an escaped document against an
+ * unescaped expectation fails on correct output, so the document is decoded
+ * first and the two sides are compared like with like.
+ *
+ * Decoding runs AFTER tag-stripping, never before: `&lt;script&gt;` in visible
+ * copy must not become a tag on the way through.
+ */
+const decodeEntities = (s) =>
+  s
+    .replace(/&(?:#(\d+)|#[xX]([0-9a-fA-F]+)|(lt|gt|quot|apos|nbsp|amp));/g, (m, dec, hex, name) => {
+      if (dec) return String.fromCodePoint(Number(dec));
+      if (hex) return String.fromCodePoint(parseInt(hex, 16));
+      return { lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", amp: "&" }[name] ?? m;
+    })
+    // ONE pass, deliberately: `&amp;quot;` is a document that literally shows
+    // "&quot;", and a second pass would turn it into a quote mark that is not
+    // on the page. ` ` collapses here too, so an nbsp in visible copy
+    // still matches a plain space in a schema string.
+    .replace(/\s+/g, " ")
+    .trim();
+
+const stripTags = (html) => decodeEntities(html.replace(/<[^>]+>/g, " "));
 
 const collectTypes = (node, out) => {
   if (Array.isArray(node)) return node.forEach((n) => collectTypes(n, out));
@@ -164,7 +196,7 @@ for (const route of routesToCheck) {
   }
 
   // ——— G41/G42: title + description ———
-  const title = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "").trim();
+  const title = decodeEntities(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "");
   if (!title) fail(route, "G41", "missing <title>");
   else {
     if (seenTitles.has(title)) fail(route, "G41", `title duplicates ${seenTitles.get(title)}`);
