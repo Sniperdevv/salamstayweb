@@ -156,6 +156,16 @@ export interface ThemeColors {
     readonly linkOnInverse: string;
     readonly subtle: string;
     readonly subtleHover: string;
+    /**
+     * The "this one is chosen" fill for a control inside a set: the picked date
+     * in a calendar, the active segment of a filter, a selected chip. Ink, not
+     * brand — brand already means "act on this", and a grid where every chosen
+     * cell shouts the primary-action color has no primary action left. Always
+     * paired with `selectedFg`.
+     */
+    readonly selectedFill: string;
+    /** Label on `selectedFill`. AA against it in the active theme. */
+    readonly selectedFg: string;
     readonly focusRing: string;
   };
   readonly border: {
@@ -221,6 +231,10 @@ const lightTheme = {
     subtle: brandRamp[50],
     /** Tinted subtle brand background, hovered. */
     subtleHover: brandRamp[100],
+    /** Selected-state fill — slate-900 ink (white on it = 15.8:1). */
+    selectedFill: slateRamp[900],
+    /** Label on the selected fill. */
+    selectedFg: slateRamp[0],
     /** Focus ring — brand, AA 3:1 as a UI boundary. */
     focusRing: brandRamp[600],
   },
@@ -294,6 +308,13 @@ const darkTheme = {
     linkOnInverse: brandRamp[700],
     subtle: "#16231F",
     subtleHover: "#1B2C27",
+    /**
+     * Selected-state fill, inverted for dark: slate-100 is the near-white that
+     * reads as "filled" against the dark canvas the way slate-900 does against
+     * white. slate-900 ink on it = 15.2:1.
+     */
+    selectedFill: slateRamp[100],
+    selectedFg: slateRamp[900],
     focusRing: brandRamp[400],
   },
   border: {

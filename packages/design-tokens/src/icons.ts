@@ -3,12 +3,18 @@
  *
  * Line icons only, Lucide-style: 1.5–2px stroke, rounded joins/caps, on a 24
  * grid. This layer defines *sizing and stroke tokens only* — no glyphs. The
- * two-size system (20 dense / 24 default) keeps optical weight consistent: the
- * stroke thins slightly at the smaller size so both read as the same family.
+ * size system (16 micro / 20 dense / 24 default) keeps optical weight
+ * consistent: the stroke thins at the smaller sizes so all read as one family.
  */
 
 /** Icon box sizes in px. */
 export const iconSize = {
+  /**
+   * micro: chevrons and carets riding inside a text run — a breadcrumb
+   * separator, the disclosure arrow on an inline link. At 20 a chevron next to
+   * 13px label text outweighs the text it belongs to.
+   */
+  xs: 16,
   /** dense contexts: inline-with-text, compact toolbars. */
   sm: 20,
   /** default: buttons, nav, list rows. */
@@ -38,6 +44,7 @@ export const iconLineStyle = {
  * than choosing a stroke ad hoc, so a 20px icon never ships with a 2px stroke.
  */
 export const iconPairing = {
+  xs: { size: iconSize.xs, stroke: iconStroke.thin },
   sm: { size: iconSize.sm, stroke: iconStroke.thin },
   md: { size: iconSize.md, stroke: iconStroke.regular },
   lg: { size: iconSize.lg, stroke: iconStroke.regular },

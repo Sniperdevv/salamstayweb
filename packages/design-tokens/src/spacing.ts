@@ -6,7 +6,7 @@
  * one-off gaps. The scale is intentionally sparse at the top (32→96 in large
  * jumps) because layout rhythm should feel deliberate, not continuous.
  *
- * Values (px): 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96.
+ * Values (px): 0, 4, 8, 12, 16, 20, 24, 32, 40, 44, 48, 64, 80, 96.
  */
 
 /** The base unit, in px. Every space token is an integer multiple of this. */
@@ -27,6 +27,13 @@ export const space = {
   6: { px: 24, rem: 1.5 },
   8: { px: 32, rem: 2 },
   10: { px: 40, rem: 2.5 },
+  /**
+   * The touch-target step. 44px is the minimum comfortable hit area on both
+   * platforms (Apple HIG 44pt, Material 48dp with a 44 floor once the visual
+   * bounds are inset), so `size-11` / `min-h-11` is how a control declares it is
+   * tappable — not a rounded-up `10` and not an arbitrary `h-[44px]`.
+   */
+  11: { px: 44, rem: 2.75 },
   12: { px: 48, rem: 3 },
   16: { px: 64, rem: 4 },
   20: { px: 80, rem: 5 },
@@ -45,13 +52,23 @@ export const layoutSpace = {
   /** Default padding inside compact controls (chips, inputs). */
   controlPadding: space[3],
   /** Default padding inside a card/surface. */
-  cardPadding: space[5],
+  cardPadding: space[6],
+  /** Padding inside a large/feature card, where 24 reads cramped. */
+  cardPaddingLg: space[8],
   /** Vertical rhythm between stacked content blocks. */
   stack: space[4],
   /** Vertical rhythm between major sections. */
   section: space[12],
   /** Screen edge gutter on mobile. */
   screenGutter: space[4],
+  /**
+   * Screen edge gutter from the `md` breakpoint up. The mobile 16 is a
+   * concession to a 360px viewport; holding it at 1280 leaves the content
+   * pinned to the glass.
+   */
+  gutterDesktop: space[12],
+  /** Screen edge gutter on wide (≥ `2xl`) viewports. */
+  gutterWide: space[20],
 } as const;
 
 export type SpaceScale = typeof space;

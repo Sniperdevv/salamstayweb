@@ -76,13 +76,19 @@ export type {
   LayoutTokens,
 } from "./layout.js";
 
-export { elevation, elevationLight, elevationDark } from "./elevation.js";
+export {
+  elevation,
+  elevationLight,
+  elevationDark,
+  dropShadow,
+} from "./elevation.js";
 export type {
   ShadowLayer,
   NativeShadow,
   ElevationLevel,
   ElevationLightTokens,
   ElevationTokens,
+  DropShadowTokens,
 } from "./elevation.js";
 
 export {
@@ -109,6 +115,7 @@ export type { IconSizeTokens, IconTokens } from "./icons.js";
 
 export {
   tailwindPreset,
+  cssVariables,
   default as tailwindPresetDefault,
 } from "./tailwind-preset.js";
 export type { TailwindPreset } from "./tailwind-preset.js";

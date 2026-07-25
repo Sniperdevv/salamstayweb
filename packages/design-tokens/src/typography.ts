@@ -61,11 +61,18 @@ export const fontSize = {
   h2: 34,
   h1: 40,
   display: 52,
+  displayLg: 64,
 } as const;
 
 /** Line-height tokens as unitless multipliers (Latin). */
 export const lineHeight = {
   none: 1,
+  /**
+   * For `displayLg` only. Leading is a ratio, so 1.2 that looks right at 16px
+   * opens a 13px trench between lines at 64px. 1.05 keeps a two-line hero
+   * reading as one object.
+   */
+  display: 1.05,
   tight: 1.2,
   snug: 1.32,
   normal: 1.5,
@@ -104,6 +111,23 @@ const px = (n: number): number => n / 16;
  * raw sizes. `rem` is precomputed off a 16px root for the web presets.
  */
 export const textStyle = {
+  /**
+   * FUNNEL HEROES ONLY — the one line at the top of a marketing or conversion
+   * page. Not for an indexable page's H1: those answer a query and get read at
+   * a glance in a SERP-shaped mindset, and 64px turns a five-word answer into a
+   * billboard. Not for section headings ever, at any breakpoint. If a screen
+   * has two of these, one of them is wrong; the second is `display`.
+   *
+   * Ships at 700 with `tighter` tracking because optical sizing is manual here:
+   * Inter's default spacing is drawn for text, and at 64px it looks loose.
+   */
+  displayLg: {
+    fontSize: fontSize.displayLg,
+    rem: px(fontSize.displayLg),
+    lineHeight: lineHeight.display,
+    fontWeight: fontWeight.bold,
+    letterSpacing: letterSpacing.tighter,
+  },
   display: {
     fontSize: fontSize.display,
     rem: px(fontSize.display),

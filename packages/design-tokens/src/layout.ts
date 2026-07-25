@@ -37,6 +37,13 @@ export const overlaySize = {
   dialogSm: 400,
   dialogMd: 520,
   dialogLg: 680,
+  /**
+   * The widest dialog the system allows — for a dialog that carries a real
+   * layout rather than a message: a two-column date picker, a photo gallery, a
+   * map-plus-list. Past this width a dialog stops reading as an overlay and
+   * should be a route.
+   */
+  dialogXl: 840,
   sheetGrabberW: 36,
   sheetGrabberH: 4,
 } as const;

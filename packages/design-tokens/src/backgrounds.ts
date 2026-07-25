@@ -55,10 +55,21 @@ export const skeleton = {
 /**
  * A translucent scrim for overlays (behind modals/sheets). Alpha-only so it
  * dims whatever theme is underneath.
+ *
+ * `subtle` is the second, quieter job the same role has to do: a gradient foot
+ * under text laid on a photograph, or the wash that lets a white control hold
+ * its edge on a bright image. At 0.44 that reads as a dismissible backdrop and
+ * kills the photo; 0.18 buys legibility without the image looking switched off.
+ * Modal backdrops keep the full weight — there the point IS "the page behind is
+ * out of play".
  */
 export const scrim = {
   light: "rgba(16, 25, 27, 0.44)",
   dark: "rgba(0, 0, 0, 0.6)",
+  subtle: {
+    light: "rgba(16, 25, 27, 0.18)",
+    dark: "rgba(0, 0, 0, 0.28)",
+  },
 } as const;
 
 /** The composed backgrounds token tree. */
