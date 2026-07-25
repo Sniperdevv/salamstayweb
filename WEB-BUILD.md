@@ -1,0 +1,43 @@
+# WEB-BUILD.md — GW cards → Next.js build ledger
+
+Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` gates (HARD blocks) → `design-reviewer` audits vs card → fix → flip → commit. Localhost only until founder approval.
+
+## Ledger
+
+| Route | Card | Status | Notes |
+|---|---|---|---|
+| chrome (Header/Footer) | web-header-footer + GW §3.12 footer | built | awaiting design-reviewer; scrolled=elevation swap; lang group linkless (no /ur) |
+| /404 + /500 | gw-015 / gw-016 | built | contract-clean; KNOWN: Next 15 404 body ships in RSC payload not initial HTML (framework layer; prod static serving expected to resolve) |
+| / | gw-001 | todo | Wave 1 |
+| /stays-in-islamabad | gw-002 | todo | Wave 1 |
+| /stays-in-islamabad/f-7 | gw-003 | todo | Wave 1 |
+| /stays-in-islamabad/f-7/is-f7-2bed | gw-004 | todo | Wave 1 · LodgingBusiness only |
+| /search | gw-005 | todo | Wave 1 · noindex,follow |
+| /stays-in-{karachi,lahore,peshawar,faisalabad,rawalpindi} | gw-002 template | todo | Wave 1b · §3.2 bar per city |
+| /trust-and-safety | gw-006 | todo | Wave 2 |
+| /shariah-policy | gw-007 | todo | Wave 2 · real `<table>` matrix |
+| /about | gw-008 | todo | Wave 2 |
+| /become-a-host | ha-001 | todo | Wave 2 |
+| /guides/where-to-stay-in-islamabad | gw-009 | todo | Wave 2 |
+| /legal/terms | gw-010 | todo | Wave 3 |
+| /legal/privacy | gw-011 | todo | Wave 3 |
+| /legal/guest-refund-policy | gw-012 | todo | Wave 3 |
+| /legal/community-standards | gw-013 | todo | Wave 3 |
+| /legal/cookie-policy (+ consent banner) | gw-014 | todo | Wave 3 |
+| /legal/editorial-policy | gw-017 | todo | Wave 4 |
+| /legal/corrections | gw-018 | todo | Wave 4 |
+| /authors/salamstay-editorial | gw-019 | todo | Wave 4 |
+| /help/cantonment-stays + /help hub | gw-020 | todo | Wave 4 · flat route |
+| image manifest + sourcing | Wave 0.5 | done | 61 files 22.6MB · verifier PASS · 47 authentic:false stand-ins flagged · UNCOVERED_SUBJECTS = commissioned-photo list |
+
+## Pass log
+
+| Pass | Date | Scope | Result |
+|---|---|---|---|
+| W0.5 | 2026-07-25 | Images: 61 localized (14 authentic-city, 30 listing, 10 gallery), ATTRIBUTIONS.md, verify-images.mjs PASS. Chrome+404/500 by frontend-designer (skills: emil-design-eng, design-taste-frontend): ui.ts shared press/focus grammar, IntersectionObserver scroll sentinel, hover behind (hover:hover), .num canon in globals. Token-gaps logged: focusRing unexposed, layout.ts absent from preset, elevationDark never emitted (latent dark bug), no 44px step, no 16px icon, Nastaliq unloaded. DEV SERVER: port 3003 | chrome awaiting review |
+| W0 | 2026-07-25 | Scaffold: Next 15 + tokens preset + theme emitter · route registry (24 pages + 47 stubs) · lib/seo builders (G74 matrix by construction) · robots/sitemap · catch-all stub resolver · validate-pages.mjs (G30/41/42/43/6/4/76/44/74/49/40/37/57/53/5) · dev server live, stub=200, unknown=404 | foundation green |
+
+## Deviations from spec (documented)
+
+- next-intl/[locale] deferred to the real-Urdu milestone — EN-only v1, hreflang omitted entirely per SEO-RULES §4 (missing counterpart ⇒ no tag).
+- Title template not used — card titles are absolute and already branded.
