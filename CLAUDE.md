@@ -7,6 +7,13 @@ Opus is the default model for the session and all dispatched agent work. Fable 5
 Responses focused, brief, concise; substance-first. High-level summaries unless depth is asked. Documents sized to the task. Deliver at intended scope; routine judgment calls self-made; flag a mistaken request in one sentence then proceed as asked. Finish fully. Delegate only large, genuinely independent parallel work; never to verify your own work; one agent over several.
 
 ## This repo is the design home
+
+**`TASTE-RULES.md` is the binding craft bar** (distilled from the founder's
+Airbnb reference set in `../../airbnb taste/`): elevation law, green-rarity (4
+roles), ink-fill selection, underline-at-rest, the gray-fill secondary button,
+type discipline, imagery law, anatomy recipes. Builders build BY it; reviewers
+audit AGAINST it; it wins over generic skill advice; SalamStay honesty law wins
+over it.
 - `DESIGN.md` — canonical design handoff. `SCREENS.md` — 226-row registry + §7.3 audit log. `CLAUDE-DESIGN-HANDOFF.md` — mechanics + the NEVERS.
 - `design-system/` — approved cards; every UI built here must match its card. Consume tokens by role from `packages/design-tokens` — never hard-code a hex/px/ms.
 - `SEO-RULES.md` + `gates/semantic-seo/` — binding for every indexable page; HARD gates block merge. The claims registry (§5) is verbatim-only; scope changes are founder-only.

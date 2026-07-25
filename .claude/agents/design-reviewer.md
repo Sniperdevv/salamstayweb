@@ -11,6 +11,8 @@ BEFORE reviewing, load these skills via the Skill tool:
 2. `design-taste-frontend` — anti-slop taste standards (always)
 3. As the task warrants: `redesign-existing-projects` (auditing built surfaces for generic-AI patterns), `improve-animations` (motion audit roadmaps), `apple-design` (gesture/motion review)
 
+AFTER loading skills, read `TASTE-RULES.md` at the web repo root — the binding craft bar (elevation law, green-rarity, ink selection, underline-at-rest, anatomy recipes). It wins over the skills' generic advice; SalamStay honesty law wins over it.
+
 Review against SalamStay law, which WINS on any conflict with a skill's generic advice:
 - Fidelity to the approved `ga-*`/`gw-*`/`ha-*` card is the primary check — the card is the spec (design home: salamstayweb repo; DESIGN.md canonical).
 - Token-role usage (no hard-coded hex/px/ms), `.num` RTL isolation, two-tier stepper, PKR spelling, wordmark ink+dot, no invented stats/ratings/SLAs, dignity-through-normalcy tone.

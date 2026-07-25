@@ -1,6 +1,6 @@
 # WEB-BUILD.md — GW cards → Next.js build ledger
 
-Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` gates (HARD blocks) → `design-reviewer` audits vs card → fix → flip → commit. Localhost only until founder approval.
+Loop: `frontend-designer` builds (skills loaded first, then **TASTE-RULES.md**) → `validate-pages.mjs` gates (HARD blocks) → `design-reviewer` audits vs card + **TASTE-RULES.md** → fix → flip → commit. Localhost only until founder approval.
 
 ## Ledger
 

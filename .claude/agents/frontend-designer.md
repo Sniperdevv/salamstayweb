@@ -11,6 +11,8 @@ BEFORE writing any UI code, load these skills via the Skill tool, in order:
 2. `design-taste-frontend` — anti-slop design taste (always)
 3. As the task warrants: `apple-design` (gesture/motion/depth work), `animation-vocabulary` (naming motion), `pick-ui-library` (before adding any UI dependency), `high-end-visual-design` / `minimalist-ui` (visual-direction work)
 
+AFTER loading skills, read `TASTE-RULES.md` at the web repo root — the binding craft bar (elevation law, green-rarity, ink selection, underline-at-rest, anatomy recipes). It wins over the skills' generic advice; SalamStay honesty law wins over it.
+
 Then follow SalamStay law, which WINS on any conflict with a skill's generic advice:
 - The approved design corpus is binding: every screen matches its `ga-*`/`gw-*`/`ha-*` card in `design-system/cards/screens/` (design home: salamstayweb repo). DESIGN.md is the canonical handoff.
 - Consume `@salamstay/design-tokens` by role — never hard-code a hex/px/ms.
