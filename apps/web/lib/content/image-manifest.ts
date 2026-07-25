@@ -84,7 +84,7 @@ export const IMAGES = {
     alt: "Rawal Lake at sunset, Islamabad — Margalla foothills along the far shore",
     width: 1880,
     height: 1253,
-    pages: ["/", "/stays-in-islamabad"],
+    pages: ["/stays-in-islamabad", "/guides/where-to-stay-in-islamabad"],
     credit: "Ashraf Hussain",
     category: "city",
     authentic: true,
@@ -96,12 +96,7 @@ export const IMAGES = {
     alt: "Expressway and tower blocks, Blue Area, Islamabad — planted sector grid on both sides",
     width: 1880,
     height: 1251,
-    pages: [
-      "/",
-      "/stays-in-islamabad",
-      "/stays-in-islamabad/blue-area",
-      "/guides/where-to-stay-in-islamabad",
-    ],
+    pages: ["/", "/stays-in-islamabad"],
     credit: "iram shehzad",
     category: "city",
     authentic: true,
@@ -155,7 +150,7 @@ export const IMAGES = {
     alt: "Main road at rush hour, Karachi — flags strung along the central median",
     width: 1880,
     height: 1253,
-    pages: ["/stays-in-karachi"],
+    pages: ["/", "/stays-in-karachi"],
     credit: "Tahamie Farooqui",
     category: "city",
     authentic: true,
@@ -989,8 +984,16 @@ export const CITY_CARDS = {
   rawalpindi: "rawalpindi-truck-art-street",
 } as const satisfies Record<string, ImageId>;
 
-/** City-page heroes. Same frames as the homepage cards, cropped larger. */
-export const CITY_HEROES = CITY_CARDS;
+/**
+ * City-page heroes — independent of the homepage identity cards since the
+ * review reshuffle (the homepage identity for Islamabad is the sector aerial;
+ * the city page leads with the lake vista so the Blue Area thumb never
+ * repeats a frame on the same page).
+ */
+export const CITY_HEROES = {
+  ...CITY_CARDS,
+  islamabad: "islamabad-rawal-lake-sunset",
+} as const satisfies Record<string, ImageId>;
 
 /** Homepage guide cards (gw-001 §GUIDES), in card order. */
 export const GUIDE_CARDS = {

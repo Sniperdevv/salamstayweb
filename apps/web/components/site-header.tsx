@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { SearchIcon } from "./icons";
 import { btnBase, btnGhost, btnMd, btnPrimary, focusRing, gutter } from "./ui";
 
@@ -66,7 +67,41 @@ function LanguageGroup({ className = "" }: { readonly className?: string }) {
   );
 }
 
+
+const CITY_LABELS: Record<string, string> = {
+  islamabad: "Islamabad",
+  karachi: "Karachi",
+  lahore: "Lahore",
+  peshawar: "Peshawar",
+  faisalabad: "Faisalabad",
+  rawalpindi: "Rawalpindi",
+};
+
+/**
+ * Discovery surfaces carry the collapsed search pill (gw-002/003/004/009);
+ * marketing, legal and error surfaces do not. Derived from the route so the
+ * root layout stays surface-agnostic; an explicit `search` prop still wins.
+ */
+function derivePillSummary(pathname: string): string | undefined {
+  if (pathname === "/search") return "Anywhere \u00b7 Any week \u00b7 Add guests";
+  const m = pathname.match(/^\/stays-in-([a-z-]+)(\/([a-z0-9-]+))?/);
+  if (m) {
+    const city = CITY_LABELS[m[1] ?? ""];
+    if (!city) return undefined;
+    const area = m[3];
+    const label = area ? `${area.toUpperCase().replace(/-(\d)/, "-$1")}, ${city}` : city;
+    return `${label} \u00b7 Any week \u00b7 Add guests`;
+  }
+  if (pathname.startsWith("/guides/where-to-stay-in-")) {
+    const city = CITY_LABELS[pathname.split("where-to-stay-in-")[1] ?? ""];
+    if (city) return `${city} \u00b7 Any week \u00b7 Add guests`;
+  }
+  return undefined;
+}
+
 export function SiteHeader({ search }: SiteHeaderProps) {
+  const pathname = usePathname();
+  const pillSummary = search ?? derivePillSummary(pathname);
   const sentinel = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -107,13 +142,13 @@ export function SiteHeader({ search }: SiteHeaderProps) {
             Salam<span className="text-interactive">.</span>Stay
           </Link>
 
-          {search ? (
+          {pillSummary ? (
             <Link
               href="/search"
               className={`mx-auto hidden h-12 max-w-md flex-1 items-center gap-3 rounded-full border border-border-default bg-canvas pl-5 pr-2 shadow-subtle md:flex ${focusRing} ${pressablePill}`}
             >
               <SearchIcon className="size-5 shrink-0 text-secondary" />
-              <span className="flex-1 truncate text-bodyMd text-secondary">{search}</span>
+              <span className="flex-1 truncate text-bodyMd text-secondary">{pillSummary}</span>
               <span className="grid size-8 shrink-0 place-items-center rounded-full bg-interactive">
                 <SearchIcon className="size-4 text-on-brand" />
               </span>

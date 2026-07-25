@@ -9,7 +9,7 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 | chrome (Header/Footer) | web-header-footer + GW §3.12 footer | done | reviewer: approve-with-fixes → applied (404 title inline, skip-link z-toast, footer comment honesty); motion+tokens+copy verbatim-clean |
 | /404 + /500 | gw-015 / gw-016 | built | contract-clean; KNOWN: Next 15 404 body ships in RSC payload not initial HTML (framework layer; prod static serving expected to resolve) |
 | / | gw-001 | done | review: approve-with-fixes → applied (receipt glyph, reduced-motion dampening across 7 sites, hero crop, lede size, manifest reshuffle) · re-gated 0 HARD |
-| /stays-in-islamabad | gw-002 | todo | Wave 1 |
+| /stays-in-islamabad | gw-002 | gated | 0 HARD · template-shaped (CityContent contract) · route-aware search pill wired · review in flight |
 | /stays-in-islamabad/f-7 | gw-003 | todo | Wave 1 |
 | /stays-in-islamabad/f-7/is-f7-2bed | gw-004 | todo | Wave 1 · LodgingBusiness only |
 | /search | gw-005 | todo | Wave 1 · noindex,follow |
