@@ -87,7 +87,7 @@ export function SiteHeader({ search }: SiteHeaderProps) {
     <>
       <a
         href="#main-content"
-        className={`sr-only rounded-md bg-interactive text-bodySm font-semibold text-on-brand focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-header focus:px-4 focus:py-3 ${focusRing}`}
+        className={`sr-only rounded-md bg-interactive text-bodySm font-semibold text-on-brand focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-toast focus:px-4 focus:py-3 ${focusRing}`}
       >
         Skip to content
       </a>

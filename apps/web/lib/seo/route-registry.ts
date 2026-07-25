@@ -26,12 +26,22 @@ export interface RouteEntry {
 
 export const ORIGIN = "https://salamstay.com";
 
+/**
+ * Root canonical is the bare origin, not `origin + "/"`. Next normalises a
+ * root-pathname canonical down to the origin on the way out
+ * (next/dist/lib/metadata/resolvers/resolve-url.js:
+ * `result.pathname === '/' ? result.origin : result.href`) and there is no
+ * per-page escape short of the global `trailingSlash: true`, which would put a
+ * slash on every other canonical too. The two forms are the same URL — an
+ * empty path is equivalent to "/" (RFC 3986 §6.2.3) — so the registry records
+ * the form that actually ships, and the G6 gate compares like with like.
+ */
 const page = (
   path: string,
   card: string,
   title: string,
   robots: Robots = "index,follow",
-  canonical: string | null = `${ORIGIN}${path === "/" ? "/" : path}`,
+  canonical: string | null = `${ORIGIN}${path === "/" ? "" : path}`,
 ): RouteEntry => ({ path, status: "page", robots, canonical, card, title });
 
 const stub = (path: string, title: string): RouteEntry => ({

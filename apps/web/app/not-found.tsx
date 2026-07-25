@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRightIcon,
@@ -26,10 +25,6 @@ import { btnBase, btnGhost, btnLg, btnPrimary, focusRing, gutter } from "@/compo
  * error code beyond the plain 404 eyebrow.
  */
 
-export const metadata: Metadata = {
-  title: { absolute: "Page not found — SalamStay" },
-  robots: { index: false, follow: true },
-};
 
 const CITIES = [
   { href: "/stays-in-islamabad", label: "Stays in Islamabad" },
@@ -49,6 +44,8 @@ const row =
 export default function NotFound() {
   return (
     <main>
+      <title>Page not found — SalamStay</title>
+      <meta name="robots" content="noindex, follow" />
       {/* HERO — the plain statement, then the two first moves */}
       <section className="bg-canvas bg-[radial-gradient(120%_90%_at_86%_-10%,var(--ss-interactive-subtle)_0%,transparent_46%)]">
         <div className={`mx-auto max-w-page py-12 md:py-16 ${gutter}`}>

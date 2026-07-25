@@ -6,7 +6,7 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 
 | Route | Card | Status | Notes |
 |---|---|---|---|
-| chrome (Header/Footer) | web-header-footer + GW §3.12 footer | built | awaiting design-reviewer; scrolled=elevation swap; lang group linkless (no /ur) |
+| chrome (Header/Footer) | web-header-footer + GW §3.12 footer | done | reviewer: approve-with-fixes → applied (404 title inline, skip-link z-toast, footer comment honesty); motion+tokens+copy verbatim-clean |
 | /404 + /500 | gw-015 / gw-016 | built | contract-clean; KNOWN: Next 15 404 body ships in RSC payload not initial HTML (framework layer; prod static serving expected to resolve) |
 | / | gw-001 | todo | Wave 1 |
 | /stays-in-islamabad | gw-002 | todo | Wave 1 |
@@ -41,3 +41,5 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 
 - next-intl/[locale] deferred to the real-Urdu milestone — EN-only v1, hreflang omitted entirely per SEO-RULES §4 (missing counterpart ⇒ no tag).
 - Title template not used — card titles are absolute and already branded.
+- Dark mode deferred (ruling): the cards' dark panels are visual-only demos and the preset never emits elevationDark — web v1 is light-only; dark ships as its own later milestone.
+- Reviewer sequencing note: chrome/404 recovery links resolve as build waves land (registry `page` routes 404 until built) — tracked per-row here.

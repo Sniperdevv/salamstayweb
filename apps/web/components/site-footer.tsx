@@ -9,7 +9,8 @@ import { focusRing, gutter } from "./ui";
  * entity intro, then FOUR labelled navs whose grouping is the contract — Cities
  * (the six beta cities), Hosting, Company, Legal — and a bottom rule carrying
  * the editorial / corrections / standards / Shariah quartet. Every anchor is a
- * real crawlable route in `lib/seo/route-registry.ts` (G37).
+ * route registered in `lib/seo/route-registry.ts` (G37); routes flip from
+ * stub/todo to real pages as the build waves land — see WEB-BUILD.md.
  */
 
 const CITIES = [
