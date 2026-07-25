@@ -8,7 +8,7 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 |---|---|---|---|
 | chrome (Header/Footer) | web-header-footer + GW §3.12 footer | done | reviewer: approve-with-fixes → applied (404 title inline, skip-link z-toast, footer comment honesty); motion+tokens+copy verbatim-clean |
 | /404 + /500 | gw-015 / gw-016 | built | contract-clean; KNOWN: Next 15 404 body ships in RSC payload not initial HTML (framework layer; prod static serving expected to resolve) |
-| / | gw-001 | todo | Wave 1 |
+| / | gw-001 | gated | validator 0 HARD · builder self-checked 1280+375 · design-review in flight |
 | /stays-in-islamabad | gw-002 | todo | Wave 1 |
 | /stays-in-islamabad/f-7 | gw-003 | todo | Wave 1 |
 | /stays-in-islamabad/f-7/is-f7-2bed | gw-004 | todo | Wave 1 · LodgingBusiness only |
@@ -36,6 +36,12 @@ Loop: `frontend-designer` builds (skills loaded first) → `validate-pages.mjs` 
 |---|---|---|---|
 | W0.5 | 2026-07-25 | Images: 61 localized (14 authentic-city, 30 listing, 10 gallery), ATTRIBUTIONS.md, verify-images.mjs PASS. Chrome+404/500 by frontend-designer (skills: emil-design-eng, design-taste-frontend): ui.ts shared press/focus grammar, IntersectionObserver scroll sentinel, hover behind (hover:hover), .num canon in globals. Token-gaps logged: focusRing unexposed, layout.ts absent from preset, elevationDark never emitted (latent dark bug), no 44px step, no 16px icon, Nastaliq unloaded. DEV SERVER: port 3003 | chrome awaiting review |
 | W0 | 2026-07-25 | Scaffold: Next 15 + tokens preset + theme emitter · route registry (24 pages + 47 stubs) · lib/seo builders (G74 matrix by construction) · robots/sitemap · catch-all stub resolver · validate-pages.mjs (G30/41/42/43/6/4/76/44/74/49/40/37/57/53/5) · dev server live, stub=200, unknown=404 | foundation green |
+
+## Parked (founder / follow-up)
+
+- Corpus-level: the "transparent fees" trust glyph is a dollar-sign path in gw-001 itself — sits badly against the PKR canon; needs a card-layer decision.
+- Chrome addendum: below `md` the header ships no hamburger — Become a host / Help / language have no header entry point on mobile (footer covers the first two). Card only specs desktop. Queue a small frontend-designer task.
+- Tokens package backlog (from W0.5): focusRing role, layout.ts in preset, elevationDark emission, 44px step, 16px icon size, Nastaliq webfont at the Urdu milestone.
 
 ## Deviations from spec (documented)
 
