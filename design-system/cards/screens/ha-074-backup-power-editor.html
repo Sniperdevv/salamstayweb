@@ -1,0 +1,624 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Backup-power editor (HA-074)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-040 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; background:#fff; border:1px solid #E7E9EA; border-radius:4px; padding:1px 5px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — post-publish editor lineage; NO wizard bars (handoff §7.6a) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.sh,.flabel,.field-sub,.stv,.tog-tt,.tog-d,.bp-t,.bp-d,.bp-lk,.pv-t,.pv-ht,.kvr dt,.kvr dd,.honestnote p,.laststat span,.unsavedbar .tx,.ebtn) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* editor app bar */
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing context chip — which listing this editor edits; links back to the Edit-listing hub (HA-036) */
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { display:block; font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:16px 0 9px; display:flex; align-items:center; gap:8px; }
+  .sh:first-of-type { margin-top:0; }
+  .sh svg { width:15px; height:15px; color:var(--text-secondary); stroke-width:1.7; flex:none; }
+
+  /* fields — Input/Select shell (§8.1), ha-026/ha-040 lineage */
+  .fld { margin-bottom:12px; }
+  .fld:last-child { margin-bottom:0; }
+  .flabel { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; }
+  .select-trig { width:100%; min-height:48px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 13px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .select-trig:focus-visible { outline:none; border-color:var(--int-primary); box-shadow:0 0 0 2px var(--int-subtle); }
+  .field-sub { display:block; font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; }
+
+  /* toggle rows — plain neutral switch (§10.1/§10.2), ha-026 grammar verbatim */
+  .toglist { display:flex; flex-direction:column; }
+  .togrow { display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--border-hairline); }
+  .togrow:last-child { border-bottom:none; }
+  .tog-ic { width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px; }
+  .tog-ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.6; }
+  .tog-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding-top:2px; }
+  .tog-tt { display:block; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .tog-d { display:block; font-size:12px; color:var(--text-secondary); line-height:1.45; }
+  .swbtn { flex:none; width:44px; height:44px; margin:-10px -10px -10px 0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; padding:0; cursor:pointer; }
+  .sw { position:relative; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); display:block; }
+  .sw i { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(16,25,27,.28); display:block; }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { transform:translateX(16px); }
+  .phone.rtl .swbtn { margin:-10px 0 -10px -10px; }
+  .phone.rtl .sw i { left:auto; right:2px; }
+  .phone.rtl .sw.on i { transform:translateX(-16px); }
+
+  /* load-shedding schedule — READ-ONLY mirror of ha-040's .bplink; one fact, one owner (HA-040 owns the windows) */
+  .bplink { display:flex; gap:12px; align-items:center; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-top:4px; }
+  .bplink .ic { width:36px; height:36px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .bplink .ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.9; }
+  .bplink .bx { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .bplink .bp-t { display:block; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .bplink .bp-d { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .bplink .bp-lk { flex:none; font-size:11.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  /* guest-strip preview — ga-031's SHIPPED backup-power vocabulary, dt/dd grammar verbatim */
+  .pv { margin-top:6px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .pv-h { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  .pv-h svg { width:14px; height:14px; color:var(--int-primary); stroke-width:2; flex:none; }
+  .pv-ht { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); }
+  .pv-t { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .pv-t svg { width:14px; height:14px; color:var(--success-fg); stroke-width:2.4; flex:none; }
+  .kv { margin-top:8px; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .kvr { display:flex; gap:12px; align-items:baseline; }
+  .kvr dt { flex:none; width:96px; font-size:11.5px; color:var(--text-secondary); }
+  .kvr dd { flex:1; min-width:0; font-size:12px; color:var(--text-primary); line-height:1.45; }
+  .kvr dd .hon { color:var(--text-secondary); display:block; margin-top:2px; font-size:11px; }
+  .kvr dd .inc { display:inline-flex; align-items:center; gap:5px; }
+  .kvr dd .inc svg { width:12px; height:12px; color:var(--success-fg); flex:none; }
+
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:16px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  .laststat { display:flex; align-items:center; gap:9px; margin-top:16px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .laststat svg { width:15px; height:15px; color:var(--success-fg); flex:none; stroke-width:2; }
+  .laststat span { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .laststat b { color:var(--text-primary); font-weight:600; }
+
+  .spacer-fill { flex:1; }
+
+  /* unsaved-changes bar — sticky footer, only while the form diverges from the saved value */
+  .unsavedbar { flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--warning-bg); border-top:1px solid var(--warning-border); }
+  .unsavedbar .uic { flex:none; width:20px; height:20px; color:var(--warning-fg); }
+  .unsavedbar .tx { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--warning-fg); line-height:1.35; }
+  .ebtnrow { flex:none; display:flex; gap:8px; }
+  .ebtn { min-height:40px; padding:0 14px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .ebtn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .ebtn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Backup-power editor (HA-074)</h1>
+    <p>The <b>owner of the backup-power fact</b>. <code>ha-040</code>'s load-shedding editor deliberately shows backup power read-only and links here; this screen returns the favour, showing the outage windows read-only and linking back — one fact, one owner, in both directions (the <code>ha-025</code> precedent). It edits <code>ha-026</code>'s wizard declarations post-publish in the standard editor frame (<code>ha-038</code>/<code>ha-039</code>/<code>ha-040</code>): app bar + listing context chip + save/discard + unsaved-changes bar, and <b>no wizard progress bars</b>. Three declarations: a <b>type</b> Select (none · UPS only · generator only · UPS + generator · solar + battery), a <b>qualitative coverage</b> Select — "how long does backup last?", the same plain tiers <code>ha-026</code> ships, never an invented kVA figure — and neutral switch rows for <b>which rooms backup actually covers</b>. The guest-strip preview reuses <code>ga-031</code>'s shipped "UPS (instant) / Generator / Fuel" <code>dt</code>/<code>dd</code> vocabulary verbatim. Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b>.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — current · edited</span><span>Dark — current</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — CURRENT · EDITED ============================ -->
+    <section class="panel" aria-label="Light theme — the current saved backup-power declaration, and an edited state with the unsaved-changes bar">
+      <div class="panel-tag">Light — A current · B edited (unsaved)</div>
+      <div class="rowflex">
+
+        <!-- A · CURRENT -->
+        <div class="pcol">
+          <div class="pcap">A · Current — nothing unsaved</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Backup power</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Backup power</h2>
+              <p class="lead">What keeps running when the grid goes out. Declare what's actually on site — guests plan their day around it.</p>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg>What's on site</h3>
+              <div class="fld">
+                <span class="flabel" id="bpt-a">Backup power type</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bpt-a"><span class="stv">UPS + generator</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">None · UPS only · Generator only · UPS + generator · Solar + battery</span>
+              </div>
+              <div class="fld">
+                <span class="flabel" id="bph-a">How long does backup last?</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bph-a"><span class="stv">Most of the day</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">A plain range in your own words — a few hours · most of the day · all day. We never publish a kVA rating a guest can't check.</span>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M7 11h5"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Generator fuel included</span><span class="tog-d">No extra charge to guests for generator fuel during their stay.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Generator fuel included, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>Which rooms it covers</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11v1h6v-1a6 6 0 0 0-3-11z"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Lights, fans &amp; Wi-Fi — whole home</span><span class="tog-d">Every room keeps lights, ceiling fans, the router and phone charging.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Lights, fans and Wi-Fi whole home, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Bedroom AC</span><span class="tog-d">One bedroom AC runs off the generator during longer cuts.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Bedroom AC, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Living-room AC</span><span class="tog-d">Off — the generator doesn't carry a second AC.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Living-room AC, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 10h16M8 6h.01M8 14h.01"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Kitchen appliances</span><span class="tog-d">Off — the fridge stays on the mains, so keep the door shut during a cut.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Kitchen appliances, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <span class="field-sub">Switch on only what genuinely runs during a cut — a guest who arrives expecting AC and finds a fan remembers it.</span>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg>Load-shedding schedule</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="bx">
+                  <span class="bp-t">One afternoon cut, <span class="num">~1–2</span> hrs</span>
+                  <span class="bp-d">Your declared outage windows — morning and evening clear</span>
+                </span>
+                <a class="bp-lk" href="/host/listings/cantt-view-residence/load-shedding">Edit →</a>
+              </div>
+              <span class="field-sub">Set once in Load-shedding schedule — shown here read-only so one fact has one place to edit.</span>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Backup power — UPS + generator</div>
+                <dl class="kv">
+                  <div class="kvr"><dt>UPS (instant)</dt><dd>Keeps fans, lights, router &amp; phone charging running through routine cuts — no interruption.</dd></div>
+                  <div class="kvr"><dt>Generator</dt><dd>Runs most of the day during longer outages. Carries one bedroom AC alongside the essentials.</dd></div>
+                  <div class="kvr"><dt>Fuel</dt><dd><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Included in your stay</span><span class="hon">No extra charge for generator fuel.</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Declare what's true, not what's hoped for. If the generator changes — fuel, hours, what it carries — update it here and the listing updates itself.</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b><span class="num">18 July 2026</span></b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EDITED -->
+        <div class="pcol">
+          <div class="pcap">B · Edited — coverage cut back honestly, unsaved bar shown</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Backup power</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Backup power</h2>
+              <p class="lead">What keeps running when the grid goes out. Declare what's actually on site — guests plan their day around it.</p>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg>What's on site</h3>
+              <div class="fld">
+                <span class="flabel" id="bpt-b">Backup power type</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bpt-b"><span class="stv">UPS + generator</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">None · UPS only · Generator only · UPS + generator · Solar + battery</span>
+              </div>
+              <div class="fld">
+                <span class="flabel" id="bph-b">How long does backup last?</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bph-b"><span class="stv">A few hours</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">A plain range in your own words — a few hours · most of the day · all day. We never publish a kVA rating a guest can't check.</span>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M7 11h5"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Generator fuel included</span><span class="tog-d">No extra charge to guests for generator fuel during their stay.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Generator fuel included, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>Which rooms it covers</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11v1h6v-1a6 6 0 0 0-3-11z"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Lights, fans &amp; Wi-Fi — whole home</span><span class="tog-d">Every room keeps lights, ceiling fans, the router and phone charging.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Lights, fans and Wi-Fi whole home, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Bedroom AC</span><span class="tog-d">Switched off — the generator no longer carries an AC.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Bedroom AC, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Living-room AC</span><span class="tog-d">Off — the generator doesn't carry a second AC.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Living-room AC, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 10h16M8 6h.01M8 14h.01"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Kitchen appliances</span><span class="tog-d">Off — the fridge stays on the mains, so keep the door shut during a cut.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Kitchen appliances, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <span class="field-sub">Switch on only what genuinely runs during a cut — a guest who arrives expecting AC and finds a fan remembers it.</span>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg>Load-shedding schedule</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="bx">
+                  <span class="bp-t">One afternoon cut, <span class="num">~1–2</span> hrs</span>
+                  <span class="bp-d">Your declared outage windows — morning and evening clear</span>
+                </span>
+                <a class="bp-lk" href="/host/listings/cantt-view-residence/load-shedding">Edit →</a>
+              </div>
+              <span class="field-sub">Set once in Load-shedding schedule — shown here read-only so one fact has one place to edit.</span>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Backup power — UPS + generator</div>
+                <dl class="kv">
+                  <div class="kvr"><dt>UPS (instant)</dt><dd>Keeps fans, lights, router &amp; phone charging running through routine cuts — no interruption.</dd></div>
+                  <div class="kvr"><dt>Generator</dt><dd>Runs a few hours during longer outages. Carries the essentials, not the ACs.</dd></div>
+                  <div class="kvr"><dt>Fuel</dt><dd><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Included in your stay</span><span class="hon">No extra charge for generator fuel.</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Declare what's true, not what's hoped for. If the generator changes — fuel, hours, what it carries — update it here and the listing updates itself.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="unsavedbar">
+              <svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span class="tx">You have unsaved changes</span>
+              <div class="ebtnrow">
+                <button class="ebtn discard" type="button">Discard</button>
+                <button class="ebtn save" type="button">Save</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">This screen is the <b>single owner of the backup-power fact</b>: <code>ha-040</code> shows it read-only and links here, and here the load-shedding windows are read-only and link back — the mirror closes the loop so the two declarations can never drift apart (<code>ha-025</code>/<code>ha-039</code> precedent). Coverage stays <b>qualitative</b> — "most of the day," "a few hours" — exactly the tiers <code>ha-026</code> ships; the registry's kVA phrasing is deliberately rendered as a plain range because a rating no guest can verify is a claim, not a fact (NEVER #3). The edited panel is an honest <i>downgrade</i> — the host cuts the AC off the generator — which is the case the product has to make easy, not just the flattering one. The preview reuses <code>ga-031</code>'s shipped "UPS (instant) / Generator / Fuel" <code>dt</code>/<code>dd</code> rows verbatim, so the declaration and the guest-facing sentence are the same sentence.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the current saved backup-power declaration">
+      <div class="panel-tag">Dark — C current</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Current — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Backup power</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Backup power</h2>
+              <p class="lead">What keeps running when the grid goes out. Declare what's actually on site — guests plan their day around it.</p>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg>What's on site</h3>
+              <div class="fld">
+                <span class="flabel" id="bpt-c">Backup power type</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bpt-c"><span class="stv">UPS + generator</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">None · UPS only · Generator only · UPS + generator · Solar + battery</span>
+              </div>
+              <div class="fld">
+                <span class="flabel" id="bph-c">How long does backup last?</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bph-c"><span class="stv">Most of the day</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">A plain range in your own words — a few hours · most of the day · all day. We never publish a kVA rating a guest can't check.</span>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M7 11h5"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Generator fuel included</span><span class="tog-d">No extra charge to guests for generator fuel during their stay.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Generator fuel included, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>Which rooms it covers</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11v1h6v-1a6 6 0 0 0-3-11z"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Lights, fans &amp; Wi-Fi — whole home</span><span class="tog-d">Every room keeps lights, ceiling fans, the router and phone charging.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Lights, fans and Wi-Fi whole home, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Bedroom AC</span><span class="tog-d">One bedroom AC runs off the generator during longer cuts.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Bedroom AC, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Living-room AC</span><span class="tog-d">Off — the generator doesn't carry a second AC.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Living-room AC, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 10h16M8 6h.01M8 14h.01"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Kitchen appliances</span><span class="tog-d">Off — the fridge stays on the mains, so keep the door shut during a cut.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Kitchen appliances, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <span class="field-sub">Switch on only what genuinely runs during a cut — a guest who arrives expecting AC and finds a fan remembers it.</span>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg>Load-shedding schedule</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="bx">
+                  <span class="bp-t">One afternoon cut, <span class="num">~1–2</span> hrs</span>
+                  <span class="bp-d">Your declared outage windows — morning and evening clear</span>
+                </span>
+                <a class="bp-lk" href="/host/listings/cantt-view-residence/load-shedding">Edit →</a>
+              </div>
+              <span class="field-sub">Set once in Load-shedding schedule — shown here read-only so one fact has one place to edit.</span>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Backup power — UPS + generator</div>
+                <dl class="kv">
+                  <div class="kvr"><dt>UPS (instant)</dt><dd>Keeps fans, lights, router &amp; phone charging running through routine cuts — no interruption.</dd></div>
+                  <div class="kvr"><dt>Generator</dt><dd>Runs most of the day during longer outages. Carries one bedroom AC alongside the essentials.</dd></div>
+                  <div class="kvr"><dt>Fuel</dt><dd><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Included in your stay</span><span class="hon">No extra charge for generator fuel.</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b><span class="num">18 July 2026</span></b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every switch row at the exact visual weight of any other utility fact (§10.1) — the "off" rows are stated neutrally, never flagged as a deficiency. The one success tick in the preview is a plain "included" marker inherited from <code>ga-031</code>, not a badge of quality.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the current saved backup-power declaration">
+      <div class="panel-tag">RTL · اردو — بیک اپ پاور</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — بیک اپ پاور</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence/edit" aria-label="لسٹنگ میں ترمیم پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">بیک اپ پاور</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="dH">بیک اپ پاور</h2>
+              <p class="lead">گرڈ بند ہونے پر کیا چلتا رہتا ہے۔ جو واقعی موجود ہے وہی بتائیں — مہمان اسی کے مطابق دن کی منصوبہ بندی کرتے ہیں۔</p>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg>گھر میں کیا موجود ہے</h3>
+              <div class="fld">
+                <span class="flabel" id="bpt-d">بیک اپ پاور کی قسم</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bpt-d"><span class="stv">یو پی ایس + جنریٹر</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                <span class="field-sub">کچھ نہیں · صرف یو پی ایس · صرف جنریٹر · یو پی ایس + جنریٹر · سولر + بیٹری</span>
+              </div>
+              <div class="fld">
+                <span class="flabel" id="bph-d">بیک اپ کتنی دیر چلتا ہے؟</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bph-d"><span class="stv">دن کا بیشتر حصہ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                <span class="field-sub">اپنے الفاظ میں ایک سادہ دورانیہ — چند گھنٹے · دن کا بیشتر حصہ · سارا دن۔ ہم ایسا <span class="num">kVA</span> نمبر شائع نہیں کرتے جسے مہمان جانچ نہ سکے۔</span>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h13l4 4v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M7 11h5"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">جنریٹر کا ایندھن شامل</span><span class="tog-d">قیام کے دوران جنریٹر کے ایندھن کا مہمانوں سے کوئی اضافی چارج نہیں۔</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="جنریٹر کا ایندھن شامل، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>کن کمروں کا احاطہ کرتا ہے</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11v1h6v-1a6 6 0 0 0-3-11z"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">روشنی، پنکھے اور وائی فائی — پورا گھر</span><span class="tog-d">ہر کمرے میں روشنی، پنکھے، راؤٹر اور فون چارجنگ چلتی رہتی ہے۔</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="روشنی، پنکھے اور وائی فائی، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">بیڈروم کا اے سی</span><span class="tog-d">لمبی بندش میں ایک بیڈروم کا اے سی جنریٹر پر چلتا ہے۔</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="بیڈروم کا اے سی، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="7" rx="1.5"/><path d="M7 13v3M12 13v4M17 13v3"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">لاؤنج کا اے سی</span><span class="tog-d">بند — جنریٹر دوسرا اے سی نہیں اٹھاتا۔</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="لاؤنج کا اے سی، بند"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 10h16M8 6h.01M8 14h.01"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">کچن کی اشیاء</span><span class="tog-d">بند — فرج مینز پر رہتا ہے، اس لیے بندش کے دوران دروازہ بند رکھیں۔</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="کچن کی اشیاء، بند"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <span class="field-sub">صرف وہی آن کریں جو بندش کے دوران واقعی چلتا ہے — اے سی کی توقع لے کر آنے والے مہمان کو پنکھا یاد رہ جاتا ہے۔</span>
+
+              <h3 class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg>لوڈشیڈنگ کا شیڈول</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="bx">
+                  <span class="bp-t">دوپہر میں ایک بندش، <span class="num">~1–2</span> گھنٹے</span>
+                  <span class="bp-d">آپ کے بتائے ہوئے اوقات — صبح اور شام صاف</span>
+                </span>
+                <a class="bp-lk" href="/ur/host/listings/cantt-view-residence/load-shedding">ترمیم کریں ←</a>
+              </div>
+              <span class="field-sub">لوڈشیڈنگ کے شیڈول میں ایک ہی جگہ طے شدہ — یہاں صرف پڑھنے کے لیے، تاکہ ہر حقیقت کی ایک ہی جگہ ترمیم ہو۔</span>
+
+              <h3 class="sh">پیش منظر — مہمان کیا دیکھیں گے</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">لسٹنگ پیش منظر</span></div>
+                <div class="pv-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>بیک اپ پاور — یو پی ایس + جنریٹر</div>
+                <dl class="kv">
+                  <div class="kvr"><dt>یو پی ایس (فوری)</dt><dd>معمول کی بندش میں پنکھے، روشنی، راؤٹر اور فون چارجنگ بلا تعطل چلتے رہتے ہیں۔</dd></div>
+                  <div class="kvr"><dt>جنریٹر</dt><dd>لمبی بندش میں دن کا بیشتر حصہ چلتا ہے۔ ضروریات کے ساتھ ایک بیڈروم کا اے سی بھی اٹھاتا ہے۔</dd></div>
+                  <div class="kvr"><dt>ایندھن</dt><dd><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>آپ کے قیام میں شامل</span><span class="hon">جنریٹر کے ایندھن کا کوئی اضافی چارج نہیں۔</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>جو سچ ہے وہ بتائیں، جو امید ہے وہ نہیں۔ جنریٹر کے بارے میں کچھ بدلے تو یہیں اپ ڈیٹ کریں — لسٹنگ خود بخود بدل جائے گی۔</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>محفوظ شدہ — آخری اپ ڈیٹ <b><span class="num">18 July 2026</span></b>۔ اس کے بعد کوئی تبدیلی نہیں۔</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron, the Select chevrons, the switch knobs and the "ترمیم کریں ←" arrow all flip toward the reading direction. Every numeral — the hour range, the date, the Latin <code>kVA</code> token — sits inside an LTR-isolated <code>.num</code> span in Western digits, with <code>aria-label</code> text matching what is visible (Pass #31 ruling).</p>
+    </section>
+
+  </main>
+</body>
+</html>

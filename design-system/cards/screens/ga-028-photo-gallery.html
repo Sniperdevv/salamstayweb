@@ -1,0 +1,382 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-028 Full photo gallery (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    /* map substrate — generated from Slate/brand ramps, no new hues (DESIGN §1.7) */
+    --map-land:#EEF0F1; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+    --map-land:#141918; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1300px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1300px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); min-height:760px; display:flex; flex-direction:column; }
+
+  /* status bar */
+  .statusbar { height:44px; z-index:6; display:flex; align-items:center; justify-content:space-between; padding:0 22px; flex:none; }
+  .statusbar .t { font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:flex; gap:5px; align-items:center; }
+  .statusbar .ic svg { width:16px; height:16px; color:var(--text-primary); }
+  .statusbar.onmedia { position:absolute; top:0; left:0; right:0; pointer-events:none; }
+  .statusbar.onmedia .t { color:#fff; }
+  .statusbar.onmedia .ic svg { color:#fff; }
+
+  /* ============ Overlay top bar (grid index) ============ */
+  .gbar { display:flex; align-items:center; gap:12px; padding:6px 12px 12px; flex:none; }
+  .iconbtn { width:40px; height:40px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; color:var(--text-primary); }
+  .iconbtn svg { width:20px; height:20px; stroke-width:2; }
+  .gbar .gt { flex:1; min-width:0; }
+  .gbar .gt .t1 { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .gbar .gt .t2 { font-size:12.5px; color:var(--text-secondary); margin-top:1px; }
+
+  /* ============ Category chips ============ */
+  .chips { display:flex; gap:8px; padding:0 12px 12px; overflow-x:auto; flex:none; scrollbar-width:none; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip2 { flex:none; height:34px; padding:0 14px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:13px; font-weight:600; color:var(--text-primary); cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; gap:6px; }
+  .chip2 b { font-weight:600; color:var(--text-tertiary); font-variant-numeric:tabular-nums; }
+  .chip2.on { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .chip2.on b { color:var(--text-on-brand); }
+
+  /* ============ Photo grid ============ */
+  .gscroll { flex:1; overflow:hidden; padding:0 12px 14px; }
+  .gtiles { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .gtile { position:relative; border:none; padding:0; margin:0; cursor:pointer; border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-sunken); display:block; font-family:inherit; }
+  .gtile.big { grid-column:1 / -1; }
+  .gbox { display:block; position:relative; width:100%; aspect-ratio:3 / 2; background:var(--bg-sunken); }
+  .gtile.big .gbox { aspect-ratio:16 / 10; }
+  .gbox img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .glabel { position:absolute; left:0; right:0; bottom:0; padding:16px 12px 9px; text-align:start; background:linear-gradient(to top,rgba(16,25,27,.62),transparent);  display:flex; flex-direction:column; gap:1px; }
+  .glabel .l1 { font-size:12.5px; font-weight:600; color:#fff; letter-spacing:.01em; }
+  .glabel .l2 { font-size:11px; color:rgba(255,255,255,.82); margin-top:1px; }
+  .gcountpill { position:absolute; top:8px; inset-inline-end:8px; height:24px; padding:0 9px; border-radius:var(--radius-full); background:rgba(16,25,27,.6); color:#fff; font-size:11.5px; font-weight:600; display:inline-flex; align-items:center; gap:5px; font-variant-numeric:tabular-nums; }
+  .gcountpill svg { width:13px; height:13px; }
+
+  /* ============ Immersive full-screen swipe view ============ */
+  .viewer { position:relative; flex:1; background:var(--bg-canvas); display:flex; flex-direction:column; overflow:hidden; }
+  .vstage { position:relative; flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .vstage img { max-width:100%; max-height:100%; width:100%; height:100%; object-fit:contain; display:block; }
+  .vtop { position:absolute; top:0; left:0; right:0; z-index:4; display:flex; align-items:center; gap:12px; padding:12px; background:linear-gradient(to bottom,var(--scrim),transparent); }
+  .vtop .vcount { flex:1; text-align:center; font-size:14px; font-weight:600; color:#fff; font-variant-numeric:tabular-nums; }
+  .vchip { width:40px; height:40px; flex:none; border-radius:var(--radius-full); background:var(--scrim); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .vchip svg { width:20px; height:20px; color:#fff; stroke-width:2; }
+  .vchip.saved svg { color:var(--error-fg); }
+  .zoomhint { position:absolute; top:64px; left:50%; transform:translateX(-50%); z-index:4; display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 12px; border-radius:var(--radius-full); background:rgba(16,25,27,.66); color:#fff; font-size:12px; font-weight:500; }
+  .zoomhint svg { width:14px; height:14px; }
+  .vbottom { position:absolute; left:0; right:0; bottom:0; z-index:4; padding:16px 16px 18px; background:linear-gradient(to top,var(--scrim),transparent); }
+  .vdots { display:flex; gap:5px; justify-content:center; margin-bottom:11px; }
+  .vdots i { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.5); }
+  .vdots i.on { background:#fff; width:18px; border-radius:3px; }
+  .vcap .c1 { font-size:14px; font-weight:600; color:#fff; }
+  .vcap .c2 { font-size:12.5px; color:rgba(255,255,255,.82); margin-top:2px; line-height:1.4; }
+
+  /* ============ Data-saver banner (§12) ============ */
+  .saver { display:flex; gap:11px; align-items:flex-start; margin:0 12px 12px; padding:11px 13px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); flex:none; }
+  .saver svg { width:18px; height:18px; color:var(--info-fg); flex:none; margin-top:1px; stroke-width:1.75; }
+  .saver .s-t { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .saver .s-d { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .saver .s-d b { color:var(--text-primary); font-weight:600; }
+
+  /* home indicator */
+  .homebar { display:flex; justify-content:center; padding:8px 0 9px; background:var(--bg-canvas); flex:none; }
+  .homebar.onmedia { background:transparent; }
+  .homebar i { width:120px; height:5px; border-radius:var(--radius-full); background:var(--text-primary); opacity:.18; }
+  .homebar.onmedia i { background:#fff; opacity:.5; }
+
+  /* skeleton */
+  .sk { background:var(--bg-sunken); border-radius:var(--radius-lg); position:relative; overflow:hidden; }
+  .sk::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,var(--bg-raised),transparent); transform:translateX(-100%); animation:shim 1.4s ease-in-out infinite; }
+  @keyframes shim { 100% { transform:translateX(100%); } }
+  @media (prefers-reduced-motion: reduce){ .sk::after { animation:none; } }
+  /* LQIP blur placeholder — cheap, zero-CLS box */
+  .lqip { filter:blur(8px); transform:scale(1.04); opacity:.9; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL — Urdu */
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.7; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-028 — Full photo gallery (mobile app)</h1>
+    <p>The full-screen media surface off the listing hero: a grid index that groups the home's photos by room with category filter chips, and a full-bleed swipe viewer with an n/24 counter, dots, and a room-labelled caption. Real Pexels photography of the F-7 Margalla-view apartment (living, bedroom, kitchen, bathroom, dining, and the Margalla Hills view). Honors the image pyramid — LQIP placeholder, a data-saver "tap to load full quality" path, and a pinch-to-zoom state. Quiet Modern: photos carry the room, cultural facts are stated in captions, never decorated.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Real Pexels photos · descriptive alt (G57)</span><span>Light · Dark · RTL/Urdu</span><span>Grid index + swipe viewer</span><span>Zero-CLS aspect boxes</span><span>Data-saver path (§12)</span><span>Pinch-to-zoom state</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT — GRID INDEX ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — grid index · grouped by room, category chips</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+
+          <div class="gbar">
+            <button class="iconbtn" aria-label="Close gallery, back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            <div class="gt">
+              <div class="t1">All photos</div>
+              <div class="t2">Margalla View Apartment · F-7, Islamabad</div>
+            </div>
+            <button class="iconbtn" aria-label="Share this listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8h16v-8M12 3v13M8 7l4-4 4 4"/></svg></button>
+          </div>
+
+          <nav class="chips" aria-label="Filter photos by room">
+            <button class="chip2 on" aria-pressed="true">All <b>24</b></button>
+            <button class="chip2" aria-pressed="false">Living <b>5</b></button>
+            <button class="chip2" aria-pressed="false">Bedroom <b>4</b></button>
+            <button class="chip2" aria-pressed="false">Kitchen <b>3</b></button>
+            <button class="chip2" aria-pressed="false">Bathroom <b>3</b></button>
+            <button class="chip2" aria-pressed="false">The view <b>2</b></button>
+            <button class="chip2" aria-pressed="false">Dining <b>3</b></button>
+          </nav>
+
+          <div class="gscroll">
+            <div class="gtiles">
+              <button class="gtile big" aria-label="Open photo 1 of 24 — living room, full screen">
+                <span class="gbox"><img src="../../assets/photos/is-f7-living.jpg" alt="Bright living room with a low grey sofa, wooden floor and a dining zone beside tall daylight windows" data-prod-loading="lazy" /></span>
+                <span class="gcountpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>1 / 24</span>
+                <span class="glabel"><span class="l1">Living room</span><span class="l2">Margalla-facing windows · seats six</span></span>
+              </button>
+              <button class="gtile" aria-label="Open photo — the view, full screen">
+                <span class="gbox"><img src="../../assets/photos/is-f7-view.jpg" alt="Green Margalla Hills at golden hour with a lone tree, seen from the apartment" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1">The view</span><span class="l2">Margalla Hills</span></span>
+              </button>
+              <button class="gtile" aria-label="Open photo — main bedroom, full screen">
+                <span class="gbox"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="Minimalist bedroom with a grey headboard, beige bedding and soft daylight" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1">Main bedroom</span><span class="l2">Qibla marked · prayer mat</span></span>
+              </button>
+              <button class="gtile" aria-label="Open photo — kitchen, full screen">
+                <span class="gbox"><img src="../../assets/photos/is-f7-kitchen.jpg" alt="Clean white minimalist kitchen with sleek cabinets and open counter space" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1">Kitchen</span><span class="l2">Halal · fully equipped</span></span>
+              </button>
+              <button class="gtile" aria-label="Open photo — bathroom, full screen">
+                <span class="gbox"><img src="../../assets/photos/is-f7-bath.jpg" alt="Modern bathroom with a glass shower cabin, wall mirror and sink" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1">Bathroom</span><span class="l2">Hand-held bidet shower</span></span>
+              </button>
+              <button class="gtile" aria-label="Open photo — dining area, full screen">
+                <span class="gbox"><img src="../../assets/photos/is-f7-dining.jpg" alt="Bright Scandinavian-style dining area with a wooden table and natural light" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1">Dining area</span><span class="l2">Seats six</span></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK — IMMERSIVE SWIPE VIEWER ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — full-screen swipe viewer · counter, dots, room caption</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="viewer">
+            <div class="statusbar onmedia">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+            <div class="vstage" role="img" aria-label="Photo 1 of 24 — bright living room with a low sofa and Margalla-facing windows">
+              <img src="../../assets/photos/is-f7-living.jpg" alt="Bright living room with a low grey sofa, wooden floor and tall daylight windows" />
+            </div>
+            <div class="vtop">
+              <button class="vchip" aria-label="Close full-screen photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <span class="vcount">1 / 24</span>
+              <button class="vchip" aria-label="Share this photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8h16v-8M12 3v13M8 7l4-4 4 4"/></svg></button>
+              <button class="vchip saved" aria-pressed="true" aria-label="Saved to wishlist, remove"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+            </div>
+            <div class="zoomhint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M11 8v6M8 11h6M21 21l-4.3-4.3"/></svg>Pinch or double-tap to zoom</div>
+            <div class="vbottom">
+              <div class="vdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+              <div class="vcap">
+                <div class="c1">Living room · 1 of 24</div>
+                <div class="c2">Low sofa and dining zone by the Margalla-facing windows. Prayer mat kept in the main bedroom.</div>
+              </div>
+            </div>
+          </div>
+          <div class="homebar onmedia"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu — GRID INDEX ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · grid index (mirrored)</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="statusbar">
+            <span class="t num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+
+          <div class="gbar">
+            <button class="iconbtn" aria-label="گیلری بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            <div class="gt">
+              <div class="t1 ur">تمام تصاویر</div>
+              <div class="t2 ur">مارگلہ ویو اپارٹمنٹ · ایف-۷، اسلام آباد</div>
+            </div>
+            <button class="iconbtn" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8h16v-8M12 3v13M8 7l4-4 4 4"/></svg></button>
+          </div>
+
+          <nav class="chips" aria-label="کمرے کے لحاظ سے تصاویر">
+            <button class="chip2 on ur" aria-pressed="true">تمام <b class="num">24</b></button>
+            <button class="chip2 ur" aria-pressed="false">لاؤنج <b class="num">5</b></button>
+            <button class="chip2 ur" aria-pressed="false">بیڈروم <b class="num">4</b></button>
+            <button class="chip2 ur" aria-pressed="false">کچن <b class="num">3</b></button>
+            <button class="chip2 ur" aria-pressed="false">باتھ روم <b class="num">3</b></button>
+            <button class="chip2 ur" aria-pressed="false">منظر <b class="num">2</b></button>
+          </nav>
+
+          <div class="gscroll">
+            <div class="gtiles">
+              <button class="gtile big" aria-label="تصویر ۱ از ۲۴ کھولیں — لاؤنج">
+                <span class="gbox"><img src="../../assets/photos/is-f7-living.jpg" alt="روشن لاؤنج، نیچی صوفہ اور مارگلہ کی طرف کھڑکیاں" data-prod-loading="lazy" /></span>
+                <span class="gcountpill num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>1 / 24</span>
+                <span class="glabel"><span class="l1 ur">لاؤنج</span><span class="l2 ur">مارگلہ کی طرف کھڑکیاں</span></span>
+              </button>
+              <button class="gtile" aria-label="تصویر کھولیں — منظر">
+                <span class="gbox"><img src="../../assets/photos/is-f7-view.jpg" alt="سنہری وقت میں مارگلہ کی سبز پہاڑیاں اور ایک درخت" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1 ur">منظر</span><span class="l2 ur">مارگلہ پہاڑیاں</span></span>
+              </button>
+              <button class="gtile" aria-label="تصویر کھولیں — بیڈروم">
+                <span class="gbox"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="سادہ بیڈروم، بھورا بستر اور نرم روشنی" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1 ur">مرکزی بیڈروم</span><span class="l2 ur">قبلہ نشان زد · جائے نماز</span></span>
+              </button>
+              <button class="gtile" aria-label="تصویر کھولیں — کچن">
+                <span class="gbox"><img src="../../assets/photos/is-f7-kitchen.jpg" alt="صاف سفید کچن، سلیقے سے کیبنٹ اور کھلی جگہ" data-prod-loading="lazy" /></span>
+                <span class="glabel"><span class="l1 ur">کچن</span><span class="l2 ur">حلال · مکمل</span></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATES ============================================================= -->
+    <div class="col">
+      <div class="cap">States — data-saver · LQIP loading · zoomed</div>
+
+      <!-- Data saver + LQIP loading -->
+      <div class="phone" style="width:340px">
+        <div class="screen" style="min-height:auto">
+          <div class="statusbar"><span class="t">9:41</span><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg></span></div>
+          <div class="gbar">
+            <button class="iconbtn" aria-label="Close gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            <div class="gt"><div class="t1">All photos</div><div class="t2">Loading on Data Saver</div></div>
+          </div>
+          <div class="saver">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>
+            <div>
+              <div class="s-t">Data Saver is on</div>
+              <div class="s-d">Photos load in lower quality to save data. <b>Tap any photo to load full quality.</b></div>
+            </div>
+          </div>
+          <div class="gscroll">
+            <div class="gtiles">
+              <div class="gtile big" aria-hidden="true">
+                <span class="gbox"><img class="lqip" src="../../assets/photos/is-f7-living.jpg" alt="" /></span>
+              </div>
+              <div class="sk" style="aspect-ratio:3/2"></div>
+              <div class="sk" style="aspect-ratio:3/2"></div>
+            </div>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+
+      <!-- Zoomed state -->
+      <div class="cap" style="margin-top:6px">Zoomed — pinch/double-tap; photo pans in frame</div>
+      <div class="phone dark" style="width:340px">
+        <div class="screen" style="min-height:auto">
+          <div class="viewer" style="height:300px;flex:none">
+            <div class="vstage" role="img" aria-label="Living room, zoomed to 2 times">
+              <img src="../../assets/photos/is-f7-living.jpg" alt="Living room, zoomed in on the sofa and windows" style="transform:scale(2) translate(6%,4%);object-fit:cover" />
+            </div>
+            <div class="vtop">
+              <button class="vchip" aria-label="Close full-screen photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <span class="vcount">1 / 24</span>
+              <button class="vchip" aria-label="Reset zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M8 11h6M21 21l-4.3-4.3"/></svg></button>
+            </div>
+            <div class="zoomhint">2× · drag to pan</div>
+          </div>
+          <div class="homebar onmedia"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

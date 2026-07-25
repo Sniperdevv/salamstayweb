@@ -1,0 +1,331 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Refund tracker (GA-106)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage; NO journey stepper (post-book, §7.6a) */
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; overflow-y:auto; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 10px; }
+  .sec-label:first-child { margin-top:2px; }
+
+  /* computed amount + destination — hero block */
+  .amthero { border:1px solid var(--border-hairline); border-radius:var(--radius-xl); background:var(--bg-raised); padding:16px; text-align:center; }
+  .amthero .al { font-size:11.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .amthero .av { font-size:26px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; margin-top:6px; }
+  .destrow { display:flex; align-items:center; gap:11px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); margin-top:12px; text-align:start; }
+  .destrow .dic { width:34px; height:30px; border-radius:var(--radius-sm); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .destrow .dic svg { width:18px; height:18px; stroke-width:1.7; }
+  .destrow-b { display:flex; flex-direction:column; gap:1px; }
+  .destrow-t { font-size:12px; color:var(--text-secondary); }
+  .destrow-v { font-size:13px; font-weight:600; color:var(--text-primary); }
+
+  /* progress track — requested → processing → sent (§8.7 timeline / Verification-status semantics) */
+  .track { list-style:none; display:flex; flex-direction:column; }
+  .trk { display:flex; gap:12px; padding-bottom:18px; position:relative; }
+  .trk:last-child { padding-bottom:2px; }
+  .trk:not(:last-child)::before { content:""; position:absolute; inset-inline-start:11px; top:26px; bottom:0; width:2px; background:var(--border-default); }
+  .trk-dot { width:24px; height:24px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .trk.done .trk-dot { background:var(--success-fg); color:var(--text-on-brand); }
+  .trk.done .trk-dot svg { width:14px; height:14px; stroke-width:2.6; }
+  .trk.current .trk-dot { background:var(--bg-canvas); border:2px solid var(--info-fg); box-shadow:0 0 0 4px var(--info-bg); }
+  .trk.current .trk-dot i { width:8px; height:8px; border-radius:50%; background:var(--info-fg); }
+  .trk.upcoming .trk-dot { background:var(--bg-canvas); border:2px solid var(--border-default); }
+  .trk-body { display:flex; flex-direction:column; gap:1px; padding-top:2px; }
+  .trk-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .trk.upcoming .trk-t { color:var(--text-secondary); }
+  .trk-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* per-rail timing note — qualitative, no invented day-counts beyond ga-034's shipped figure */
+  .railnote { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-top:14px; }
+  .railnote svg { width:17px; height:17px; stroke-width:1.9; color:var(--info-fg); flex:none; margin-top:1px; }
+  .railnote-tx { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .railnote-tx b { color:var(--text-primary); font-weight:600; }
+
+  /* support row */
+  .suprow { display:flex; align-items:center; gap:12px; min-height:58px; margin-top:14px; padding:11px 13px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; }
+  .suprow-ic { width:36px; height:36px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-sunken); color:var(--text-secondary); }
+  .suprow-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .suprow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .suprow-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .suprow-s { font-size:11.5px; color:var(--text-secondary); }
+  .suprow-chev { flex:none; color:var(--text-tertiary); }
+  .suprow-chev svg { width:18px; height:18px; stroke-width:2; }
+
+  /* completed state */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin:6px 0 16px; }
+  .success .tick { width:56px; height:56px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .success .tick svg { width:28px; height:28px; stroke-width:2.2; }
+  .success h2 { font-size:18px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:12px; }
+  .success .sp { font-size:12.5px; color:var(--text-secondary); margin-top:5px; max-width:250px; }
+
+  .grow { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:14.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; margin-top:16px; }
+  .btn.ghost { background:var(--bg-canvas); color:var(--text-secondary); border:1px solid var(--border-default); }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Refund tracker (GA-106)</h1>
+    <p>Tracking the refund from the <code>GA-105</code> cancellation of <strong>Margalla View Apartment</strong> — the computed amount and destination stay pinned at the top, and a three-stage progress track (<strong>requested → processing → sent</strong>) carries state by glyph + text, never colour alone (§8.7). Rail timing is stated <strong>honestly, per PK payout rail</strong>: card timing reuses the exact figure <code>GA-034</code> already shipped ("5–7 business days"), and wallet timing stays <strong>qualitative</strong> — "usually arrives sooner" — with no new invented day-count. A calm "taking longer than expected?" row is always one tap from support. No journey stepper (§7.6a). Panels: requested + processing, in flight (light) · completed / sent state (dark) · اردو / RTL in-flight.</p>
+    <div class="toggle" role="presentation"><span class="on">In flight · light</span><span>Completed · sent · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — refund in progress, requested and processing">
+      <div class="panel-tag">Light — requested (done) · processing (current) · sent (upcoming)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Refund in progress</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Your refund</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="amthero">
+                <div class="al">Refund amount</div>
+                <div class="av num">PKR 25,000</div>
+                <div class="destrow">
+                  <span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="destrow-b"><span class="destrow-t">Going back to</span><span class="destrow-v num">HBL •••• 8842</span></span>
+                </div>
+              </div>
+
+              <div class="sec-label">Status</div>
+              <ol class="track" aria-label="Refund progress: requested, done; processing, current; sent, upcoming">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Requested</span><span class="trk-s">10 Aug 2026 · after cancelling</span></span>
+                </li>
+                <li class="trk current" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><i></i></span>
+                  <span class="trk-body"><span class="trk-t">Processing</span><span class="trk-s">HBL is preparing the transfer</span></span>
+                </li>
+                <li class="trk upcoming">
+                  <span class="trk-dot" aria-hidden="true"></span>
+                  <span class="trk-body"><span class="trk-t">Sent</span><span class="trk-s">Reaches your card statement</span></span>
+                </li>
+              </ol>
+
+              <div class="railnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                <span class="railnote-tx">Card refunds like this one usually reach you in <b>5–7 business days</b> once sent. Wallet refunds (JazzCash, EasyPaisa) usually arrive sooner than card refunds — timing depends on your bank.</span>
+              </div>
+
+              <a class="suprow" href="/help/payments/refund-status">
+                <span class="suprow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="suprow-b"><span class="suprow-t">Taking longer than expected?</span><span class="suprow-s">Talk to support, 24/7 in Urdu or English</span></span>
+                <span class="suprow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The track is a real <code>&lt;ol&gt;</code> (§8.7 timeline): done carries a filled tick, current a quiet ringed dot (never a spinner-of-anxiety), upcoming a hollow outline — state is legible by shape and text before colour. The rail-timing note reuses the <strong>exact figure <code>GA-034</code> already ships</strong> for card refunds ("5–7 business days") rather than inventing a new one, and keeps the wallet comparison strictly qualitative, per the literal-promise discipline for money screens.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — refund completed, sent">
+      <div class="panel-tag">Dark — completed · sent</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Refund sent — completed state</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Your refund</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2>PKR 25,000 sent</h2>
+                <p class="sp">Sent to your HBL •••• 8842 on 15 Aug 2026. It should already be on your statement, or arrive within a few days.</p>
+              </div>
+
+              <div class="sec-label">Status</div>
+              <ol class="track" aria-label="Refund progress: requested, done; processing, done; sent, done">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Requested</span><span class="trk-s">10 Aug 2026</span></span>
+                </li>
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Processing</span><span class="trk-s">12 Aug 2026</span></span>
+                </li>
+                <li class="trk done" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Sent</span><span class="trk-s">15 Aug 2026 · to HBL •••• 8842</span></span>
+                </li>
+              </ol>
+
+              <a class="suprow" href="/help/payments/refund-status">
+                <span class="suprow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="suprow-b"><span class="suprow-t">Don't see it on your statement yet?</span><span class="suprow-s">Talk to support, 24/7 in Urdu or English</span></span>
+                <span class="suprow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+              <a class="btn ghost" href="/search" role="button">Find another stay</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">All three stages read <code>done</code> in the completed state — the same shape language as the in-flight panel, just fully filled — so a returning guest instantly recognises the track. The support row's copy adapts to context ("don't see it yet?") rather than repeating verbatim, but stays the same reachable list-row.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the refund tracker, in flight">
+      <div class="panel-tag">RTL · اردو — "آپ کی واپسی", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">آپ کی واپسی — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="سفر پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title ur" id="uH">آپ کی واپسی</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="amthero">
+                <div class="al ur">واپسی کی رقم</div>
+                <div class="av num">PKR 25,000</div>
+                <div class="destrow">
+                  <span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="destrow-b"><span class="destrow-t ur">واپس جا رہی ہے</span><span class="destrow-v num">HBL •••• 8842</span></span>
+                </div>
+              </div>
+
+              <div class="sec-label ur">صورتحال</div>
+              <ol class="track" aria-label="واپسی کی پیش رفت: درخواست، مکمل؛ کارروائی، جاری؛ ارسال، آنے والا">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t ur">درخواست موصول</span><span class="trk-s ur">10 اگست 2026 · منسوخی کے بعد</span></span>
+                </li>
+                <li class="trk current" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><i></i></span>
+                  <span class="trk-body"><span class="trk-t ur">کارروائی جاری</span><span class="trk-s ur">HBL ٹرانسفر تیار کر رہا ہے</span></span>
+                </li>
+                <li class="trk upcoming">
+                  <span class="trk-dot" aria-hidden="true"></span>
+                  <span class="trk-body"><span class="trk-t ur">ارسال</span><span class="trk-s ur">آپ کے کارڈ اسٹیٹمنٹ تک پہنچے گی</span></span>
+                </li>
+              </ol>
+
+              <div class="railnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                <span class="railnote-tx ur">اس طرح کے کارڈ ریفنڈ عام طور پر ارسال کے بعد <b class="num">5–7</b> کاروباری دنوں میں پہنچتے ہیں۔ والٹ ریفنڈ (جاز کیش، ایزی پیسہ) عموماً کارڈ ریفنڈ سے جلدی پہنچتے ہیں — وقت آپ کے بینک پر منحصر ہے۔</span>
+              </div>
+
+              <a class="suprow" href="/help/payments/refund-status">
+                <span class="suprow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="suprow-b"><span class="suprow-t ur">توقع سے زیادہ وقت لگ رہا ہے؟</span><span class="suprow-s ur">سپورٹ سے بات کریں، 24/7 اردو یا انگریزی میں</span></span>
+                <span class="suprow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the track rail and dots move to the leading (right) edge, the destination row and support row flip, every rupee and day-count figure keeps <code>.num</code> LTR isolation (§11). "HBL", "JazzCash" and "EasyPaisa" stay Latin as proper nouns; the rest is real Urdu carrying the identical qualitative wallet-vs-card framing as the English panel — no new number is introduced in translation.</p>
+    </section>
+
+  </main>
+</body>
+</html>

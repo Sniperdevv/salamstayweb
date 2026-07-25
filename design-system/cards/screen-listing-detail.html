@@ -1,0 +1,288 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Listing Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    /* raw ramp anchors — used ONLY as on-palette gradient stops for photo placeholders */
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .head .toggle { display:inline-flex; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+  .head .toggle span.on.dk { background:#0E1211; }
+
+  .frame { max-width:1180px; margin:0 auto; border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); }
+  .frame + .frame { margin-top:24px; }
+
+  /* transparent-over-media app bar */
+  .gallery { position:relative; height:340px; display:grid; grid-template-columns:2fr 1fr 1fr; grid-template-rows:1fr 1fr; gap:6px; }
+  .gallery img { width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery .g0 { grid-row:1/3; }
+  .appbar { position:absolute; top:14px; left:16px; right:16px; display:flex; justify-content:space-between; z-index:2; }
+  .appbar .chip { width:36px; height:36px; border-radius:var(--radius-full); background:var(--scrim); display:flex; align-items:center; justify-content:center; }
+  .appbar .chip svg { width:20px; height:20px; color:#fff; stroke-width:2; }
+  .appbar .right { display:flex; gap:8px; }
+  .gallery .count { position:absolute; bottom:14px; right:16px; background:rgba(255,255,255,.92); color:#16191B; font-size:12px; font-weight:600; padding:6px 12px; border-radius:var(--radius-full); z-index:2; }
+
+  .content { display:grid; grid-template-columns:1fr 360px; gap:40px; padding:28px 32px 36px; }
+  .titleblock h2 { font-size:28px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .titleblock .sub { display:flex; align-items:center; gap:10px; font-size:14px; color:var(--text-secondary); margin-top:6px; flex-wrap:wrap; }
+  .rating { display:inline-flex; align-items:center; gap:5px; font-weight:600; color:var(--text-primary); }
+  .rating svg { width:15px; height:15px; color:var(--warning-fg); }
+  .dot { color:var(--text-tertiary); }
+  .divider { height:1px; background:var(--border-hairline); margin:24px 0; }
+
+  .section-h { font-size:18px; font-weight:600; color:var(--text-primary); margin-bottom:14px; }
+  .cult-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .cult { display:flex; gap:12px; align-items:flex-start; }
+  .cult .ic { width:40px; height:40px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; }
+  .cult .ic svg { width:20px; height:20px; color:var(--text-secondary); stroke-width:1.75; }
+  .cult .t { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .cult .d { font-size:13px; color:var(--text-secondary); }
+  .cult .info { color:var(--text-tertiary); margin-left:auto; }
+  .cult .info svg { width:16px; height:16px; }
+
+  .qibla { display:flex; gap:16px; align-items:center; padding:16px 20px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-top:16px; }
+  .compass { width:60px; height:60px; border-radius:var(--radius-full); border:2px solid var(--info-fg); position:relative; flex:none; display:flex; align-items:center; justify-content:center; }
+  .compass svg { width:32px; height:32px; color:var(--info-fg); transform:rotate(-45deg); }
+  .qibla .q-t { font-size:14px; font-weight:600; color:var(--info-fg); }
+  .qibla .q-d { font-size:13px; color:var(--text-secondary); margin-top:2px; }
+
+  .host { display:flex; align-items:center; gap:14px; }
+  .host .av { width:52px; height:52px; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--text-secondary); position:relative; }
+  .host .av .tick { position:absolute; bottom:-2px; right:-2px; width:20px; height:20px; border-radius:var(--radius-full); background:var(--success-bg); border:2px solid var(--bg-canvas); display:flex; align-items:center; justify-content:center; }
+  .host .av .tick svg { width:11px; height:11px; color:var(--success-fg); }
+  .host .h-name { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .host .h-meta { font-size:13px; color:var(--text-secondary); }
+
+  /* sticky booking rail */
+  .booking { position:sticky; top:20px; align-self:start; border:1px solid var(--border-default); border-radius:var(--radius-2xl); padding:24px; box-shadow:var(--el-popover); background:var(--bg-canvas); }
+  .booking .price { display:flex; align-items:baseline; gap:6px; }
+  .booking .price b { font-size:24px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .booking .price span { font-size:14px; color:var(--text-secondary); }
+  .booking .fx { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--text-secondary); margin-top:6px; }
+  .booking .fx svg { width:13px; height:13px; }
+  .datebox { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border-default); border-radius:var(--radius-md); margin-top:16px; overflow:hidden; }
+  .datebox .cell { padding:10px 12px; }
+  .datebox .cell + .cell { border-left:1px solid var(--border-default); }
+  .datebox .cell.full { grid-column:1/3; border-top:1px solid var(--border-default); border-left:none; }
+  .datebox .lb { font-size:10px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); }
+  .datebox .v { font-size:14px; color:var(--text-primary); margin-top:1px; }
+  .reserve { width:100%; height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; margin-top:16px; font-family:inherit; }
+  .breakdown { margin-top:16px; }
+  .brow { display:flex; justify-content:space-between; font-size:14px; color:var(--text-secondary); padding:5px 0; }
+  .brow.total { border-top:1px solid var(--border-hairline); margin-top:6px; padding-top:12px; font-weight:600; color:var(--text-primary); }
+  .brow b { font-variant-numeric:tabular-nums; font-weight:inherit; }
+  /* On-palette gradient photo placeholders (every stop is a token) */
+  .ph { display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+  .ph-glyph { width:26px; height:26px; color:rgba(255,255,255,.5); }
+  .g-a { background:linear-gradient(160deg,var(--brand-700),var(--brand-300)); }
+  .g-b { background:linear-gradient(160deg,var(--slate-700),var(--slate-400)); }
+  .g-c { background:linear-gradient(160deg,var(--info-fg),var(--slate-700)); }
+  .g-d { background:linear-gradient(160deg,var(--brand-800),var(--brand-400)); }
+  .g-e { background:linear-gradient(160deg,var(--slate-800),var(--slate-500)); }
+  .g-f { background:linear-gradient(160deg,var(--brand-900),var(--brand-600)); }
+  @media (max-width:920px){ .content{ grid-template-columns:1fr; } .booking{ position:static; } .cult-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Screen — Listing Detail</h1>
+    <p>The decision screen: gallery, cultural attributes, a calm Qibla card, verified host, and a sticky booking rail. Cultural info in the same modern language as "wifi" — no ornament.</p>
+    <div class="toggle"><span class="on">Light</span><span>Dark ↓</span></div>
+  </div>
+
+  <!-- LIGHT -->
+  <div class="frame">
+    <div class="gallery">
+      <span class="ph g0 g-a" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-b" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-c" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-d" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-e" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <div class="appbar">
+        <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="right">
+          <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8h16v-8M12 3v13M8 7l4-4 4 4"/></svg></div>
+          <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+        </div>
+      </div>
+      <div class="count">Show all 24 photos</div>
+    </div>
+
+    <div class="content">
+      <div class="main">
+        <div class="titleblock">
+          <h2>Cedar Lodge — Margalla views over F-6</h2>
+          <div class="sub">
+            <span class="rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.92</span>
+            <span class="dot">·</span><span>214 reviews</span>
+            <span class="dot">·</span><span>Islamabad, Islamabad Capital Territory</span>
+            <span class="dot">·</span><span>Entire home · 6 guests</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-h">Cultural &amp; property features</div>
+        <div class="cult-grid">
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></div><div><div class="t">Halal kitchen</div><div class="d">No pork or alcohol on site</div></div><div class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></div></div>
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></div><div><div class="t">Prayer space</div><div class="d">Quiet room with a clean mat</div></div></div>
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2.5"/><circle cx="16" cy="6" r="2.5"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M12 20v-3a4 4 0 0 1 8 0v3"/></svg></div><div><div class="t">Family-friendly</div><div class="d">Well suited for children</div></div></div>
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><div><div class="t">Backup power (UPS)</div><div class="d">Covers routine load-shedding</div></div></div>
+        </div>
+
+        <div class="qibla">
+          <div class="compass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="M8 16l2-6 6-2-2 6z" fill="currentColor" stroke="none"/></svg></div>
+          <div>
+            <div class="q-t">Prayer &amp; Qibla</div>
+            <div class="q-d">Qibla is roughly <b>southwest</b> from this property. Jamia Masjid is a 4-minute walk. Fajr today at 3:52 AM.</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="host">
+          <div class="av">AY<div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div></div>
+          <div>
+            <div class="h-name">Hosted by Ayesha · SalamStar</div>
+            <div class="h-meta">Verified · responds within an hour · hosting since 2022</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="booking">
+        <div class="price"><b>PKR 14,200</b> <span>/ night</span></div>
+        <div class="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Rate locked for 15 min</div>
+        <div class="datebox">
+          <div class="cell"><div class="lb">Check in</div><div class="v">12 Jul 2026</div></div>
+          <div class="cell"><div class="lb">Check out</div><div class="v">16 Jul 2026</div></div>
+          <div class="cell full"><div class="lb">Guests</div><div class="v">2 adults · 1 child</div></div>
+        </div>
+        <button class="reserve">Reserve</button>
+        <div class="breakdown">
+          <div class="brow"><span>PKR 14,200 × 4 nights</span><b>PKR 56,800</b></div>
+          <div class="brow"><span>Service fee</span><b>PKR 3,400</b></div>
+          <div class="brow"><span>GST</span><b>PKR 2,010</b></div>
+          <div class="brow total"><span>Total</span><b>PKR 62,210</b></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- DARK -->
+  <div class="frame dark">
+    <div class="gallery">
+      <span class="ph g0 g-f" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-b" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-c" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-d" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <span class="ph g-e" aria-hidden="true"><svg class="ph-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-5 5M8 19l3.5-3.5"/></svg></span>
+      <div class="appbar">
+        <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="right">
+          <div class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8h16v-8M12 3v13M8 7l4-4 4 4"/></svg></div>
+          <div class="chip"><svg viewBox="0 0 24 24" fill="#E39385" stroke="#E39385" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+        </div>
+      </div>
+      <div class="count">Show all 18 photos</div>
+    </div>
+
+    <div class="content">
+      <div class="main">
+        <div class="titleblock">
+          <h2>Lake View Suite — family retreat by Upper Kachura</h2>
+          <div class="sub">
+            <span class="rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.78</span>
+            <span class="dot">·</span><span>88 reviews</span>
+            <span class="dot">·</span><span>Karachi</span>
+            <span class="dot">·</span><span>Family-only · 4 guests</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-h">Cultural &amp; property features</div>
+        <div class="cult-grid">
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></div><div><div class="t">Halal kitchen</div><div class="d">No pork or alcohol on site</div></div><div class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></div></div>
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg></div><div><div class="t">Women-only section</div><div class="d">Separate floor with its own entrance</div></div></div>
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></div><div><div class="t">Prayer mat provided</div><div class="d">Clean mat in the main bedroom</div></div></div>
+          <div class="cult"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg></div><div><div class="t">Mosque nearby</div><div class="d">Under 5 minutes on foot</div></div></div>
+        </div>
+
+        <div class="qibla">
+          <div class="compass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="M8 16l2-6 6-2-2 6z" fill="currentColor" stroke="none"/></svg></div>
+          <div>
+            <div class="q-t">Prayer &amp; Qibla</div>
+            <div class="q-d">Qibla is roughly <b>west-southwest</b>. Nearest masjid is 350&nbsp;m. Maghrib today at 7:14 PM.</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="host">
+          <div class="av">SB<div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div></div>
+          <div>
+            <div class="h-name">Hosted by Sana · women-hosted</div>
+            <div class="h-meta">Verified · responds within a few hours</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="booking">
+        <div class="price"><b>PKR 9,500</b> <span>/ night</span></div>
+        <div class="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Rate locked for 15 min</div>
+        <div class="datebox">
+          <div class="cell"><div class="lb">Check in</div><div class="v">2 Aug 2026</div></div>
+          <div class="cell"><div class="lb">Check out</div><div class="v">7 Aug 2026</div></div>
+          <div class="cell full"><div class="lb">Guests</div><div class="v">Family of 4</div></div>
+        </div>
+        <button class="reserve">Reserve</button>
+        <div class="breakdown">
+          <div class="brow"><span>PKR 9,500 × 5 nights</span><b>PKR 47,500</b></div>
+          <div class="brow"><span>Service fee</span><b>PKR 2,850</b></div>
+          <div class="brow"><span>GST</span><b>PKR 1,760</b></div>
+          <div class="brow total"><span>Total</span><b>PKR 52,110</b></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

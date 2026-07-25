@@ -1,0 +1,453 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — FBR NTN / STRN capture (HA-012)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from HA-010/HA-009 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:302px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage (ha-004/ha-009/ha-010); NO checkout stepper */
+  .phone { width:302px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.hc-a,.hc-now,h2,.lead,.flabel,.field-sub,.stv,.dtv,.st,.sd,.tk-t,.tk-d,.tk-when,.sum-lb,.sum-val,.pop-h,.pop-d,.whatis,.byp-t,.helplink,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — no checkout stepper on host onboarding (§7.6a) */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 2px; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .hero-ic.info { background:var(--info-bg); color:var(--info-fg); }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.6; }
+
+  /* why-panel callout */
+  .callout { display:flex; gap:11px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:16px; }
+  .callout .cico { flex:none; color:var(--text-secondary); margin-top:1px; }
+  .callout .cico svg { width:18px; height:18px; stroke-width:1.75; }
+  .callout .ctxt { font-size:12px; color:var(--text-secondary); line-height:1.55; }
+  .callout .ctxt strong { color:var(--text-primary); font-weight:600; }
+  .callout .ctxt a { color:var(--int-primary); font-weight:600; text-decoration:none; }
+  .callout .ctxt a:hover { text-decoration:underline; }
+
+  /* fields — Input shell (§8.1) */
+  .fld { margin-bottom:13px; }
+  .fld-hd { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .txtinput { width:100%; min-height:48px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 13px; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .txtinput::placeholder { color:var(--text-tertiary); font-weight:500; }
+  .txtinput:focus-visible { outline:none; border-color:var(--int-primary); box-shadow:0 0 0 2px var(--int-subtle); }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+
+  /* small info-popover trigger beside a field label (§8.5 Tooltip/Popover) */
+  .infobtn { flex:none; width:20px; height:20px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .infobtn svg { width:13px; height:13px; stroke-width:2; }
+  .popover { position:relative; border:1px solid var(--info-border); background:var(--info-bg); border-radius:var(--radius-lg); padding:11px 12px; margin:-3px 0 13px; }
+  .pop-h { font-size:12px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:6px; }
+  .pop-h svg { width:14px; height:14px; stroke-width:2; color:var(--info-fg); flex:none; }
+  .pop-d { font-size:11.5px; color:var(--text-secondary); margin-top:4px; line-height:1.5; }
+
+  /* status rows (§8.3 verification-status) */
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:13px; }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .statusrow .sico { flex:none; margin-top:1px; }
+  .statusrow .sico svg { width:18px; height:18px; stroke-width:2; }
+  .statusrow.ok .sico svg { color:var(--success-fg); }
+  .statusrow.info .sico svg { color:var(--info-fg); }
+  .statusrow .sbody { display:flex; flex-direction:column; gap:2px; }
+  .statusrow .sbody .st { font-size:12.5px; font-weight:600; }
+  .statusrow.ok .st { color:var(--success-fg); }
+  .statusrow.info .st { color:var(--info-fg); }
+  .statusrow .sbody .sd { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+
+  .byp { display:inline-flex; align-items:center; gap:8px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:14px; }
+  .byp svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .byp-t { display:inline; }
+
+  /* status tracker (submitted -> confirming with FBR -> verified) */
+  .track { display:flex; flex-direction:column; margin:2px 0 14px; }
+  .track li { display:flex; gap:12px; align-items:stretch; }
+  .tk-rail { display:flex; flex-direction:column; align-items:center; flex:none; width:24px; }
+  .tk-dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; border:2px solid var(--border-default); background:var(--bg-canvas); color:var(--text-tertiary); }
+  .tk-dot svg { width:13px; height:13px; stroke-width:2.4; }
+  .tk-line { display:block; width:2px; flex:1; background:var(--border-hairline); min-height:16px; margin:3px 0; }
+  .track li:last-child .tk-line { display:none; }
+  .track li.done .tk-dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .track li.done .tk-line { background:var(--int-primary); }
+  .track li.now .tk-dot { border-color:var(--int-primary); color:var(--int-primary); box-shadow:0 0 0 3px var(--int-subtle); }
+  .tk-body { flex:1; padding-bottom:14px; display:flex; flex-direction:column; gap:2px; }
+  .tk-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .track li.upcoming .tk-t { color:var(--text-tertiary); }
+  .tk-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+
+  /* verified summary rows */
+  .sumrow { display:flex; flex-direction:column; gap:2px; border-bottom:1px solid var(--border-hairline); padding:10px 2px; }
+  .sumrow:last-of-type { border-bottom:none; }
+  .sum-lb { font-size:11px; color:var(--text-tertiary); }
+  .sum-val { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:12px; font-size:12.5px; }
+  a.helplink { color:var(--int-primary); font-weight:600; }
+  a.helplink:hover { text-decoration:underline; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — FBR NTN / STRN capture (HA-012)</h1>
+    <p>The host records their FBR National Tax Number (NTN) — and, where it applies, a Sales Tax Registration Number (STRN) — so SalamStay can calculate the correct withholding tax on every payout (host-verify, ARCH §6.9). The <b>NTN</b> is the only required field; the <b>STRN</b> section is optional and explained plainly: for service-tax registered businesses — most individual hosts don't need this. A WHY panel states the one consequence plainly, reusing the shipped withholding concept already verbatim in <code>HA-055</code>. Hosts without an NTN yet have an equal-weight <b>"I don't have an NTN"</b> path that states what that means factually — never a dead end, never a penalty tone. Case: host Aqib, Lahore, Punjab — continuing the lineage shipped in <code>HA-004</code>'s Payout step and <code>HA-010</code>. Panels: empty form + filled/ready + no-NTN path (light) · confirming + verified (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — empty · filled &amp; ready · no NTN</span><span>Dark — confirming with FBR · verified</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — EMPTY · FILLED · NO-NTN PATH ============================ -->
+    <section class="panel" aria-label="Light theme — the empty capture form, the filled form ready to submit, and the no-NTN path">
+      <div class="panel-tag">Light — empty form · filled &amp; ready · "I don't have an NTN"</div>
+      <div class="rowflex">
+
+        <!-- A · EMPTY FORM -->
+        <div class="pcol">
+          <div class="pcap">A · Add your tax registration — empty</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tax registration</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <h2 id="aH">Add your tax registration</h2>
+              <p class="lead">Set once — this decides the withholding tax rate on every payout you receive.</p>
+
+              <div class="callout">
+                <span class="cico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="ctxt"><strong>Why we ask.</strong> The withholding tax on your payouts is calculated from your NTN and FBR filer status, under FBR rules — used only for that calculation. See exactly how it applies in <a href="/host/payout-settings/tax/status">ATL filer status</a>.</span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="ntn-a">NTN (National Tax Number)</label>
+                <input class="txtinput" id="ntn-a" type="text" inputmode="numeric" placeholder="e.g. 35201-1234567-1" />
+                <span class="field-sub">This is usually the same number as your CNIC.</span>
+              </div>
+
+              <div class="fld">
+                <div class="fld-hd">
+                  <label class="flabel" for="strn-a" style="margin-bottom:0;">STRN (optional)</label>
+                  <button class="infobtn" type="button" aria-expanded="false" aria-controls="strnpopA" aria-label="What's an STRN?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
+                </div>
+                <input class="txtinput" id="strn-a" type="text" inputmode="numeric" placeholder="e.g. 03-01234567-1" />
+                <span class="field-sub">For service-tax registered businesses — most individual hosts don't need this.</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">Continue</button>
+              <a class="helplink" href="/host/payout-settings/tax/no-ntn">I don't have an NTN</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · FILLED & READY -->
+        <div class="pcol">
+          <div class="pcap">B · Filled, NTN + STRN — ready to submit</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tax registration</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <h2 id="bH">Add your tax registration</h2>
+              <p class="lead">Set once — this decides the withholding tax rate on every payout you receive.</p>
+
+              <div class="fld">
+                <label class="flabel" for="ntn-b">NTN (National Tax Number)</label>
+                <input class="txtinput num" id="ntn-b" type="text" inputmode="numeric" value="35201-1234567-1" />
+                <span class="field-sub">This is usually the same number as your CNIC.</span>
+              </div>
+
+              <div class="fld">
+                <div class="fld-hd">
+                  <label class="flabel" for="strn-b" style="margin-bottom:0;">STRN (optional)</label>
+                  <button class="infobtn" type="button" aria-expanded="true" aria-controls="strnpopB" aria-label="What's an STRN?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
+                </div>
+                <input class="txtinput num" id="strn-b" type="text" inputmode="numeric" value="03-01234567-1" />
+                <span class="field-sub">For service-tax registered businesses — most individual hosts don't need this.</span>
+                <div class="popover" id="strnpopB" role="region" aria-label="What an STRN is">
+                  <div class="pop-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>STRN, in one line</div>
+                  <div class="pop-d">If you provide services beyond hosting through a registered business, your STRN may also apply. Most individual hosts leave this blank.</div>
+                </div>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">Ready to submit</div><div class="sd">We'll confirm this with FBR — usually within a few minutes.</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">Submit</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · I DON'T HAVE AN NTN -->
+        <div class="pcol">
+          <div class="pcap">C · "I don't have an NTN" — factual, no dead end</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings/tax" aria-label="Back to tax registration"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Continuing without an NTN</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <div class="hero-ic info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></div>
+              <h2 id="cH">Continuing without an NTN</h2>
+              <p class="lead">That's alright — many hosts host without one on file.</p>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">What this means</div><div class="sd">Without an NTN, we can't confirm your Active Taxpayer List status, so withholding is calculated at the non-filer rate until you add one. Non-filers are withheld at roughly double the filer rate, and a withholding certificate is issued for every payout.</div></div>
+              </div>
+
+              <p class="field-sub" style="margin:0 0 4px;">FBR's IRIS portal has instructions for registering for an NTN, if you'd like one later.</p>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">Continue without an NTN</button>
+              <a class="btn secondary" href="/host/payout-settings/tax">Add my NTN instead</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The <b>NTN field</b> is the only required input; its placeholder pattern mirrors the CNIC-style format most individual hosts already use for their NTN. The <b>STRN section is genuinely optional</b> — labelled as such, explained in a persistent one-line helper ("for service-tax registered businesses — most individual hosts don't need this") plus an info popover (A closed, B open) for hosts who want more detail (§8.5). <b>C</b> is the equal-weight "I don't have an NTN" path: it states the non-filer consequence as a fact reused verbatim from the shipped <code>HA-055</code> withholding language ("Non-filers are withheld at roughly double the filer rate, and a withholding certificate is issued for every payout"), mentions FBR's IRIS portal only as plain text — never a hotlink (§7 hard rule) — and offers both a forward path and a way back, so neither is a dead end.</p>
+    </section>
+
+    <!-- ============================ DARK — CONFIRMING + VERIFIED ============================ -->
+    <section class="panel dark" aria-label="Dark theme — confirming with FBR, and verified">
+      <div class="panel-tag">Dark — confirming with FBR · verified</div>
+      <div class="rowflex">
+
+        <!-- D · CONFIRMING WITH FBR -->
+        <div class="pcol">
+          <div class="pcap">D · Submitted — confirming with FBR</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tax registration</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="dH">Confirming with FBR</h2>
+              <p class="lead">Thanks — your details are submitted. This is checked automatically and usually takes a few minutes, not days.</p>
+
+              <span class="byp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="byp-t">Checked automatically against FBR records</span></span>
+
+              <ol class="track">
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Submitted</div><div class="tk-d">Your NTN and STRN were received.</div></div>
+                </li>
+                <li class="now" aria-current="step">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Confirming with FBR</div><div class="tk-d">We're checking your registration and filer status.</div></div>
+                </li>
+                <li class="upcoming">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Verified</div><div class="tk-d">Your withholding rate is set.</div></div>
+                </li>
+              </ol>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/payout-settings">Back to Payout settings</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- E · VERIFIED -->
+        <div class="pcol">
+          <div class="pcap">E · Verified — quiet confirmation</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Tax registration</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="eH">Your tax details are confirmed</h2>
+              <p class="lead">This is a one-time step — you won't be asked again unless something changes.</p>
+
+              <div class="sumrow"><span class="sum-lb">NTN</span><span class="sum-val num">35201-1234567-1</span></div>
+              <div class="sumrow"><span class="sum-lb">STRN</span><span class="sum-val">Not provided</span></div>
+
+              <div class="statusrow ok" role="status" style="margin-top:14px;">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="sbody"><div class="st">Verified</div><div class="sd">Withholding is calculated using your filer status.</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/payout-settings/tax/status">See your ATL filer status</a>
+              <a class="helplink" href="/host/help/fees#withholding">How withholding tax works</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Confirmation here is <b>automatic against FBR records</b>, not a human document review — distinct in tone from <code>HA-010</code>'s "reviewed by our team" (that screen verifies an uploaded license; this one verifies a registration number), so the tracker's middle step reads "Confirming with FBR" rather than "In review." The <b>STRN "Not provided"</b> value in E demonstrates the common individual-host path plainly, without treating it as missing information. "See your ATL filer status" and the withholding help link route into <code>HA-013</code> and the exact anchor already shipped on <code>HA-055</code> (<code>/host/help/fees#withholding</code>), keeping the fee-explainer destination singular across the product.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the filled form ready to submit">
+      <div class="panel-tag">RTL · اردو — filled form, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">F · اردو — جمع کرانے کے لیے تیار</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="rH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/payout-settings" aria-label="ادائیگی کی ترتیبات پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">ٹیکس رجسٹریشن</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">ادائیگی</span></div>
+            <div class="screen">
+              <h2 id="rH">اپنی ٹیکس رجسٹریشن شامل کریں</h2>
+              <p class="lead">ایک بار طے کریں — یہ ہر ادائیگی پر ودہولڈنگ ٹیکس کی شرح طے کرتا ہے۔</p>
+
+              <div class="callout">
+                <span class="cico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="ctxt"><strong>ہم یہ کیوں پوچھتے ہیں۔</strong> آپ کی ادائیگیوں پر ودہولڈنگ ٹیکس آپ کے این ٹی این اور FBR فائلر کی صورتحال سے، FBR کے ضوابط کے تحت طے ہوتا ہے — صرف اسی حساب کے لیے استعمال ہوتا ہے۔ مکمل تفصیل <a href="/ur/host/payout-settings/tax/status">فعال ٹیکس گزار کی صورتحال</a> میں دیکھیں۔</span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="ntn-r">این ٹی این (نیشنل ٹیکس نمبر)</label>
+                <input class="txtinput num" id="ntn-r" type="text" value="35201-1234567-1" style="direction:ltr; text-align:right;" />
+                <span class="field-sub">عام طور پر یہ آپ کے شناختی کارڈ (CNIC) جیسا ہی نمبر ہوتا ہے۔</span>
+              </div>
+
+              <div class="fld">
+                <div class="fld-hd">
+                  <label class="flabel" for="strn-r" style="margin-bottom:0;">ایس ٹی آر این (اختیاری)</label>
+                  <button class="infobtn" type="button" aria-expanded="false" aria-controls="strnpopR" aria-label="ایس ٹی آر این کیا ہے؟"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
+                </div>
+                <input class="txtinput num" id="strn-r" type="text" value="03-01234567-1" style="direction:ltr; text-align:right;" />
+                <span class="field-sub">سروس ٹیکس میں رجسٹرڈ کاروباروں کے لیے — زیادہ تر انفرادی میزبانوں کو اس کی ضرورت نہیں۔</span>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">جمع کرانے کے لیے تیار</div><div class="sd">ہم چند منٹوں میں FBR سے تصدیق کر لیں گے۔</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">جمع کروائیں</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron flips to the leading (right) edge, and both the NTN and STRN numbers stay LTR-isolated and right-aligned (<code>.num</code>, matching the convention already set by <code>HA-010</code>'s license-number field) inside the right-to-left row. "این ٹی این" (NTN) and "ایس ٹی آر این" (STRN) are kept as transliterations rather than invented Urdu acronyms, consistent with "فائلر"/"ودہولڈنگ ٹیکس" already shipped on <code>HA-002</code>/<code>HA-055</code>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

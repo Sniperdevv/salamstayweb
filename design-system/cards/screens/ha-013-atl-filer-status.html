@@ -1,0 +1,446 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — ATL filer-status display (HA-013)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:302px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage (ha-004/ha-009/ha-012); NO checkout stepper */
+  .phone { width:302px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.hc-a,.hc-now,h2,.lead,.st,.sd,.rc-t,.rc-w,.pop-h,.pop-d,.whatis,.sup-t,.sup-s,.chg-h,.chg-d,.sum-lb,.sum-val,.helplink,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — host onboarding journey context, no checkout stepper (§7.6a) */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 2px; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .hero-ic.info { background:var(--info-bg); color:var(--info-fg); }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.6; }
+
+  /* status tag beside the heading */
+  .tag { font-size:10.5px; font-weight:700; border-radius:var(--radius-full); padding:2px 9px; white-space:nowrap; }
+  .tag-filer { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .tag-nonfiler { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+
+  /* status rows (§8.3 verification-status — muted throughout, never alarmist) */
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:13px; }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .statusrow .sico { flex:none; margin-top:1px; }
+  .statusrow .sico svg { width:18px; height:18px; stroke-width:2; }
+  .statusrow.ok .sico svg { color:var(--success-fg); }
+  .statusrow.info .sico svg { color:var(--info-fg); }
+  .statusrow .sbody { display:flex; flex-direction:column; gap:3px; }
+  .statusrow .sbody .st { font-size:12.5px; font-weight:600; }
+  .statusrow.ok .st { color:var(--success-fg); }
+  .statusrow.info .st { color:var(--info-fg); }
+  .statusrow .sbody .sd { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* what-changed banner — factual, not alarmist */
+  .chg { display:flex; gap:11px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .chg .cico { flex:none; color:var(--int-primary); margin-top:1px; }
+  .chg .cico svg { width:19px; height:19px; stroke-width:1.85; }
+  .chg-b { display:flex; flex-direction:column; gap:2px; }
+  .chg-h { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .chg-d { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* re-check affordance row */
+  .recheck { display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:11px 13px; margin-bottom:14px; }
+  .rc-body { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .rc-t { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .rc-w { font-size:11px; color:var(--text-tertiary); }
+  .rc-btn { flex:none; font-family:inherit; font-size:12px; font-weight:600; color:var(--int-primary); background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-md); padding:8px 12px; min-height:36px; cursor:pointer; }
+
+  /* info popover trigger + panel (§8.5) */
+  .whatis { display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:0 13px; margin-bottom:8px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--int-primary); font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .whatis svg { width:14px; height:14px; stroke-width:2; }
+  .popover { border:1px solid var(--info-border); background:var(--info-bg); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; }
+  .pop-h { font-size:12.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:6px; }
+  .pop-h svg { width:14px; height:14px; stroke-width:2; color:var(--info-fg); flex:none; }
+  .pop-d { font-size:11.5px; color:var(--text-secondary); margin-top:4px; line-height:1.55; }
+
+  /* "become a filer" guidance row — concept-level, no tax-advice tone */
+  .suprow { display:flex; align-items:center; gap:12px; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 13px; text-decoration:none; margin-bottom:14px; }
+  .sup-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-default); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sup-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .sup-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .sup-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .sup-s { font-size:11.5px; color:var(--text-secondary); }
+  .sup-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .sup-chev svg { width:17px; height:17px; stroke-width:2; }
+  .phone.rtl .sup-chev svg { transform:scaleX(-1); }
+
+  .sumrow { display:flex; flex-direction:column; gap:2px; border-bottom:1px solid var(--border-hairline); padding:10px 2px; }
+  .sumrow:last-of-type { border-bottom:none; }
+  .sum-lb { font-size:11px; color:var(--text-tertiary); }
+  .sum-val { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:12px; font-size:12.5px; }
+  a.helplink { color:var(--int-primary); font-weight:600; }
+  a.helplink:hover { text-decoration:underline; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — ATL filer-status display (HA-013)</h1>
+    <p>A read-only surface showing the host's FBR Active Taxpayer List (ATL) status and its effect on the withholding rate applied to their payouts (host-verify, ARCH §6.9). Both <b>Filer</b> and <b>Non-filer</b> are shown calmly, at the same visual weight — non-filer is a status, not a verdict, and carries no warning/error color (DESIGN §10.6). The explanatory line reuses <code>HA-055</code>'s shipped filer/non-filer withholding language <b>verbatim</b>. Every state carries a <b>re-check affordance</b> ("checked against the FBR Active Taxpayer List"), an <b>info popover</b> explaining the ATL in one plain paragraph, and — only where relevant — a factual, no-tax-advice <b>"become a filer"</b> guidance row. A <b>what-changed</b> state states a status flip plainly. Case: host Aqib, Lahore, Punjab. Panels: filer · non-filer · status-changed (light) · filer · non-filer (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — filer · non-filer · status changed</span><span>Dark — filer · non-filer</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — FILER · NON-FILER · STATUS CHANGED ============================ -->
+    <section class="panel" aria-label="Light theme — filer status, non-filer status, and a status-changed state">
+      <div class="panel-tag">Light — filer · non-filer · status changed</div>
+      <div class="rowflex">
+
+        <!-- A · FILER -->
+        <div class="pcol">
+          <div class="pcap">A · Filer — calm, informational</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Filer status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+              <h2 id="aH">You're a filer <span class="tag tag-filer">Filer</span></h2>
+              <p class="lead">This affects the withholding rate on your payouts — here's exactly how.</p>
+
+              <div class="statusrow ok" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="sbody"><div class="st">Withholding tax · filer rate</div><div class="sd">Advance tax collected under FBR rules and deposited against your account. You're on the Active Taxpayers List (ATL), so the filer rate applies.</div></div>
+              </div>
+
+              <div class="recheck">
+                <div class="rc-body"><span class="rc-t">Checked against the FBR Active Taxpayer List</span><span class="rc-w">Today, 9:15 AM</span></div>
+                <button class="rc-btn" type="button">Check again</button>
+              </div>
+
+              <button class="whatis" type="button" aria-expanded="false" aria-controls="atlpopA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>What is the ATL?</button>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/payout-settings/tax">Manage your NTN</a>
+              <a class="helplink" href="/host/help/fees#withholding">How withholding tax works</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · NON-FILER -->
+        <div class="pcol">
+          <div class="pcap">B · Non-filer — status, not a verdict</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Filer status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <div class="hero-ic info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></div>
+              <h2 id="bH">You're a non-filer <span class="tag tag-nonfiler">Non-filer</span></h2>
+              <p class="lead">This affects the withholding rate on your payouts — here's exactly how.</p>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">Withholding tax · non-filer rate</div><div class="sd">Advance tax collected under FBR rules and deposited against your account. Non-filers are withheld at roughly double the filer rate, and a withholding certificate is issued for every payout.</div></div>
+              </div>
+
+              <a class="suprow" href="/host/help/becoming-a-filer">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11"/></svg></span>
+                <span class="sup-b"><span class="sup-t">Want to become a filer?</span><span class="sup-s">Your tax consultant or the FBR portal can help.</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="recheck">
+                <div class="rc-body"><span class="rc-t">Checked against the FBR Active Taxpayer List</span><span class="rc-w">Today, 9:15 AM</span></div>
+                <button class="rc-btn" type="button">Check again</button>
+              </div>
+
+              <button class="whatis" type="button" aria-expanded="true" aria-controls="atlpopB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>What is the ATL?</button>
+              <div class="popover" id="atlpopB" role="region" aria-label="What the ATL is">
+                <div class="pop-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>The ATL, in one line</div>
+                <div class="pop-d">The Active Taxpayer List (ATL) is FBR's record of taxpayers who have filed their latest return. SalamStay checks it periodically to apply the correct withholding rate — it isn't a ranking or a judgment, just a tax status.</div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/payout-settings/tax">Manage your NTN</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · STATUS CHANGED -->
+        <div class="pcol">
+          <div class="pcap">C · Status changed — factual, not alarmist</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Filer status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <h2 id="cH">You're a filer <span class="tag tag-filer">Filer</span></h2>
+              <p class="lead">This affects the withholding rate on your payouts — here's exactly how.</p>
+
+              <div class="chg">
+                <span class="cico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 12v-2a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 12v2a4 4 0 0 1-4 4H3"/></svg></span>
+                <div class="chg-b"><span class="chg-h">Your status changed</span><span class="chg-d">Non-filer → Filer on <span class="num">14 Jul 2026</span> — this applies to payouts from your next booking onward.</span></div>
+              </div>
+
+              <div class="statusrow ok" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="sbody"><div class="st">Withholding tax · filer rate</div><div class="sd">You're on the Active Taxpayers List (ATL), so the filer rate now applies — earlier payouts are unaffected.</div></div>
+              </div>
+
+              <div class="recheck">
+                <div class="rc-body"><span class="rc-t">Checked against the FBR Active Taxpayer List</span><span class="rc-w">Today, 9:15 AM</span></div>
+                <button class="rc-btn" type="button">Check again</button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/host/help/fees#withholding">How withholding tax works</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Non-filer (<b>B</b>) sits in the muted <code>info</code> register, never <code>warning</code>/<code>error</code> — no red, no alert triangle — because a filer status is a fact about tax registration, not a fault (DESIGN §10.6, row note: "transparency framed as trust, not penalty"). The withholding explanation in both A and B is reused <b>verbatim</b> from the shipped <code>HA-055</code> copy ("Advance tax collected under FBR rules and deposited against your account… Non-filers are withheld at roughly double the filer rate, and a withholding certificate is issued for every payout") — no new percentage is invented anywhere on this card. The <b>"become a filer"</b> row (B) only ever names a consultant or the FBR portal — never SalamStay itself — staying out of the tax-advice business. <b>C</b> demonstrates the what-changed state without alarm: a quiet banner, the same calm filer display beneath it, and an explicit "earlier payouts are unaffected" line so nothing reads as retroactive or punitive.</p>
+    </section>
+
+    <!-- ============================ DARK — FILER · NON-FILER ============================ -->
+    <section class="panel dark" aria-label="Dark theme — filer status and non-filer status">
+      <div class="panel-tag">Dark — filer · non-filer</div>
+      <div class="rowflex">
+
+        <!-- D · FILER (DARK) -->
+        <div class="pcol">
+          <div class="pcap">D · Filer — dark</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Filer status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+              <h2 id="dH">You're a filer <span class="tag tag-filer">Filer</span></h2>
+              <p class="lead">This affects the withholding rate on your payouts — here's exactly how.</p>
+
+              <div class="statusrow ok" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="sbody"><div class="st">Withholding tax · filer rate</div><div class="sd">Advance tax collected under FBR rules and deposited against your account. You're on the Active Taxpayers List (ATL), so the filer rate applies.</div></div>
+              </div>
+
+              <div class="recheck">
+                <div class="rc-body"><span class="rc-t">Checked against the FBR Active Taxpayer List</span><span class="rc-w">Today, 9:15 AM</span></div>
+                <button class="rc-btn" type="button">Check again</button>
+              </div>
+
+              <button class="whatis" type="button" aria-expanded="false" aria-controls="atlpopD"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>What is the ATL?</button>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/payout-settings/tax">Manage your NTN</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- E · NON-FILER (DARK) -->
+        <div class="pcol">
+          <div class="pcap">E · Non-filer — dark</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Filer status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Payout</span></div>
+            <div class="screen">
+              <div class="hero-ic info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></div>
+              <h2 id="eH">You're a non-filer <span class="tag tag-nonfiler">Non-filer</span></h2>
+              <p class="lead">This affects the withholding rate on your payouts — here's exactly how.</p>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">Withholding tax · non-filer rate</div><div class="sd">Advance tax collected under FBR rules and deposited against your account. Non-filers are withheld at roughly double the filer rate, and a withholding certificate is issued for every payout.</div></div>
+              </div>
+
+              <a class="suprow" href="/host/help/becoming-a-filer">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11"/></svg></span>
+                <span class="sup-b"><span class="sup-t">Want to become a filer?</span><span class="sup-s">Your tax consultant or the FBR portal can help.</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="recheck">
+                <div class="rc-body"><span class="rc-t">Checked against the FBR Active Taxpayer List</span><span class="rc-w">Today, 9:15 AM</span></div>
+                <button class="rc-btn" type="button">Check again</button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/payout-settings/tax">Manage your NTN</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark is first-class — every role stays AA-proven (§11). The <code>tag-filer</code>/<code>tag-nonfiler</code> pills carry the same muted success/info hues used across the product (never brand green as a judgment fill, DESIGN §10.3) so filer and non-filer read as two factual states of one status field, not a pass/fail pair.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — non-filer status with the become-a-filer row and the ATL popover open">
+      <div class="panel-tag">RTL · اردو — non-filer, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">F · نان فائلر — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="rH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/payout-settings" aria-label="ادائیگی کی ترتیبات پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">فائلر کی صورتحال</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">ادائیگی</span></div>
+            <div class="screen">
+              <div class="hero-ic info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></div>
+              <h2 id="rH">آپ نان فائلر ہیں <span class="tag tag-nonfiler">نان فائلر</span></h2>
+              <p class="lead">یہ آپ کی ادائیگیوں پر ودہولڈنگ ٹیکس کی شرح کو متاثر کرتا ہے — یہاں پوری تفصیل ہے۔</p>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">ودہولڈنگ ٹیکس · نان فائلر شرح</div><div class="sd">FBR کے ضوابط کے تحت پیشگی ٹیکس کاٹا جاتا ہے اور آپ کے اکاؤنٹ میں جمع کیا جاتا ہے۔ نان فائلرز سے فائلر کی شرح سے تقریباً دگنی رقم کاٹی جاتی ہے، اور ہر ادائیگی کے لیے ودہولڈنگ سرٹیفکیٹ جاری کیا جاتا ہے۔</div></div>
+              </div>
+
+              <a class="suprow" href="/ur/host/help/becoming-a-filer">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11"/></svg></span>
+                <span class="sup-b"><span class="sup-t">فائلر بننا چاہتے ہیں؟</span><span class="sup-s">آپ کا ٹیکس مشیر یا FBR پورٹل مدد کر سکتا ہے۔</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+              </a>
+
+              <div class="recheck">
+                <div class="rc-body"><span class="rc-t">FBR کی فعال ٹیکس گزار فہرست سے موازنہ کیا گیا</span><span class="rc-w">آج، صبح <span class="num">9:15</span></span></div>
+                <button class="rc-btn" type="button">دوبارہ چیک کریں</button>
+              </div>
+
+              <button class="whatis" type="button" aria-expanded="true" aria-controls="atlpopF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>ایکٹو ٹیکس پیئر لسٹ کیا ہے؟</button>
+              <div class="popover" id="atlpopF" role="region" aria-label="ایکٹو ٹیکس پیئر لسٹ کی وضاحت">
+                <div class="pop-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>ایک سطر میں ATL</div>
+                <div class="pop-d">فعال ٹیکس گزار فہرست (ATL) FBR کا وہ ریکارڈ ہے جو حالیہ گوشوارہ جمع کرانے والے ٹیکس گزاروں کو ظاہر کرتا ہے۔ سلام اسٹے وقتاً فوقتاً اسے چیک کرتا ہے تاکہ درست ودہولڈنگ شرح لاگو ہو — یہ کوئی درجہ بندی یا فیصلہ نہیں، محض ایک ٹیکس صورتحال ہے۔</div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/ur/host/payout-settings/tax">اپنا این ٹی این منظم کریں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron and the guidance row's chevron flip to the reading direction; the time in the re-check row stays LTR-isolated (<code>.num</code>). "فائلر"/"نان فائلر" keep the transliteration already shipped on <code>HA-055</code> rather than inventing new Urdu terms; "ودہولڈنگ ٹیکس" matches <code>HA-002</code>/<code>HA-055</code> exactly.</p>
+    </section>
+
+  </main>
+</body>
+</html>

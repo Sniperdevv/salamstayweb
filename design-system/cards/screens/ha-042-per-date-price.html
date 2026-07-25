@@ -1,0 +1,617 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Per-date price editor (HA-042)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<!-- ===========================================================================
+     HA-042 · Per-date price editor — /host/calendar/{date} and /{from}..{to}
+     ---------------------------------------------------------------------------
+     Editor frame canon (§7.6a / ha-040): app bar + listing context chip +
+       save / discard + unsaved-changes bar. NO wizard bars.
+     CURRENCY LAW (ha-002 / ha-031, verbatim): the ₨ glyph is an INPUT-FIELD
+       PREFIX ADORNMENT ONLY. Every price stated in prose or in a breakdown
+       spells "PKR" (DESIGN §8.1 — currency is labelled, never symbol-only).
+     SHIPPED FIGURES, NOT NEW ONES:
+       Cantt View Residence · weekday base PKR 12,000 · weekend Fri–Sat
+         PKR 15,000 (HA-031 weekend-rate convention, HA-043).
+       Friday 14 August 2026 already carries the PKR 16,500 override HA-043
+         applied and saved — this screen is where that override is read,
+         changed, or removed.
+       Hijri 14 Aug 2026 = 1 Rabi' al-Awwal 1448 (derived from HA-032's
+         shipped 20 Mar 2026 = 1 Shawwal 1447 anchor; see HA-041).
+     OVERRIDE VS BASE IS STATED PLAINLY: what the date would be without the
+       override is always visible, and "Remove override" is a first-class
+       action, so an override can never become a one-way door.
+     NO SMART PRICING (HA-031 shipped its explicit absence): no suggested
+       rate, no market comparison, no demand statistic. The weekend and Eid
+       context rows show only the host's OWN shipped figures and link to the
+       editors that own them (HA-031 / HA-044).
+     Guest-impact line is HA-043's, verbatim.
+     =========================================================================== -->
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1740px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1020px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1740px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1180px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — post-publish editor lineage (ha-040/ha-043/ha-044 family) */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:790px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.sh,.dt-g,.dt-h,.dt-w,.flabel,.field-sub,.cmp-k,.cmp-v,.cmp-note,.ctx-t,.ctx-d,.ctx-lk,.rm-t,.rm-lk,.impact p,.unsavedbar .tx,.btn,.ebtn,.toast-t,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing context chip — ha-040 grammar, byte-for-byte; links back to the hub HA-036 */
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-tx > span { display:block; }
+  .lctx-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 18px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:5px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:16px 0 9px; }
+
+  /* the date this editor is about */
+  .dtcard { display:flex; align-items:center; gap:12px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; }
+  .dt-ic { flex:none; width:40px; height:40px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .dt-ic svg { width:19px; height:19px; stroke-width:1.7; }
+  .dt-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .dt-b > span { display:block; }
+  .dt-g { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .dt-h { font-size:11px; color:var(--text-tertiary); }
+  .dt-w { font-size:11px; color:var(--text-secondary); }
+
+  /* price input — ₨ is an input-field PREFIX ADORNMENT only (ha-002/ha-031) */
+  .fld { margin-bottom:4px; }
+  .flabel { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px; }
+  .amtwrap { display:flex; align-items:center; min-height:52px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 13px; gap:9px; }
+  .amtwrap:focus-within { border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-subtle); }
+  .amtwrap .pre { font-size:17px; font-weight:600; color:var(--text-tertiary); flex:none; }
+  .amtwrap input { flex:1; min-width:0; border:none; outline:none; background:transparent; font-family:'Inter',sans-serif; font-size:19px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate; }
+  .amtwrap input::placeholder { color:var(--text-disabled); font-weight:500; }
+  .field-sub { display:block; font-size:11px; color:var(--text-tertiary); margin-top:7px; line-height:1.45; }
+
+  /* override vs base — stated plainly, side by side */
+  .cmp { display:flex; flex-direction:column; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; margin-top:12px; }
+  .cmprow { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:11px 13px; border-bottom:1px solid var(--border-hairline); }
+  .cmp > .cmprow:last-of-type { border-bottom:none; }
+  .cmprow.now { background:var(--int-subtle); }
+  .cmp-k { font-size:12px; color:var(--text-secondary); }
+  .cmprow.now .cmp-k { color:var(--text-primary); font-weight:600; }
+  .cmp-v { font-size:13.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; text-align:end; }
+  .cmprow.now .cmp-v { color:var(--int-primary); font-size:15px; }
+  .cmprow.was .cmp-v { color:var(--text-secondary); }
+  .cmp-note { font-size:11px; color:var(--text-tertiary); line-height:1.5; padding:10px 13px; background:var(--bg-raised); border-top:1px solid var(--border-hairline); }
+
+  /* remove-override row — an override is never a one-way door */
+  .rmrow { display:flex; align-items:center; gap:10px; margin-top:12px; padding:10px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .rmrow svg { width:15px; height:15px; color:var(--text-secondary); flex:none; stroke-width:1.9; }
+  .rm-t { flex:1; min-width:0; font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .rm-lk { flex:none; font-size:11.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; background:transparent; border:none; font-family:inherit; cursor:pointer; white-space:nowrap; }
+
+  /* context rows — the host's OWN shipped figures, owned by HA-031 / HA-044 */
+  .ctx { display:flex; gap:10px; align-items:flex-start; margin-top:10px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .ctx svg { width:15px; height:15px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.8; }
+  .ctx-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ctx-b > span { display:block; }
+  .ctx-t { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+  .ctx-d { font-size:11px; color:var(--text-secondary); line-height:1.45; }
+  .ctx-lk { font-size:11px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  .impact { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .impact svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .impact p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  .spacer-fill { flex:1; min-height:10px; }
+
+  /* unsaved-changes bar — ha-040/ha-043 grammar, byte-for-byte */
+  .unsavedbar { flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--warning-bg); border-top:1px solid var(--warning-border); }
+  .unsavedbar .uic { flex:none; width:20px; height:20px; color:var(--warning-fg); }
+  .unsavedbar .tx { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--warning-fg); line-height:1.35; }
+  .ebtnrow { flex:none; display:flex; gap:8px; }
+  .ebtn { min-height:40px; padding:0 14px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .ebtn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .ebtn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  .toast { position:absolute; inset-inline:14px; bottom:36px; display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-lg); background:var(--text-primary); box-shadow:var(--el-popover); z-index:4; }
+  .toast svg { width:16px; height:16px; color:var(--bg-canvas); flex:none; stroke-width:2.2; }
+  .toast-t { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--bg-canvas); line-height:1.35; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:344px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Per-date price editor (HA-042)</h1>
+    <p>Where <code>HA-041</code>'s calendar hands off a date or a range: <code>/host/calendar/2026-08-14</code>, in the same editor frame as <code>ha-040</code>/<code>ha-043</code>/<code>ha-044</code> — app bar, listing context chip, save/discard, unsaved-changes bar, <b>no wizard bars</b>. The screen's whole job is to make <b>override versus base legible</b>: what this night would cost without an override is <b>always on screen</b>, the override sits beside it, and <b>"Remove override"</b> is a first-class action so a one-off price can never become a one-way door. The case is the one <code>ha-043</code> already created — Friday <span class="num">14</span> August <span class="num">2026</span> at <b>Cantt View Residence</b>, carrying the <b><span class="num">PKR 16,500</span></b> that bulk edit applied and saved over the <b><span class="num">PKR 15,000</span></b> weekend rate. Currency follows <code>HA-002</code>/<code>HA-031</code> exactly: <b>₨ is an input-field prefix adornment and nothing else</b> — every figure in prose or in the comparison spells <b>PKR</b>. There is <b>no suggested rate, no market comparison and no demand statistic</b>: <code>HA-031</code> shipped the explicit absence of smart pricing, and the weekend and Eid rows show only the host's own shipped figures, linking to the editors that own them. Panels: existing override (light) · edited, unsaved (light) · a range with no override yet (light) · saved, dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — override · edited · range</span><span>Dark — saved</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — OVERRIDE · EDITED · RANGE ============================ -->
+    <section class="panel" aria-label="Light theme — an existing override, an edited unsaved state, and a range with no override yet">
+      <div class="panel-tag">Light — A existing override · B edited, unsaved · C range, no override</div>
+      <div class="rowflex">
+
+        <!-- A · EXISTING OVERRIDE -->
+        <div class="pcol">
+          <div class="pcap">A · One night, overridden — base always visible</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/calendar" aria-label="Back to Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Price for this night</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Price for this night</h2>
+              <p class="lead">Set what this one night costs. Your base price stays untouched.</p>
+
+              <div class="dtcard">
+                <span class="dt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="dt-b">
+                  <span class="dt-g">Friday <span class="num">14 August 2026</span></span>
+                  <span class="dt-h"><span class="num">1</span> Rabi' al-Awwal <span class="num">1448</span> AH</span>
+                  <span class="dt-w">Open · a weekend night</span>
+                </span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="pr-a">Price for this night</label>
+                <div class="amtwrap"><span class="pre" aria-hidden="true">₨</span><input id="pr-a" type="text" inputmode="numeric" value="16,500" /></div>
+                <span class="field-sub">You set this price. Nothing adjusts it automatically.</span>
+              </div>
+
+              <div class="cmp">
+                <div class="cmprow now">
+                  <span class="cmp-k">This night</span>
+                  <span class="cmp-v num">PKR 16,500</span>
+                </div>
+                <div class="cmprow was">
+                  <span class="cmp-k">Without an override</span>
+                  <span class="cmp-v num">PKR 15,000</span>
+                </div>
+                <p class="cmp-note">Your weekend rate is <span class="num">PKR 15,000</span> a night. Remove the override and this date goes back to it.</p>
+              </div>
+
+              <div class="rmrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-5h5"/></svg>
+                <span class="rm-t">Back to your weekend rate for this date.</span>
+                <button class="rm-lk" type="button">Remove override</button>
+              </div>
+
+              <h3 class="sh">Where this price comes from</h3>
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 8h6a2 2 0 1 1 0 4h-4a2 2 0 1 0 0 4h6"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">Your nightly rates</span>
+                  <span class="ctx-d">Weekdays <span class="num">PKR 12,000</span> · Friday and Saturday <span class="num">PKR 15,000</span>.</span>
+                  <a class="ctx-lk" href="/host/listings/cantt-view-residence/pricing">Edit your rates →</a>
+                </span>
+              </div>
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">Eid &amp; Ramadan pricing</span>
+                  <span class="ctx-d">Nothing set — your base price applies to Ramadan and both Eids.</span>
+                  <a class="ctx-lk" href="/host/listings/cantt-view-residence/seasonal-pricing">Set seasonal prices →</a>
+                </span>
+              </div>
+
+              <div class="impact">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EDITED -->
+        <div class="pcol">
+          <div class="pcap">B · Edited — new figure typed, nothing saved yet</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/calendar" aria-label="Back to Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Price for this night</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Price for this night</h2>
+              <p class="lead">Set what this one night costs. Your base price stays untouched.</p>
+
+              <div class="dtcard">
+                <span class="dt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="dt-b">
+                  <span class="dt-g">Friday <span class="num">14 August 2026</span></span>
+                  <span class="dt-h"><span class="num">1</span> Rabi' al-Awwal <span class="num">1448</span> AH</span>
+                  <span class="dt-w">Open · a weekend night</span>
+                </span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="pr-b">Price for this night</label>
+                <div class="amtwrap"><span class="pre" aria-hidden="true">₨</span><input id="pr-b" type="text" inputmode="numeric" value="18,000" /></div>
+                <span class="field-sub">You set this price. Nothing adjusts it automatically.</span>
+              </div>
+
+              <div class="cmp">
+                <div class="cmprow now">
+                  <span class="cmp-k">This night, once saved</span>
+                  <span class="cmp-v num">PKR 18,000</span>
+                </div>
+                <div class="cmprow was">
+                  <span class="cmp-k">Currently saved</span>
+                  <span class="cmp-v num">PKR 16,500</span>
+                </div>
+                <div class="cmprow was">
+                  <span class="cmp-k">Without an override</span>
+                  <span class="cmp-v num">PKR 15,000</span>
+                </div>
+                <p class="cmp-note">Three figures, so nothing is guessed: what you're about to set, what is set now, and what this date would be with no override at all.</p>
+              </div>
+
+              <div class="rmrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-5h5"/></svg>
+                <span class="rm-t">Back to your weekend rate for this date.</span>
+                <button class="rm-lk" type="button">Remove override</button>
+              </div>
+
+              <div class="impact">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="unsavedbar">
+              <svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span class="tx">You have unsaved changes</span>
+              <div class="ebtnrow">
+                <button class="ebtn discard" type="button">Discard</button>
+                <button class="ebtn save" type="button">Save</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · RANGE -->
+        <div class="pcol">
+          <div class="pcap">C · A range from the calendar — no override yet</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/calendar" aria-label="Back to Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Price for these nights</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Price for these nights</h2>
+              <p class="lead">One price for all three nights. Your base price stays untouched.</p>
+
+              <div class="dtcard">
+                <span class="dt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="dt-b">
+                  <span class="dt-g"><span class="num">21</span>–<span class="num">23 August 2026</span></span>
+                  <span class="dt-h"><span class="num">8</span>–<span class="num">10</span> Rabi' al-Awwal <span class="num">1448</span> AH</span>
+                  <span class="dt-w"><span class="num">3</span> nights · all open</span>
+                </span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="pr-c">Price for each of these nights</label>
+                <div class="amtwrap"><span class="pre" aria-hidden="true">₨</span><input id="pr-c" type="text" inputmode="numeric" placeholder="e.g. 14,000" /></div>
+                <span class="field-sub">Leave this empty and each night keeps the rate it already has.</span>
+              </div>
+
+              <div class="cmp">
+                <div class="cmprow was">
+                  <span class="cmp-k">Friday <span class="num">21</span> · Saturday <span class="num">22</span></span>
+                  <span class="cmp-v num">PKR 15,000</span>
+                </div>
+                <div class="cmprow was">
+                  <span class="cmp-k">Sunday <span class="num">23</span></span>
+                  <span class="cmp-v num">PKR 12,000</span>
+                </div>
+                <p class="cmp-note">These nights have no override — they're on your weekend and weekday rates. A price set here replaces both for these three dates only.</p>
+              </div>
+
+              <h3 class="sh">Where this price comes from</h3>
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 8h6a2 2 0 1 1 0 4h-4a2 2 0 1 0 0 4h6"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">Your nightly rates</span>
+                  <span class="ctx-d">Weekdays <span class="num">PKR 12,000</span> · Friday and Saturday <span class="num">PKR 15,000</span>.</span>
+                  <a class="ctx-lk" href="/host/listings/cantt-view-residence/pricing">Edit your rates →</a>
+                </span>
+              </div>
+
+              <div class="impact">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The <b>₨</b> glyph appears exactly once per panel — inside the input, as a unit adornment — and <b>every other figure spells PKR</b>: this is <code>HA-002</code>/<code>HA-031</code>'s shipped rule and DESIGN §8.1's "currency is labelled, never symbol-only," applied to a screen whose entire content is money. The comparison block is what makes an override safe: <b>A</b> shows the override and, right beneath it, what the night would be without one; <b>B</b> adds the third figure a host actually needs mid-edit — about to set, currently set, and no-override-at-all — so saving is never a guess; <b>C</b> arrives from <code>HA-041</code>'s selection with <b>no</b> override, and states plainly that two different underlying rates are in the range rather than flattening them into a single fake "current price." <b>Remove override</b> sits at the same weight as saving because an override is a one-off, not a commitment. There is no suggested rate anywhere: the only numbers on screen are the host's own, and both context rows link out to the editors that own them (<code>HA-031</code>, <code>HA-044</code>) instead of re-deciding them here.</p>
+    </section>
+
+    <!-- ============================ DARK — SAVED ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the saved result of a price change">
+      <div class="panel-tag">Dark — D saved</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · Saved — the new figure is now the override</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/calendar" aria-label="Back to Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Price for this night</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="dH">Price for this night</h2>
+              <p class="lead">Set what this one night costs. Your base price stays untouched.</p>
+
+              <div class="dtcard">
+                <span class="dt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="dt-b">
+                  <span class="dt-g">Friday <span class="num">14 August 2026</span></span>
+                  <span class="dt-h"><span class="num">1</span> Rabi' al-Awwal <span class="num">1448</span> AH</span>
+                  <span class="dt-w">Open · a weekend night</span>
+                </span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="pr-d">Price for this night</label>
+                <div class="amtwrap"><span class="pre" aria-hidden="true">₨</span><input id="pr-d" type="text" inputmode="numeric" value="18,000" /></div>
+                <span class="field-sub">You set this price. Nothing adjusts it automatically.</span>
+              </div>
+
+              <div class="cmp">
+                <div class="cmprow now">
+                  <span class="cmp-k">This night</span>
+                  <span class="cmp-v num">PKR 18,000</span>
+                </div>
+                <div class="cmprow was">
+                  <span class="cmp-k">Without an override</span>
+                  <span class="cmp-v num">PKR 15,000</span>
+                </div>
+                <p class="cmp-note">Your weekend rate is <span class="num">PKR 15,000</span> a night. Remove the override and this date goes back to it.</p>
+              </div>
+
+              <div class="rmrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-5h5"/></svg>
+                <span class="rm-t">Back to your weekend rate for this date.</span>
+                <button class="rm-lk" type="button">Remove override</button>
+              </div>
+
+              <h3 class="sh">Where this price comes from</h3>
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 8h6a2 2 0 1 1 0 4h-4a2 2 0 1 0 0 4h6"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">Your nightly rates</span>
+                  <span class="ctx-d">Weekdays <span class="num">PKR 12,000</span> · Friday and Saturday <span class="num">PKR 15,000</span>.</span>
+                  <a class="ctx-lk" href="/host/listings/cantt-view-residence/pricing">Edit your rates →</a>
+                </span>
+              </div>
+
+              <div class="impact">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="toast" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+              <span class="toast-t">Saved — <span class="num">14 Aug</span> is now <span class="num">PKR 18,000</span></span>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">After saving, the unsaved bar is gone and the comparison block collapses back to two rows — the new override and the untouched base — so the screen returns to its resting shape rather than accumulating history. The confirmation toast names the date and the figure in full (<span class="num">PKR</span> spelled, per the currency law) instead of a bare "Saved," because on a money screen the value that landed is the only reassurance worth giving.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — an existing override">
+      <div class="panel-tag">RTL · اردو — اس رات کی قیمت</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — اس رات کی قیمت</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/calendar" aria-label="کیلنڈر پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">اس رات کی قیمت</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="eH">اس رات کی قیمت</h2>
+              <p class="lead">صرف اس ایک رات کی قیمت طے کریں۔ آپ کی بنیادی قیمت جوں کی توں رہے گی۔</p>
+
+              <div class="dtcard">
+                <span class="dt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="dt-b">
+                  <span class="dt-g">جمعہ <span class="num">14 اگست 2026</span></span>
+                  <span class="dt-h"><span class="num">1</span> ربیع الاول <span class="num">1448</span> ھ</span>
+                  <span class="dt-w">کھلا · ہفتہ وار چھٹی کی رات</span>
+                </span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="pr-e">اس رات کی قیمت</label>
+                <div class="amtwrap"><span class="pre" aria-hidden="true">₨</span><input id="pr-e" type="text" inputmode="numeric" value="16,500" dir="ltr" /></div>
+                <span class="field-sub">یہ قیمت آپ طے کرتے ہیں۔ کوئی چیز اسے خودکار طور پر تبدیل نہیں کرتی۔</span>
+              </div>
+
+              <div class="cmp">
+                <div class="cmprow now">
+                  <span class="cmp-k">یہ رات</span>
+                  <span class="cmp-v num">PKR 16,500</span>
+                </div>
+                <div class="cmprow was">
+                  <span class="cmp-k">تبدیلی کے بغیر</span>
+                  <span class="cmp-v num">PKR 15,000</span>
+                </div>
+                <p class="cmp-note">آپ کی ہفتہ وار چھٹی کی قیمت <span class="num">PKR 15,000</span> فی رات ہے۔ تبدیلی ہٹا دیں تو یہ تاریخ اسی پر واپس آ جائے گی۔</p>
+              </div>
+
+              <div class="rmrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.3 5.7"/><path d="M4 20v-5h5"/></svg>
+                <span class="rm-t">اس تاریخ کو واپس آپ کی ہفتہ وار چھٹی کی قیمت پر لے جائیں۔</span>
+                <button class="rm-lk" type="button">تبدیلی ہٹائیں</button>
+              </div>
+
+              <h3 class="sh">یہ قیمت کہاں سے آتی ہے</h3>
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 8h6a2 2 0 1 1 0 4h-4a2 2 0 1 0 0 4h6"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">آپ کی فی رات قیمتیں</span>
+                  <span class="ctx-d">عام دن <span class="num">PKR 12,000</span> · جمعہ اور ہفتہ <span class="num">PKR 15,000</span>۔</span>
+                  <a class="ctx-lk" href="/ur/host/listings/cantt-view-residence/pricing">قیمتوں میں ترمیم ←</a>
+                </span>
+              </div>
+
+              <div class="impact">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>قیمت کی تبدیلی صرف نئی بکنگز پر لاگو ہوتی ہے — جن مہمانوں نے پہلے بکنگ کر لی، اُن کی قیمت وہی رہے گی۔</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the chip's chevron and the "Edit →" arrow flip to the reading direction, label/value pairs swap sides, and the price input keeps <code>dir="ltr"</code> so typing a figure never reverses under the cursor — <code>ha-031</code>'s shipped RTL input convention, byte-for-byte. Every figure sits inside <code>.num</code> with Western digits and <code>unicode-bidi:isolate</code>, so <span class="num">PKR 16,500</span> and <span class="num">14 اگست 2026</span> read in the right order (Pass&nbsp;#31 ruling). The <b>₨</b> prefix stays a field adornment in Urdu too, and the comparison rows still spell <b>PKR</b> — the currency law does not change with the script.</p>
+    </section>
+
+  </main>
+</body>
+</html>

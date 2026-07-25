@@ -1,0 +1,119 @@
+<!-- @dsCard group="Navigation" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Bottom Tab Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --int-primary:#2E7D6A; --error-fg:#A8412F;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --radius-full:9999px;
+    --sa-stripe:rgba(46,125,106,.10);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --int-primary:#579D8B; --error-fg:#E39385;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 28px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .grid3 { max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:20px; padding:28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .phone { max-width:300px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:28px; overflow:hidden; background:var(--bg-raised); }
+  .screen-stub { height:200px; background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); font-size:13px; }
+  .tabbar { display:flex; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); box-shadow:var(--el-hairline); }
+  /* Each tab slot is ≥48px tall (44px+ tap target) */
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:56px; padding:8px 0; position:relative; background:transparent; border:none; cursor:pointer; }
+  .tab svg { width:24px; height:24px; color:var(--text-secondary); stroke-width:1.75; }
+  .tab .lb { font-size:11px; color:var(--text-secondary); font-weight:400; }
+  .tab.active svg { color:var(--int-primary); }
+  .tab.active .lb { color:var(--int-primary); font-weight:500; }
+  .tab .dot { position:absolute; top:10px; right:calc(50% - 16px); width:8px; height:8px; border-radius:50%; background:var(--error-fg); border:1.5px solid var(--bg-canvas); }
+  /* Safe-area annotation — models env(safe-area-inset-bottom) (home-indicator zone) */
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; }
+  .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .caption { text-align:center; font-size:12px; color:var(--text-tertiary); margin-top:14px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:8px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  /* RTL */
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .lb, .phone.rtl .screen-stub { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .lb { font-size:12px; }
+  @media (max-width:980px){ .grid3{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Bottom Tab Bar</h1>
+    <p>Five destinations, labels always on for a Pakistan-first audience. Active is a Salam-Green tinted glyph — never a Material pill. Tab slots are ≥48px tall; the home-indicator safe area is a real annotated zone, not fake padding; RTL mirrors order + labels.</p>
+  </div>
+  <div class="grid3">
+    <div class="panel">
+      <div class="panel-tag">Light — guest mode</div>
+      <div class="phone">
+        <div class="screen-stub">Explore</div>
+        <nav class="tabbar" aria-label="Primary">
+          <button class="tab active" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">Trips</span></button>
+          <button class="tab"><span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Log in</span></button>
+        </nav>
+        <div class="sa-bottom"><span>safe-area-inset-bottom</span></div>
+      </div>
+      <div class="caption">Explore active · Inbox unread dot</div>
+      <div class="note">Slots are <code>min-height:56px</code>; the striped band is <code>env(safe-area-inset-bottom)</code> — the bar pads by it, never a static 12px.</div>
+    </div>
+
+    <div class="panel dark">
+      <div class="panel-tag">Dark — host mode</div>
+      <div class="phone">
+        <div class="screen-stub">Inbox</div>
+        <nav class="tabbar" aria-label="Primary">
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span class="lb">Today</span></button>
+          <button class="tab active" aria-current="page"><span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Profile</span></button>
+        </nav>
+        <div class="sa-bottom"><span>safe-area-inset-bottom</span></div>
+      </div>
+      <div class="caption">Inbox active · "Trips" becomes "Today"</div>
+      <div class="note">Host mode swaps one destination; geometry &amp; safe area are identical.</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-tag">RTL — اردو (mirrored)</div>
+      <div class="phone rtl">
+        <div class="screen-stub">دریافت</div>
+        <nav class="tabbar" aria-label="بنیادی">
+          <button class="tab active" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">دریافت</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">پسندیدہ</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">سفر</span></button>
+          <button class="tab"><span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">پیغامات</span></button>
+          <button class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">پروفائل</span></button>
+        </nav>
+        <div class="sa-bottom"><span>safe-area-inset-bottom</span></div>
+      </div>
+      <div class="caption">دریافت active · order flows right → left</div>
+      <div class="note">Tab order mirrors: Explore leads from the right; the unread dot mirrors with its tab.</div>
+    </div>
+  </div>
+</body>
+</html>

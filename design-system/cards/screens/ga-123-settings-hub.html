@@ -1,0 +1,458 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Settings hub (GA-123)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 8px; }
+
+  /* identity summary row — the signed-in account holder (initials avatar) */
+  .idrow { display:flex; align-items:center; gap:13px; min-height:72px; padding:13px; background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); text-decoration:none; }
+  .idrow:hover { background:var(--bg-raised); }
+  .idav { flex:none; width:52px; height:52px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; }
+  .idbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .idname { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .idnm { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .vchip { font-size:10px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-brand); border-radius:var(--radius-full); padding:2px 8px; display:inline-flex; align-items:center; gap:4px; }
+  .vchip svg { width:11px; height:11px; stroke-width:2.4; }
+  .idsub { font-size:12px; color:var(--text-secondary); display:block; }
+  .idchev { flex:none; color:var(--text-tertiary); display:flex; }
+  .idchev svg { width:18px; height:18px; stroke-width:2; }
+  .phone.rtl .idchev svg { transform:scaleX(-1); }
+
+  /* grouped chevron rows */
+  .grp { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-canvas); }
+  .srow { display:flex; align-items:center; gap:12px; min-height:60px; padding:10px 12px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); text-decoration:none; }
+  .srow:last-child { border-bottom:none; }
+  .srow:hover { background:var(--bg-raised); }
+  .sic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sic svg { width:19px; height:19px; stroke-width:1.8; }
+  .sbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .st { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .shint { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .schev { flex:none; color:var(--text-tertiary); display:flex; }
+  .schev svg { width:18px; height:18px; stroke-width:2; }
+  .phone.rtl .schev svg { transform:scaleX(-1); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* sign-out — quiet, not a red alarm */
+  .signout { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; min-height:52px; margin-top:16px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-canvas); color:var(--text-secondary); font-size:14.5px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .signout:hover { background:var(--bg-raised); color:var(--text-primary); }
+  .signout svg { width:18px; height:18px; stroke-width:1.9; }
+
+  /* version footer */
+  .ver { text-align:center; padding:18px 8px 4px; }
+  .wm { font-size:12.5px; font-weight:700; letter-spacing:.01em; color:var(--text-primary); }
+  .wm .dot { color:var(--int-primary); }
+  .verline { font-size:11px; color:var(--text-tertiary); margin-top:5px; display:block; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Settings hub (GA-123)</h1>
+    <p>The calm entry point at <strong>/account/settings</strong> — a signed-in identity summary (the established couple traveller, initials avatar) over four plainly-grouped sections of chevron rows: <strong>Account</strong> (personal info · payments · notifications), <strong>Preferences</strong> (language &amp; accessibility · data saver · privacy), <strong>Support</strong>, and <strong>Legal</strong>. Every row carries a <strong>current-value hint</strong> ("English · اردو available", "Data saver on", the saved HBL tail) so the hub answers "what's set" before you tap. Sign-out is a quiet outlined row, never a red-alarm; a version line closes the page. Organization is the design — no ornament, no journey stepper (this is an account screen, §7.6a). Panels: full hub (light) · hub with the safer defaults surfaced (dark) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Full hub · light</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the full settings hub">
+      <div class="panel-tag">Light — identity · Account · Preferences · Support · Legal</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Entry hub — grouped, with current-value hints</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Settings</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <a class="idrow" href="/account/profile/view">
+                <span class="idav" aria-hidden="true">AG</span>
+                <span class="idbd">
+                  <span class="idname">
+                    <span class="idnm">Aqib Gulab</span>
+                    <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  </span>
+                  <span class="idsub">View your profile &amp; how others see you</span>
+                </span>
+                <span class="idchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="scap">Account</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/personal">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span>
+                  <span class="sbd"><span class="st">Personal info</span><span class="shint">Name, date of birth, phone, email</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/payment">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="sbd"><span class="st">Payments</span><span class="shint">HBL <span class="num">•••• 8842</span> · 2 more saved</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/notifications">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                  <span class="sbd"><span class="st">Notifications</span><span class="shint">WhatsApp · Push · quiet hours on</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">Preferences</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/accessibility">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                  <span class="sbd"><span class="st">Language &amp; accessibility</span><span class="shint">English · اردو available</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/data">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12l4-3M4 12a8 8 0 1 1 16 0"/><path d="M12 20v.01"/></svg></span>
+                  <span class="sbd"><span class="st">Data saver</span><span class="shint">Data saver on</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/privacy">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="sbd"><span class="st">Privacy</span><span class="shint">Messaging limited to your hosts · Trip safety on</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">Support</div>
+              <div class="grp">
+                <a class="srow" href="/help">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4 2c0 1.5-2 2-2 3M12 17h.01"/></svg></span>
+                  <span class="sbd"><span class="st">Help centre</span><span class="shint">Guides &amp; support in Urdu and English</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/help/report">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h13l-2 4 2 4H5"/></svg></span>
+                  <span class="sbd"><span class="st">Report a problem</span><span class="shint">Something wrong? Tell us what happened</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">Legal</div>
+              <div class="grp">
+                <a class="srow" href="/legal/terms">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></span>
+                  <span class="sbd"><span class="st">Terms of Service</span><span class="shint">The agreement for using SalamStay</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/legal/privacy">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span class="sbd"><span class="st">Privacy Policy</span><span class="shint">What we collect and how we protect it</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <button class="signout" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12H4M8 8l-4 4 4 4"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg>
+                Sign out
+              </button>
+
+              <div class="ver">
+                <span class="wm">Salam<span class="dot">.</span>Stay</span>
+                <span class="verline">Version <span class="num">1.4.0</span> · Android</span>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every row is a real <code>&lt;a href&gt;</code> to its own settings screen — <strong>Personal info</strong> (<code>GA-047</code>), <strong>Payments</strong> (<code>GA-062</code>), <strong>Notifications</strong> (<code>GA-069</code>), <strong>Language &amp; accessibility</strong> (<code>GA-068</code>), <strong>Data saver</strong> (<code>GA-081</code>), <strong>Privacy</strong> (<code>GA-125</code>) — with the current value spelled out as a hint so the hub is legible at a glance. The identity summary routes to the profile view, not an editor. Sign-out is a calm outlined <code>&lt;button&gt;</code> in <code>text.secondary</code> — never a destructive-red row (§10.8). No <code>&lt;button&gt;</code> inside an <code>&lt;a&gt;</code>; the wordmark is one ink with a single green dot (§0.4).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the settings hub">
+      <div class="panel-tag">Dark — identity · Account · Preferences · sign-out</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Same hub, dark surfaces</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Settings</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <a class="idrow" href="/account/profile/view">
+                <span class="idav" aria-hidden="true">AG</span>
+                <span class="idbd">
+                  <span class="idname">
+                    <span class="idnm">Aqib Gulab</span>
+                    <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  </span>
+                  <span class="idsub">View your profile &amp; how others see you</span>
+                </span>
+                <span class="idchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="scap">Account</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/personal">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span>
+                  <span class="sbd"><span class="st">Personal info</span><span class="shint">Name, date of birth, phone, email</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/payment">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="sbd"><span class="st">Payments</span><span class="shint">HBL <span class="num">•••• 8842</span> · 2 more saved</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/notifications">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                  <span class="sbd"><span class="st">Notifications</span><span class="shint">WhatsApp · Push · quiet hours on</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">Preferences</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/accessibility">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                  <span class="sbd"><span class="st">Language &amp; accessibility</span><span class="shint">English · اردو available</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/data">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12l4-3M4 12a8 8 0 1 1 16 0"/><path d="M12 20v.01"/></svg></span>
+                  <span class="sbd"><span class="st">Data saver</span><span class="shint">Data saver on</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/privacy">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="sbd"><span class="st">Privacy</span><span class="shint">Messaging limited to your hosts · Trip safety on</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <button class="signout" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12H4M8 8l-4 4 4 4"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg>
+                Sign out
+              </button>
+
+              <div class="ver">
+                <span class="wm">Salam<span class="dot">.</span>Stay</span>
+                <span class="verline">Version <span class="num">1.4.0</span> · Android</span>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark surfaces resolve through the <code>.dark</code> scope — the identity avatar keeps its <code>interactive.subtle</code> tint, rows sit on <code>bg.canvas</code>, and the verified chip stays a quiet tint, never a filled brand banner. The hint values (channels, saved-card tail, "Data saver on", "Trip safety on") are the same source of truth in both themes so the hub never contradicts the screen it opens.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the settings hub">
+      <div class="panel-tag">RTL · اردو — "سیٹنگز", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Settings hub — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">سیٹنگز</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <a class="idrow" href="/account/profile/view">
+                <span class="idav" aria-hidden="true">AG</span>
+                <span class="idbd">
+                  <span class="idname">
+                    <span class="idnm">عاقب گلاب</span>
+                    <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                  </span>
+                  <span class="idsub">اپنی پروفائل دیکھیں اور دوسرے آپ کو کیسے دیکھتے ہیں</span>
+                </span>
+                <span class="idchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="scap">اکاؤنٹ</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/personal">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span>
+                  <span class="sbd"><span class="st">ذاتی معلومات</span><span class="shint">نام، تاریخِ پیدائش، فون، ای میل</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/payment">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="sbd"><span class="st">ادائیگیاں</span><span class="shint">HBL <span class="num">•••• 8842</span> · <span class="num">2</span> اور محفوظ</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/notifications">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                  <span class="sbd"><span class="st">اطلاعات</span><span class="shint">WhatsApp · پش · خاموش اوقات آن</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">ترجیحات</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/accessibility">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                  <span class="sbd"><span class="st">زبان اور رسائی</span><span class="shint">انگریزی · اردو دستیاب</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/data">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12l4-3M4 12a8 8 0 1 1 16 0"/><path d="M12 20v.01"/></svg></span>
+                  <span class="sbd"><span class="st">ڈیٹا سیور</span><span class="shint">ڈیٹا سیور آن</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/account/settings/privacy">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="sbd"><span class="st">پرائیویسی</span><span class="shint">پیغام رسانی صرف آپ کے میزبانوں تک · ٹرپ سیفٹی آن</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">معاونت</div>
+              <div class="grp">
+                <a class="srow" href="/help">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4 2c0 1.5-2 2-2 3M12 17h.01"/></svg></span>
+                  <span class="sbd"><span class="st">مدد سینٹر</span><span class="shint">رہنمائی اور معاونت — اردو اور انگریزی میں</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/help/report">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h13l-2 4 2 4H5"/></svg></span>
+                  <span class="sbd"><span class="st">مسئلہ رپورٹ کریں</span><span class="shint">کچھ غلط ہے؟ ہمیں بتائیں کیا ہوا</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">قانونی</div>
+              <div class="grp">
+                <a class="srow" href="/legal/terms">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></span>
+                  <span class="sbd"><span class="st">سروس کی شرائط</span><span class="shint">سلام اسٹے استعمال کرنے کا معاہدہ</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="srow" href="/legal/privacy">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span class="sbd"><span class="st">پرائیویسی پالیسی</span><span class="shint">ہم کیا جمع کرتے ہیں اور اسے کیسے محفوظ رکھتے ہیں</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <button class="signout" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12H4M8 8l-4 4 4 4"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg>
+                سائن آؤٹ
+              </button>
+
+              <div class="ver">
+                <span class="wm">Salam<span class="dot">.</span>Stay</span>
+                <span class="verline">ورژن <span class="num">1.4.0</span> · اینڈرائیڈ</span>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and every row chevron flip to the reading-start edge (<code>transform:scaleX(-1)</code>, §11), icon slots lead per direction, and Nastaliq gets its line-height room. Latin proper nouns (WhatsApp, HBL) and the masked card tail stay LTR — the tail is wrapped in <code>.num { direction:ltr; unicode-bidi:isolate }</code> so it never digit-order-mirrors. The wordmark reads identically; only the dot is green, in both scripts.</p>
+    </section>
+
+  </main>
+</body>
+</html>

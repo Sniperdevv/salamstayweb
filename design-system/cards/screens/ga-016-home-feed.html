@@ -1,0 +1,916 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-016 Home / Explore feed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    /* raw ramp anchors — used ONLY as on-palette gradient stops for photo placeholders */
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone frame */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.large-title,.pill-t,.pill-s,.rail-h,.seeall,.ttl,.loc,.badge,.tab .lb,.ctile-name,.ctile-sub,.nudge-tx,.newchip,.brandmark) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .large-title { line-height:1.9; }
+
+  /* Safe-area annotation bands */
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); }
+
+  /* Status bar hint */
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  /* App bar — large title */
+  .appbar { display:flex; align-items:flex-end; justify-content:space-between; padding:6px 12px 8px 16px; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .large-title { font-size:30px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; position:relative; }
+  .icon-btn svg { width:23px; height:23px; color:var(--text-primary); stroke-width:1.75; }
+  .icon-btn .ndot { position:absolute; top:9px; right:10px; width:8px; height:8px; border-radius:50%; background:var(--error-fg); border:1.5px solid var(--bg-canvas); }
+
+  /* Feed (the screen's dominant content region) */
+  .feed { max-height:560px; overflow-y:auto; padding-bottom:8px; }
+  .feed::-webkit-scrollbar { width:0; height:0; }
+
+  /* Search pill */
+  .pill { display:flex; align-items:center; gap:12px; margin:4px 16px 6px; height:56px; padding:0 18px; border:1px solid var(--border-default); border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-subtle); }
+  .pill-ic svg { width:20px; height:20px; color:var(--int-primary); stroke-width:2; display:block; }
+  .pill-tx { display:flex; flex-direction:column; min-width:0; }
+  .pill-t { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .pill-s { font-size:12px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Rail */
+  .rail { margin-top:18px; }
+  .rail-head { display:flex; align-items:baseline; justify-content:space-between; padding:0 16px 10px; }
+  .rail-h { font-size:16px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em; }
+  .rail-sub { display:block; font-size:12px; font-weight:400; color:var(--text-secondary); margin-top:1px; }
+  .seeall { display:inline-flex; align-items:center; gap:2px; min-height:44px; font-size:13px; font-weight:600; color:var(--int-link); flex:none; }
+  .seeall svg { width:15px; height:15px; stroke-width:2.25; }
+  .scroller { display:flex; gap:12px; overflow-x:auto; padding:0 16px 4px; scroll-snap-type:x proximity; }
+  .scroller::-webkit-scrollbar { height:0; }
+  .scroller > * { scroll-snap-align:start; }
+
+  /* City destination tile */
+  .ctile { width:132px; flex:none; }
+  .ctile-link { display:block; color:inherit; text-decoration:none; }
+  .ctile-media { display:block; height:120px; border-radius:var(--radius-lg); }
+  .ctile-name { display:block; font-size:14px; font-weight:600; color:var(--text-primary); margin-top:8px; }
+  .ctile-sub { display:block; font-size:12px; color:var(--text-secondary); margin-top:1px; }
+
+  /* Listing card (rail item) */
+  .lcard { width:184px; flex:none; position:relative; }
+  .lcard-link { display:block; color:inherit; text-decoration:none; }
+  .lcard-media { display:block; aspect-ratio:20/19; border-radius:var(--radius-xl); }
+  .lbody { display:block; padding-top:10px; }
+  .titlerow { display:flex; align-items:center; gap:8px; justify-content:space-between; }
+  .ttl { font-size:14px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .newchip { flex:none; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:2px 8px; }
+  .loc { display:block; font-size:12.5px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+  .badges { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .badge { display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 8px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:11px; font-weight:500; color:var(--text-primary); }
+  .badge svg { width:13px; height:13px; color:var(--text-secondary); stroke-width:1.75; }
+  .badge.util { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .badge.util svg { color:var(--info-fg); }
+  .badge.more { color:var(--text-secondary); }
+  .price { display:block; margin-top:10px; font-size:14px; }
+  .price b { font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .price span { color:var(--text-secondary); font-size:12.5px; }
+
+  /* Wishlist heart — 44px hit area, 32px visible bubble */
+  .heart { position:absolute; top:2px; right:2px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; z-index:2; }
+  .heart .bubble { width:32px; height:32px; border-radius:var(--radius-full); background:var(--scrim); display:flex; align-items:center; justify-content:center; }
+  .heart svg { width:17px; height:17px; color:var(--text-on-inverse); }
+  .phone.rtl .heart { right:auto; left:2px; }
+
+  /* Wishlist nudge */
+  .nudge { display:flex; align-items:center; gap:12px; margin:18px 16px 4px; padding:12px 14px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .nudge-ic { flex:none; width:32px; height:32px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; }
+  .nudge-ic svg { width:17px; height:17px; color:var(--int-primary); }
+  .nudge-tx { font-size:12.5px; color:var(--text-secondary); line-height:1.45; }
+  .nudge-tx b { color:var(--text-primary); font-weight:600; }
+  .nudge-x { flex:none; width:44px; height:44px; margin:-6px -8px -6px 0; background:transparent; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .nudge-x svg { width:16px; height:16px; color:var(--text-tertiary); stroke-width:2; }
+  .phone.rtl .nudge-x { margin:-6px 0 -6px -8px; }
+
+  /* Bottom tab bar */
+  .tabbar { display:flex; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); box-shadow:var(--el-hairline); }
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:56px; padding:7px 0; position:relative; }
+  .tab svg { width:23px; height:23px; color:var(--text-secondary); stroke-width:1.75; }
+  .tab .lb { font-size:11px; color:var(--text-secondary); font-weight:400; }
+  .tab.active svg { color:var(--int-primary); }
+  .tab.active .lb { color:var(--int-primary); font-weight:500; }
+  .tab .dot { position:absolute; top:9px; right:calc(50% - 15px); width:8px; height:8px; border-radius:50%; background:var(--error-fg); border:1.5px solid var(--bg-canvas); }
+
+  /* Skeleton */
+  .sk { position:relative; overflow:hidden; background:var(--skeleton-base); border-radius:var(--radius-md); }
+  .sk::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,var(--skeleton-shine),transparent); animation:sh 1.4s ease-in-out infinite; }
+  @keyframes sh { 100% { transform:translateX(100%); } }
+  @media (prefers-reduced-motion: reduce) { .sk::after { animation:none; opacity:.5; } }
+  .sk-tile { width:132px; flex:none; }
+  .sk-tile .sk { height:120px; border-radius:var(--radius-lg); }
+  .sk-tile .sk.line { height:12px; margin-top:9px; border-radius:var(--radius-full); }
+  .sk-tile .sk.line.short { width:64%; margin-top:6px; }
+  .sk-card { width:184px; flex:none; }
+  .sk-card .sk.media { aspect-ratio:20/19; border-radius:var(--radius-xl); }
+  .sk-card .sk.line { height:12px; margin-top:9px; border-radius:var(--radius-full); }
+  .sk-card .sk.line.short { width:55%; margin-top:6px; }
+
+  /* Notes panel */
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  /* On-palette gradient photo placeholders (every stop is a token) */
+  .g-isb { background:linear-gradient(150deg,var(--brand-800),var(--brand-400)); }
+  .g-khi { background:linear-gradient(150deg,var(--info-fg),var(--brand-800)); }
+  .g-lhr { background:linear-gradient(150deg,var(--brand-900),var(--slate-600)); }
+  .g-pew { background:linear-gradient(150deg,var(--slate-700),var(--brand-900)); }
+  .g-fsd { background:linear-gradient(150deg,var(--slate-800),var(--slate-500)); }
+  .g-rwp { background:linear-gradient(150deg,var(--brand-900),var(--slate-800)); }
+  .g-a { background:linear-gradient(160deg,var(--brand-700),var(--brand-300)); }
+  .g-b { background:linear-gradient(160deg,var(--slate-700),var(--slate-400)); }
+  .g-c { background:linear-gradient(160deg,var(--info-fg),var(--slate-700)); }
+  .g-d { background:linear-gradient(160deg,var(--brand-800),var(--brand-400)); }
+  .g-e { background:linear-gradient(160deg,var(--slate-800),var(--slate-500)); }
+  .g-f { background:linear-gradient(160deg,var(--brand-900),var(--brand-600)); }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-016 — Home / Explore feed (mobile app)</h1>
+    <p>The pilot tone-setter: the first non-chrome surface a guest sees. A collapsed search pill, the six beta-city rail, cultural collections framed as ordinary categories (Women-hosted, Family-friendly, Near a masjid) at the exact weight of "Popular this week", recently viewed, and one quiet wishlist nudge. Quiet Modern — no ornament; cultural badges sit at "Wifi" weight; pre-launch listings show a "New" chip, never invented ratings.</p>
+    <div class="legend">
+      <span>Light · personalized</span>
+      <span>Dark · personalized</span>
+      <span>RTL · اردو</span>
+      <span>First-run · logged-out</span>
+      <span>Loading · skeleton rail</span>
+      <span>≥44pt targets · safe-area bands annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · PERSONALIZED ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — signed-in, personalized</div>
+      <section class="phone" aria-label="Home / Explore feed — light, signed-in">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <div>
+            <div class="brandmark">Salam<i>.</i>Stay</div>
+            <h2 class="large-title">Explore</h2>
+          </div>
+          <a class="icon-btn" href="/notifications" aria-label="Notifications, 1 new"><span class="ndot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></a>
+        </header>
+
+        <section class="feed" aria-label="Explore content">
+          <a class="pill" href="/search" aria-label="Search stays. Where to?">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">Where to?</span><span class="pill-s">Anywhere · Any week · Add guests</span></span>
+          </a>
+
+          <!-- CITY RAIL — six beta cities first -->
+          <section class="rail" aria-labelledby="l-cities">
+            <div class="rail-head">
+              <h3 class="rail-h" id="l-cities">Cities to explore</h3>
+              <a class="seeall" href="/destinations">All cities <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <!-- media = on-palette gradient placeholders; prod img alt pattern: "{City} — {landmark/area}" -->
+            <ol class="scroller">
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-islamabad" aria-label="Stays in Islamabad, the federal capital"><span class="ctile-media g-isb" aria-hidden="true"></span><span class="ctile-name">Islamabad</span><span class="ctile-sub">Federal capital</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-karachi" aria-label="Stays in Karachi, a coastal city"><span class="ctile-media g-khi" aria-hidden="true"></span><span class="ctile-name">Karachi</span><span class="ctile-sub">Coastal city</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-lahore" aria-label="Stays in Lahore, a historic Punjab city"><span class="ctile-media g-lhr" aria-hidden="true"></span><span class="ctile-name">Lahore</span><span class="ctile-sub">Historic Punjab</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-peshawar" aria-label="Stays in Peshawar, Khyber Pakhtunkhwa"><span class="ctile-media g-pew" aria-hidden="true"></span><span class="ctile-name">Peshawar</span><span class="ctile-sub">Khyber Pakhtunkhwa</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-faisalabad" aria-label="Stays in Faisalabad, central Punjab"><span class="ctile-media g-fsd" aria-hidden="true"></span><span class="ctile-name">Faisalabad</span><span class="ctile-sub">Central Punjab</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-rawalpindi" aria-label="Stays in Rawalpindi, the twin city"><span class="ctile-media g-rwp" aria-hidden="true"></span><span class="ctile-name">Rawalpindi</span><span class="ctile-sub">Twin city</span></a></li>
+            </ol>
+          </section>
+
+          <!-- PLAIN RAIL — sets the grammar cultural rails then match -->
+          <section class="rail" aria-labelledby="l-pop">
+            <div class="rail-head">
+              <h3 class="rail-h" id="l-pop">Popular in Islamabad</h3>
+              <a class="seeall" href="/s/stays-in-islamabad" aria-label="See all popular stays in Islamabad">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/is-f7-2bed" aria-label="Margalla View Apartment in F-7, Islamabad. PKR 12,500 per night. Halal kitchen, prayer space, backup power. New listing.">
+                  <span class="lcard-media g-a" aria-hidden="true"></span>
+                  <!-- prod alt: "2-bed home in F-7, Islamabad — halal kitchen" -->
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Margalla View Apartment</span><span class="newchip">New</span></span>
+                    <span class="loc">F-7 · entire home</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg>Prayer space</span>
+                      <span class="badge more">+1</span>
+                    </span>
+                    <span class="price"><b>PKR 12,500</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Margalla View Apartment to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/isb-f6-118" aria-label="Kohsar-side studio in F-6, Islamabad. PKR 9,600 per night. Halal kitchen, self check-in. New listing.">
+                  <span class="lcard-media g-b" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Kohsar-side studio</span><span class="newchip">New</span></span>
+                    <span class="loc">F-6 · private room</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 1 0-4 0M7 11h10v9H7z M3 11l4-4M12 11v3"/></svg>Self check-in</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 9,600</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Saved. Remove Kohsar-side studio from wishlist" aria-pressed="true"><span class="bubble"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/isb-e11-076" aria-label="Family apartment in E-11, Islamabad. PKR 11,200 per night. Backup power, family-friendly. New listing.">
+                  <span class="lcard-media g-c" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Family apartment</span><span class="newchip">New</span></span>
+                    <span class="loc">E-11 · entire home</span>
+                    <span class="badges">
+                      <span class="badge util"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Backup power</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 11,200</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Family apartment to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <!-- CULTURAL COLLECTION — same grammar, ordinary category -->
+          <section class="rail" aria-labelledby="l-women">
+            <div class="rail-head">
+              <h3 class="rail-h" id="l-women">Women-hosted stays<span class="rail-sub">Homes hosted by women</span></h3>
+              <a class="seeall" href="/s/women-hosted" aria-label="See all women-hosted stays">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/lhr-gul-330" aria-label="Garden portion in Gulberg, Lahore. PKR 12,500 per night. Women-hosted, halal kitchen. New listing.">
+                  <span class="lcard-media g-d" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Garden portion</span><span class="newchip">New</span></span>
+                    <span class="loc">Gulberg, Lahore · women-hosted</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>Women-hosted</span>
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                      <span class="badge more">+1</span>
+                    </span>
+                    <span class="price"><b>PKR 12,500</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Garden portion to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/khi-clf-512" aria-label="Sea-view 1-bed in Clifton, Karachi. PKR 15,400 per night. Women-hosted, women-only section. New listing.">
+                  <span class="lcard-media g-e" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Sea-view 1-bed</span><span class="newchip">New</span></span>
+                    <span class="loc">Clifton, Karachi · women-only</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>Women-hosted</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 15,400</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Sea-view 1-bed to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/rwp-sat-140" aria-label="Quiet upper portion in Satellite Town, Rawalpindi. PKR 8,200 per night. Women-hosted, near masjid. New listing.">
+                  <span class="lcard-media g-f" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Quiet upper portion</span><span class="newchip">New</span></span>
+                    <span class="loc">Satellite Town, Rawalpindi</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>Women-hosted</span>
+                      <span class="badge more">+1</span>
+                    </span>
+                    <span class="price"><b>PKR 8,200</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Quiet upper portion to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <!-- CULTURAL COLLECTION -->
+          <section class="rail" aria-labelledby="l-family">
+            <div class="rail-head">
+              <h3 class="rail-h" id="l-family">Family-friendly stays<span class="rail-sub">Well suited for families and children</span></h3>
+              <a class="seeall" href="/s/family-friendly" aria-label="See all family-friendly stays">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/lhr-mtn-088" aria-label="3-bed family house in Model Town, Lahore. PKR 16,000 per night. Family-friendly, halal kitchen, backup power. New listing.">
+                  <span class="lcard-media g-a" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">3-bed family house</span><span class="newchip">New</span></span>
+                    <span class="loc">Model Town, Lahore · entire home</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg>Family-friendly</span>
+                      <span class="badge util"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Backup power</span>
+                      <span class="badge more">+1</span>
+                    </span>
+                    <span class="price"><b>PKR 16,000</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save 3-bed family house to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/fsd-civ-045" aria-label="Cantt family portion in Civil Lines, Faisalabad. PKR 9,000 per night. Family-friendly, prayer space. New listing.">
+                  <span class="lcard-media g-c" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Cantt family portion</span><span class="newchip">New</span></span>
+                    <span class="loc">Civil Lines, Faisalabad</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg>Family-friendly</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 9,000</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Cantt family portion to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/pew-hyt-260" aria-label="Wide family home in Hayatabad, Peshawar. PKR 10,500 per night. Family-friendly, halal kitchen. New listing.">
+                  <span class="lcard-media g-b" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Wide family home</span><span class="newchip">New</span></span>
+                    <span class="loc">Hayatabad, Peshawar</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg>Family-friendly</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 10,500</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Wide family home to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <!-- Quiet wishlist nudge — shown once, dismissible -->
+          <div class="nudge" role="note">
+            <span class="nudge-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+            <p class="nudge-tx"><b>Tap the heart</b> to save a place for later.</p>
+            <button class="nudge-x" aria-label="Dismiss this tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+
+          <!-- Recently viewed — personalized only -->
+          <section class="rail" aria-labelledby="l-recent">
+            <div class="rail-head">
+              <h3 class="rail-h" id="l-recent">Recently viewed</h3>
+              <a class="seeall" href="/recently-viewed" aria-label="See all recently viewed stays">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/khi-dha-410" aria-label="Modern 2-bed in DHA, Karachi. PKR 14,000 per night. Halal kitchen, near masjid. New listing.">
+                  <span class="lcard-media g-f" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Modern 2-bed</span><span class="newchip">New</span></span>
+                    <span class="loc">DHA, Karachi · entire home</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg>Near masjid</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 14,000</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Modern 2-bed to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/is-f7-2bed" aria-label="Margalla View Apartment in F-7, Islamabad. PKR 12,500 per night. Halal kitchen, prayer space. New listing.">
+                  <span class="lcard-media g-a" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Margalla View Apartment</span><span class="newchip">New</span></span>
+                    <span class="loc">F-7, Islamabad · entire home</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 12,500</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Saved. Remove Margalla View Apartment from wishlist" aria-pressed="true"><span class="bubble"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+        </section>
+
+        <nav class="tabbar" aria-label="Primary">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">Trips</span></a>
+          <a class="tab" href="/inbox"><span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></a>
+          <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Profile</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Rail order: <code>search → cities → popular → women-hosted → family-friendly → nudge → recently viewed</code>. Cultural rails share the exact grammar as "Popular in Islamabad". Heart is a 44×44 target with a 32px bubble; it never opens the listing.</p>
+    </div>
+
+    <!-- ============================== DARK · PERSONALIZED ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — signed-in, personalized</div>
+      <section class="phone dark" aria-label="Home / Explore feed — dark, signed-in">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <div>
+            <div class="brandmark">Salam<i>.</i>Stay</div>
+            <h2 class="large-title">Explore</h2>
+          </div>
+          <a class="icon-btn" href="/notifications" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></a>
+        </header>
+
+        <section class="feed" aria-label="Explore content">
+          <a class="pill" href="/search" aria-label="Search stays. Where to?">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">Where to?</span><span class="pill-s">Anywhere · Any week · Add guests</span></span>
+          </a>
+
+          <section class="rail" aria-labelledby="d-cities">
+            <div class="rail-head">
+              <h3 class="rail-h" id="d-cities">Cities to explore</h3>
+              <a class="seeall" href="/destinations" aria-label="See all cities">All cities <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-islamabad" aria-label="Stays in Islamabad, the federal capital"><span class="ctile-media g-isb" aria-hidden="true"></span><span class="ctile-name">Islamabad</span><span class="ctile-sub">Federal capital</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-karachi" aria-label="Stays in Karachi, a coastal city"><span class="ctile-media g-khi" aria-hidden="true"></span><span class="ctile-name">Karachi</span><span class="ctile-sub">Coastal city</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-lahore" aria-label="Stays in Lahore, a historic Punjab city"><span class="ctile-media g-lhr" aria-hidden="true"></span><span class="ctile-name">Lahore</span><span class="ctile-sub">Historic Punjab</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-peshawar" aria-label="Stays in Peshawar, Khyber Pakhtunkhwa"><span class="ctile-media g-pew" aria-hidden="true"></span><span class="ctile-name">Peshawar</span><span class="ctile-sub">Khyber Pakhtunkhwa</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-faisalabad" aria-label="Stays in Faisalabad, central Punjab"><span class="ctile-media g-fsd" aria-hidden="true"></span><span class="ctile-name">Faisalabad</span><span class="ctile-sub">Central Punjab</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-rawalpindi" aria-label="Stays in Rawalpindi, the twin city"><span class="ctile-media g-rwp" aria-hidden="true"></span><span class="ctile-name">Rawalpindi</span><span class="ctile-sub">Twin city</span></a></li>
+            </ol>
+          </section>
+
+          <section class="rail" aria-labelledby="d-masjid">
+            <div class="rail-head">
+              <h3 class="rail-h" id="d-masjid">Near a masjid<span class="rail-sub">A short walk to the nearest mosque</span></h3>
+              <a class="seeall" href="/s/near-a-masjid" aria-label="See all stays near a masjid">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/lhr-wld-011" aria-label="Old-city guest room near the Walled City, Lahore. PKR 7,500 per night. Near masjid, halal kitchen. New listing.">
+                  <span class="lcard-media g-b" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Old-city guest room</span><span class="newchip">New</span></span>
+                    <span class="loc">Walled City, Lahore</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg>Near masjid</span>
+                      <span class="badge more">+1</span>
+                    </span>
+                    <span class="price"><b>PKR 7,500</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Old-city guest room to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/pew-sad-320" aria-label="Cantt studio in Saddar, Peshawar. PKR 6,800 per night. Near masjid, prayer space. New listing.">
+                  <span class="lcard-media g-d" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Cantt studio</span><span class="newchip">New</span></span>
+                    <span class="loc">Saddar, Peshawar · private room</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg>Near masjid</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 6,800</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Cantt studio to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/rwp-sad-206" aria-label="Bazaar-side flat in Saddar, Rawalpindi. PKR 8,900 per night. Near masjid, backup power. New listing.">
+                  <span class="lcard-media g-e" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Bazaar-side flat</span><span class="newchip">New</span></span>
+                    <span class="loc">Saddar, Rawalpindi</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg>Near masjid</span>
+                      <span class="badge util"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Backup power</span>
+                    </span>
+                    <span class="price"><b>PKR 8,900</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Saved. Remove Bazaar-side flat from wishlist" aria-pressed="true"><span class="bubble"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <section class="rail" aria-labelledby="d-women">
+            <div class="rail-head">
+              <h3 class="rail-h" id="d-women">Women-hosted stays<span class="rail-sub">Homes hosted by women</span></h3>
+              <a class="seeall" href="/s/women-hosted" aria-label="See all women-hosted stays">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/khi-clf-512" aria-label="Sea-view 1-bed in Clifton, Karachi. PKR 15,400 per night. Women-hosted, women-only section. New listing.">
+                  <span class="lcard-media g-f" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Sea-view 1-bed</span><span class="newchip">New</span></span>
+                    <span class="loc">Clifton, Karachi · women-only</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>Women-hosted</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 15,400</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Sea-view 1-bed to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/isb-f6-118" aria-label="Kohsar-side studio in F-6, Islamabad. PKR 9,600 per night. Women-hosted, self check-in. New listing.">
+                  <span class="lcard-media g-a" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Kohsar-side studio</span><span class="newchip">New</span></span>
+                    <span class="loc">F-6, Islamabad · women-hosted</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>Women-hosted</span>
+                      <span class="badge more">+1</span>
+                    </span>
+                    <span class="price"><b>PKR 9,600</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Kohsar-side studio to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <section class="rail" aria-labelledby="d-recent">
+            <div class="rail-head">
+              <h3 class="rail-h" id="d-recent">Recently viewed</h3>
+              <a class="seeall" href="/recently-viewed" aria-label="See all recently viewed stays">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/lhr-mtn-088" aria-label="3-bed family house in Model Town, Lahore. PKR 16,000 per night. Family-friendly, backup power. New listing.">
+                  <span class="lcard-media g-c" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">3-bed family house</span><span class="newchip">New</span></span>
+                    <span class="loc">Model Town, Lahore</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg>Family-friendly</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 16,000</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save 3-bed family house to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+        </section>
+
+        <nav class="tabbar" aria-label="Primary">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">Trips</span></a>
+          <a class="tab" href="/inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></a>
+          <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Profile</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Dark is a green-tinted charcoal (never pure black); every role AA-proven. The saved heart stays muted terracotta (<code>error.fg</code>) — the one documented off-role use — never brand green.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL</b> — اردو (mirrored)</div>
+      <section class="phone rtl" lang="ur" dir="rtl" aria-label="ہوم / دریافت — اردو">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <div>
+            <div class="brandmark">سلام<i>اسٹے</i></div>
+            <h2 class="large-title">دریافت کریں</h2>
+          </div>
+          <a class="icon-btn" href="/notifications" aria-label="اطلاعات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></a>
+        </header>
+
+        <section class="feed" aria-label="دریافت مواد">
+          <a class="pill" href="/search" aria-label="قیام تلاش کریں۔ کہاں جانا ہے؟">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">کہاں جانا ہے؟</span><span class="pill-s">کہیں بھی · کوئی بھی ہفتہ · مہمان شامل کریں</span></span>
+          </a>
+
+          <section class="rail" aria-labelledby="r-cities">
+            <div class="rail-head">
+              <h3 class="rail-h" id="r-cities">شہر دریافت کریں</h3>
+              <a class="seeall" href="/destinations" aria-label="تمام شہر دیکھیں">سب دیکھیں <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-islamabad" aria-label="اسلام آباد میں قیام"><span class="ctile-media g-isb" aria-hidden="true"></span><span class="ctile-name">اسلام آباد</span><span class="ctile-sub">وفاقی دارالحکومت</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-karachi" aria-label="کراچی میں قیام"><span class="ctile-media g-khi" aria-hidden="true"></span><span class="ctile-name">کراچی</span><span class="ctile-sub">ساحلی شہر</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-lahore" aria-label="لاہور میں قیام"><span class="ctile-media g-lhr" aria-hidden="true"></span><span class="ctile-name">لاہور</span><span class="ctile-sub">تاریخی پنجاب</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-peshawar" aria-label="پشاور میں قیام"><span class="ctile-media g-pew" aria-hidden="true"></span><span class="ctile-name">پشاور</span><span class="ctile-sub">خیبر پختونخوا</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-faisalabad" aria-label="فیصل آباد میں قیام"><span class="ctile-media g-fsd" aria-hidden="true"></span><span class="ctile-name">فیصل آباد</span><span class="ctile-sub">وسطی پنجاب</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-rawalpindi" aria-label="راولپنڈی میں قیام"><span class="ctile-media g-rwp" aria-hidden="true"></span><span class="ctile-name">راولپنڈی</span><span class="ctile-sub">جڑواں شہر</span></a></li>
+            </ol>
+          </section>
+
+          <section class="rail" aria-labelledby="r-pop">
+            <div class="rail-head">
+              <h3 class="rail-h" id="r-pop">لاہور میں مقبول</h3>
+              <a class="seeall" href="/s/stays-in-lahore" aria-label="لاہور میں تمام مقبول قیام دیکھیں">سب دیکھیں <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/lhr-gul-330" aria-label="گلبرگ، لاہور میں گارڈن پورشن۔ فی رات 12,500 روپے۔ حلال کچن، نماز کی جگہ۔ نیا اندراج۔">
+                  <span class="lcard-media g-d" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">گارڈن پورشن</span><span class="newchip">نیا</span></span>
+                    <span class="loc">گلبرگ، لاہور</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>حلال کچن</span>
+                      <span class="badge more">‎+1</span>
+                    </span>
+                    <span class="price"><b class="num">PKR 12,500</b> <span>/ فی رات</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="گارڈن پورشن کو پسندیدہ میں محفوظ کریں" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/lhr-mtn-088" aria-label="ماڈل ٹاؤن، لاہور میں تین کمروں کا فیملی گھر۔ فی رات 16,000 روپے۔ فیملی کے لیے موزوں، بیک اپ پاور۔ نیا اندراج۔">
+                  <span class="lcard-media g-a" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">فیملی گھر</span><span class="newchip">نیا</span></span>
+                    <span class="loc">ماڈل ٹاؤن، لاہور</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg>فیملی</span>
+                      <span class="badge util"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>بیک اپ پاور</span>
+                    </span>
+                    <span class="price"><b class="num">PKR 16,000</b> <span>/ فی رات</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="فیملی گھر کو پسندیدہ میں محفوظ کریں" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <section class="rail" aria-labelledby="r-women">
+            <div class="rail-head">
+              <h3 class="rail-h" id="r-women">خواتین کے زیرِ میزبانی قیام<span class="rail-sub">خواتین کی میزبانی میں گھر</span></h3>
+              <a class="seeall" href="/s/women-hosted" aria-label="خواتین کے زیرِ میزبانی تمام قیام دیکھیں">سب دیکھیں <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/khi-clf-512" aria-label="کلفٹن، کراچی میں سمندری منظر والا ایک کمرہ۔ فی رات 15,400 روپے۔ خواتین میزبان، خواتین کے لیے مخصوص حصہ۔ نیا اندراج۔">
+                  <span class="lcard-media g-e" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">سمندری منظر</span><span class="newchip">نیا</span></span>
+                    <span class="loc">کلفٹن، کراچی</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg>خواتین میزبان</span>
+                      <span class="badge more">‎+2</span>
+                    </span>
+                    <span class="price"><b class="num">PKR 15,400</b> <span>/ فی رات</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="سمندری منظر کو پسندیدہ میں محفوظ کریں" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+        </section>
+
+        <nav class="tabbar" aria-label="بنیادی">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">دریافت</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">پسندیدہ</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">سفر</span></a>
+          <a class="tab" href="/inbox"><span class="dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">پیغامات</span></a>
+          <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">پروفائل</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Whole layout mirrors: rails scroll right→left, chevrons flip, the heart moves to the leading (left) edge but its glyph is never mirrored. Prices keep Latin digit order (never digit-mirrored).</p>
+    </div>
+
+    <!-- ============================== FIRST-RUN · LOGGED-OUT ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>First run</b> — no personalization, logged-out</div>
+      <section class="phone" aria-label="Home / Explore feed — first run, logged out">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <div>
+            <div class="brandmark">Salam<i>.</i>Stay</div>
+            <h2 class="large-title">Explore</h2>
+          </div>
+          <a class="icon-btn" href="/login" aria-label="Log in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></a>
+        </header>
+
+        <section class="feed" aria-label="Explore content">
+          <a class="pill" href="/search" aria-label="Search stays. Where to?">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">Where to?</span><span class="pill-s">Anywhere · Any week · Add guests</span></span>
+          </a>
+
+          <section class="rail" aria-labelledby="f-cities">
+            <div class="rail-head">
+              <h3 class="rail-h" id="f-cities">Cities to explore</h3>
+              <a class="seeall" href="/destinations" aria-label="See all cities">All cities <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-islamabad" aria-label="Stays in Islamabad, the federal capital"><span class="ctile-media g-isb" aria-hidden="true"></span><span class="ctile-name">Islamabad</span><span class="ctile-sub">Federal capital</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-karachi" aria-label="Stays in Karachi, a coastal city"><span class="ctile-media g-khi" aria-hidden="true"></span><span class="ctile-name">Karachi</span><span class="ctile-sub">Coastal city</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-lahore" aria-label="Stays in Lahore, a historic Punjab city"><span class="ctile-media g-lhr" aria-hidden="true"></span><span class="ctile-name">Lahore</span><span class="ctile-sub">Historic Punjab</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-peshawar" aria-label="Stays in Peshawar, Khyber Pakhtunkhwa"><span class="ctile-media g-pew" aria-hidden="true"></span><span class="ctile-name">Peshawar</span><span class="ctile-sub">Khyber Pakhtunkhwa</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-faisalabad" aria-label="Stays in Faisalabad, central Punjab"><span class="ctile-media g-fsd" aria-hidden="true"></span><span class="ctile-name">Faisalabad</span><span class="ctile-sub">Central Punjab</span></a></li>
+              <li class="ctile"><a class="ctile-link" href="/s/stays-in-rawalpindi" aria-label="Stays in Rawalpindi, the twin city"><span class="ctile-media g-rwp" aria-hidden="true"></span><span class="ctile-name">Rawalpindi</span><span class="ctile-sub">Twin city</span></a></li>
+            </ol>
+          </section>
+
+          <!-- Curated (not empty / not "for you") — editor picks per city -->
+          <section class="rail" aria-labelledby="f-editor">
+            <div class="rail-head">
+              <h3 class="rail-h" id="f-editor">Editor's picks · Islamabad<span class="rail-sub">Hand-checked homes to get you started</span></h3>
+              <a class="seeall" href="/s/stays-in-islamabad?curated=editors" aria-label="See all editor's picks in Islamabad">See all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+            </div>
+            <ol class="scroller">
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/is-f7-2bed" aria-label="Margalla View Apartment in F-7, Islamabad. PKR 12,500 per night. Halal kitchen, prayer space. New listing.">
+                  <span class="lcard-media g-a" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Margalla View Apartment</span><span class="newchip">New</span></span>
+                    <span class="loc">F-7 · entire home</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 12,500</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Margalla View Apartment to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+              <li class="lcard">
+                <a class="lcard-link" href="/rooms/isb-f6-118" aria-label="Kohsar-side studio in F-6, Islamabad. PKR 9,600 per night. Halal kitchen, self check-in. New listing.">
+                  <span class="lcard-media g-b" aria-hidden="true"></span>
+                  <span class="lbody">
+                    <span class="titlerow"><span class="ttl">Kohsar-side studio</span><span class="newchip">New</span></span>
+                    <span class="loc">F-6 · private room</span>
+                    <span class="badges">
+                      <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 1 0-4 0M7 11h10v9H7z M3 11l4-4M12 11v3"/></svg>Self check-in</span>
+                      <span class="badge more">+2</span>
+                    </span>
+                    <span class="price"><b>PKR 9,600</b> <span>/ night</span></span>
+                  </span>
+                </a>
+                <button class="heart" aria-label="Save Kohsar-side studio to wishlist" aria-pressed="false"><span class="bubble"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span></button>
+              </li>
+            </ol>
+          </section>
+
+          <!-- SKELETON — one rail still fetching on first open (cached content renders instantly above) -->
+          <section class="rail" aria-labelledby="f-loading" aria-busy="true">
+            <div class="rail-head">
+              <h3 class="rail-h" id="f-loading">Women-hosted stays</h3>
+            </div>
+            <p role="status" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Loading women-hosted stays</p>
+            <ol class="scroller" aria-hidden="true">
+              <li class="sk-card"><span class="sk media"></span><span class="sk line"></span><span class="sk line short"></span></li>
+              <li class="sk-card"><span class="sk media"></span><span class="sk line"></span><span class="sk line short"></span></li>
+              <li class="sk-card"><span class="sk media"></span><span class="sk line"></span><span class="sk line short"></span></li>
+            </ol>
+          </section>
+
+          <!-- Ask-late wishlist nudge -->
+          <div class="nudge" role="note">
+            <span class="nudge-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+            <p class="nudge-tx">Browse freely — <b>tap the heart to save a place</b>, and log in only when you're ready to book.</p>
+            <button class="nudge-x" aria-label="Dismiss this tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+        </section>
+
+        <nav class="tabbar" aria-label="Primary">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">Trips</span></a>
+          <a class="tab" href="/inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></a>
+          <a class="tab" href="/login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Log in</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">First open is never an empty shell: curated beta-city rails (a cached payload) render instantly while below-the-fold rails stream in. Logged-out is fully browsable — Profile reads "Log in", saving/booking is <b>ask-late</b>. The skeleton mirrors the listing-card geometry exactly (zero CLS) with a transform-only shimmer that stops under reduced-motion.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, cultural law &amp; S1 gate compliance</div>
+      <ul>
+        <li><b>One title, hierarchical.</b> A single document <code style="font-family:ui-monospace">h1</code> (this card); each state's app-bar "Explore" is an <b>h2</b>, every rail an <b>h3</b>. Listing titles are text inside the card anchor, not headings — matching the real listing-card component.</li>
+        <li><b>Real anchors everywhere.</b> Search pill, city tiles, listing cards, "See all", notifications and every tab bar destination are <code style="font-family:ui-monospace">&lt;a href&gt;</code> to plausible app routes (<code style="font-family:ui-monospace">/s/stays-in-{city}</code>, <code style="font-family:ui-monospace">/rooms/{id}</code>). No clickable divs; the heart and dismiss are real <code style="font-family:ui-monospace">&lt;button&gt;</code>s.</li>
+        <li><b>Cultural = Wifi weight.</b> Halal kitchen, Prayer space, Qibla, Women-hosted, Near masjid all render as neutral <code style="font-family:ui-monospace">bg.raised</code> pills — never brand-green filled, never ornamented. Collections are ordinary categories beside "Popular in Islamabad". No-alcohol default stays implicit — never a banner.</li>
+        <li><b>Copy governance.</b> Only SEO-RULES §5 registry claims or plain descriptive text; no invented ratings, review counts, or social proof — listings show the Rating "New" chip pre-launch, never "0.0".</li>
+        <li><b>All content in the DOM.</b> Rails overflow-scroll but every card is present; nothing hides behind a tap. Skeleton rail is <code style="font-family:ui-monospace">aria-busy</code> with a visually-hidden status.</li>
+        <li><b>On-palette only.</b> Every color resolves through a <code style="font-family:ui-monospace">var()</code> token; city/listing media are on-palette gradient placeholders (brand + slate + info stops) annotated with production alt patterns.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-016 · blueprint <code>DESIGN.md §9-H</code> · cultural law <code>§10</code> · a11y <code>§11</code> · perf <code>§12</code>. Real PK areas sourced from <code>city-facts.md</code> (F-6/F-7, Clifton/DHA/Saddar, Gulberg/Model Town/Walled City, Hayatabad, Civil Lines, Satellite Town).</p>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Tax receipt / FBR e-invoice download (HA-059)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1300px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1300px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:306px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host operational lineage; NO checkout stepper */
+  .phone { width:306px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:730px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.sech,.flabel,.field-sub,.stv,.drow-t,.drow-s,.drow-act,.inv-pill,.fbr-h,.fbr p,.emailrow-t,.emailrow-s,.resend,.doc-h,.doc-k,.doc-v,.bd dt,.tx-k,.tx-v,.tx-foot,.opt-l,.opt-s,.btn,.helplink,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sech { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:6px 0 9px; display:block; }
+
+  /* period Select (§8.1) */
+  .fld { margin-bottom:14px; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .select-trig { width:100%; min-height:48px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 13px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig[aria-expanded="true"] { border-color:var(--int-primary); box-shadow:0 0 0 2px var(--int-subtle); }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+  .select-trig:focus-visible { outline:none; border-color:var(--int-primary); box-shadow:0 0 0 2px var(--int-subtle); }
+
+  /* open listbox */
+  .listbox { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:6px; margin:6px 0 14px; }
+  .lbopt { display:flex; align-items:center; gap:10px; width:100%; min-height:46px; padding:0 10px; background:transparent; border:none; border-radius:var(--radius-md); font-family:inherit; cursor:pointer; text-align:start; }
+  .lbopt:hover { background:var(--bg-sunken); }
+  .lbopt[aria-selected="true"] { background:var(--int-subtle); }
+  .lbopt .tick { width:17px; height:17px; flex:none; color:var(--int-primary); }
+  .lbopt .tick svg { width:17px; height:17px; stroke-width:2.3; }
+  .lbopt-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .opt-l { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .opt-s { font-size:11px; color:var(--text-tertiary); display:block; }
+
+  /* download rows — ready / generating (GA-134 grammar) */
+  .dlist { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+  .drow { display:flex; align-items:center; gap:11px; min-height:68px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 12px; }
+  .drow.period { background:var(--bg-raised); }
+  .drow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .drow-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .drow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .drow-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .drow-s { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .inv-pill { display:inline-block; width:fit-content; margin-top:4px; font-size:10.5px; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+  .drow-act { flex:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:0 12px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:12.5px; font-weight:600; color:var(--text-primary); cursor:pointer; font-family:inherit; text-decoration:none; white-space:nowrap; }
+  .drow-act svg { width:14px; height:14px; stroke-width:2; flex:none; }
+  .drow.generating .drow-ic { background:var(--bg-sunken); color:var(--text-tertiary); }
+  .drow.generating .drow-act { color:var(--text-tertiary); border-style:dashed; cursor:default; }
+  .spin { animation:spin059 1s linear infinite; }
+  @keyframes spin059 { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation:none; } }
+
+  /* invoice preview document */
+  .doc { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:14px; box-shadow:var(--el-hairline); }
+  .doc-top { background:var(--bg-sunken); border-bottom:1px solid var(--border-hairline); padding:12px 13px; }
+  .doc-h { font-size:13.5px; font-weight:700; color:var(--text-primary); display:block; }
+  .doc-meta { display:flex; flex-direction:column; gap:3px; margin-top:7px; }
+  .doc-line { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .doc-k { font-size:11px; color:var(--text-tertiary); }
+  .doc-v { font-size:11.5px; font-weight:600; color:var(--text-primary); text-align:end; }
+  .doc-body { padding:12px 13px; }
+
+  /* itemised breakdown — HA-055's exact fee chain */
+  .bd { display:flex; flex-direction:column; }
+  .bd .row { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--border-hairline); }
+  .bd dt { font-size:12.5px; color:var(--text-secondary); }
+  .bd dt .rate { color:var(--text-tertiary); font-size:11px; }
+  .bd dd { font-size:12.5px; color:var(--text-primary); white-space:nowrap; text-align:end; }
+  .bd .row.total { border-bottom:none; border-top:2px solid var(--border-default); margin-top:4px; padding-top:11px; }
+  .bd .row.total dt { font-size:13.5px; font-weight:700; color:var(--text-primary); }
+  .bd .row.total dd { font-size:15px; font-weight:700; }
+
+  /* tax lines block — provincial GST named, never invented */
+  .taxblk { margin-top:14px; border-top:1px solid var(--border-hairline); padding-top:12px; }
+  .tx-h { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); display:block; margin-bottom:8px; }
+  .tx-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--border-hairline); }
+  .tx-row:last-of-type { border-bottom:none; }
+  .tx-k { font-size:12.5px; color:var(--text-primary); font-weight:600; }
+  .tx-v { font-size:11.5px; color:var(--text-secondary); text-align:end; max-width:150px; }
+  .tx-foot { font-size:11px; color:var(--text-tertiary); line-height:1.5; margin-top:8px; display:block; }
+
+  /* FBR e-invoicing note (GA-134 verbatim) */
+  .fbr { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:12px; }
+  .fbr .fi { color:var(--info-fg); flex:none; margin-top:1px; }
+  .fbr .fi svg { width:18px; height:18px; stroke-width:1.9; }
+  .fbr-b { min-width:0; }
+  .fbr-h { font-size:12.5px; font-weight:600; color:var(--info-fg); display:block; }
+  .fbr p { font-size:11.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+
+  /* emailed copy row (GA-134 grammar) */
+  .emailrow { display:flex; align-items:center; gap:12px; min-height:60px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 12px; margin-bottom:12px; }
+  .emailrow .ei { flex:none; color:var(--text-secondary); display:flex; }
+  .emailrow .ei svg { width:18px; height:18px; stroke-width:1.8; }
+  .emailrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .emailrow-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .emailrow-s { font-size:11px; color:var(--text-tertiary); display:block; }
+  .resend { flex:none; min-height:44px; padding:0 8px; background:none; border:none; font-size:12.5px; font-weight:600; color:var(--int-primary); cursor:pointer; font-family:inherit; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .helplink { display:flex; align-items:center; justify-content:center; min-height:44px; margin-top:6px; font-size:12.5px; color:var(--int-primary); font-weight:600; }
+  .helplink:hover { text-decoration:underline; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:344px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Tax receipt / FBR e-invoice download (HA-059)</h1>
+    <p>The host's download surface at <code>/host/earnings/tax-receipts</code> (get-paid, ARCH §6.7): <b>one tax invoice per booking</b>, plus a bundle for any period. Rows carry <code>GA-134</code>'s exact <b>generating → ready</b> grammar ("Preparing your file — usually just a moment" · <code>aria-busy</code> · disabled action), its placeholder invoice-number format <code>INV-2026-…</code>, and its emailed-copy row. The preview renders the tax invoice for Fatima's stay with <code>HA-055</code>'s fee chain <b>verbatim and exact</b> — <span class="num">PKR 37,500</span> gross, <b>−<span class="num">3%</span> = <span class="num">1,125</span></b> wakala, <b>−<span class="num">1.8%</span> = <span class="num">675</span></b> MDR, <b>−<span class="num">1%</span> = <span class="num">375</span></b> withholding, net <span class="num">PKR 35,325</span> — and itemises the <b>provincial sales tax line by name</b> ("Sales tax · Punjab (Lahore)", the <code>GA-134</code> pattern) while stating <b>no rate and no amount for it</b>, because none has ever been published for Punjab: it is charged to the guest and itemised on the guest's invoice. Case: host Aqib, NTN <span class="num">35201-1234567-1</span> (<code>HA-012</code>). Panels: booking list, one still generating · ready + invoice preview (light) · period Select open (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — list (one generating) · ready + preview</span><span>Dark — period Select open</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — LIST + PREVIEW ============================ -->
+    <section class="panel" aria-label="Light theme — the per-booking invoice list and the ready invoice preview">
+      <div class="panel-tag">Light — A · By booking, one generating · B · Ready + invoice preview</div>
+      <div class="rowflex">
+
+        <!-- A · LIST -->
+        <div class="pcol">
+          <div class="pcap">A · Invoices by booking &amp; period</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tax receipts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Tax receipts &amp; FBR e-invoices</h2>
+              <p class="lead">One tax invoice per booking, plus a bundle for any period. All amounts in PKR.</p>
+
+              <div class="fld">
+                <span class="flabel" id="perlbA">Period</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="perlbA"><span class="stv">This tax year · FY <span class="num">2025–26</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">Or pick a single month, or a custom range.</span>
+              </div>
+
+              <ul class="dlist" role="list">
+                <li class="drow period">
+                  <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h6l2 2h8v10H4z"/><path d="M9 14h6"/></svg></span>
+                  <span class="drow-b"><span class="drow-t">All invoices for this period</span><span class="drow-s">FY <span class="num">2025–26</span> · one file</span></span>
+                  <a class="drow-act" href="/host/earnings/tax-receipts/2025-26.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</a>
+                </li>
+              </ul>
+
+              <span class="sech">By booking</span>
+              <ul class="dlist" role="list">
+                <li class="drow">
+                  <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+                  <span class="drow-b">
+                    <span class="drow-t">Gulberg <span class="num">2</span> Residence · Fatima</span>
+                    <span class="drow-s"><span class="num">14–17 Aug 2026</span> · <span class="num">3</span> nights · net <span class="num">PKR 35,325</span></span>
+                    <span class="inv-pill">Invoice <span class="num">INV-2026-000517</span></span>
+                  </span>
+                  <a class="drow-act" href="/host/earnings/tax-receipts/fatima-gulberg2-aug2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6"/></svg>Preview</a>
+                </li>
+                <li class="drow">
+                  <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+                  <span class="drow-b">
+                    <span class="drow-t">Gulberg <span class="num">2</span> Residence · Ayesha Khan</span>
+                    <span class="drow-s"><span class="num">12–16 Jul 2026</span> · <span class="num">4</span> nights · net <span class="num">PKR 47,100</span></span>
+                    <span class="inv-pill">Invoice <span class="num">INV-2026-000463</span></span>
+                  </span>
+                  <a class="drow-act" href="/host/earnings/tax-receipts/ayesha-gulberg2-jul2026.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</a>
+                </li>
+                <li class="drow generating" aria-busy="true">
+                  <span class="drow-ic" aria-hidden="true"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg></span>
+                  <span class="drow-b">
+                    <span class="drow-t">F-<span class="num">6</span> Studio · Bilal Ahmed</span>
+                    <span class="drow-s" role="status">Preparing your file — usually just a moment</span>
+                    <span class="inv-pill">Invoice <span class="num">INV-2026-000451</span></span>
+                  </span>
+                  <span class="drow-act" aria-disabled="true">Preparing…</span>
+                </li>
+              </ul>
+
+              <div class="fbr">
+                <span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+                <span class="fbr-b">
+                  <span class="fbr-h">About your tax invoice</span>
+                  <p>Your tax invoice is a document compliant with FBR e-invoicing, carrying its own invoice number. It will download as soon as it's ready.</p>
+                </span>
+              </div>
+
+              <div class="emailrow">
+                <span class="ei" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+                <span class="emailrow-b"><span class="emailrow-t">Also emailed to you</span><span class="emailrow-s">Sent to your registered email with every payout</span></span>
+                <button class="resend" type="button">Resend</button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/host/tax-documents">Year-end tax documents</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · READY + PREVIEW -->
+        <div class="pcol">
+          <div class="pcap">B · Ready — preview before you download</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings/tax-receipts" aria-label="Back to Tax receipts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tax invoice</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Your invoice is ready</h2>
+              <p class="lead">Check it here, then download or email yourself a copy.</p>
+
+              <div class="doc">
+                <div class="doc-top">
+                  <span class="doc-h">Tax invoice · FBR e-invoice</span>
+                  <div class="doc-meta">
+                    <div class="doc-line"><span class="doc-k">Invoice number</span><span class="doc-v num">INV-2026-000517</span></div>
+                    <div class="doc-line"><span class="doc-k">Issued</span><span class="doc-v num">15 Aug 2026</span></div>
+                    <div class="doc-line"><span class="doc-k">Host NTN</span><span class="doc-v num">35201-1234567-1</span></div>
+                    <div class="doc-line"><span class="doc-k">Tax year</span><span class="doc-v">FY <span class="num">2025–26</span></span></div>
+                  </div>
+                </div>
+                <div class="doc-body">
+                  <div class="doc-meta">
+                    <div class="doc-line"><span class="doc-k">Stay</span><span class="doc-v">Gulberg <span class="num">2</span> Residence · Lahore</span></div>
+                    <div class="doc-line"><span class="doc-k">Guest &amp; dates</span><span class="doc-v">Fatima · <span class="num">14–17 Aug 2026</span></span></div>
+                  </div>
+
+                  <dl class="bd">
+                    <div class="row"><dt>Gross booking value <span class="rate">(<span class="num">PKR 12,500</span> × <span class="num">3</span> nights)</span></dt><dd class="num">PKR 37,500</dd></div>
+                    <div class="row"><dt>Service fee (wakala) <span class="rate"><span class="num">−3%</span></span></dt><dd class="num">−PKR 1,125</dd></div>
+                    <div class="row"><dt>Payment processing (MDR) <span class="rate"><span class="num">−1.8%</span></span></dt><dd class="num">−PKR 675</dd></div>
+                    <div class="row"><dt>Withholding tax · ATL filer <span class="rate"><span class="num">−1%</span></span></dt><dd class="num">−PKR 375</dd></div>
+                    <div class="row total"><dt>Net payout to you</dt><dd class="num">PKR 35,325</dd></div>
+                  </dl>
+
+                  <div class="taxblk">
+                    <span class="tx-h">Tax lines on this booking</span>
+                    <div class="tx-row">
+                      <span class="tx-k">Withholding tax · ATL filer</span>
+                      <span class="tx-v"><span class="num">−PKR 375</span> · deducted from your payout</span>
+                    </div>
+                    <div class="tx-row">
+                      <span class="tx-k">Sales tax · Punjab (Lahore)</span>
+                      <span class="tx-v">Charged to your guest · itemised on their invoice</span>
+                    </div>
+                    <span class="tx-foot">Both lines appear on the FBR e-invoice for this booking. Provincial sales tax is collected from the guest at checkout, so it never comes out of your payout.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="emailrow">
+                <span class="ei" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+                <span class="emailrow-b"><span class="emailrow-t">Also emailed to you</span><span class="emailrow-s">Sent when this payout released</span></span>
+                <button class="resend" type="button">Resend</button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/earnings/tax-receipts/fatima-gulberg2-aug2026.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download PDF</a>
+              <a class="helplink" href="/host/earnings/withholding/fatima-gulberg2-aug2026">How the withholding line is worked out</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The preview is <b>arithmetic, not decoration</b>: <span class="num">12,500</span> × <span class="num">3</span> = <span class="num">37,500</span>; <span class="num">3%</span> = <span class="num">1,125</span>; <span class="num">1.8%</span> = <span class="num">675</span>; <span class="num">1%</span> = <span class="num">375</span>; <span class="num">37,500</span> − <span class="num">1,125</span> − <span class="num">675</span> − <span class="num">375</span> = <b><span class="num">35,325</span></b> — the same net <code>HA-049</code> already shipped, with <code>HA-055</code>'s label strings unchanged. The July rows carry <code>HA-055</code>'s own shipped nets (<span class="num">PKR 47,100</span> and the F-<span class="num">6</span> Studio booking still generating). The <b>provincial sales-tax row names the province and states where the money sits — and deliberately carries no rate and no amount</b>, because SalamStay has only ever published an ICT figure (<code>GA-134</code>); manufacturing a Punjab percentage would be an invented tax rate. FBR framing stays <b>concept-level</b>: "compliant with FBR e-invoicing" plus a placeholder number format, never a rendered official document.</p>
+    </section>
+
+    <!-- ============================ DARK — PERIOD SELECT OPEN ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the period Select open">
+      <div class="panel-tag">Dark — C · Period Select open</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Choose a period — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tax receipts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Tax receipts &amp; FBR e-invoices</h2>
+              <p class="lead">One tax invoice per booking, plus a bundle for any period. All amounts in PKR.</p>
+
+              <div class="fld">
+                <span class="flabel" id="perlbC">Period</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="true" aria-controls="perlistC" aria-labelledby="perlbC"><span class="stv">This tax year · FY <span class="num">2025–26</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg></button>
+                <div class="listbox" id="perlistC" role="listbox" aria-labelledby="perlbC">
+                  <button class="lbopt" type="button" role="option" aria-selected="true">
+                    <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="lbopt-b"><span class="opt-l">This tax year · FY <span class="num">2025–26</span></span><span class="opt-s"><span class="num">3</span> invoices</span></span>
+                  </button>
+                  <button class="lbopt" type="button" role="option" aria-selected="false">
+                    <span class="tick" aria-hidden="true"></span>
+                    <span class="lbopt-b"><span class="opt-l">August <span class="num">2026</span></span><span class="opt-s"><span class="num">1</span> invoice</span></span>
+                  </button>
+                  <button class="lbopt" type="button" role="option" aria-selected="false">
+                    <span class="tick" aria-hidden="true"></span>
+                    <span class="lbopt-b"><span class="opt-l">July <span class="num">2026</span></span><span class="opt-s"><span class="num">2</span> invoices</span></span>
+                  </button>
+                  <button class="lbopt" type="button" role="option" aria-selected="false">
+                    <span class="tick" aria-hidden="true"></span>
+                    <span class="lbopt-b"><span class="opt-l">Custom range</span><span class="opt-s">Pick your own start and end dates</span></span>
+                  </button>
+                </div>
+              </div>
+
+              <span class="sech">By booking</span>
+              <ul class="dlist" role="list">
+                <li class="drow">
+                  <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+                  <span class="drow-b">
+                    <span class="drow-t">Gulberg <span class="num">2</span> Residence · Fatima</span>
+                    <span class="drow-s"><span class="num">14–17 Aug 2026</span> · net <span class="num">PKR 35,325</span></span>
+                    <span class="inv-pill">Invoice <span class="num">INV-2026-000517</span></span>
+                  </span>
+                  <a class="drow-act" href="/host/earnings/tax-receipts/fatima-gulberg2-aug2026.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download</a>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/host/tax-documents">Year-end tax documents</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The Select is a real <code>aria-haspopup="listbox"</code> trigger whose chevron flips to point up while open, with a proper <code>role="listbox"</code>/<code>role="option"</code> list and the selection carried by <b>a tick glyph plus <code>aria-selected</code></b>, never by fill alone (§11). Option counts are the counts of rows actually shown on this card — <span class="num">1</span> in August, <span class="num">2</span> in July, <span class="num">3</span> in the year — so nothing on screen implies data the card doesn't render. Dark keeps every role AA-proven.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the invoice list and preview">
+      <div class="panel-tag">RTL · اردو — ٹیکس رسیدیں، mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · ٹیکس رسیدیں — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/earnings" aria-label="کمائی پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">ٹیکس رسیدیں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="dH">ٹیکس رسیدیں اور ایف بی آر ای-انوائس</h2>
+              <p class="lead">ہر بکنگ کا ایک ٹیکس انوائس، اور کسی بھی مدت کے لیے ایک مجموعہ۔</p>
+
+              <div class="fld">
+                <span class="flabel" id="perlbD">مدت</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="perlbD"><span class="stv">رواں ٹیکس سال · FY <span class="num">2025–26</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">یا کوئی ایک مہینہ، یا اپنی مرضی کی مدت منتخب کریں۔</span>
+              </div>
+
+              <span class="sech">بکنگ کے حساب سے</span>
+              <ul class="dlist" role="list">
+                <li class="drow">
+                  <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+                  <span class="drow-b">
+                    <span class="drow-t">گلبرگ <span class="num">2</span> ریزیڈنس · فاطمہ</span>
+                    <span class="drow-s"><span class="num">14–17</span> اگست <span class="num">2026</span> · خالص <span class="num">PKR 35,325</span></span>
+                    <span class="inv-pill">انوائس <span class="num">INV-2026-000517</span></span>
+                  </span>
+                  <a class="drow-act" href="/ur/host/earnings/tax-receipts/fatima-gulberg2-aug2026.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>ڈاؤن لوڈ</a>
+                </li>
+                <li class="drow generating" aria-busy="true">
+                  <span class="drow-ic" aria-hidden="true"><svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/></svg></span>
+                  <span class="drow-b">
+                    <span class="drow-t">F-<span class="num">6</span> اسٹوڈیو · بلال احمد</span>
+                    <span class="drow-s" role="status">آپ کی فائل تیار ہو رہی ہے — بس ایک لمحہ</span>
+                    <span class="inv-pill">انوائس <span class="num">INV-2026-000451</span></span>
+                  </span>
+                  <span class="drow-act" aria-disabled="true">تیار ہو رہی ہے…</span>
+                </li>
+              </ul>
+
+              <div class="doc">
+                <div class="doc-top">
+                  <span class="doc-h">ٹیکس انوائس · ایف بی آر ای-انوائس</span>
+                  <div class="doc-meta">
+                    <div class="doc-line"><span class="doc-k">انوائس نمبر</span><span class="doc-v num">INV-2026-000517</span></div>
+                    <div class="doc-line"><span class="doc-k">این ٹی این</span><span class="doc-v num">35201-1234567-1</span></div>
+                  </div>
+                </div>
+                <div class="doc-body">
+                  <dl class="bd">
+                    <div class="row"><dt>مجموعی رقم <span class="rate">(<span class="num">PKR 12,500</span> × <span class="num">3</span>)</span></dt><dd class="num">PKR 37,500</dd></div>
+                    <div class="row"><dt>سروس فیس (وکالہ) <span class="rate"><span class="num">−3%</span></span></dt><dd class="num">−PKR 1,125</dd></div>
+                    <div class="row"><dt>ادائیگی پروسیسنگ (MDR) <span class="rate"><span class="num">−1.8%</span></span></dt><dd class="num">−PKR 675</dd></div>
+                    <div class="row"><dt>ودہولڈنگ ٹیکس · فائلر <span class="rate"><span class="num">−1%</span></span></dt><dd class="num">−PKR 375</dd></div>
+                    <div class="row total"><dt>آپ کی خالص ادائیگی</dt><dd class="num">PKR 35,325</dd></div>
+                  </dl>
+
+                  <div class="taxblk">
+                    <span class="tx-h">اس بکنگ پر ٹیکس کی مدات</span>
+                    <div class="tx-row">
+                      <span class="tx-k">ودہولڈنگ ٹیکس · فائلر</span>
+                      <span class="tx-v"><span class="num">−PKR 375</span> · آپ کی ادائیگی سے کٹوتی</span>
+                    </div>
+                    <div class="tx-row">
+                      <span class="tx-k">سیلز ٹیکس · پنجاب (لاہور)</span>
+                      <span class="tx-v">مہمان سے وصول · اُن کے انوائس پر درج</span>
+                    </div>
+                    <span class="tx-foot">دونوں مدات اس بکنگ کے ایف بی آر ای-انوائس پر ظاہر ہوتی ہیں۔ صوبائی سیلز ٹیکس چیک آؤٹ پر مہمان سے وصول ہوتا ہے، آپ کی ادائیگی سے نہیں۔</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/ur/host/tax-documents">سال کے آخر کی ٹیکس دستاویزات</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron flips, breakdown label/value pairs swap sides, the Select chevron stays pointing down (non-directional), and the download glyph is non-directional so it is not flipped. <b>Every numeral run — <span class="num">PKR 37,500</span>, <span class="num">−3%</span>, <span class="num">−1.8%</span>, <span class="num">−1%</span>, <span class="num">INV-2026-000517</span>, the NTN <span class="num">35201-1234567-1</span> and the dates — sits inside <code>.num</code></b> with <code>direction:ltr; unicode-bidi:isolate</code> and Western digits (Pass #31). Urdu strings are the shipped ones: "سروس فیس (وکالہ)", "ادائیگی پروسیسنگ (MDR)", "خالص ادائیگی" from <code>HA-055</code>; "ایف بی آر ای-انوائسنگ" and "سیلز ٹیکس · …" from <code>GA-134</code>, with only the province name changed.</p>
+    </section>
+
+  </main>
+</body>
+</html>

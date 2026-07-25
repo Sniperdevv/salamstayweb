@@ -1,0 +1,356 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Trusted contacts manager (GA-090)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:860px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1000px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title, .phone.rtl h2, .phone.rtl p, .phone.rtl .c-t, .phone.rtl .c-s, .phone.rtl .bnr-h, .phone.rtl .bnr-d, .phone.rtl .titem-t, .phone.rtl .titem-d, .phone.rtl label, .phone.rtl .th, .phone.rtl .td, .phone.rtl .empty-h, .phone.rtl .empty-d, .phone.rtl .btn, .phone.rtl a { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:14px; }
+
+  /* what-they-receive transparency panel */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:16px; border:1px solid transparent; }
+  .bnr.info { background:var(--info-bg); border-color:var(--info-border); }
+  .bnr.mute { background:var(--bg-raised); border-color:var(--border-hairline); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:19px; height:19px; stroke-width:1.85; }
+  .bnr.info .bnr-ic svg { color:var(--info-fg); }
+  .bnr.mute .bnr-ic svg { color:var(--text-secondary); }
+  .bnr .bnr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); display:block; }
+
+  /* contact list rows */
+  .sub-h { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:2px 2px 10px; }
+  .clist { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:16px; }
+  .crow { display:flex; align-items:center; gap:12px; min-height:60px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 12px; }
+  .c-av { flex:none; width:40px; height:40px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+  .c-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .c-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .c-tag { font-size:10px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+  .c-s { font-size:12px; color:var(--text-secondary); display:block; font-variant-numeric:tabular-nums; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .c-rm { flex:none; width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; color:var(--text-tertiary); }
+  .c-rm svg { width:19px; height:19px; stroke-width:1.9; }
+
+  /* add-contact form */
+  .field-row { margin-bottom:12px; }
+  .field-row label { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:6px; }
+  .txtinput { width:100%; min-height:46px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-canvas); padding:0 13px; font-family:inherit; font-size:14px; color:var(--text-primary); }
+  .txtinput::placeholder { color:var(--text-tertiary); }
+  .field-hint { font-size:11.5px; color:var(--text-tertiary); margin-top:5px; display:block; }
+
+  /* empty state */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px; }
+  .empty-ic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .empty-ic svg { width:28px; height:28px; stroke-width:1.6; }
+  .empty-h { font-size:16px; font-weight:600; color:var(--text-primary); margin-bottom:6px; display:block; }
+  .empty-d { font-size:12.5px; color:var(--text-secondary); max-width:240px; margin-bottom:20px; display:block; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.wide { max-width:240px; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+
+  /* undo toast */
+  .toast { position:absolute; inset-inline:16px; bottom:calc(30px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:12px 12px 12px 14px; }
+  .toast .ti { color:var(--text-secondary); flex:none; }
+  .toast .ti svg { width:20px; height:20px; stroke-width:1.9; }
+  .toast .tbd { flex:1; min-width:0; }
+  .toast .th { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .toast .undo { flex:none; background:transparent; border:none; color:var(--int-primary); font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; padding:8px 4px; min-height:44px; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Trusted contacts manager (GA-090)</h1>
+    <p>The general-purpose safety primitive that feeds GA-091's arrival-share Switch — add or remove the people who receive trip-sharing updates, plainly stated as useful for any trip, never branded a "women's" feature on the surface (DESIGN §9-G, §10.8). Initials avatars only, no faces on these fictional contacts, and one row uses the established Urdu-initial avatar in the RTL panel (per the host-profile precedent in GA-027/GA-033). States: the contact list with a what-they-receive transparency panel, the add-contact form, a remove that resolves to an undo toast (no confirm modal), the empty first-run state, and Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">List · light</span><span>Add contact</span><span>Remove → undo · empty · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the contact list and the add-contact form">
+      <div class="panel-tag">Light — contact list · add contact</div>
+      <div class="rowflex">
+
+        <!-- A · CONTACT LIST -->
+        <div class="pcol">
+          <div class="pcap">A · Your trusted contacts</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/safety" aria-label="Back to safety"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Trusted contacts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">The people you choose to keep in the loop on a trip — useful whether you're travelling solo, as a couple, or with family.</p>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">What they receive</span>
+                  <span class="bnr-d">Arrival confirmations and any trip details you choose to share — never your continuous location.</span>
+                </div>
+              </div>
+
+              <div class="sub-h">2 contacts</div>
+              <ul class="clist">
+                <li class="crow">
+                  <span class="c-av" aria-hidden="true">AR</span>
+                  <span class="c-b"><span class="c-t"><span>Ali Raza</span><span class="c-tag">Brother</span></span><span class="c-s"><span class="num">0301 234 5678</span></span></span>
+                  <button class="c-rm" type="button" aria-label="Remove Ali Raza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7"/></svg></button>
+                </li>
+                <li class="crow">
+                  <span class="c-av" aria-hidden="true">SM</span>
+                  <span class="c-b"><span class="c-t"><span>Sana Malik</span><span class="c-tag">Sister</span></span><span class="c-s"><span class="num">0333 876 5432</span></span></span>
+                  <button class="c-rm" type="button" aria-label="Remove Sana Malik"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/safety/contacts/add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add a trusted contact</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · ADD-CONTACT FORM -->
+        <div class="pcol">
+          <div class="pcap">B · Add a contact</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/safety/contacts" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Add a contact</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">Add someone you trust to receive your arrival confirmations and any trip details you choose to share.</p>
+
+              <div class="field-row">
+                <label for="cname">Name</label>
+                <input class="txtinput" type="text" id="cname" name="cname" placeholder="e.g. Ali Raza" />
+              </div>
+              <div class="field-row">
+                <label for="cphone">Phone number</label>
+                <input class="txtinput" type="tel" id="cphone" name="cphone" placeholder="03XX XXX XXXX" inputmode="numeric" />
+                <span class="field-hint">A Pakistan mobile number, so we can reach them if you ever need help.</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="submit">Save contact</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The transparency panel is load-bearing, not a footnote: it states exactly what a trusted contact receives — and exactly what they never do (§9-G privacy-truth). Contact rows are a real list with a masked-safe phone display; the remove control is a plain trailing icon button, not a destructive-red flourish, because removal resolves gently (state C). The add form uses the standard sunken Input shell with a plain 03XX phone hint — no invented validation copy.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — remove resolves to an undo toast, and the empty first-run state">
+      <div class="panel-tag">Dark — remove → undo toast · empty state</div>
+      <div class="rowflex">
+
+        <!-- C · REMOVE -> UNDO TOAST -->
+        <div class="pcol">
+          <div class="pcap">C · Removed — undo, no scary modal</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/safety" aria-label="Back to safety"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Trusted contacts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">The people you choose to keep in the loop on a trip.</p>
+
+              <div class="bnr mute" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">What they receive</span>
+                  <span class="bnr-d">Arrival confirmations and any trip details you choose to share — never your continuous location.</span>
+                </div>
+              </div>
+
+              <div class="sub-h">1 contact</div>
+              <ul class="clist">
+                <li class="crow">
+                  <span class="c-av" aria-hidden="true">AR</span>
+                  <span class="c-b"><span class="c-t"><span>Ali Raza</span><span class="c-tag">Brother</span></span><span class="c-s"><span class="num">0301 234 5678</span></span></span>
+                  <button class="c-rm" type="button" aria-label="Remove Ali Raza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/safety/contacts/add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add a trusted contact</a>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7"/></svg></span>
+              <div class="tbd"><span class="th">Removed Sana Malik</span></div>
+              <button class="undo" type="button">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · EMPTY STATE -->
+        <div class="pcol">
+          <div class="pcap">D · Empty — invite the first contact</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/safety" aria-label="Back to safety"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Trusted contacts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="empty">
+              <span class="empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+              <span class="empty-h" id="dH">No trusted contacts yet</span>
+              <span class="empty-d">Add someone you'd like to keep in the loop — they'll only ever see what you choose to share.</span>
+              <a class="btn primary wide" href="/safety/contacts/add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add your first contact</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Removing a contact is reversible and calm: the row disappears immediately and a plain toast offers <strong>Undo</strong> — no destructive confirm dialog, no red warning copy (§10.8). The empty state follows the standard pattern (§8.5): one line glyph, a calm headline, one sentence, one clear action — it reads intentional, not broken, and never blocks anything else in the app.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the contact list, with the Urdu-initial avatar detail">
+      <div class="panel-tag">RTL · اردو — "قابلِ اعتماد رابطے", mirrored · ع avatar</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">List — اردو · Urdu-initial avatar</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/safety" aria-label="حفاظت پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">قابلِ اعتماد رابطے</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">وہ لوگ جنہیں آپ سفر کے دوران باخبر رکھنا چاہتے ہیں — تنہا سفر ہو، جوڑے کے ساتھ، یا خاندان کے ساتھ، سب کے لیے مفید۔</p>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">انہیں کیا موصول ہوتا ہے</span>
+                  <span class="bnr-d">آمد کی تصدیقات اور سفر کی وہ تفصیلات جو آپ شیئر کرنا چاہیں — کبھی بھی آپ کی مسلسل لوکیشن نہیں۔</span>
+                </div>
+              </div>
+
+              <div class="sub-h"><span class="num">2</span> رابطے</div>
+              <ul class="clist">
+                <li class="crow">
+                  <span class="c-av" aria-hidden="true">ع</span>
+                  <span class="c-b"><span class="c-t"><span>علی رضا</span><span class="c-tag">بھائی</span></span><span class="c-s"><span class="num">0301 234 5678</span></span></span>
+                  <button class="c-rm" type="button" aria-label="علی رضا کو ہٹائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7"/></svg></button>
+                </li>
+                <li class="crow">
+                  <span class="c-av" aria-hidden="true">ث</span>
+                  <span class="c-b"><span class="c-t"><span>ثناء ملک</span><span class="c-tag">بہن</span></span><span class="c-s"><span class="num">0333 876 5432</span></span></span>
+                  <button class="c-rm" type="button" aria-label="ثناء ملک کو ہٹائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-8 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/ur/safety/contacts/add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>قابلِ اعتماد رابطہ شامل کریں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron flips to the reading-start edge and the remove icon stays trailing per the row's new reading direction (§11). Avatars follow the established ethics rule — initials only, never a real face on a fictional identity — and under Urdu, initials render as a single Urdu letter from the person's own name (علی → <b>ع</b>, ثناء → <b>ث</b>), the same convention already set by the host avatar in GA-027 / GA-033, rather than transliterating the Latin initials.</p>
+    </section>
+
+  </main>
+</body>
+</html>

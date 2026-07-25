@@ -1,0 +1,125 @@
+<!-- @dsCard group="Overlays" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Modal &amp; Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --scrim:rgba(16,25,27,.44);
+    --el-modal:0 8px 16px -4px rgba(16,25,27,.1),0 24px 48px -8px rgba(16,25,27,.12);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --radius-2xl:20px; --radius-md:8px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#1C2322; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --scrim:rgba(0,0,0,.6);
+    --el-modal:0 8px 16px -4px rgba(0,0,0,.5),0 24px 48px -8px rgba(0,0,0,.5);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 28px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .grid2 { max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { border-radius:20px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); overflow:hidden; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:18px 24px 0; background:var(--bg-canvas); }
+
+  .stage { position:relative; height:420px; background:var(--scrim); background-image:linear-gradient(var(--scrim),var(--scrim)),repeating-linear-gradient(45deg,var(--bg-raised),var(--bg-raised) 12px,var(--bg-sunken) 12px,var(--bg-sunken) 24px); display:flex; align-items:center; justify-content:center; padding:24px; }
+  .stage.sheet-stage { align-items:flex-end; padding:0; }
+
+  .dialog { width:100%; max-width:400px; background:var(--bg-canvas); border-radius:var(--radius-2xl); box-shadow:var(--el-modal); overflow:hidden; }
+  .dhead { display:flex; align-items:center; justify-content:space-between; padding:20px 20px 12px; }
+  .dhead h3 { font-size:20px; font-weight:600; color:var(--text-primary); }
+  .dclose { width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); }
+  .dclose svg { width:22px; height:22px; }
+  .dbody { padding:0 20px 4px; font-size:15px; color:var(--text-secondary); }
+  .dfoot { display:flex; justify-content:flex-end; gap:12px; padding:16px 20px 20px; }
+  .btn { height:40px; padding:0 16px; border-radius:var(--radius-md); font-size:13px; font-weight:500; border:1px solid transparent; cursor:pointer; font-family:inherit; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  .sheet { width:100%; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-modal); padding-bottom:20px; }
+  .grabber { width:36px; height:4px; border-radius:var(--radius-full); background:var(--border-strong); margin:12px auto 0; }
+  .shead { display:flex; align-items:center; justify-content:space-between; padding:14px 20px 10px; }
+  .shead h3 { font-size:18px; font-weight:600; }
+  .srow { display:flex; align-items:center; gap:12px; padding:12px 20px; }
+  .srow .ic { width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; }
+  .srow .ic svg { width:18px; height:18px; color:var(--text-secondary); }
+  .srow .t { font-size:15px; color:var(--text-primary); font-weight:500; }
+  .srow .d { font-size:13px; color:var(--text-secondary); }
+  .srow .chk { margin-left:auto; color:var(--int-primary); }
+  .srow .chk svg { width:20px; height:20px; }
+  .sfoot { display:flex; gap:12px; padding:14px 20px 4px; border-top:1px solid var(--border-hairline); margin-top:6px; }
+  .sfoot .btn { flex:1; height:48px; display:flex; align-items:center; justify-content:center; }
+  @media (max-width:880px){ .grid2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Modal &amp; Bottom Sheet</h1>
+    <p>Same semantic surface across platforms — centered dialog on web, thumb-zone sheet on mobile with a grabber. Both float at the top of the elevation ladder over a scrim.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-tag">Light — web dialog</div>
+      <div class="stage">
+        <div class="dialog">
+          <div class="dhead">
+            <h3>Cancel this booking?</h3>
+            <div class="dclose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+          </div>
+          <div class="dbody">Your stay at Cedar Lodge, Islamabad (12–16 Jul) will be released. Free cancellation applies until 48 hours before check-in.</div>
+          <div class="dfoot">
+            <button class="btn secondary">Keep booking</button>
+            <button class="btn primary">Cancel booking</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel dark">
+      <div class="panel-tag">Dark — mobile sheet</div>
+      <div class="stage sheet-stage">
+        <div class="sheet">
+          <div class="grabber"></div>
+          <div class="shead">
+            <h3>Choose prayer facility</h3>
+            <div class="dclose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>
+          </div>
+          <div class="srow">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></div>
+            <div><div class="t">Prayer mat provided</div><div class="d">Clean mat in the main bedroom</div></div>
+            <div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+          </div>
+          <div class="srow">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10"/></svg></div>
+            <div><div class="t">Dedicated prayer room</div><div class="d">Separate quiet space</div></div>
+          </div>
+          <div class="srow">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg></div>
+            <div><div class="t">Mosque within walking distance</div><div class="d">Under 5 minutes</div></div>
+          </div>
+          <div class="sfoot">
+            <button class="btn secondary">Reset</button>
+            <button class="btn primary">Show 54 stays</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

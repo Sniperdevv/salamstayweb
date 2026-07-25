@@ -1,0 +1,358 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Guest-registration confirmation (GA-077)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1200px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:840px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1200px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:960px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title, .phone.rtl h2, .phone.rtl p, .phone.rtl .dl-t, .phone.rtl .dl-d, .phone.rtl .bnr-h, .phone.rtl .bnr-d, .phone.rtl .nrow-t, .phone.rtl .nrow-s, .phone.rtl .ti-t, .phone.rtl .ti-d, .phone.rtl .erow-t, .phone.rtl .erow-s, .phone.rtl .btn, .phone.rtl a { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.9; }
+
+  /* description-list rows — reference + timestamp facts */
+  .dl-rows { display:flex; flex-direction:column; gap:9px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .dl-row { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .dl-t { font-size:12.5px; color:var(--text-secondary); flex:none; display:block; }
+  .dl-d { font-size:12.5px; font-weight:600; color:var(--text-primary); text-align:end; font-variant-numeric:tabular-nums; display:block; }
+  .dl-d.code { letter-spacing:.05em; }
+
+  /* banners — WHY panel / practical note / offline */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; border:1px solid transparent; }
+  .bnr.info { background:var(--info-bg); border-color:var(--info-border); }
+  .bnr.mute { background:var(--bg-raised); border-color:var(--border-hairline); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:19px; height:19px; stroke-width:1.85; }
+  .bnr.info .bnr-ic svg { color:var(--info-fg); }
+  .bnr.mute .bnr-ic svg { color:var(--text-secondary); }
+  .bnr .bnr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); display:block; }
+
+  /* next-step / link rows */
+  .nlist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .nrow { display:flex; gap:12px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 13px; text-decoration:none; }
+  .nrow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .nrow-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .nrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .nrow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .nrow-s { font-size:12px; color:var(--text-secondary); display:block; }
+  .nrow-chev { flex:none; color:var(--text-tertiary); }
+  .nrow-chev svg { width:19px; height:19px; stroke-width:2; }
+
+  /* transparency list — what was shared */
+  .tlist { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+  .titem { display:flex; gap:11px; align-items:flex-start; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:11px 13px; }
+  .titem-ic { flex:none; width:32px; height:32px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .titem-ic svg { width:16px; height:16px; stroke-width:1.8; }
+  .titem-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .titem-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .titem-d { font-size:12px; color:var(--text-secondary); display:block; font-variant-numeric:tabular-nums; }
+  .tcap { font-size:11.5px; color:var(--text-tertiary); margin:-4px 0 14px; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.ghost { background:transparent; color:var(--int-primary); }
+  .btn + .btn { margin-top:10px; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+
+  /* trip-detail entry-point rows (dark panel) */
+  .home { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; }
+  .erow { display:flex; gap:11px; align-items:center; min-height:60px; border:1px solid var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-lg); padding:11px 13px; margin-bottom:10px; text-decoration:none; }
+  .erow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-primary); color:var(--text-on-brand); }
+  .erow-ic svg { width:19px; height:19px; stroke-width:2; }
+  .erow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .erow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .erow-s { font-size:12px; color:var(--text-secondary); display:block; }
+  .erow-chev { flex:none; color:var(--int-primary); }
+  .erow-chev svg { width:19px; height:19px; stroke-width:2; }
+  .erow-plain { display:flex; gap:11px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 13px; margin-bottom:10px; }
+  .erow-plain .erow-ic { background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); }
+  .sub-h { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:4px 2px 10px; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Guest-registration confirmation (GA-077)</h1>
+    <p>A quiet, factual disclosure: Margalla View Apartment's stay is registered with the <strong>Islamabad Capital Territory (ICT) Police</strong> — a routine short-stay formality SalamStay files on the host's behalf (DESIGN §9-D, §10.6). No journey stepper — this is a post-book, pre-stay confirmation. States: the registered confirmation (reference + timestamp + a plain "why this happens" panel), a "what was shared" transparency detail, the trip-detail entry point it's reached from, and Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Registered · light</span><span>What was shared</span><span>Trip-detail entry · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the registered confirmation and the what-was-shared detail">
+      <div class="panel-tag">Light — registered · what was shared</div>
+      <div class="rowflex">
+
+        <!-- A · REGISTERED CONFIRMATION -->
+        <div class="pcol">
+          <div class="pcap">A · Registered — quiet confirmation</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Guest registration</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="aH">Your stay is registered</h2>
+              <p class="lead">Margalla View Apartment is registered with the Islamabad Capital Territory (ICT) Police for your dates — a routine formality for short stays in Islamabad. You don't need to do anything.</p>
+
+              <div class="dl-rows">
+                <div class="dl-row"><span class="dl-t">Reference</span><span class="dl-d code">REG-ICT-2026-8H4M2X</span></div>
+                <div class="dl-row"><span class="dl-t">Registered</span><span class="dl-d">Fri 14 Aug 2026 · 9:02 AM</span></div>
+                <div class="dl-row"><span class="dl-t">Authority</span><span class="dl-d">ICT Police</span></div>
+                <div class="dl-row"><span class="dl-t">Stay</span><span class="dl-d">Fri 14 – Mon 17 Aug 2026</span></div>
+              </div>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">Why this happens</span>
+                  <span class="bnr-d">Short-stay guest registration is a routine legal requirement in Islamabad — the same formality any hotel or guest house completes. SalamStay files it with your host as soon as your booking is confirmed.</span>
+                </div>
+              </div>
+
+              <ul class="nlist">
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/registration/shared">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">What was shared</span><span class="nrow-s">Names and CNIC, in plain terms</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/is-f7-2bed-aug2026">Back to your trip</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · WHAT WAS SHARED — TRANSPARENCY DETAIL -->
+        <div class="pcol">
+          <div class="pcap">B · What was shared — transparency detail</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/trips/is-f7-2bed-aug2026/registration" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">What was shared</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Only what registration requires</h2>
+              <p class="lead">Nothing beyond the details Islamabad's guest-registration process asks for was shared.</p>
+
+              <ul class="tlist">
+                <li class="titem">
+                  <span class="titem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                  <span class="titem-b"><span class="titem-t">You</span><span class="titem-d">CNIC 35202-•••••••-1</span></span>
+                </li>
+                <li class="titem">
+                  <span class="titem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                  <span class="titem-b"><span class="titem-t">Your partner</span><span class="titem-d">CNIC 37405-•••••••-6</span></span>
+                </li>
+                <li class="titem">
+                  <span class="titem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></span>
+                  <span class="titem-b"><span class="titem-t">Property</span><span class="titem-d">Margalla View Apartment, F-7, Islamabad</span></span>
+                </li>
+                <li class="titem">
+                  <span class="titem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <span class="titem-b"><span class="titem-t">Stay dates</span><span class="titem-d">Fri 14 – Mon 17 Aug 2026</span></span>
+                </li>
+              </ul>
+              <p class="tcap">Couples share both partners' CNIC — other booking types (family, group) share different documents, always just what's asked for.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/trips/is-f7-2bed-aug2026/registration">Back to registration</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The confirmation is a quiet tick, not a celebration (§10.6) — a real <code>&lt;dl&gt;</code>-style fact block (reference, timestamp, authority, stay) read fully by assistive tech, plus a factual <code>role="note"</code> WHY panel in the muted <strong>info</strong> register. "What was shared" is a genuine transparency detail, not a legal footnote — CNIC numbers are shown masked (privacy in public, §10.6), never a real-looking official document.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the trip-detail entry point that leads here">
+      <div class="panel-tag">Dark — trip-detail entry point</div>
+      <div class="rowflex">
+
+        <!-- C · TRIP DETAIL — ENTRY POINT -->
+        <div class="pcol">
+          <div class="pcap">C · Trip detail — where this is reached from</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/trips" aria-label="Back to trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Your trip</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="home">
+              <div class="sub-h">Compliance &amp; safety</div>
+              <a class="erow" href="/trips/is-f7-2bed-aug2026/registration">
+                <span class="erow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="erow-b"><span class="erow-t">Guest registration</span><span class="erow-s">Registered · ICT Police · REG-ICT-2026-8H4M2X</span></span>
+                <span class="erow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+              <div class="erow-plain">
+                <span class="erow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span class="erow-b"><span class="erow-t">Check-in instructions</span><span class="erow-s">Access details &amp; host contact</span></span>
+              </div>
+              <div class="erow-plain">
+                <span class="erow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+                <span class="erow-b"><span class="erow-t">Safety</span><span class="erow-s">Emergency, trusted contacts, arrival share</span></span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">GA-077 is reached from the Trip detail's (GA-071) compliance &amp; safety section — a plain list row stating the registered status and reference at a glance, the same visual weight as check-in instructions and safety (no alarm framing). Dark theme carries the identical token set, AA-proven (DESIGN §1.6).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the registered confirmation">
+      <div class="panel-tag">RTL · اردو — "آپ کا قیام رجسٹرڈ ہے", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Registered — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/trips/is-f7-2bed-aug2026" aria-label="اپنے سفر پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">مہمان کی رجسٹریشن</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="uH">آپ کا قیام رجسٹرڈ ہے</h2>
+              <p class="lead">مارگلہ ویو اپارٹمنٹ آپ کی تاریخوں کے لیے اسلام آباد کیپیٹل ٹیریٹری (ICT) پولیس کے ہاں رجسٹرڈ ہے — اسلام آباد میں مختصر قیام کے لیے ایک معمول کی کارروائی۔ آپ کو کچھ کرنے کی ضرورت نہیں۔</p>
+
+              <div class="dl-rows">
+                <div class="dl-row"><span class="dl-t">حوالہ نمبر</span><span class="dl-d code">REG-ICT-2026-8H4M2X</span></div>
+                <div class="dl-row"><span class="dl-t">رجسٹرڈ</span><span class="dl-d"><span class="num">14</span> اگست <span class="num">2026</span> · <span class="num">9:02 AM</span></span></div>
+                <div class="dl-row"><span class="dl-t">ادارہ</span><span class="dl-d">آئی سی ٹی پولیس</span></div>
+                <div class="dl-row"><span class="dl-t">قیام</span><span class="dl-d"><span class="num">14 – 17</span> اگست <span class="num">2026</span></span></div>
+              </div>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">ایسا کیوں ہوتا ہے</span>
+                  <span class="bnr-d">اسلام آباد میں مختصر قیام کی رجسٹریشن ایک معمول کا قانونی تقاضا ہے — بالکل ویسے ہی جیسے کوئی ہوٹل یا گیسٹ ہاؤس مکمل کرتا ہے۔ بکنگ کی تصدیق ہوتے ہی سلام اسٹے یہ آپ کے میزبان کی جانب سے مکمل کرتا ہے۔</span>
+                </div>
+              </div>
+
+              <ul class="nlist">
+                <li>
+                  <a class="nrow" href="/ur/trips/is-f7-2bed-aug2026/registration/shared">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">کیا شیئر کیا گیا</span><span class="nrow-s">نام اور شناختی کارڈ نمبر، سادہ الفاظ میں</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/trips/is-f7-2bed-aug2026">اپنے سفر پر واپس</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and next-step chevron flip to the reading direction, label/value pairs in the fact block swap sides while dates and the reference code keep tabular, non-mirrored digits (§11). "ICT Police" is named plainly — never a generic or incorrect provincial label.</p>
+    </section>
+
+  </main>
+</body>
+</html>

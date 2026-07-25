@@ -1,0 +1,378 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Message search (GA-096)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064/ga-083/ga-090 lineage; NO journey stepper (§7.6a) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title, .phone.rtl .seclabel, .phone.rtl .field-in, .phone.rtl .ch-name, .phone.rtl .ch-count, .phone.rtl .snip, .phone.rtl .resdate, .phone.rtl .rc-t, .phone.rtl .noq-h, .phone.rtl .noq-d, .phone.rtl .nores-h, .phone.rtl .nores-d { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl .snip, .phone.rtl .noq-d, .phone.rtl .nores-d { line-height:1.85; }
+  .phone.rtl .field-in { font-family:'Noto Nastaliq Urdu', serif; line-height:2; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 20px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* search field — reuses the DESIGN §8-nav search-bar shell (GA-021 lineage) */
+  .field { display:flex; align-items:center; gap:10px; height:48px; padding:0 8px 0 14px; border:1px solid var(--border-strong); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); flex:none; }
+  .field.focused { border-color:var(--border-brand); box-shadow:var(--focus-ring); }
+  .field-ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:2; display:block; }
+  .field-in { flex:1; min-width:0; border:none; outline:none; background:transparent; font-family:inherit; font-size:15px; color:var(--text-primary); }
+  .field-in::placeholder { color:var(--text-secondary); opacity:1; }
+  .field-clear { width:32px; height:32px; border-radius:var(--radius-full); border:none; background:var(--bg-sunken); cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; }
+  .field-clear svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:2.4; }
+
+  .seclabel { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 10px; }
+
+  /* results grouped by conversation */
+  .convgroup { margin-bottom:14px; }
+  .convgroup + .convgroup { margin-top:2px; }
+  .convhead { display:flex; align-items:center; gap:10px; padding:6px 2px 8px; }
+  .ch-av { flex:none; width:32px; height:32px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:700; }
+  .ch-name { flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .ch-count { flex:none; font-size:11.5px; color:var(--text-tertiary); }
+
+  .results { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .resrow { display:flex; align-items:center; gap:10px; min-height:56px; padding:10px 12px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); text-decoration:none; }
+  .resrow:hover { background:var(--bg-raised); }
+  .res-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .snip { font-size:13px; color:var(--text-secondary); line-height:1.4; display:block; }
+  .snip mark { background:transparent; color:var(--int-primary); font-weight:700; }
+  .resdate { font-size:11px; color:var(--text-tertiary); display:block; }
+  .res-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .res-chev svg { width:17px; height:17px; stroke-width:2; }
+  .phone.rtl .res-chev svg { transform:scaleX(-1); }
+
+  /* recent searches (no query yet) */
+  .rc-row { display:flex; align-items:center; gap:12px; width:100%; min-height:52px; padding:8px 8px; border:none; background:transparent; border-radius:var(--radius-lg); cursor:pointer; text-align:start; font-family:inherit; }
+  .rc-row + .rc-row { border-top:1px solid var(--border-hairline); }
+  .rc-ic { width:38px; height:38px; border-radius:var(--radius-md); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-sunken); color:var(--text-secondary); }
+  .rc-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .rc-t { flex:1; min-width:0; font-size:14px; font-weight:500; color:var(--text-primary); }
+  .rc-rm { flex:none; width:36px; height:36px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .rc-rm svg { width:15px; height:15px; stroke-width:2.2; }
+
+  /* no-query orienting note above recent searches */
+  .noq { display:flex; flex-direction:column; align-items:center; text-align:center; padding:26px 18px 10px; }
+  .noq-ic { width:48px; height:48px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .noq-ic svg { width:24px; height:24px; stroke-width:1.6; }
+  .noq-h { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .noq-d { font-size:12.5px; color:var(--text-secondary); margin-top:5px; line-height:1.5; max-width:230px; }
+
+  /* no-results state */
+  .nores { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px 18px; }
+  .nores-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .nores-ic svg { width:26px; height:26px; stroke-width:1.6; }
+  .nores-h { font-size:15.5px; font-weight:600; color:var(--text-primary); }
+  .nores-d { font-size:12.5px; color:var(--text-secondary); margin-top:6px; line-height:1.5; max-width:230px; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Message search (GA-096)</h1>
+    <p>Search across every conversation from one field — results group under the conversation they belong to, each row showing the host's initials avatar, the conversation name, a matched snippet with the search term highlighted via a real <code>&lt;mark&gt;</code>, and a date. Tapping a result is a genuine anchored link into that thread (<code>/messages/{slug}#{message-id}</code>), never a re-fetch that loses the highlight. Reuses the <code>GA-021</code> search-field shell and the <code>GA-083</code> list-row grammar (no messaging-thread card exists yet to draw from). No journey stepper (§7.6a) — this is a cross-cutting <code>support</code>-stage utility. Panels: results found for "check-in" (light) · no results for "parking" (dark) · recent searches before any query (light) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Results found · light</span><span>No results · dark</span><span>Recent searches · empty query</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ ROW 1 — RESULTS (light) · NO RESULTS (dark) ============================ -->
+    <section class="panel" aria-label="Light theme with matching results, and dark theme with a no-results state">
+      <div class="panel-tag">Light — results found · Dark — no results</div>
+      <div class="rowflex">
+
+        <!-- A · RESULTS FOUND -->
+        <div class="pcol">
+          <div class="pcap">A · Results for "check-in"</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Search messages</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="field focused">
+                <span class="field-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <input class="field-in" type="text" value="check-in" aria-label="Search messages" />
+                <button class="field-clear" type="button" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+
+              <div class="seclabel">3 results in 2 conversations</div>
+
+              <div class="convgroup">
+                <div class="convhead">
+                  <span class="ch-av" aria-hidden="true">AK</span>
+                  <span class="ch-name">Ayesha Khan</span>
+                  <span class="ch-count num">2</span>
+                </div>
+                <ul class="results">
+                  <li>
+                    <a class="resrow" href="/messages/host-ayesha-margalla-view#m-241">
+                      <span class="res-b"><span class="snip">"Assalam o alaikum! I'll share the <mark>check-in</mark> details a day before your arrival."</span><span class="resdate">3 days ago</span></span>
+                      <span class="res-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="resrow" href="/messages/host-ayesha-margalla-view#m-244">
+                      <span class="res-b"><span class="snip">"The <mark>check-in</mark> code will be active from 3 PM on your arrival day."</span><span class="resdate">3 days ago</span></span>
+                      <span class="res-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="convgroup">
+                <div class="convhead">
+                  <span class="ch-av" aria-hidden="true">IA</span>
+                  <span class="ch-name">Imran A.</span>
+                  <span class="ch-count num">1</span>
+                </div>
+                <ul class="results">
+                  <li>
+                    <a class="resrow" href="/messages/host-imran-a#m-58">
+                      <span class="res-b"><span class="snip">"<mark>Check-in</mark> is anytime after 3 PM — I'll send the door code that morning."</span><span class="resdate">2 weeks ago</span></span>
+                      <span class="res-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · NO RESULTS -->
+        <div class="pcol">
+          <div class="pcap">B · No results for "parking"</div>
+          <section class="phone dark" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Search messages</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="field focused">
+                <span class="field-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <input class="field-in" type="text" value="parking" aria-label="Search messages" />
+                <button class="field-clear" type="button" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+
+              <div class="nores" role="status">
+                <span class="nores-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M8.5 11h5"/></svg></span>
+                <h2 class="nores-h">No messages match "parking"</h2>
+                <p class="nores-d">Try a different word, or check the spelling — search looks across every conversation.</p>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Results are real anchored links (<code>&lt;a href="/messages/host-ayesha-margalla-view#m-241"&gt;</code>) into the existing thread, grouped under a conversation header (initials avatar, name, match count) so multiple hits in one thread read as one place, not a flat wall of rows (§8-nav list-row pattern, borrowed from <code>GA-083</code> since no thread card exists yet). The matched term is a real <code>&lt;mark&gt;</code> styled on-palette — brand-coloured bold text, never a yellow highlight — reusing the exact rule from <code>GA-021</code>'s destination autocomplete. No results (B) stays calm and names the next action ("try a different word") rather than a dead end, per the "no dead ends" rule.</p>
+    </section>
+
+    <!-- ============================ ROW 2 — RECENT SEARCHES (empty query) · RTL/URDU ============================ -->
+    <section class="panel" aria-label="Light theme before any query is typed, and the right-to-left Urdu rendering of results">
+      <div class="panel-tag">Light — recent searches (no query yet) · اردو · RTL</div>
+      <div class="rowflex">
+
+        <!-- C · RECENT SEARCHES -->
+        <div class="pcol">
+          <div class="pcap">C · Before typing — recent searches</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Search messages</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="field">
+                <span class="field-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <input class="field-in" type="text" placeholder="Search messages" aria-label="Search messages" />
+              </div>
+
+              <div class="noq">
+                <span class="noq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <h2 class="noq-h">Search every conversation</h2>
+                <p class="noq-d">Type a name, a place, or a word from a message — like "check-in" or "Qibla."</p>
+              </div>
+
+              <div class="seclabel">Recent searches</div>
+              <div class="rc-row">
+                <span class="rc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="rc-t">check-in</span>
+                <button class="rc-rm" type="button" aria-label="Remove recent search: check-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+              <div class="rc-row">
+                <span class="rc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="rc-t">Qibla direction</span>
+                <button class="rc-rm" type="button" aria-label="Remove recent search: Qibla direction"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+              <div class="rc-row">
+                <span class="rc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="rc-t">Ayesha</span>
+                <button class="rc-rm" type="button" aria-label="Remove recent search: Ayesha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · RTL / URDU — RESULTS -->
+        <div class="pcol">
+          <div class="pcap">D · اردو — "check-in" کے نتائج</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/messages" aria-label="پیغامات پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="dH">پیغامات میں تلاش کریں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="field focused">
+                <span class="field-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                <input class="field-in num" type="text" value="check-in" aria-label="پیغامات میں تلاش کریں" />
+                <button class="field-clear" type="button" aria-label="تلاش صاف کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+
+              <div class="seclabel"><span class="num">2</span> گفتگوؤں میں <span class="num">3</span> نتائج</div>
+
+              <div class="convgroup">
+                <div class="convhead">
+                  <span class="ch-av" aria-hidden="true">عا</span>
+                  <span class="ch-name">عائشہ خان</span>
+                  <span class="ch-count num">2</span>
+                </div>
+                <ul class="results">
+                  <li>
+                    <a class="resrow" href="/messages/host-ayesha-margalla-view#m-241">
+                      <span class="res-b"><span class="snip">”السلام علیکم! میں <mark class="num">check-in</mark> کی تفصیلات ایک دن پہلے بھیج دوں گی۔“</span><span class="resdate"><span class="num">3</span> دن پہلے</span></span>
+                      <span class="res-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="resrow" href="/messages/host-ayesha-margalla-view#m-244">
+                      <span class="res-b"><span class="snip">”<mark class="num">check-in</mark> کوڈ آپ کی آمد والے دن سہ پہر <span class="num">3</span> بجے سے فعال ہوگا۔“</span><span class="resdate"><span class="num">3</span> دن پہلے</span></span>
+                      <span class="res-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="convgroup">
+                <div class="convhead">
+                  <span class="ch-av" aria-hidden="true">عم</span>
+                  <span class="ch-name">عمران اے۔</span>
+                  <span class="ch-count num">1</span>
+                </div>
+                <ul class="results">
+                  <li>
+                    <a class="resrow" href="/messages/host-imran-a#m-58">
+                      <span class="res-b"><span class="snip">”<mark class="num">Check-in</mark> سہ پہر <span class="num">3</span> بجے کے بعد کسی بھی وقت ہے — دروازے کا کوڈ اُسی صبح بھیج دوں گا۔“</span><span class="resdate"><span class="num">2</span> ہفتے پہلے</span></span>
+                      <span class="res-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Before any query (C), the field shows a plain orienting line and <strong>recent searches</strong> reusing <code>GA-021</code>'s history-row grammar (clock glyph, term, a per-item remove) — never a blank, un-oriented void. RTL (D) mirrors the field, the chevrons, and the whole layout; the searched term itself — "check-in" — is a borrowed English/Latin word commonly used as-is in Urdu messaging, so it is deliberately <strong>not translated</strong> inside the quoted message snippets (matching how the term would really appear in a bilingual thread) and stays LTR-isolated via <code>.num</code> so it never reverses; surrounding Urdu prose, names, and UI chrome are fully translated. Host initials render from the Urdu form of each name; since عائشہ (Ayesha) and عمران (Imran) both begin with the same letter <b>ع</b>, the avatar takes the first <em>two</em> Urdu letters (عا / عم) rather than one, so the two conversations stay visually distinct — an extension of the single-letter <code>GA-090</code> convention for exactly this collision case.</p>
+    </section>
+
+  </main>
+</body>
+</html>

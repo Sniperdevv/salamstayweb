@@ -1,0 +1,506 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Host profile editor (HA-079)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:302px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage; NO checkout stepper */
+  .phone { width:302px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:680px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.pslot-h,.pslot-none,.pslot-btn,.reqpill,.corepill,.field-label,.field-val,.field-sub,.ta,.ta-count,.chip,.vis-lb,.vsum-t,.vsum-c,.st-t,.st-d,.st-state,.st-act,.toast-t,.savebtn,.sec-lb) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 16px; overflow:hidden; }
+  .sec-lb { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:14px 2px 10px; }
+  .sec-lb:first-child { margin-top:0; }
+
+  /* photo slot — REQUIRED for hosts, equal visual weight, never scolding */
+  .pslot { display:flex; gap:13px; align-items:center; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:14px; margin-bottom:16px; }
+  .pslot-av { flex:none; width:60px; height:60px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; }
+  .pslot-av.photo { background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); position:relative; overflow:hidden; }
+  .pslot-av.photo::after { content:""; position:absolute; width:36px; height:36px; border-radius:var(--radius-full); background:var(--border-default); opacity:.6; top:10px; left:12px; }
+  .pslot-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .pslot-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .pslot-h { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .pslot-none { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.45; }
+  .pslot-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:3px; }
+  .pslot-btn { display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 12px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:12.5px; font-weight:600; color:var(--text-primary); text-decoration:none; cursor:pointer; font-family:inherit; }
+  .pslot-btn svg { width:15px; height:15px; stroke-width:1.9; }
+
+  /* required / core pills — non-interactive facts, distinct from the visibility switch */
+  .reqpill { font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-full); padding:3px 9px; white-space:nowrap; }
+  .corepill { font-size:10px; font-weight:600; color:var(--text-tertiary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:3px 9px; white-space:nowrap; }
+
+  /* field block */
+  .field { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); padding:12px 13px; margin-bottom:11px; }
+  .field-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .field-label { flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .field-val { font-size:13px; color:var(--text-secondary); display:block; line-height:1.5; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); display:block; margin-top:7px; line-height:1.45; }
+  .field-btn { display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px dashed var(--border-default); font-size:12.5px; font-weight:600; color:var(--int-primary); cursor:pointer; font-family:inherit; }
+  .field-btn svg { width:14px; height:14px; stroke-width:2.2; }
+
+  /* visibility Switch (§8.1) — only on personal prompts, per §9-K */
+  .vis { display:inline-flex; align-items:center; gap:8px; flex:none; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:2px; min-height:44px; }
+  .vis-lb { font-size:11px; font-weight:600; color:var(--text-tertiary); white-space:nowrap; }
+  .vis.on .vis-lb { color:var(--int-primary); }
+  .sw-track { position:relative; width:42px; height:24px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1.5px solid var(--border-default); flex:none; }
+  .vis.on .sw-track { background:var(--int-primary); border-color:var(--int-primary); }
+  .sw-thumb { position:absolute; top:2px; inset-inline-start:2px; width:17px; height:17px; border-radius:var(--radius-full); background:var(--text-on-inverse); box-shadow:var(--el-hairline); }
+  .vis.on .sw-thumb { inset-inline-start:21px; }
+
+  /* bio textarea — 50+ word guidance, encouraging not punitive */
+  .ta { width:100%; min-height:100px; border:1.5px solid var(--int-primary); border-radius:var(--radius-md); background:var(--bg-canvas); padding:10px 12px; font-family:inherit; font-size:13.5px; color:var(--text-primary); line-height:1.55; box-shadow:0 0 0 3px var(--int-subtle); resize:none; }
+  .ta-count { font-size:11px; color:var(--text-tertiary); display:block; margin-top:6px; }
+  .ta-count.ok { color:var(--success-fg); font-weight:600; }
+  .ta-count.ok svg { width:12px; height:12px; stroke-width:2.6; vertical-align:-1.5px; margin-inline-end:3px; }
+
+  /* language chips — includes native-script اردو chip */
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-full); padding:6px 12px; }
+  .chip.ur { font-family:'Noto Nastaliq Urdu', serif; }
+  .chip .x { color:var(--text-tertiary); display:inline-flex; }
+  .chip .x svg { width:13px; height:13px; stroke-width:2.2; }
+  .chip.add { border-style:dashed; color:var(--int-primary); background:transparent; cursor:pointer; font-family:inherit; }
+  .chip.add svg { width:14px; height:14px; stroke-width:2.2; }
+
+  /* completeness — real fraction + qualitative caption (no invented conversion stats) */
+  .vsum { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .vsum-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:9px; }
+  .vsum-t .vsum-frac { font-size:11.5px; font-weight:600; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .vsum-bar { height:6px; border-radius:var(--radius-full); background:var(--bg-sunken); overflow:hidden; }
+  .vsum-bar i { display:block; height:100%; background:var(--int-primary); border-radius:var(--radius-full); }
+  .vsum-c { font-size:11.5px; color:var(--text-secondary); margin-top:9px; line-height:1.5; }
+
+  /* new-host checklist rows (photo / bio / languages) */
+  .stlist { display:flex; flex-direction:column; gap:8px; margin-bottom:6px; }
+  .strow { display:flex; gap:11px; align-items:flex-start; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:11px 12px; }
+  .st-bubble { width:34px; height:34px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; border:1px solid transparent; }
+  .st-bubble svg { width:16px; height:16px; stroke-width:2; }
+  .st-bubble.todo { background:var(--bg-sunken); border-color:var(--border-hairline); color:var(--text-secondary); }
+  .st-meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .st-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .st-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .st-state { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:var(--radius-full); border:1px solid transparent; white-space:nowrap; flex:none; }
+  .st-state.todo { background:var(--bg-sunken); border-color:var(--border-hairline); color:var(--text-secondary); }
+
+  /* save bar + toast */
+  .savebar { flex:none; border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .savebtn { width:100%; min-height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
+  .toast { position:absolute; inset-inline:16px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:12px 14px; }
+  .toast-ic { flex:none; color:var(--success-fg); display:inline-flex; }
+  .toast-ic svg { width:20px; height:20px; stroke-width:2.2; }
+  .toast-t { flex:1; font-size:13px; font-weight:600; color:var(--text-primary); }
+
+  .screen-scroll { flex:1; overflow-y:auto; padding-right:2px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Host profile editor (HA-079)</h1>
+    <p>The host sibling of <code>GA-129</code>, distinct where DESIGN §9-K makes hosting distinct: the photo is <strong>required, not optional</strong> — framed as a fact of a host profile, never a scold, routing to the same shared <code>GA-130</code> capture surface in its host-context variant. The bio Textarea carries a live <strong>50+-word</strong> counter that turns encouraging once past the guidance, not a hard gate. Two personal prompts — <strong>hosting style</strong> and <strong>about your area</strong> — carry the same per-item visibility Switch as the guest editor; the photo, bio and languages are core trust-anatomy fields for a host (§9-K "more is shown") and stay always-shown, marked with a plain "Shown to guests" fact tag instead of a toggle. Language chips include native-script <span lang="ur" style="font-family:'Noto Nastaliq Urdu',serif;">اردو</span> alongside English and Punjabi. A completeness meter is a real fraction of filled basics plus a qualitative caption — never an invented stat. Case continues host Aqib from <code>HA-004</code>/<code>HA-046</code>. Panels: new-host checklist · established profile (light) · prompt visibility + save toast (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — new-host · established</span><span>Dark — prompts &amp; visibility · save toast</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — NEW-HOST + ESTABLISHED ============================ -->
+    <section class="panel" aria-label="Light theme — new-host checklist nudge and the established, complete profile">
+      <div class="panel-tag">Light — new-host checklist (photo required) · established profile</div>
+      <div class="rowflex">
+
+        <!-- A · NEW-HOST — CHECKLIST -->
+        <div class="pcol">
+          <div class="pcap">A · New host — gentle checklist</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="aH">Edit host profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="screen-scroll">
+                <div class="vsum">
+                  <div class="vsum-t"><span>Profile basics</span><span class="vsum-frac"><span class="num">0</span> of <span class="num">3</span> added</span></div>
+                  <div class="vsum-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="3" aria-label="0 of 3 profile basics added"><i style="width:4%"></i></div>
+                  <p class="vsum-c">Add a photo, write 50+ words, and add your languages — this is what guests see first.</p>
+                </div>
+
+                <ul class="stlist" role="list">
+                  <li class="strow">
+                    <span class="st-bubble todo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                    <div class="st-meta"><div class="st-t">Add a photo</div><div class="st-d">Required — guests decide with it.</div></div>
+                    <span class="st-state todo">Add</span>
+                  </li>
+                  <li class="strow">
+                    <span class="st-bubble todo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12M6 9h12M6 14h8"/></svg></span>
+                    <div class="st-meta"><div class="st-t">Write 50+ words</div><div class="st-d">A few sentences help guests know who hosts them.</div></div>
+                    <span class="st-state todo">Add</span>
+                  </li>
+                  <li class="strow">
+                    <span class="st-bubble todo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg></span>
+                    <div class="st-meta"><div class="st-t">Add your languages</div><div class="st-d">Shown as part of your host stats.</div></div>
+                    <span class="st-state todo">Add</span>
+                  </li>
+                </ul>
+
+                <div class="sec-lb">Your photo</div>
+                <div class="pslot">
+                  <span class="pslot-av" aria-hidden="true">A</span>
+                  <div class="pslot-b">
+                    <div class="pslot-top"><span class="pslot-h">Your photo</span><span class="reqpill">Required</span></div>
+                    <span class="pslot-none">Hosts show a face or clear identity photo — guests decide with it.</span>
+                    <div class="pslot-actions">
+                      <a class="pslot-btn" href="/host/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Add a photo</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sec-lb">About you</div>
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fa1">About you (bio)</span><span class="corepill">Shown to guests</span></div>
+                  <textarea class="ta" aria-labelledby="fa1" placeholder="Tell guests a little about yourself and how you host…">Hi, I'm Aqib.</textarea>
+                  <span class="ta-count"><span class="num">3</span> / 50+ words — a few sentences help guests know who hosts them.</span>
+                </div>
+
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fa2">Languages</span><span class="corepill">Shown to guests</span></div>
+                  <div class="chips" aria-labelledby="fa2">
+                    <button class="chip add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add a language</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · ESTABLISHED — FULL EDITOR -->
+        <div class="pcol">
+          <div class="pcap">B · Established — profile complete</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="bH">Edit host profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="screen-scroll">
+                <div class="pslot">
+                  <span class="pslot-av photo" aria-hidden="true"></span>
+                  <div class="pslot-b">
+                    <div class="pslot-top"><span class="pslot-h">Your photo</span><span class="corepill">Shown to guests</span></div>
+                    <span class="pslot-none">Guests see this when deciding to book with you.</span>
+                    <div class="pslot-actions">
+                      <a class="pslot-btn" href="/host/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Change photo</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sec-lb">About you</div>
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fb1">About you (bio)</span><span class="corepill">Shown to guests</span></div>
+                  <span class="field-val" aria-labelledby="fb1">Assalam-o-alaikum, I'm Aqib. I've hosted Gulberg 2 Residence in Lahore for two years and love sharing the best nearby food spots and prayer times with guests. I keep the place spotless and I'm quick to reply.</span>
+                  <span class="ta-count ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="num">36</span> words — nicely detailed</span>
+                </div>
+
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fb2">Languages</span><span class="corepill">Shown to guests</span></div>
+                  <div class="chips" aria-labelledby="fb2">
+                    <span class="chip">English</span>
+                    <span class="chip ur" lang="ur">اردو</span>
+                    <span class="chip">Punjabi</span>
+                    <button class="chip add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add</button>
+                  </div>
+                </div>
+
+                <div class="sec-lb">Hosting prompts</div>
+                <div class="field">
+                  <div class="field-top">
+                    <span class="field-label" id="fb3">Hosting style</span>
+                    <button class="vis on" type="button" role="switch" aria-checked="true" aria-labelledby="fb3" aria-label="Hosting style — shown on your profile">
+                      <span class="vis-lb">Shown</span>
+                      <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                    </button>
+                  </div>
+                  <span class="field-val" aria-labelledby="fb3">I like to greet guests personally and point them to the best nearby food.</span>
+                </div>
+
+                <div class="field">
+                  <div class="field-top">
+                    <span class="field-label" id="fb4">About your area</span>
+                    <button class="vis on" type="button" role="switch" aria-checked="true" aria-labelledby="fb4" aria-label="About your area — shown on your profile">
+                      <span class="vis-lb">Shown</span>
+                      <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                    </button>
+                  </div>
+                  <span class="field-val" aria-labelledby="fb4">Gulberg is quiet and central — five minutes from Liberty Market and a masjid just around the corner.</span>
+                </div>
+
+                <div class="vsum">
+                  <div class="vsum-t"><span>Profile basics</span><span class="vsum-frac"><span class="num">3</span> of <span class="num">3</span> added</span></div>
+                  <div class="vsum-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="3 of 3 profile basics added"><i style="width:100%"></i></div>
+                  <p class="vsum-c">Your profile is looking complete — this is what guests see when deciding to book with you.</p>
+                </div>
+              </div>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The photo, bio and languages are the host's core public-trust anatomy (DESIGN §9-K) — always shown, marked with a plain non-interactive <b>"Shown to guests"</b> fact tag rather than a toggle, because a host cannot ship a profile without them. Only the two personal <b>prompts</b> (hosting style, about your area) carry the per-item visibility Switch inherited from <code>GA-129</code>. The completeness meter is a real count of these three basics plus a qualitative caption — never an invented percentage or conversion claim (§6/NEVER #3). The new-host checklist reuses <code>HA-004</code>'s row grammar with a new, equally calm "todo" state (never "locked" — these are optional-order tasks, not a gate).</p>
+    </section>
+
+    <!-- ============================ DARK — PROMPTS/VISIBILITY + SAVE TOAST ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a hidden prompt and the save confirmation toast">
+      <div class="panel-tag">Dark — one prompt hidden ("Only you") · save confirmation</div>
+      <div class="rowflex">
+
+        <!-- C · PROMPT HIDDEN -->
+        <div class="pcol">
+          <div class="pcap">C · About your area — hidden</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="cH">Edit host profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="screen-scroll">
+                <div class="sec-lb">Hosting prompts</div>
+                <div class="field">
+                  <div class="field-top">
+                    <span class="field-label" id="fc1">Hosting style</span>
+                    <button class="vis on" type="button" role="switch" aria-checked="true" aria-labelledby="fc1" aria-label="Hosting style — shown on your profile">
+                      <span class="vis-lb">Shown</span>
+                      <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                    </button>
+                  </div>
+                  <span class="field-val" aria-labelledby="fc1">I like to greet guests personally and point them to the best nearby food.</span>
+                </div>
+
+                <div class="field">
+                  <div class="field-top">
+                    <span class="field-label" id="fc2">About your area</span>
+                    <button class="vis" type="button" role="switch" aria-checked="false" aria-labelledby="fc2" aria-label="About your area — hidden, only you">
+                      <span class="vis-lb">Only you</span>
+                      <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                    </button>
+                  </div>
+                  <span class="field-val" aria-labelledby="fc2">Gulberg is quiet and central — five minutes from Liberty Market and a masjid just around the corner.</span>
+                  <span class="field-sub">Hidden prompts are simply left off your public profile — never flagged as incomplete.</span>
+                </div>
+
+                <div class="sec-lb">Languages</div>
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fc3">Languages</span><span class="corepill">Shown to guests</span></div>
+                  <div class="chips" aria-labelledby="fc3">
+                    <span class="chip">English</span>
+                    <span class="chip ur" lang="ur">اردو</span>
+                    <span class="chip">Punjabi</span>
+                    <button class="chip add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · SAVE TOAST -->
+        <div class="pcol">
+          <div class="pcap">D · Save confirmation toast</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="dH">Edit host profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="screen-scroll">
+                <div class="pslot">
+                  <span class="pslot-av photo" aria-hidden="true"></span>
+                  <div class="pslot-b">
+                    <div class="pslot-top"><span class="pslot-h">Your photo</span><span class="corepill">Shown to guests</span></div>
+                    <span class="pslot-none">Guests see this when deciding to book with you.</span>
+                    <div class="pslot-actions">
+                      <a class="pslot-btn" href="/host/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Change photo</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="vsum">
+                  <div class="vsum-t"><span>Profile basics</span><span class="vsum-frac"><span class="num">3</span> of <span class="num">3</span> added</span></div>
+                  <div class="vsum-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="3 of 3 profile basics added"><i style="width:100%"></i></div>
+                  <p class="vsum-c">Your profile is looking complete — this is what guests see when deciding to book with you.</p>
+                </div>
+              </div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="toast-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="toast-t">Changes saved</span>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Hiding "About your area" only removes it from the public profile — it is never treated as a defect against the completeness meter, which counts only the three always-shown basics (photo, bio, languages). Saving confirms with the same low-stakes, <code>aria-live="polite"</code> toast as <code>GA-129</code>, dark-mode AA-proven (§11).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the host profile editor">
+      <div class="panel-tag">RTL · اردو — "میزبان پروفائل میں ترمیم", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — مکمل ایڈیٹر</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/profile" aria-label="ایڈیٹر بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="uH">میزبان پروفائل میں ترمیم</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="screen-scroll">
+                <div class="pslot">
+                  <span class="pslot-av" aria-hidden="true">ا</span>
+                  <div class="pslot-b">
+                    <div class="pslot-top"><span class="pslot-h">آپ کی تصویر</span><span class="reqpill">لازمی</span></div>
+                    <span class="pslot-none">میزبان چہرہ یا واضح شناختی تصویر دکھاتے ہیں — مہمان اسی کی بنیاد پر فیصلہ کرتے ہیں۔</span>
+                    <div class="pslot-actions">
+                      <a class="pslot-btn" href="/ur/host/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>تصویر شامل کریں</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sec-lb">آپ کے بارے میں</div>
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fu1">تعارف</span><span class="corepill">مہمانوں کو دکھایا گیا</span></div>
+                  <textarea class="ta" aria-labelledby="fu1" lang="ur">السلام علیکم، میں عاقب ہوں۔ میں دو سال سے لاہور میں گلبرگ 2 ریزیڈنس کی میزبانی کر رہا ہوں اور مہمانوں کو قریبی بہترین کھانوں اور نماز کے اوقات سے آگاہ کرنا پسند کرتا ہوں۔</textarea>
+                  <span class="ta-count ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="num">33</span> الفاظ — تفصیلی اور اچھا</span>
+                </div>
+
+                <div class="field">
+                  <div class="field-top"><span class="field-label" id="fu2">زبانیں</span><span class="corepill">مہمانوں کو دکھایا گیا</span></div>
+                  <div class="chips" aria-labelledby="fu2">
+                    <span class="chip ur" lang="ur">انگریزی</span>
+                    <span class="chip ur" lang="ur">اردو</span>
+                    <span class="chip ur" lang="ur">پنجابی</span>
+                    <button class="chip add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>مزید شامل کریں</button>
+                  </div>
+                </div>
+
+                <div class="sec-lb">میزبانی کے سوالات</div>
+                <div class="field">
+                  <div class="field-top">
+                    <span class="field-label" id="fu3">میزبانی کا انداز</span>
+                    <button class="vis on" type="button" role="switch" aria-checked="true" aria-labelledby="fu3" aria-label="میزبانی کا انداز — پروفائل پر دکھایا گیا">
+                      <span class="vis-lb">دکھایا گیا</span>
+                      <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                    </button>
+                  </div>
+                  <span class="field-val" aria-labelledby="fu3">میں مہمانوں سے ذاتی طور پر ملتا ہوں اور قریبی بہترین کھانوں کی نشاندہی کرتا ہوں۔</span>
+                </div>
+
+                <div class="vsum">
+                  <div class="vsum-t"><span>پروفائل کی بنیادی معلومات</span><span class="vsum-frac"><span class="num">3</span> میں سے <span class="num">3</span> شامل</span></div>
+                  <div class="vsum-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="3" aria-label="3 میں سے 3 بنیادی معلومات شامل"><i style="width:100%"></i></div>
+                  <p class="vsum-c">آپ کی پروفائل مکمل نظر آ رہی ہے — بکنگ کا فیصلہ کرتے وقت مہمان یہی دیکھتے ہیں۔</p>
+                </div>
+              </div>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">تبدیلیاں محفوظ کریں</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The Switch mirrors exactly as in <code>GA-129</code> (§8.1/§11): the "on" thumb travels via <code>inset-inline-start</code> so "on" stays forward for Urdu. In the fully-localised UI, every language name is rendered in Urdu script (انگریزی، اردو، پنجابی); the English-language panels above instead show <span lang="ur" style="font-family:'Noto Nastaliq Urdu',serif;">اردو</span> as its own endonym chip among Latin-script neighbours — a deliberate, realistic touch, not an inconsistency. Word counts stay LTR-isolated (<code>.num</code>) inside the right-to-left sentence.</p>
+    </section>
+
+  </main>
+</body>
+</html>

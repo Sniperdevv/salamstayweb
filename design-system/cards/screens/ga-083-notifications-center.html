@@ -1,0 +1,378 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Notifications center (GA-083)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064/ga-123 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:6px 0 12px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* list header strip — count + mark all read */
+  .listtop { display:flex; align-items:center; gap:10px; padding:8px 15px 6px; }
+  .listtop-t { flex:1; min-width:0; font-size:12px; color:var(--text-secondary); }
+  .listtop-t b { color:var(--text-primary); font-weight:600; }
+  .markread { flex:none; background:transparent; border:none; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--int-primary); cursor:pointer; min-height:36px; padding:6px 4px; }
+  .markread:hover { text-decoration:underline; }
+
+  /* day group */
+  .dayhead { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:12px 15px 4px; }
+
+  /* notification row */
+  .ntf { display:flex; align-items:flex-start; gap:12px; padding:12px 15px; text-decoration:none; border-bottom:1px solid var(--border-hairline); }
+  .ntf:hover { background:var(--bg-raised); }
+  .ntf.unread { background:var(--int-subtle); }
+  .ntf.unread:hover { background:var(--int-subtle); }
+  .ntf-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .ntf.unread .ntf-ic { background:var(--bg-canvas); }
+  .ntf-ic svg { width:19px; height:19px; stroke-width:1.8; }
+  .ntf-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .ntf-t { font-size:13.5px; font-weight:500; color:var(--text-primary); display:block; line-height:1.35; }
+  .ntf.unread .ntf-t { font-weight:700; }
+  .ntf-s { font-size:12px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .ntf-time { font-size:11px; color:var(--text-tertiary); display:block; }
+  .ntf-dot { flex:none; width:9px; height:9px; border-radius:var(--radius-full); background:var(--int-primary); margin-top:6px; }
+  .ntf-read { flex:none; width:9px; margin-top:6px; }
+
+  /* quiet preferences link row */
+  .preflink { display:flex; align-items:center; gap:12px; margin:14px 15px 0; padding:12px 13px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; }
+  .preflink:hover { background:var(--bg-raised); }
+  .pref-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .pref-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .pref-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .pref-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .pref-s { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .pref-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .pref-chev svg { width:18px; height:18px; stroke-width:2; }
+  .phone.rtl .pref-chev svg { transform:scaleX(-1); }
+
+  /* empty state — warm, one line glyph */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 26px 40px; }
+  .empty-ic { width:60px; height:60px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .empty-ic svg { width:28px; height:28px; stroke-width:1.7; }
+  .empty-h { font-size:16px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .empty-d { font-size:12.5px; color:var(--text-secondary); margin-top:8px; line-height:1.55; max-width:230px; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Notifications center (GA-083)</h1>
+    <p>The in-app history of what's happened, grouped by day (§7.6a: no journey stepper). Rows carry a <strong>type glyph</strong> — booking update, message, reminder — a title, a one-line snippet, and a timestamp; unread rows read heavier and carry a brand dot (weight + dot, never colour alone). A calm <strong>Mark all read</strong> sits in the header, every row is a plain <strong>tap-through <code>&lt;a&gt;</code></strong> to its context (no swipe gestures to discover), and a quiet row routes to notification preferences (<code>GA-069</code>). The empty state is warm — "You're all caught up." Panels: list with unread (light) · list read + empty state (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">List · unread · light</span><span>Read list · empty · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — LIST WITH UNREAD ============================ -->
+    <section class="panel" aria-label="Light theme — notifications grouped by day with unread items">
+      <div class="panel-tag">Light — grouped by day · unread dots · mark all read</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Notifications — today &amp; yesterday</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Notifications</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="listtop">
+                <span class="listtop-t"><b><span class="num">2</span> unread</b></span>
+                <button class="markread" type="button">Mark all read</button>
+              </div>
+
+              <div class="dayhead">Today</div>
+              <a class="ntf unread" href="/trips/is-f7-2bed-aug2026">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">Your booking is confirmed</span>
+                  <span class="ntf-s">Margalla View Apartment · 14–17 Aug 2026</span>
+                  <span class="ntf-time"><span class="num">2:14 PM</span></span>
+                </span>
+                <span class="ntf-dot" aria-label="Unread"></span>
+              </a>
+              <a class="ntf unread" href="/messages/ayesha">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">Ayesha sent you a message</span>
+                  <span class="ntf-s">"Assalam o alaikum! I'll share the check-in details a day before…"</span>
+                  <span class="ntf-time"><span class="num">11:03 AM</span></span>
+                </span>
+                <span class="ntf-dot" aria-label="Unread"></span>
+              </a>
+
+              <div class="dayhead">Yesterday</div>
+              <a class="ntf" href="/trips/is-f7-2bed-aug2026">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">Your stay starts soon</span>
+                  <span class="ntf-s">Check-in Fri 14 Aug at Margalla View — <span class="num">3 days</span> to go</span>
+                  <span class="ntf-time">Yesterday, <span class="num">6:20 PM</span></span>
+                </span>
+                <span class="ntf-read" aria-hidden="true"></span>
+              </a>
+              <a class="ntf" href="/trips/is-f7-2bed-aug2026">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">Ayesha confirmed your dates</span>
+                  <span class="ntf-s">Your request for 14–17 Aug was accepted</span>
+                  <span class="ntf-time">Yesterday, <span class="num">2:41 PM</span></span>
+                </span>
+                <span class="ntf-read" aria-hidden="true"></span>
+              </a>
+
+              <a class="preflink" href="/account/settings/notifications">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">Notification preferences</span><span class="pref-s">Choose what we notify you about</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Notifications are grouped under plain <strong>Today / Yesterday</strong> headers. Each row pairs a neutral <strong>type glyph</strong> (a home for booking updates, a speech bubble for messages, a bell for reminders — all equal weight, no coloured type-fills) with a title, snippet, and timestamp. Unread is carried by a <strong>heavier title + a brand dot</strong> (redundant, never colour alone, §11) and a subtle <code>interactive.subtle</code> row wash; read rows are plain. Every row is a real tap-through <code>&lt;a href&gt;</code> to its trip or thread — no hidden swipe affordances. The preferences row routes to <code>GA-069</code>. Times wrap in <code>.num</code>.</p>
+    </section>
+
+    <!-- ============================ DARK — READ LIST + EMPTY STATE ============================ -->
+    <section class="panel dark" aria-label="Dark theme — all-read list and the empty state">
+      <div class="panel-tag">Dark — all caught up (read) · empty state</div>
+      <div class="rowflex">
+
+        <!-- A · READ LIST (DARK) -->
+        <div class="pcol">
+          <div class="pcap">All read — dark surfaces</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Notifications</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="listtop">
+                <span class="listtop-t">All caught up · nothing unread</span>
+              </div>
+
+              <div class="dayhead">Today</div>
+              <a class="ntf" href="/trips/is-f7-2bed-aug2026">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">Your booking is confirmed</span>
+                  <span class="ntf-s">Margalla View Apartment · 14–17 Aug 2026</span>
+                  <span class="ntf-time"><span class="num">2:14 PM</span></span>
+                </span>
+                <span class="ntf-read" aria-hidden="true"></span>
+              </a>
+              <a class="ntf" href="/messages/ayesha">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">Ayesha sent you a message</span>
+                  <span class="ntf-s">"Assalam o alaikum! I'll share the check-in details a day before…"</span>
+                  <span class="ntf-time"><span class="num">11:03 AM</span></span>
+                </span>
+                <span class="ntf-read" aria-hidden="true"></span>
+              </a>
+
+              <a class="preflink" href="/account/settings/notifications">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">Notification preferences</span><span class="pref-s">Choose what we notify you about</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EMPTY STATE -->
+        <div class="pcol">
+          <div class="pcap">Empty — warm, oriented</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Notifications</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="empty">
+                <span class="empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M9.5 21a2.8 2.8 0 0 0 5 0"/></svg></span>
+                <h2 class="empty-h">You're all caught up</h2>
+                <p class="empty-d">New booking updates, messages, and reminders will show up here.</p>
+              </div>
+              <a class="preflink" href="/account/settings/notifications">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">Notification preferences</span><span class="pref-s">Choose what we notify you about</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Read rows drop the dot and the wash but keep their glyph and content, so "caught up" is legible at a glance. The empty state follows §8.5: one neutral line glyph in <code>text.tertiary</code>, a warm one-line headline, a single orienting sentence — <strong>no mascot, no illustration</strong> — and it keeps the preferences link reachable so the screen is never a dead end.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU — LIST ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the notifications list">
+      <div class="panel-tag">RTL · اردو — "اطلاعات", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Notifications — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">اطلاعات</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="listtop">
+                <span class="listtop-t"><b><span class="num">2</span> غیر پڑھی</b></span>
+                <button class="markread" type="button">سب پڑھا ہوا نشان زد کریں</button>
+              </div>
+
+              <div class="dayhead">آج</div>
+              <a class="ntf unread" href="/trips/is-f7-2bed-aug2026">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">آپ کی بکنگ کی تصدیق ہو گئی</span>
+                  <span class="ntf-s">مارگلہ ویو اپارٹمنٹ · <span class="num">14–17 Aug 2026</span></span>
+                  <span class="ntf-time"><span class="num">2:14 PM</span></span>
+                </span>
+                <span class="ntf-dot" aria-label="غیر پڑھی"></span>
+              </a>
+              <a class="ntf unread" href="/messages/ayesha">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">عائشہ نے آپ کو پیغام بھیجا</span>
+                  <span class="ntf-s">”السلام علیکم! میں چیک اِن کی تفصیلات ایک دن پہلے بھیج دوں گی…“</span>
+                  <span class="ntf-time"><span class="num">11:03 AM</span></span>
+                </span>
+                <span class="ntf-dot" aria-label="غیر پڑھی"></span>
+              </a>
+
+              <div class="dayhead">کل</div>
+              <a class="ntf" href="/trips/is-f7-2bed-aug2026">
+                <span class="ntf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                <span class="ntf-b">
+                  <span class="ntf-t">آپ کا قیام جلد شروع ہو رہا ہے</span>
+                  <span class="ntf-s">چیک اِن جمعہ <span class="num">14 Aug</span> مارگلہ ویو — <span class="num">3</span> دن باقی</span>
+                  <span class="ntf-time">کل، <span class="num">6:20 PM</span></span>
+                </span>
+                <span class="ntf-read" aria-hidden="true"></span>
+              </a>
+
+              <a class="preflink" href="/account/settings/notifications">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">اطلاعات کی ترجیحات</span><span class="pref-s">منتخب کریں ہم آپ کو کس بارے میں اطلاع دیں</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: type glyphs and the row body lead from the reading-start (right) edge, the unread dot moves to the trailing edge, and the preferences chevron flips (<code>scaleX(-1)</code>). The host name sets in Urdu (<span lang="ur">عائشہ</span>) while dates, times, and counts stay LTR-isolated tabular figures via <code>.num</code> (§11) so "14–17 Aug" and "2:14 PM" never digit-order-mirror.</p>
+    </section>
+
+  </main>
+</body>
+</html>

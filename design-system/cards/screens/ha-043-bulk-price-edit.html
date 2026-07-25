@@ -1,0 +1,529 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Bulk price edit / weekly view (HA-043)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-040 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1320px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1000px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1320px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:372px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — post-publish editor lineage; NO wizard bars (§7 mechanics) ===== */
+  .phone { width:372px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:900px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.pat-t,.pat-v,.pat-d,.wksub,.bulk-lab,.bulk-hint,.applybtn,.impact-p,.savebox-t,.savebox-d,.unsavedbar .tx,.btn,.ebtn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* editor app bar */
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing context chip */
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 13px 20px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 9px; }
+  .sh:first-of-type { margin-top:0; }
+
+  /* saved weekly pattern — informational summary, one-fact-one-owner: edited via the strip below, not a separate screen */
+  .patcard { display:flex; gap:11px; align-items:center; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .patcard .pic { flex:none; width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .patcard .pic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.7; }
+  .patcard .px { flex:1; min-width:0; }
+  .pat-t { font-size:11px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; color:var(--text-tertiary); }
+  .pat-v { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-top:3px; line-height:1.5; }
+  .pat-d { font-size:10.5px; color:var(--text-tertiary); margin-top:3px; line-height:1.4; }
+
+  .wksub { font-size:11.5px; color:var(--text-secondary); margin-bottom:9px; }
+
+  /* week-strip — 7 selectable day columns, ≥44px targets */
+  .wkstrip { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+  .wkcol { position:relative; min-height:68px; min-width:44px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:6px 2px; cursor:pointer; font-family:inherit; }
+  .wkcol .wd { font-size:8.5px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; color:var(--text-tertiary); }
+  .wkcol .wdate { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .wkcol .wprice { font-size:9px; font-weight:600; color:var(--text-secondary); }
+  .wkcol.sel { background:var(--int-subtle); border-color:var(--border-brand); }
+  .wkcol.sel .wd, .wkcol.sel .wdate, .wkcol.sel .wprice { color:var(--int-primary); }
+  .wkcol .chk { position:absolute; top:3px; right:3px; width:11px; height:11px; border-radius:50%; background:var(--int-primary); display:none; align-items:center; justify-content:center; }
+  .wkcol.sel .chk { display:flex; }
+  .wkcol .chk svg { width:7px; height:7px; color:var(--text-on-brand); stroke-width:3; }
+  .phone.rtl .wkcol .chk { right:auto; left:3px; }
+
+  /* bulk price-for-selected control */
+  .bulkbox { margin-top:12px; padding:13px 14px; border-radius:var(--radius-lg); border:1px solid var(--border-hairline); background:var(--bg-raised); }
+  .bulkbox.disabled { opacity:.6; }
+  .bulk-lab { font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .amtwrap { display:flex; align-items:center; height:44px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); }
+  .amtwrap .pre { font-size:14px; font-weight:600; color:var(--text-secondary); padding:0 4px 0 13px; }
+  .amtwrap input { flex:1; border:none; font-family:inherit; font-size:14px; color:var(--text-primary); padding:0 13px 0 2px; background:transparent; min-width:0; }
+  .amtwrap input::placeholder { color:var(--text-tertiary); }
+  .amtwrap input[disabled] { color:var(--text-disabled); }
+  .bulk-hint { display:block; font-size:10.5px; color:var(--text-tertiary); margin-top:6px; line-height:1.4; }
+  .applybtn { width:100%; min-height:40px; margin-top:10px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; background:var(--int-primary); color:var(--text-on-brand); }
+  .applybtn[disabled] { background:var(--border-default); color:var(--text-disabled); cursor:default; }
+
+  /* honesty note — guest-impact framing, reused visual grammar from ha-031 .abnote */
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:15px; height:15px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+
+  /* saved confirmation banner */
+  .savebox { display:flex; gap:10px; align-items:flex-start; margin-top:14px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .savebox svg { width:16px; height:16px; color:var(--success-fg); flex:none; margin-top:1px; stroke-width:2; }
+  .savebox-t { font-size:12px; font-weight:600; color:var(--success-fg); line-height:1.45; }
+  .savebox-d { font-size:11px; color:var(--success-fg); opacity:.85; margin-top:3px; line-height:1.4; }
+
+  .spacer-fill { flex:1; }
+
+  .laststat { display:flex; align-items:center; gap:9px; margin-top:14px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .laststat svg { width:15px; height:15px; color:var(--success-fg); flex:none; stroke-width:2; }
+  .laststat span { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .laststat b { color:var(--text-primary); font-weight:600; }
+
+  /* unsaved-changes bar — ha-040 grammar byte-for-byte */
+  .unsavedbar { flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--warning-bg); border-top:1px solid var(--warning-border); }
+  .unsavedbar .uic { flex:none; width:20px; height:20px; color:var(--warning-fg); }
+  .unsavedbar .tx { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--warning-fg); line-height:1.35; }
+  .ebtnrow { flex:none; display:flex; gap:8px; }
+  .ebtn { min-height:40px; padding:0 14px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .ebtn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .ebtn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:800px){ .pcol,.phone{ width:100%; max-width:392px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Bulk price edit / weekly view (HA-043)</h1>
+    <p>Manual bulk pricing across a week — the pre-Phase-3 tool before any smart-pricing engine ships, in the same editor frame as <code>ha-038</code>/<code>ha-039</code>/<code>ha-040</code>. A <b>week-strip</b> of seven selectable day columns (Gregorian date + that night's price) replaces the single-date focus of <code>HA-042</code>; tapping columns is a <b>multi-select</b> affordance (weekend columns shown selected in panel B), and a <b>set-price-for-selected Input</b> — the host's own figure, "you set this," never a suggested rate — applies to every selected night at once. A read-only <b>"Your saved weekly pattern"</b> card gives the recurring weekday/weekend split as context (edited by selecting the matching nights below, not a separate screen). The <b>guest-impact line</b> states plainly that a price change only affects <i>new</i> bookings — a guest who already booked keeps the price they paid. Case continuity: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b>, weekday base <b>PKR 12,000</b> / weekend (Fri–Sat) <b>PKR 15,000</b> (<code>HA-031</code>'s weekend-rate convention). Panels: viewing (light) · selection + bulk input (light) · saved (light) · dark, different week + selection · اردو / RTL.</p>
+    <div class="legend">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span>
+      <span>Editor frame — no wizard bars</span><span>Host's own figure — never a market-rate suggestion</span>
+      <span>Changes apply to new bookings only</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — VIEWING · SELECTION + BULK INPUT · SAVED ============================ -->
+    <section class="panel" aria-label="Light theme — viewing with no selection, mid-edit with a selection and bulk input, and a saved confirmation">
+      <div class="panel-tag">Light — A viewing · B selection + bulk input · C saved</div>
+      <div class="rowflex">
+
+        <!-- A · VIEWING -->
+        <div class="pcol">
+          <div class="pcap">A · Viewing — nothing selected</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Bulk price edit</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Edit your prices</h2>
+              <p class="lead">Select one or more nights, then set a price for all of them at once.</p>
+
+              <h3 class="sh">Your saved weekly pattern</h3>
+              <div class="patcard">
+                <span class="pic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+                <div class="px">
+                  <div class="pat-v">Weekdays <span class="num">PKR 12,000</span> · Weekends (Fri–Sat) <span class="num">PKR 15,000</span></div>
+                  <div class="pat-d">Applies automatically — select nights below to override specific dates.</div>
+                </div>
+              </div>
+
+              <h3 class="sh">This week</h3>
+              <p class="wksub"><span class="num">9</span>–<span class="num">15 August 2026</span></p>
+              <div class="wkstrip" role="group" aria-label="9 to 15 August 2026, tap a night to select it">
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Sunday 9 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sun</span><span class="wdate num">9</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Monday 10 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Mon</span><span class="wdate num">10</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Tuesday 11 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Tue</span><span class="wdate num">11</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Wednesday 12 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Wed</span><span class="wdate num">12</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Thursday 13 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Thu</span><span class="wdate num">13</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Friday 14 August, PKR 15,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Fri</span><span class="wdate num">14</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Saturday 15 August, PKR 15,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sat</span><span class="wdate num">15</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+              </div>
+
+              <div class="bulkbox disabled">
+                <label class="bulk-lab" for="bulk-a">Set price for selected nights</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="bulk-a" type="text" inputmode="numeric" placeholder="e.g. 15,000" disabled /></div>
+                <span class="bulk-hint">Select nights above to set a new price for them.</span>
+                <button class="applybtn" type="button" disabled aria-disabled="true">Apply to 0 selected nights</button>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b>2 July 2026</b>. No changes since.</span>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SELECTION + BULK INPUT -->
+        <div class="pcol">
+          <div class="pcap">B · Selecting — Fri &amp; Sat selected, new price typed, not yet applied</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Bulk price edit</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Edit your prices</h2>
+              <p class="lead">Select one or more nights, then set a price for all of them at once.</p>
+
+              <h3 class="sh">Your saved weekly pattern</h3>
+              <div class="patcard">
+                <span class="pic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+                <div class="px">
+                  <div class="pat-v">Weekdays <span class="num">PKR 12,000</span> · Weekends (Fri–Sat) <span class="num">PKR 15,000</span></div>
+                  <div class="pat-d">Applies automatically — select nights below to override specific dates.</div>
+                </div>
+              </div>
+
+              <h3 class="sh">This week</h3>
+              <p class="wksub"><span class="num">9</span>–<span class="num">15 August 2026</span> — <span class="num">2</span> nights selected</p>
+              <div class="wkstrip" role="group" aria-label="9 to 15 August 2026, Friday and Saturday selected">
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Sunday 9 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sun</span><span class="wdate num">9</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Monday 10 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Mon</span><span class="wdate num">10</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Tuesday 11 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Tue</span><span class="wdate num">11</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Wednesday 12 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Wed</span><span class="wdate num">12</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Thursday 13 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Thu</span><span class="wdate num">13</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Friday 14 August, PKR 15,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Fri</span><span class="wdate num">14</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Saturday 15 August, PKR 15,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sat</span><span class="wdate num">15</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+              </div>
+
+              <div class="bulkbox">
+                <label class="bulk-lab" for="bulk-b">Set price for selected nights</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="bulk-b" type="text" inputmode="numeric" value="16,500" /></div>
+                <span class="bulk-hint">You set this — it isn't a suggested rate.</span>
+                <button class="applybtn" type="button">Apply to 2 selected nights</button>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · SAVED -->
+        <div class="pcol">
+          <div class="pcap">C · Saved — Fri &amp; Sat updated to PKR 16,500</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="ch2">Bulk price edit</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Edit your prices</h2>
+              <p class="lead">Select one or more nights, then set a price for all of them at once.</p>
+
+              <div class="savebox">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <div>
+                  <div class="savebox-t">Updated — Friday and Saturday changed to <span class="num">PKR 16,500</span>/night for this week.</div>
+                  <div class="savebox-d">This was a one-time change for these dates — your saved weekly pattern above is unchanged.</div>
+                </div>
+              </div>
+
+              <h3 class="sh">Your saved weekly pattern</h3>
+              <div class="patcard">
+                <span class="pic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+                <div class="px">
+                  <div class="pat-v">Weekdays <span class="num">PKR 12,000</span> · Weekends (Fri–Sat) <span class="num">PKR 15,000</span></div>
+                  <div class="pat-d">Applies automatically — select nights below to override specific dates.</div>
+                </div>
+              </div>
+
+              <h3 class="sh">This week</h3>
+              <p class="wksub"><span class="num">9</span>–<span class="num">15 August 2026</span></p>
+              <div class="wkstrip" role="group" aria-label="9 to 15 August 2026, Friday and Saturday updated">
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Sunday 9 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sun</span><span class="wdate num">9</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Monday 10 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Mon</span><span class="wdate num">10</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Tuesday 11 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Tue</span><span class="wdate num">11</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Wednesday 12 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Wed</span><span class="wdate num">12</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Thursday 13 August, PKR 12,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Thu</span><span class="wdate num">13</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Friday 14 August, PKR 16,500, updated"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Fri</span><span class="wdate num">14</span><span class="wprice">₨<span class="num">16,500</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Saturday 15 August, PKR 16,500, updated"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sat</span><span class="wdate num">15</span><span class="wprice">₨<span class="num">16,500</span></span></button>
+              </div>
+
+              <div class="bulkbox disabled">
+                <label class="bulk-lab" for="bulk-c">Set price for selected nights</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="bulk-c" type="text" inputmode="numeric" placeholder="e.g. 15,000" disabled /></div>
+                <span class="bulk-hint">Select nights above to set a new price for them.</span>
+                <button class="applybtn" type="button" disabled aria-disabled="true">Apply to 0 selected nights</button>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — updated just now.</span>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The three panels read as one continuous flow: <b>A</b> nothing selected, the bulk-input area muted; <b>B</b> Friday and Saturday selected (the "weekends selected" affordance) with a new price typed but not yet applied — the strip cells still show the old <span class="num">PKR 15,000</span>; <b>C</b> after Apply + Save, the two cells read <span class="num">PKR 16,500</span> and a success banner confirms it, while the "saved weekly pattern" card stays unchanged, making explicit that a bulk edit to specific dates is a one-time override, not a rewrite of the recurring pattern. Selection state is never color-only — the small check badge and <code>aria-pressed</code> carry the state redundantly (§11).</p>
+    </section>
+
+    <!-- ============================ DARK — DIFFERENT WEEK + SELECTION ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a different week with all five weekdays selected and a discounted bulk price">
+      <div class="panel-tag">Dark — D selecting — 5 weekdays selected, discounted price typed</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · Dark — week of 16–22 August 2026, Sun–Thu selected</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Bulk price edit</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Edit your prices</h2>
+              <p class="lead">Select one or more nights, then set a price for all of them at once.</p>
+
+              <h3 class="sh">Your saved weekly pattern</h3>
+              <div class="patcard">
+                <span class="pic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+                <div class="px">
+                  <div class="pat-v">Weekdays <span class="num">PKR 12,000</span> · Weekends (Fri–Sat) <span class="num">PKR 15,000</span></div>
+                  <div class="pat-d">Applies automatically — select nights below to override specific dates.</div>
+                </div>
+              </div>
+
+              <h3 class="sh">This week</h3>
+              <p class="wksub"><span class="num">16</span>–<span class="num">22 August 2026</span> — <span class="num">5</span> nights selected</p>
+              <div class="wkstrip" role="group" aria-label="16 to 22 August 2026, Sunday through Thursday selected">
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Sunday 16 August, PKR 12,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sun</span><span class="wdate num">16</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Monday 17 August, PKR 12,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Mon</span><span class="wdate num">17</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Tuesday 18 August, PKR 12,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Tue</span><span class="wdate num">18</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Wednesday 19 August, PKR 12,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Wed</span><span class="wdate num">19</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol sel" type="button" aria-pressed="true" aria-label="Thursday 20 August, PKR 12,000, selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Thu</span><span class="wdate num">20</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Friday 21 August, PKR 15,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Fri</span><span class="wdate num">21</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="Saturday 22 August, PKR 15,000, not selected"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">Sat</span><span class="wdate num">22</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+              </div>
+
+              <div class="bulkbox">
+                <label class="bulk-lab" for="bulk-d">Set price for selected nights</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="bulk-d" type="text" inputmode="numeric" value="10,500" /></div>
+                <span class="bulk-hint">You set this — it isn't a suggested rate.</span>
+                <button class="applybtn" type="button">Apply to 5 selected nights</button>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>Price changes apply to new bookings only — guests who already booked keep the price they paid.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">A different week, a five-night weekday selection and a discounted bulk price prove the strip and bulk-input pair aren't hard-coded to the Friday/Saturday example — a host might just as easily bulk-lower a slow week as bulk-raise a busy one. Dark tokens re-resolve every role (§1.5).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — viewing with no selection">
+      <div class="panel-tag">RTL · اردو — قیمتوں میں یکمشت ترمیم</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — کوئی رات منتخب نہیں</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence/edit" aria-label="لسٹنگ میں ترمیم پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="eH">قیمتوں میں یکمشت ترمیم</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>اپنی قیمتیں طے کریں</h2>
+              <p class="lead">ایک یا کئی راتیں منتخب کریں، پھر سب کے لیے ایک ساتھ نئی قیمت طے کریں۔</p>
+
+              <h3 class="sh">آپ کا محفوظ شدہ ہفتہ وار انداز</h3>
+              <div class="patcard">
+                <span class="pic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+                <div class="px">
+                  <div class="pat-v">ہفتے کے دن <span class="num">PKR 12,000</span> · ویک اینڈ (جمعہ–ہفتہ) <span class="num">PKR 15,000</span></div>
+                  <div class="pat-d">خودکار طور پر لاگو ہے — مخصوص تاریخوں کو بدلنے کے لیے نیچے راتیں منتخب کریں۔</div>
+                </div>
+              </div>
+
+              <h3 class="sh">اس ہفتے</h3>
+              <p class="wksub"><span class="num">9</span>–<span class="num">15 اگست 2026</span></p>
+              <div class="wkstrip" role="group" aria-label="9 سے 15 اگست، کوئی رات منتخب نہیں">
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="اتوار 9 اگست، PKR 12,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">اتوار</span><span class="wdate num">9</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="پیر 10 اگست، PKR 12,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">پیر</span><span class="wdate num">10</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="منگل 11 اگست، PKR 12,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">منگل</span><span class="wdate num">11</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="بدھ 12 اگست، PKR 12,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">بدھ</span><span class="wdate num">12</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="جمعرات 13 اگست، PKR 12,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">جمعرات</span><span class="wdate num">13</span><span class="wprice">₨<span class="num">12,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="جمعہ 14 اگست، PKR 15,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">جمعہ</span><span class="wdate num">14</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+                <button class="wkcol" type="button" aria-pressed="false" aria-label="ہفتہ 15 اگست، PKR 15,000، غیر منتخب"><span class="chk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="wd">ہفتہ</span><span class="wdate num">15</span><span class="wprice">₨<span class="num">15,000</span></span></button>
+              </div>
+
+              <div class="bulkbox disabled">
+                <label class="bulk-lab" for="bulk-e">منتخب راتوں کے لیے قیمت طے کریں</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="bulk-e" type="text" inputmode="numeric" placeholder="مثلاً 15,000" disabled /></div>
+                <span class="bulk-hint">نئی قیمت طے کرنے کے لیے اوپر راتیں منتخب کریں۔</span>
+                <button class="applybtn" type="button" disabled aria-disabled="true"><span class="num">0</span> منتخب راتوں پر لاگو کریں</button>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>قیمت میں تبدیلی صرف نئی بکنگز پر لاگو ہوتی ہے — جن مہمانوں نے پہلے ہی بکنگ کی ہے وہ اپنی طے شدہ قیمت پر ہی رہیں گے۔</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>محفوظ شدہ — آخری اپ ڈیٹ <b>۲ جولائی ۲۰۲۶</b>۔ اس کے بعد کوئی تبدیلی نہیں۔</span>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron, listing-context chevron and the selected-night check badge all flip to the reading-start (right) edge. Day names follow <code>ga-022</code>/<code>ha-032</code>'s established full-Urdu-weekday convention in the strip header; every date, price and count stays Latin-numeral and LTR-isolated (<code>.num</code>) inside the Urdu sentence flow.</p>
+    </section>
+
+  </main>
+</body>
+</html>

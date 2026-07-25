@@ -1,0 +1,152 @@
+<!-- @dsCard group="Marketplace" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Rating, Price &amp; Wishlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --int-primary:#2E7D6A; --int-subtle:#EEF6F3;
+    --brand-400:#579D8B; --brand-700:#256757;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54;
+    --scrim:rgba(16,25,27,.44);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --int-primary:#579D8B; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A;
+    --scrim:rgba(0,0,0,.6);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 28px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .grid2 { max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:20px; padding:28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); margin:22px 0 12px; }
+  .sec-label:first-of-type { margin-top:0; }
+  .row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .item { display:flex; flex-direction:column; gap:4px; }
+  .cap { font-size:11px; color:var(--text-tertiary); }
+
+  .rating { display:inline-flex; align-items:center; gap:5px; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .rating svg { width:16px; height:16px; color:var(--warning-fg); }
+  .rating .cnt { color:var(--text-secondary); font-weight:400; }
+  .stars { display:inline-flex; gap:3px; align-items:center; }
+  .stars svg { width:18px; height:18px; }
+  .new-chip { display:inline-flex; height:24px; align-items:center; padding:0 10px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:12px; font-weight:600; color:var(--text-primary); }
+
+  .price-inline b { font-size:16px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .price-inline span { font-size:13px; color:var(--text-secondary); }
+  .price-stack .amt { font-size:22px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .price-stack .amt span { font-size:14px; font-weight:400; color:var(--text-secondary); }
+  .price-stack .total { font-size:13px; color:var(--text-secondary); margin-top:2px; }
+  .price-stack .fx { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--text-secondary); margin-top:6px; }
+  .price-stack .fx svg { width:14px; height:14px; }
+  .disc .orig { font-size:13px; color:var(--text-tertiary); text-decoration:line-through; margin-right:8px; }
+  .disc b { font-size:16px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .disc .save { display:block; font-size:12px; color:var(--success-fg); margin-top:2px; }
+
+  .heart-demo { display:flex; gap:16px; align-items:center; }
+  .hbubble { width:44px; height:44px; border-radius:var(--radius-full); background:var(--scrim); display:flex; align-items:center; justify-content:center; position:relative; }
+  .hbubble.photo { background-image:linear-gradient(135deg,var(--brand-400),var(--brand-700)); }
+  .hbubble.photo .inner { width:32px; height:32px; border-radius:var(--radius-full); background:var(--scrim); display:flex; align-items:center; justify-content:center; }
+  .hbubble svg { width:22px; height:22px; }
+  .h-onsurface { width:44px; height:44px; display:flex; align-items:center; justify-content:center; }
+  .h-onsurface svg { width:24px; height:24px; }
+  @media (max-width:880px){ .grid2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Rating · Price · Wishlist</h1>
+    <p>Star in muted amber (never brand), price leads with the unit receding, saved heart in terracotta — the error hue's one non-error role.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-tag">Light</div>
+
+      <div class="sec-label">Rating</div>
+      <div class="row">
+        <div class="item"><span class="rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.92</span><span class="cap">compact</span></div>
+        <div class="item"><span class="rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.85 <span class="cnt">(214)</span></span><span class="cap">standard</span></div>
+        <div class="item"><span class="new-chip">New</span><span class="cap">no reviews</span></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <div class="item">
+          <span class="stars">
+            <svg viewBox="0 0 24 24" fill="var(--warning-fg)"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--warning-fg)"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--warning-fg)"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--warning-fg)"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--border-strong)" stroke-width="1.5"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+          </span>
+          <span class="cap">full 5-star track (detail) · 4.0</span>
+        </div>
+      </div>
+
+      <div class="sec-label">Price</div>
+      <div class="row">
+        <div class="item"><span class="price-inline"><b>PKR 9,500</b> <span>/ night</span></span><span class="cap">inline</span></div>
+        <div class="item disc"><div><span class="orig">PKR 12,000</span><b>PKR 9,500</b></div><span class="save">You save 21%</span></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <div class="item price-stack">
+          <div class="amt">PKR 9,500 <span>/ night</span></div>
+          <div class="total">PKR 47,500 total for 5 nights</div>
+          <div class="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Rate locked</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel dark">
+      <div class="panel-tag">Dark — wishlist heart</div>
+
+      <div class="sec-label">Over-photo · on-surface · saved · disabled</div>
+      <div class="heart-demo">
+        <div class="item">
+          <div class="hbubble photo"><div class="inner"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div></div>
+          <span class="cap">over photo</span>
+        </div>
+        <div class="item">
+          <div class="h-onsurface"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+          <span class="cap">on surface</span>
+        </div>
+        <div class="item">
+          <div class="h-onsurface"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+          <span class="cap">saved</span>
+        </div>
+        <div class="item">
+          <div class="h-onsurface"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text-disabled)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+          <span class="cap">disabled</span>
+        </div>
+      </div>
+
+      <div class="sec-label">Rating (dark)</div>
+      <div class="row">
+        <span class="rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.78 <span class="cnt">(88)</span></span>
+        <span class="new-chip">New</span>
+      </div>
+
+      <div class="sec-label">Price (dark)</div>
+      <div class="row">
+        <div class="item disc"><div><span class="orig">PKR 15,000</span><b>PKR 11,800</b></div><span class="save">You save 21%</span></div>
+        <div class="item"><span class="price-inline" style="color:var(--text-tertiary)"><b style="color:var(--text-tertiary);text-decoration:line-through">PKR 8,000</b> <span>booked</span></span><span class="cap">unavailable</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

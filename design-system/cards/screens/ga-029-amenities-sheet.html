@@ -1,0 +1,390 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-029 All amenities sheet (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --map-land:#EEF0F1; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+    --map-land:#141918; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1300px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1300px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); display:flex; flex-direction:column; }
+
+  /* peek of the listing behind the sheet */
+  .peek { position:relative; height:96px; background:linear-gradient(158deg,var(--bg-raised),var(--bg-sunken)); flex:none; overflow:hidden; }
+  .peek img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .peek .dim { position:absolute; inset:0; background:var(--scrim); }
+  .statusbar { position:absolute; top:0; left:0; right:0; height:44px; z-index:6; display:flex; align-items:center; justify-content:space-between; padding:0 22px; pointer-events:none; }
+  .statusbar .t { font-size:13px; font-weight:600; color:#fff; font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:flex; gap:5px; align-items:center; }
+  .statusbar .ic svg { width:16px; height:16px; color:#fff; }
+
+  /* ============ Bottom sheet ============ */
+  .sheet { position:relative; z-index:2; margin-top:-20px; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; display:flex; flex-direction:column; flex:1; }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; flex:none; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .shead { display:flex; align-items:center; gap:12px; padding:8px 18px 12px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .shead .st { flex:1; min-width:0; }
+  .shead .st h2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em; }
+  .shead .st p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; }
+  .closeb { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; color:var(--text-primary); }
+  .closeb svg { width:18px; height:18px; stroke-width:2; }
+
+  .sbody { padding:6px 18px 18px; }
+
+  /* group */
+  .grp { padding-top:16px; }
+  .gsub { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:4px; }
+
+  /* amenity row — the ONE grammar; cultural == essentials (§10.1) */
+  .arow { display:flex; gap:13px; align-items:center; padding:11px 0; border-top:1px solid var(--border-hairline); }
+  .grp .arow:first-of-type { border-top:none; }
+  .arow .ic { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .arow .ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.75; }
+  .arow .tx { flex:1; min-width:0; }
+  .arow .tx .t { font-size:14px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .arow .tx .d { font-size:12.5px; color:var(--text-secondary); margin-top:1px; line-height:1.35; }
+  .arow .info { width:22px; height:22px; flex:none; border:none; background:transparent; padding:0; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .arow .info svg { width:18px; height:18px; }
+
+  /* utility fact — muted info tint on the icon bubble only (§10.3); label weight unchanged */
+  .arow.util .ic { background:var(--info-bg); border-color:var(--info-border); }
+  .arow.util .ic svg { color:var(--info-fg); }
+
+  /* absent — quietly struck, NEVER red (§10) */
+  .arow.absent .ic { background:var(--bg-sunken); border-color:var(--border-hairline); }
+  .arow.absent .ic svg { color:var(--text-disabled); }
+  .arow.absent .tx .t { color:var(--text-tertiary); text-decoration:line-through; text-decoration-color:var(--text-disabled); font-weight:500; }
+  .arow.absent .tx .d { color:var(--text-tertiary); }
+  .natag { display:inline-flex; align-items:center; height:20px; padding:0 8px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); font-size:11px; font-weight:600; color:var(--text-tertiary); flex:none; }
+
+  /* inline detail popover (state) */
+  .pop { margin:2px 0 6px 47px; padding:10px 12px; border-radius:var(--radius-md); background:var(--info-bg); border:1px solid var(--info-border); font-size:12.5px; color:var(--text-secondary); line-height:1.45; position:relative; }
+  .pop b { color:var(--text-primary); font-weight:600; }
+  .pop::before { content:""; position:absolute; top:-6px; inset-inline-start:18px; width:10px; height:10px; background:var(--info-bg); border-left:1px solid var(--info-border); border-top:1px solid var(--info-border); transform:rotate(45deg); }
+
+  /* sticky footer note */
+  .foot { padding:12px 18px calc(12px + 6px); border-top:1px solid var(--border-hairline); background:var(--bg-canvas); flex:none; display:flex; gap:9px; align-items:flex-start; }
+  .foot svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .foot p { font-size:12px; color:var(--text-secondary); line-height:1.45; }
+
+  /* skeleton */
+  .sk { background:var(--bg-sunken); border-radius:var(--radius-md); position:relative; overflow:hidden; }
+  .sk::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,var(--bg-raised),transparent); transform:translateX(-100%); animation:shim 1.4s ease-in-out infinite; }
+  @keyframes shim { 100% { transform:translateX(100%); } }
+  @media (prefers-reduced-motion: reduce){ .sk::after { animation:none; } }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL — Urdu */
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.7; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+  .phone.rtl .pop { margin-left:0; margin-right:47px; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-029 — All amenities sheet (mobile app)</h1>
+    <p>The complete "What this place offers" bottom sheet — every amenity, PK-practical utility, and cultural attribute in one grouped list at a single visual weight. Cultural &amp; prayer items use the exact row grammar as Wi-Fi (§10.1); utility facts (backup power, generator hours, load-shedding) carry only a muted info tint on the icon bubble (§10.3); anything the home lacks is stated by a quiet strikethrough and a neutral "Not available" tag — never red. Real F-7 Margalla-view apartment content.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>Cultural == amenity weight (§10.1)</span><span>Present / absent states</span><span>Absent = quiet strike, never red</span><span>Utility info tint (§10.3)</span><span>Line icons only</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT — FULL SHEET ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — full sheet · all groups</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="peek">
+            <img src="../../assets/photos/is-f7-living.jpg" alt="" aria-hidden="true" />
+            <div class="dim"></div>
+            <div class="statusbar">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>What this place offers</h2>
+                <p>Margalla View Apartment · F-7, Islamabad</p>
+              </div>
+              <button class="closeb" aria-label="Close amenities"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+
+            <div class="sbody">
+
+              <!-- Essentials -->
+              <section class="grp" aria-label="Essentials">
+                <div class="gsub">Essentials</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></span><div class="tx"><div class="t">Wi-Fi</div><div class="d">Fibre · ~30 Mbps, whole home</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h12a3 3 0 1 1 3 3H4zM4 14h9a2.5 2.5 0 1 1 2.5 2.5"/></svg></span><div class="tx"><div class="t">Air conditioning</div><div class="d">Inverter AC in both bedrooms</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="10" rx="2"/><path d="M6 10V7a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v3"/><path d="M9 15h2"/></svg></span><div class="tx"><div class="t">Free parking on premises</div><div class="d">One covered space</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="12" cy="11" r="3.5"/><path d="M12 8.5v.5"/></svg></span><div class="tx"><div class="t">Washing machine</div><div class="d">In the utility area</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span><div class="tx"><div class="t">Dedicated workspace</div><div class="d">Desk and chair in the second bedroom</div></div></div>
+                <div class="arow absent"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8l3-3 3 3M9 16l3 3 3-3"/></svg></span><div class="tx"><div class="t">Elevator</div><div class="d">Apartment is a second-floor walk-up</div></div><span class="natag">Not available</span></div>
+              </section>
+
+              <!-- Kitchen & dining -->
+              <section class="grp" aria-label="Kitchen and dining">
+                <div class="gsub">Kitchen &amp; dining</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span><div class="tx"><div class="t">Halal kitchen</div><div class="d">No pork; kept halal</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M6 11h12M9.5 6.5v2M9.5 14v3"/></svg></span><div class="tx"><div class="t">Refrigerator</div><div class="d">Full-size, freezer compartment</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="2"/><circle cx="15" cy="14" r="2"/><path d="M7 8V5M12 8V5M17 8V5"/></svg></span><div class="tx"><div class="t">Gas stove &amp; oven</div><div class="d">Piped Sui gas</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><rect x="6" y="9" width="8" height="6" rx="1"/><path d="M17 9v6"/></svg></span><div class="tx"><div class="t">Microwave</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v7a4 4 0 0 0 8 0V3"/><path d="M12 14v7M8 21h8"/><path d="M4 3l16 18" opacity="0"/></svg></span><div class="tx"><div class="t">Dishes &amp; cutlery</div><div class="d">Plates, glasses, pots and pans</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M6 12v8M18 12v8"/></svg></span><div class="tx"><div class="t">Dining table</div><div class="d">Seats six</div></div></div>
+                <div class="arow absent"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2"/><circle cx="12" cy="13" r="3"/></svg></span><div class="tx"><div class="t">Dishwasher</div></div><span class="natag">Not available</span></div>
+              </section>
+
+              <!-- Bathroom -->
+              <section class="grp" aria-label="Bathroom">
+                <div class="gsub">Bathroom</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg></span><div class="tx"><div class="t">Hand-held bidet shower</div><div class="d">Wudu-friendly; in both bathrooms</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/><path d="M12 16a2 2 0 0 0 2-2" opacity=".6"/></svg></span><div class="tx"><div class="t">Hot water</div><div class="d">Gas geyser</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="8" height="13" rx="2"/><path d="M10 8V5a2 2 0 0 1 4 0v3"/></svg></span><div class="tx"><div class="t">Shampoo &amp; soap</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 5v14M8 9h8"/></svg></span><div class="tx"><div class="t">Towels provided</div></div></div>
+                <div class="arow absent"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M7 12V6a2 2 0 0 1 4 0"/></svg></span><div class="tx"><div class="t">Bathtub</div></div><span class="natag">Not available</span></div>
+              </section>
+
+              <!-- Cultural & prayer — identical row grammar (§10.1) -->
+              <section class="grp" aria-label="Cultural and prayer">
+                <div class="gsub">Cultural &amp; prayer</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t">No-alcohol home</div><div class="d">No alcohol on the premises</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg></span><div class="tx"><div class="t">Prayer mat provided</div><div class="d">Clean mat in the main room</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 15.5l2-5 5-2-2 5z" fill="currentColor" stroke="none"/></svg></span><div class="tx"><div class="t">Qibla marked</div><div class="d">Direction marked in the main bedroom</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8.5" y="9" width="7" height="8" rx="1"/></svg></span><div class="tx"><div class="t">Quiet prayer space</div><div class="d">Room to pray in the main bedroom</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg></span><div class="tx"><div class="t">Women-only floor</div><div class="d">Available on request</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><path d="M3 19v-1.5a3.5 3.5 0 0 1 7 0V19M14 19v-1.5a3.5 3.5 0 0 1 7 0V19"/></svg></span><div class="tx"><div class="t">Family-friendly</div><div class="d">Suitable for children</div></div></div>
+              </section>
+
+              <!-- Power & utilities — utility info tint (§10.3) -->
+              <section class="grp" aria-label="Power and utilities">
+                <div class="gsub">Power &amp; utilities</div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span><div class="tx"><div class="t">Backup power</div><div class="d">UPS + generator — covers routine outages</div></div></div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2 2"/></svg></span><div class="tx"><div class="t">Generator hours</div><div class="d">Runs during scheduled load-shedding, ~1–2 hrs/day</div></div><button class="info" aria-label="See generator run times"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M13 2.5l-2 4h3l-2 4"/><path d="M12 12v4" opacity=".5"/></svg></span><div class="tx"><div class="t">Load-shedding</div><div class="d">~1–2 hrs/day; lighter in capital sectors</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s4 3.5 4 8a4 4 0 0 1-8 0c0-1.6.7-3 1.5-4 .3 1 1 1.6 1.7 1.8C11 7.5 12 5 12 3z"/></svg></span><div class="tx"><div class="t">Piped gas (Sui)</div><div class="d">Kitchen and heaters</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/></svg></span><div class="tx"><div class="t">Water</div><div class="d">24/7 — mains, storage tank &amp; bore backup</div></div></div>
+              </section>
+
+              <!-- Safety -->
+              <section class="grp" aria-label="Safety">
+                <div class="gsub">Safety</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg></span><div class="tx"><div class="t">Smoke alarm</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h4l1 3M10 7c-2 1-4 3-4 7a6 6 0 0 0 12 0c0-3-2-5-3-6"/><path d="M15 4h2"/></svg></span><div class="tx"><div class="t">Fire extinguisher</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M12 10v6M9 13h6"/></svg></span><div class="tx"><div class="t">First-aid kit</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/><path d="M12 15v2"/></svg></span><div class="tx"><div class="t">Self check-in</div><div class="d">Lockbox on arrival</div></div></div>
+                <div class="arow absent"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 15h.01"/></svg></span><div class="tx"><div class="t">Carbon monoxide alarm</div></div><span class="natag">Not available</span></div>
+              </section>
+
+            </div>
+
+            <div class="foot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <p>Hosts declare these facts up front. Anything not available is shown plainly so there are no surprises on arrival.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK — FULL SHEET (condensed) ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — cultural, utility &amp; absent states</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="peek">
+            <img src="../../assets/photos/is-f7-bedroom.jpg" alt="" aria-hidden="true" />
+            <div class="dim"></div>
+            <div class="statusbar">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>What this place offers</h2>
+                <p>Cultural at amenity weight · utility info tint · quiet absent</p>
+              </div>
+              <button class="closeb" aria-label="Close amenities"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sbody">
+              <section class="grp" aria-label="Cultural and prayer">
+                <div class="gsub">Cultural &amp; prayer</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t">No-alcohol home</div><div class="d">No alcohol on the premises</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg></span><div class="tx"><div class="t">Prayer mat provided</div><div class="d">Clean mat in the main room</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 15.5l2-5 5-2-2 5z" fill="currentColor" stroke="none"/></svg></span><div class="tx"><div class="t">Qibla marked</div><div class="d">Direction marked in the main bedroom</div></div></div>
+              </section>
+              <section class="grp" aria-label="Power and utilities">
+                <div class="gsub">Power &amp; utilities</div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span><div class="tx"><div class="t">Backup power</div><div class="d">UPS + generator — covers routine outages</div></div></div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2 2"/></svg></span><div class="tx"><div class="t">Generator hours</div><div class="d">Runs during scheduled load-shedding</div></div><button class="info" aria-expanded="true" aria-label="Hide generator run times"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button></div>
+                <div class="pop" role="note">Generator typically runs <b>12:00–2:00 PM</b> and <b>6:00–8:00 PM</b> to cover the scheduled cuts. Fans, lights and Wi-Fi stay on; heavy appliances may pause.</div>
+              </section>
+              <section class="grp" aria-label="Safety">
+                <div class="gsub">Safety</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/><path d="M12 15v2"/></svg></span><div class="tx"><div class="t">Self check-in</div><div class="d">Lockbox on arrival</div></div></div>
+                <div class="arow absent"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 15h.01"/></svg></span><div class="tx"><div class="t">Carbon monoxide alarm</div></div><span class="natag">Not available</span></div>
+              </section>
+            </div>
+            <div class="foot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <p>Absent items read as a quiet strike and a neutral tag — never an alarming red.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · mirrored sheet</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="peek">
+            <img src="../../assets/photos/is-f7-view.jpg" alt="" aria-hidden="true" />
+            <div class="dim"></div>
+            <div class="statusbar">
+              <span class="t num">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2 class="ur">یہ جگہ کیا پیش کرتی ہے</h2>
+                <p class="ur">مارگلہ ویو اپارٹمنٹ · ایف-۷، اسلام آباد</p>
+              </div>
+              <button class="closeb" aria-label="سہولیات بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sbody">
+              <section class="grp" aria-label="بنیادی سہولیات">
+                <div class="gsub ur">بنیادی سہولیات</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></span><div class="tx"><div class="t ur">وائی فائی</div><div class="d ur">فائبر · تقریباً <span class="num">30 Mbps</span></div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h12a3 3 0 1 1 3 3H4zM4 14h9a2.5 2.5 0 1 1 2.5 2.5"/></svg></span><div class="tx"><div class="t ur">ایئر کنڈیشننگ</div><div class="d ur">دونوں بیڈرومز میں انورٹر اے سی</div></div></div>
+                <div class="arow absent"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8l3-3 3 3M9 16l3 3 3-3"/></svg></span><div class="tx"><div class="t ur">لفٹ</div><div class="d ur">اپارٹمنٹ دوسری منزل پر</div></div><span class="natag ur">دستیاب نہیں</span></div>
+              </section>
+              <section class="grp" aria-label="ثقافتی اور نماز">
+                <div class="gsub ur">ثقافتی اور نماز</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t ur">الکحل سے پاک گھر</div><div class="d ur">احاطے میں الکحل نہیں</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg></span><div class="tx"><div class="t ur">جائے نماز موجود</div><div class="d ur">مرکزی کمرے میں صاف مصلّٰی</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 15.5l2-5 5-2-2 5z" fill="currentColor" stroke="none"/></svg></span><div class="tx"><div class="t ur">قبلہ کی نشاندہی</div><div class="d ur">بیڈروم میں سمت نشان زد</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg></span><div class="tx"><div class="t ur">خواتین کے لیے منزل</div><div class="d ur">درخواست پر دستیاب</div></div></div>
+              </section>
+              <section class="grp" aria-label="بجلی اور یوٹیلیٹی">
+                <div class="gsub ur">بجلی اور یوٹیلیٹی</div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span><div class="tx"><div class="t ur">بیک اپ پاور</div><div class="d ur">یو پی ایس + جنریٹر</div></div></div>
+                <div class="arow util"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2 2"/></svg></span><div class="tx"><div class="t ur">جنریٹر کے اوقات</div><div class="d ur">لوڈشیڈنگ کے دوران، روزانہ ~<span class="num">1–2</span> گھنٹے</div></div></div>
+              </section>
+            </div>
+            <div class="foot">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <p class="ur">میزبان یہ حقائق پیشگی بتاتے ہیں تاکہ آمد پر کوئی حیرانی نہ ہو۔</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATES — loading skeleton ============================================================= -->
+    <div class="col">
+      <div class="cap">State — sheet loading (skeleton)</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="peek" style="height:80px"><div class="dim" style="background:var(--bg-sunken)"></div><div class="statusbar"><span class="t" style="color:var(--text-tertiary)">9:41</span></div></div>
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st"><div class="sk" style="height:18px;width:70%"></div><div class="sk" style="height:12px;width:50%;margin-top:8px"></div></div>
+            </div>
+            <div class="sbody" aria-hidden="true">
+              <div class="sk" style="height:12px;width:30%;margin:16px 0 10px"></div>
+              <div style="display:flex;gap:13px;align-items:center;padding:11px 0"><div class="sk" style="width:34px;height:34px;border-radius:9999px"></div><div style="flex:1"><div class="sk" style="height:13px;width:55%"></div><div class="sk" style="height:11px;width:38%;margin-top:7px"></div></div></div>
+              <div style="display:flex;gap:13px;align-items:center;padding:11px 0"><div class="sk" style="width:34px;height:34px;border-radius:9999px"></div><div style="flex:1"><div class="sk" style="height:13px;width:62%"></div><div class="sk" style="height:11px;width:44%;margin-top:7px"></div></div></div>
+              <div style="display:flex;gap:13px;align-items:center;padding:11px 0"><div class="sk" style="width:34px;height:34px;border-radius:9999px"></div><div style="flex:1"><div class="sk" style="height:13px;width:48%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

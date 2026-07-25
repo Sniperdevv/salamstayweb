@@ -1,0 +1,260 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Map, price pins &amp; clusters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -6px rgba(16,25,27,.10);
+    --el-modal:0 8px 16px -4px rgba(16,25,27,.11),0 24px 48px -12px rgba(16,25,27,.14);
+    --radius-lg:12px; --radius-xl:16px; --radius-2xl:20px; --radius-full:9999px;
+    /* map style — generated from neutral Slate ramp + brand-50 whisper (no new hues) */
+    --map-land:#EEF0F1; --map-water:#E4EDEC; --map-park:#E7F1EB; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.42),0 12px 24px -6px rgba(0,0,0,.46);
+    --el-modal:0 8px 16px -4px rgba(0,0,0,.5),0 24px 48px -12px rgba(0,0,0,.55);
+    --map-land:#141918; --map-water:#101716; --map-park:#132019; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 28px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .grid2 { max-width:1180px; margin:0 auto 24px; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:20px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:16px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:12px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  .map { position:relative; height:380px; border-radius:var(--radius-xl); overflow:hidden; background:var(--map-land); border:1px solid var(--border-hairline); }
+  /* substrate: water / park / roads — all recede so pins pop */
+  .water { position:absolute; border-radius:40% 55% 50% 45%; background:var(--map-water); }
+  .park { position:absolute; border-radius:50% 40% 55% 45%; background:var(--map-park); }
+  .road { position:absolute; background:var(--map-road); border-radius:2px; }
+  .road.thin { background:var(--map-road2); }
+  .lbl { position:absolute; font-size:10px; font-weight:500; color:var(--map-label); letter-spacing:.02em; }
+
+  /* price pin */
+  .pin { position:absolute; transform:translate(-50%,-50%); height:32px; min-width:44px; display:inline-flex; align-items:center; justify-content:center; padding:0 12px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); box-shadow:var(--shadow-card); font-size:13px; font-weight:500; color:var(--text-primary); font-variant-numeric:tabular-nums; cursor:pointer; white-space:nowrap; z-index:2; }
+  .pin.viewed { color:var(--text-secondary); }
+  .pin.selected { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--border-brand); font-weight:600; transform:translate(-50%,-50%) scale(1.06); z-index:3; }
+  /* cluster */
+  .cluster { position:absolute; transform:translate(-50%,-50%); width:48px; height:48px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-strong); box-shadow:var(--shadow-card); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; color:var(--text-primary); cursor:pointer; z-index:2; }
+  .cluster.lg { width:60px; height:60px; font-size:16px; }
+  /* user location */
+  .userdot { position:absolute; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:var(--int-primary); border:2px solid var(--bg-canvas); box-shadow:var(--shadow-card); z-index:2; }
+  .userhalo { position:absolute; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:50%; background:var(--int-subtle); opacity:.7; z-index:1; }
+  /* search this area */
+  .searcharea { position:absolute; top:14px; left:50%; transform:translateX(-50%); display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 16px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); box-shadow:var(--el-popover); font-size:14px; font-weight:500; color:var(--text-primary); cursor:pointer; z-index:5; white-space:nowrap; }
+  .searcharea svg { width:16px; height:16px; color:var(--text-secondary); }
+  /* zoom / recenter controls (trailing side; mirror in RTL) */
+  .ctrls { position:absolute; right:14px; bottom:104px; display:flex; flex-direction:column; gap:8px; z-index:5; }
+  .ctrls button { width:40px; height:40px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); box-shadow:var(--shadow-card); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); }
+  .ctrls button svg { width:18px; height:18px; }
+  .ctrls .stack2 { display:flex; flex-direction:column; border-radius:var(--radius-2xl); overflow:hidden; }
+  .ctrls .stack2 button { border-radius:0; height:40px; }
+  .ctrls .stack2 button:first-child { border-bottom:none; }
+  /* peeking mini-card */
+  .minicard { position:absolute; left:12px; right:12px; bottom:12px; display:flex; gap:12px; padding:10px; background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-xl); box-shadow:var(--el-modal); z-index:6; }
+  .minicard .thumb { width:72px; height:72px; border-radius:var(--radius-lg); background:var(--bg-sunken); object-fit:cover; flex:none; }
+  .minicard .mc-body { flex:1; min-width:0; }
+  .minicard .mc-t { font-size:14px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .minicard .mc-l { font-size:12px; color:var(--text-secondary); }
+  .minicard .mc-p { font-size:14px; margin-top:6px; }
+  .minicard .mc-p b { font-weight:700; }
+  .minicard .mc-p span { color:var(--text-secondary); font-size:12px; }
+  .minicard .mc-r { display:inline-flex; align-items:center; gap:3px; font-size:12px; font-weight:600; color:var(--text-primary); float:right; }
+  .minicard .mc-r svg { width:13px; height:13px; color:#8A5A16; }
+  .dark .minicard .mc-r svg { color:#E0B36B; }
+
+  /* privacy-radius mini-map (listing detail §B) */
+  .miniwrap { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .minimap { position:relative; height:210px; border-radius:var(--radius-xl); overflow:hidden; background:var(--map-land); border:1px solid var(--border-hairline); }
+  .privacy { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:150px; height:150px; border-radius:50%; background:var(--int-subtle); border:1.5px dashed var(--border-brand); opacity:.9; }
+  .privacy-core { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:14px; height:14px; border-radius:50%; background:var(--int-primary); border:2px solid var(--bg-canvas); }
+  .privacy-lbl { position:absolute; left:12px; bottom:12px; font-size:11px; font-weight:500; color:var(--text-secondary); background:var(--bg-canvas); border:1px solid var(--border-hairline); padding:3px 8px; border-radius:var(--radius-full); box-shadow:var(--shadow-card); }
+
+  /* RTL */
+  .map.rtl { direction:rtl; }
+  .map.rtl .ctrls { right:auto; left:14px; }
+  .map.rtl .searcharea, .map.rtl .minicard .mc-t, .map.rtl .minicard .mc-l { font-family:'Noto Nastaliq Urdu',serif; }
+  @media (max-width:980px){ .grid2{ grid-template-columns:1fr; } .miniwrap{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Map — price pins, clusters &amp; "search this area"</h1>
+    <p>The spatial results view: a muted, on-palette substrate (generated from the Slate ramp) so listing photos and price pins pop. Price-as-pin, default / viewed / selected states, cluster bubbles, a floating "search this area" chip, a user-location dot, and the privacy-radius circle for the listing-detail mini-map. Islamabad content.</p>
+  </div>
+
+  <div class="grid2">
+    <!-- LIGHT results map -->
+    <div class="panel">
+      <div class="panel-tag">Light — results map</div>
+      <div class="map">
+        <span class="water" style="top:-40px;right:-30px;width:200px;height:170px"></span>
+        <span class="park" style="left:-30px;bottom:40px;width:150px;height:130px"></span>
+        <span class="road" style="top:120px;left:-20px;width:420px;height:6px;transform:rotate(-12deg)"></span>
+        <span class="road thin" style="top:60px;left:180px;width:6px;height:340px;transform:rotate(8deg)"></span>
+        <span class="road thin" style="top:230px;left:-10px;width:420px;height:5px;transform:rotate(6deg)"></span>
+        <span class="lbl" style="top:96px;left:34px">F-7 Markaz</span>
+        <span class="lbl" style="top:250px;left:220px">Margalla Rd</span>
+
+        <button class="searcharea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>Search this area</button>
+
+        <button class="pin selected" style="top:150px;left:130px" aria-label="PKR 14,200 per night, Cedar Lodge">PKR 14,200</button>
+        <button class="pin" style="top:95px;left:250px" aria-label="PKR 9,500 per night">PKR 9,500</button>
+        <button class="pin viewed" style="top:215px;left:95px" aria-label="PKR 11,800 per night, viewed">PKR 11,800</button>
+        <button class="pin" style="top:255px;left:290px" aria-label="PKR 8,000 per night">PKR 8,000</button>
+        <button class="cluster" style="top:210px;left:205px" aria-label="12 stays in this area">12</button>
+
+        <span class="userhalo" style="top:180px;left:325px"></span>
+        <span class="userdot" style="top:180px;left:325px" aria-label="Your location"></span>
+
+        <div class="ctrls">
+          <div class="stack2">
+            <button aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button aria-label="Zoom out" style="border-top:1px solid var(--border-default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+          </div>
+          <button aria-label="Recenter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+        </div>
+
+        <div class="minicard">
+          <div class="thumb" style="background:linear-gradient(135deg,#2E7D6A,#256757)"></div>
+          <div class="mc-body">
+            <span class="mc-r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.92</span>
+            <div class="mc-t">Cedar Lodge, Islamabad</div>
+            <div class="mc-l">F-7 · entire home · Halal kitchen</div>
+            <div class="mc-p"><b>PKR 14,200</b> <span>/ night</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">Pins are price pills (≥<code>44pt</code> hit area). Selected inverts to brand fill + <code>onBrand</code>; viewed dims to <code>text.secondary</code>; the cluster count uses <code>border.strong</code>.</div>
+    </div>
+
+    <!-- DARK results map -->
+    <div class="panel dark">
+      <div class="panel-tag">Dark — results map</div>
+      <div class="map">
+        <span class="water" style="top:-40px;right:-30px;width:200px;height:170px"></span>
+        <span class="park" style="left:-30px;bottom:40px;width:150px;height:130px"></span>
+        <span class="road" style="top:120px;left:-20px;width:420px;height:6px;transform:rotate(-12deg)"></span>
+        <span class="road thin" style="top:60px;left:180px;width:6px;height:340px;transform:rotate(8deg)"></span>
+        <span class="road thin" style="top:230px;left:-10px;width:420px;height:5px;transform:rotate(6deg)"></span>
+        <span class="lbl" style="top:96px;left:34px">F-7 Markaz</span>
+        <span class="lbl" style="top:250px;left:220px">Margalla Rd</span>
+
+        <button class="searcharea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>Search this area</button>
+
+        <button class="pin selected" style="top:150px;left:130px">PKR 14,200</button>
+        <button class="pin" style="top:95px;left:250px">PKR 9,500</button>
+        <button class="pin viewed" style="top:215px;left:95px">PKR 11,800</button>
+        <button class="pin" style="top:255px;left:290px">PKR 8,000</button>
+        <button class="cluster" style="top:210px;left:205px">12</button>
+
+        <span class="userhalo" style="top:180px;left:325px"></span>
+        <span class="userdot" style="top:180px;left:325px"></span>
+
+        <div class="ctrls">
+          <div class="stack2">
+            <button aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button aria-label="Zoom out" style="border-top:1px solid var(--border-default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+          </div>
+          <button aria-label="Recenter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+        </div>
+
+        <div class="minicard">
+          <div class="thumb" style="background:linear-gradient(135deg,#579D8B,#256757)"></div>
+          <div class="mc-body">
+            <span class="mc-r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.92</span>
+            <div class="mc-t">Cedar Lodge, Islamabad</div>
+            <div class="mc-l">F-7 · entire home · Halal kitchen</div>
+            <div class="mc-p"><b>PKR 14,200</b> <span>/ night</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">The dark map style is generated from dark tokens — darker land/water, labels lifted for contrast; pins use dark brand tokens.</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <!-- RTL results map -->
+    <div class="panel">
+      <div class="panel-tag">RTL — اردو · controls mirrored</div>
+      <div class="map rtl">
+        <span class="water" style="top:-40px;left:-30px;width:200px;height:170px"></span>
+        <span class="park" style="right:-30px;bottom:40px;width:150px;height:130px"></span>
+        <span class="road" style="top:120px;right:-20px;width:420px;height:6px;transform:rotate(12deg)"></span>
+        <span class="road thin" style="top:60px;right:180px;width:6px;height:340px;transform:rotate(-8deg)"></span>
+
+        <button class="searcharea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5"/></svg>اس علاقے میں تلاش کریں</button>
+
+        <button class="pin selected" style="top:150px;right:130px">PKR 14,200</button>
+        <button class="pin" style="top:95px;right:250px">PKR 9,500</button>
+        <button class="pin viewed" style="top:215px;right:95px">PKR 11,800</button>
+        <button class="cluster" style="top:210px;right:205px">12</button>
+
+        <span class="userhalo" style="top:180px;right:325px"></span>
+        <span class="userdot" style="top:180px;right:325px"></span>
+
+        <div class="ctrls">
+          <div class="stack2">
+            <button aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+            <button aria-label="Zoom out" style="border-top:1px solid var(--border-default)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+          </div>
+        </div>
+
+        <div class="minicard">
+          <div class="thumb" style="background:linear-gradient(135deg,#2E7D6A,#256757)"></div>
+          <div class="mc-body">
+            <div class="mc-t">سیڈر لاج، اسلام آباد</div>
+            <div class="mc-l">ایف-۷ · پورا گھر</div>
+            <div class="mc-p"><b>PKR 14,200</b> <span>/ رات</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="note">Controls mirror to the leading (left in RTL) side; the search-area pill stays top-center; pin text respects locale.</div>
+    </div>
+
+    <!-- privacy-radius mini-map -->
+    <div class="panel">
+      <div class="panel-tag">Listing detail — privacy-radius mini-map</div>
+      <div class="miniwrap">
+        <div class="minimap">
+          <span class="road thin" style="top:40px;left:-10px;width:260px;height:5px;transform:rotate(-10deg)"></span>
+          <span class="road thin" style="top:120px;left:90px;width:5px;height:160px;transform:rotate(6deg)"></span>
+          <div class="privacy"></div>
+          <div class="privacy-core"></div>
+          <span class="privacy-lbl">Approximate area</span>
+        </div>
+        <div class="minimap dark">
+          <span class="road thin" style="top:40px;left:-10px;width:260px;height:5px;transform:rotate(-10deg)"></span>
+          <span class="road thin" style="top:120px;left:90px;width:5px;height:160px;transform:rotate(6deg)"></span>
+          <div class="privacy"></div>
+          <div class="privacy-core"></div>
+          <span class="privacy-lbl">Approximate area</span>
+        </div>
+      </div>
+      <div class="note">Detail pages show a <b>privacy radius</b> — a translucent <code>interactive.subtle</code> circle with a dashed <code>border.brand</code> edge and a centre dot, never the exact pin. Protects host location; supports women's-safety context.</div>
+    </div>
+  </div>
+
+</body>
+</html>

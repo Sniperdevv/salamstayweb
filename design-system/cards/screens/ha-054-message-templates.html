@@ -1,0 +1,695 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Message templates &amp; scheduled messages (HA-054)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b, .note strong { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ha-047 host lineage; NO guest-checkout stepper (§7.6a) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.tbar-act,.segtab,.bnote-t,.seclabel,.tpl-t,.lang-x,.tpl-meta-t,.flabel,.fhint,.ta,.vchip,.rl,.rs,.tf-v,.mbtn,.pnote-t,.q-t,.q-s,.q-cancel,.btn,.th,.td,.undo,.swrow-t,.swrow-s) { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl :is(.lang-x,.bnote-t,.pnote-t,.fhint,.ta) { line-height:1.95; }
+  .phone.rtl :is(.tpl-t,.rl,.q-t,.btn,.flabel) { line-height:1.85; }
+  .phone.rtl .lang-x.en { font-family:'Inter',sans-serif; line-height:1.5; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:2px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .phone.rtl .ib.mirror svg { transform:scaleX(-1); }
+  .tbar-title { flex:1; font-size:16px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tbar-act { flex:none; min-height:44px; padding:0 10px; display:inline-flex; align-items:center; background:transparent; border:none; font-family:inherit; font-size:13.5px; font-weight:700; color:var(--int-primary); cursor:pointer; text-decoration:none; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding-bottom:12px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .grow { flex:1; }
+
+  .segtabs { display:flex; gap:2px; padding:8px 12px 10px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .segtab { flex:1; display:flex; align-items:center; justify-content:center; min-height:44px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; color:var(--text-secondary); background:transparent; border:none; font-family:inherit; cursor:pointer; }
+  .segtab .cnt { font-size:10.5px; font-weight:700; color:var(--text-on-brand); background:var(--int-primary); border-radius:var(--radius-full); min-width:16px; height:16px; padding:0 4px; margin-inline-start:5px; display:inline-flex; align-items:center; justify-content:center; }
+  .segtab[aria-selected="true"] { background:var(--int-subtle); color:var(--int-primary); }
+
+  .seclabel { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:14px 16px 8px; }
+
+  /* bilingual explainer strip */
+  .bnote { display:flex; align-items:flex-start; gap:9px; margin:12px 14px 2px; padding:10px 11px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .bnote-ic { flex:none; color:var(--text-secondary); display:flex; margin-top:1px; }
+  .bnote-ic svg { width:15px; height:15px; stroke-width:1.9; }
+  .bnote-t { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .bnote-t b { color:var(--text-primary); font-weight:600; }
+
+  /* template rows — bilingual, both variants visible */
+  .tpls { display:flex; flex-direction:column; gap:10px; padding:0 14px; }
+  .tpl { display:block; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:11px 12px; text-decoration:none; box-shadow:var(--el-hairline); }
+  .tpl:hover { background:var(--bg-raised); }
+  .tpl-h { display:flex; align-items:center; gap:8px; }
+  .tpl-t { flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .tpl-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .tpl-chev svg { width:16px; height:16px; stroke-width:2; }
+  .phone.rtl .tpl-chev svg { transform:scaleX(-1); }
+  .langs { display:flex; flex-direction:column; gap:7px; margin-top:9px; }
+  .lang { display:flex; align-items:flex-start; gap:8px; }
+  .lang-tag { flex:none; min-width:34px; text-align:center; font-size:9.5px; font-weight:700; letter-spacing:.04em; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 6px; margin-top:1px; }
+  .lang-x { flex:1; min-width:0; font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .lang-x.ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.95; }
+  .lang-x.en { font-family:'Inter',sans-serif; line-height:1.5; }
+  .vtok { font-size:10.5px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-sm); padding:1px 5px; white-space:nowrap; }
+  .tpl-meta { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:9px; }
+  .tpl-meta-t { display:inline-flex; align-items:center; font-size:10px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+  .tpl-meta-t svg { width:10px; height:10px; stroke-width:2.1; margin-inline-end:4px; flex:none; }
+  .tpl-meta-t.auto { color:var(--success-fg); background:var(--success-bg); border-color:var(--success-border); }
+
+  /* editor */
+  .fgrp { display:flex; flex-direction:column; gap:6px; padding:0 16px; margin-top:14px; }
+  .flabel { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .ta { resize:none; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); color:var(--text-primary); font-family:inherit; font-size:12.5px; line-height:1.55; padding:11px 12px; min-height:96px; width:100%; }
+  .ta.urdu { font-family:'Noto Nastaliq Urdu', serif; line-height:2.05; min-height:112px; }
+  .ta:focus { border-color:var(--border-brand); }
+  .fhint { font-size:11px; color:var(--text-tertiary); line-height:1.5; }
+  .vchips { display:flex; flex-wrap:wrap; gap:6px; padding:0 16px; margin-top:10px; }
+  .vchip { min-height:32px; padding:0 10px; display:inline-flex; align-items:center; border-radius:var(--radius-full); border:1px dashed var(--border-brand); background:var(--int-subtle); color:var(--int-primary); font-family:inherit; font-size:11px; font-weight:600; cursor:pointer; }
+  .savebar { display:flex; gap:8px; padding:14px 16px 4px; }
+  .btn { flex:1; display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:0 16px; border-radius:var(--radius-md); font-size:13.5px; font-weight:600; text-decoration:none; border:1px solid var(--border-default); color:var(--text-primary); background:var(--bg-canvas); font-family:inherit; cursor:pointer; }
+  .btn.primary { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+
+  /* scheduling */
+  .radios { display:flex; flex-direction:column; gap:8px; padding:0 16px; }
+  .rrow { display:flex; align-items:center; gap:11px; width:100%; min-height:52px; padding:8px 12px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); font-family:inherit; cursor:pointer; text-align:start; }
+  .rrow[aria-checked="true"] { border-color:var(--border-brand); background:var(--int-subtle); }
+  .rdot { flex:none; width:18px; height:18px; border-radius:var(--radius-full); border:2px solid var(--border-default); display:flex; align-items:center; justify-content:center; }
+  .rrow[aria-checked="true"] .rdot { border-color:var(--int-primary); }
+  .rdot i { width:8px; height:8px; border-radius:var(--radius-full); background:transparent; }
+  .rrow[aria-checked="true"] .rdot i { background:var(--int-primary); }
+  .rb { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .rl { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .rs { font-size:11px; color:var(--text-secondary); }
+
+  .tfield { display:flex; align-items:center; gap:9px; margin:10px 16px 0; padding:10px 12px; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .tf-ic { flex:none; color:var(--text-secondary); display:flex; }
+  .tf-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .tf-v { flex:1; min-width:0; font-size:13px; font-weight:600; color:var(--text-primary); }
+
+  .picker { display:flex; gap:8px; margin:10px 16px 0; }
+  .wheel { flex:1; position:relative; display:flex; gap:4px; padding:6px; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); }
+  .wsel { position:absolute; inset-inline:6px; top:50%; transform:translateY(-50%); height:34px; border-radius:var(--radius-md); background:var(--int-subtle); border:1px solid var(--border-brand); }
+  .wcol { flex:1; display:flex; flex-direction:column; position:relative; z-index:1; }
+  .wv { height:34px; display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--text-tertiary); }
+  .wv.sel { color:var(--int-primary); font-weight:700; font-size:14px; }
+  .mer { flex:none; width:58px; display:flex; flex-direction:column; gap:6px; }
+  .mbtn { flex:1; min-height:44px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-canvas); color:var(--text-secondary); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .mbtn[aria-pressed="true"] { border-color:var(--border-brand); background:var(--int-subtle); color:var(--int-primary); }
+
+  /* prayer-window note — ga-069 quiet-hours register: plain utility, neutral surface */
+  .pnote { display:flex; align-items:flex-start; gap:9px; margin:12px 16px 0; padding:10px 11px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .pnote-ic { flex:none; color:var(--text-secondary); display:flex; margin-top:1px; }
+  .pnote-ic svg { width:15px; height:15px; stroke-width:1.9; }
+  .pnote-t { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .pnote-t b { color:var(--text-primary); font-weight:600; }
+
+  .swrow { display:flex; align-items:center; gap:11px; margin:12px 16px 0; padding:10px 12px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); }
+  .swrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .swrow-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .swrow-s { font-size:11px; color:var(--text-secondary); line-height:1.45; }
+  .swhit { flex:none; width:52px; height:44px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .sw { width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-default); position:relative; display:block; }
+  .sw i { position:absolute; top:3px; inset-inline-start:3px; width:18px; height:18px; border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-hairline); }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { inset-inline-start:19px; }
+
+  /* scheduled queue */
+  .qlist { display:flex; flex-direction:column; gap:9px; padding:0 14px; }
+  .qrow { display:flex; align-items:center; gap:10px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:9px 10px; }
+  .q-ic { flex:none; width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .q-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .q-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .q-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .q-s { font-size:11px; color:var(--text-secondary); line-height:1.4; }
+  .q-cancel { flex:none; min-height:44px; padding:0 11px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+
+  /* undo toast — ga-090 grammar */
+  .toast { position:absolute; inset-inline:14px; bottom:calc(30px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-raised); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:11px 12px; }
+  .ti { flex:none; color:var(--text-secondary); display:flex; }
+  .ti svg { width:19px; height:19px; stroke-width:1.9; }
+  .tbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .th { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .td { font-size:11px; color:var(--text-secondary); }
+  .undo { flex:none; background:transparent; border:none; font-family:inherit; font-size:12.5px; font-weight:700; color:var(--int-primary); cursor:pointer; min-height:44px; padding:0 6px; }
+
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Message templates &amp; scheduled messages (HA-054)</h1>
+    <p>Aqib's saved replies at <code>/host/messages/templates</code>, reachable from the <code>HA-053</code> composer. Every template is <strong>bilingual by construction</strong> — an English and an اردو variant, both visible on the row, so a host is never guessing what a guest actually receives. <strong>Variable chips</strong> (<code>{guest name}</code>, <code>{check-in time}</code>, <code>{listing name}</code>) are inserted into a plain Textarea and fill in at send time. Scheduling is a calm utility: <em>day before arrival, 10:00 AM</em>, with the <strong>prayer-window-aware</strong> note carried over from <code>GA-069</code>'s quiet-hours precedent — stated as a scheduling fact on a neutral surface, with a functional clock glyph and no religious ornament (§10.1–§10.3). The queue shows what will go out and lets a host cancel with an <strong>Undo</strong> toast (<code>GA-090</code>), never a confirm modal. Panels: saved replies + editor (light) · schedule + queue with Undo (light) · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Saved replies · light</span><span>Editor · variable chips</span><span>Schedule · time picker</span><span>Queue · Undo</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 — TEMPLATES · EDITOR ============================ -->
+    <section class="panel" aria-label="Light theme — the saved-replies list and the template editor">
+      <div class="panel-tag">Light — saved replies (bilingual rows) · template editor</div>
+      <div class="rowflex">
+
+        <!-- A · TEMPLATES -->
+        <div class="pcol">
+          <div class="pcap">A · Saved replies — EN and اردو, side by side</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/host/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Saved replies</div>
+              <a class="tbar-act" href="/host/messages/templates/new">New</a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Templates and scheduled messages">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Saved replies <span class="cnt num">3</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Scheduled <span class="cnt num">2</span></button>
+              </div>
+
+              <div class="bnote">
+                <span class="bnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span>
+                <span class="bnote-t"><b>Each reply keeps both languages.</b> The guest receives the version that matches the language they're reading in — you write once, in both.</span>
+              </div>
+
+              <div class="seclabel">Your replies</div>
+              <div class="tpls">
+                <a class="tpl" href="/host/messages/templates/check-in-info">
+                  <span class="tpl-h"><span class="tpl-t">Check-in info</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en">"Assalam o alaikum <span class="vtok">{guest name}</span>! Check-in at <span class="vtok">{listing name}</span> is from <span class="vtok">{check-in time}</span>. I'll send the gate code here on the morning you arrive."</span></span>
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur" dir="rtl" lang="ur">”السلام علیکم <span class="vtok">{مہمان کا نام}</span>! <span class="vtok">{لسٹنگ کا نام}</span> میں چیک اِن <span class="vtok">{چیک اِن کا وقت}</span> سے ہے۔ گیٹ کوڈ آپ کی آمد والی صبح یہیں بھیج دوں گا۔“</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Sends automatically</span>
+                    <span class="tpl-meta-t">Day before arrival · <span class="num">10:00 AM</span></span>
+                  </span>
+                </a>
+
+                <a class="tpl" href="/host/messages/templates/directions">
+                  <span class="tpl-h"><span class="tpl-t">Directions</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en">"From Main Boulevard, take the second turn after the park — the gate is on the left. Message me when you turn in and I'll open it."</span></span>
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur" dir="rtl" lang="ur">”مین بلیوارڈ سے پارک کے بعد دوسرا موڑ لیں — گیٹ بائیں طرف ہے۔ مڑتے وقت پیغام بھیج دیں، میں گیٹ کھول دوں گا۔“</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l7 16-7-4-7 4z"/></svg>Send by hand</span>
+                  </span>
+                </a>
+
+                <a class="tpl" href="/host/messages/templates/thank-you">
+                  <span class="tpl-h"><span class="tpl-t">Thank you</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en">"Shukriya for staying, <span class="vtok">{guest name}</span>. Safe travels home — you're welcome back any time."</span></span>
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur" dir="rtl" lang="ur">”قیام کا شکریہ، <span class="vtok">{مہمان کا نام}</span>۔ سفر بخیر — آپ جب چاہیں دوبارہ تشریف لائیں۔“</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Sends automatically</span>
+                    <span class="tpl-meta-t">Morning of checkout · <span class="num">11:00 AM</span></span>
+                  </span>
+                </a>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EDITOR -->
+        <div class="pcol">
+          <div class="pcap">B · Editor — Textarea + variable chips</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/host/messages/templates" aria-label="Back to saved replies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Check-in info</div>
+              <button class="tbar-act" type="button">Save</button>
+            </div>
+            <div class="screen">
+              <div class="fgrp">
+                <label class="flabel" for="ta-en">English</label>
+                <textarea class="ta" id="ta-en" rows="4">Assalam o alaikum {guest name}! Check-in at {listing name} is from {check-in time}. I'll send the gate code here on the morning you arrive.</textarea>
+              </div>
+
+              <div class="vchips" role="group" aria-label="Insert a variable">
+                <button class="vchip" type="button">{guest name}</button>
+                <button class="vchip" type="button">{listing name}</button>
+                <button class="vchip" type="button">{check-in time}</button>
+                <button class="vchip" type="button">{check-out time}</button>
+              </div>
+
+              <div class="fgrp">
+                <span class="fhint">Variables fill in on their own when the message sends — <span class="vtok">{guest name}</span> becomes the guest's first name, <span class="vtok">{check-in time}</span> the time set on that listing.</span>
+              </div>
+
+              <div class="fgrp">
+                <label class="flabel" for="ta-ur">اردو</label>
+                <textarea class="ta urdu" id="ta-ur" dir="rtl" lang="ur" rows="4">السلام علیکم {مہمان کا نام}! {لسٹنگ کا نام} میں چیک اِن {چیک اِن کا وقت} سے ہے۔ گیٹ کوڈ آپ کی آمد والی صبح یہیں بھیج دوں گا۔</textarea>
+              </div>
+
+              <div class="savebar">
+                <a class="btn" href="/host/messages/templates">Cancel</a>
+                <button class="btn primary" type="button">Save reply</button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The row is the whole template, not a title with a mystery behind it: both language variants are visible before a host ever opens the editor, and the variable tokens keep the same brand-subtle pill styling in the list <em>and</em> in the editor so <code>{guest name}</code> is recognisably one thing everywhere. The editor is two plain Textareas — <strong>the اردو field is Nastaliq with its own line-height and <code>dir="rtl"</code></strong> even inside the English UI, because the content direction follows the <em>content</em> locale, not the interface locale (§11). Variable chips are dashed-outline buttons at <strong>32pt inside a 44pt row rhythm</strong>, and the hint below spells out exactly what each token becomes — no magic.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL 2 — SCHEDULE · QUEUE ============================ -->
+    <section class="panel" aria-label="Light theme — scheduling a template and the scheduled queue">
+      <div class="panel-tag">Light — when to send (time picker, prayer-window note) · scheduled queue + Undo</div>
+      <div class="rowflex">
+
+        <!-- C · SCHEDULE -->
+        <div class="pcol">
+          <div class="pcap">C · Schedule — day before arrival, 10:00 AM</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/host/messages/templates/check-in-info" aria-label="Back to the Check-in info reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">When to send</div>
+              <button class="tbar-act" type="button">Save</button>
+            </div>
+            <div class="screen">
+              <div class="seclabel">Send this reply</div>
+              <div class="radios" role="radiogroup" aria-label="When to send this reply">
+                <button class="rrow" type="button" role="radio" aria-checked="true">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">Day before arrival</span><span class="rs">Goes out the day before check-in</span></span>
+                </button>
+                <button class="rrow" type="button" role="radio" aria-checked="false">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">Morning of arrival</span><span class="rs">Goes out on the check-in day</span></span>
+                </button>
+                <button class="rrow" type="button" role="radio" aria-checked="false">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">Morning of checkout</span><span class="rs">Goes out on the last day of the stay</span></span>
+                </button>
+              </div>
+
+              <div class="seclabel">At</div>
+              <div class="tfield">
+                <span class="tf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <span class="tf-v num">10:00 AM</span>
+              </div>
+              <div class="picker">
+                <div class="wheel" role="group" aria-label="Pick a time: 10:00">
+                  <span class="wsel" aria-hidden="true"></span>
+                  <span class="wcol"><span class="wv num">09</span><span class="wv sel num">10</span><span class="wv num">11</span></span>
+                  <span class="wcol"><span class="wv num">45</span><span class="wv sel num">00</span><span class="wv num">15</span></span>
+                </div>
+                <div class="mer" role="group" aria-label="Morning or afternoon">
+                  <button class="mbtn" type="button" aria-pressed="true">AM</button>
+                  <button class="mbtn" type="button" aria-pressed="false">PM</button>
+                </div>
+              </div>
+
+              <div class="pnote">
+                <span class="pnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <span class="pnote-t"><b>Scheduled sends avoid prayer windows.</b> A message due during one is delivered just after, using the prayer times for the listing's city.</span>
+              </div>
+
+              <div class="swrow">
+                <span class="swrow-b"><span class="swrow-t">Send this automatically</span><span class="swrow-s">Applies to every confirmed booking at Gulberg 2 Residence</span></span>
+                <button class="swhit" type="button" role="switch" aria-checked="true" aria-label="Send this automatically"><span class="sw on" aria-hidden="true"><i></i></span></button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · QUEUE + UNDO -->
+        <div class="pcol">
+          <div class="pcap">D · Queue — cancel resolves to Undo, not a confirm</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/host/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Saved replies</div>
+              <a class="tbar-act" href="/host/messages/templates/new">New</a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Templates and scheduled messages">
+                <button class="segtab" type="button" role="tab" aria-selected="false">Saved replies <span class="cnt num">3</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="true">Scheduled <span class="cnt num">2</span></button>
+              </div>
+
+              <div class="seclabel">Waiting to send</div>
+              <div class="qlist">
+                <div class="qrow">
+                  <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                  <span class="q-b"><span class="q-t">Check-in info → Fatima</span><span class="q-s">Tomorrow, <span class="num">10:00 AM</span> · Gulberg 2 Residence</span></span>
+                  <button class="q-cancel" type="button" aria-label="Cancel the scheduled Check-in info message to Fatima">Cancel</button>
+                </div>
+                <div class="qrow">
+                  <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                  <span class="q-b"><span class="q-t">Check-in info → Ali Raza</span><span class="q-s">Fri <span class="num">21 Aug</span>, <span class="num">10:00 AM</span> · Cantt View Residence</span></span>
+                  <button class="q-cancel" type="button" aria-label="Cancel the scheduled Check-in info message to Ali Raza">Cancel</button>
+                </div>
+              </div>
+
+              <div class="seclabel">Sent recently</div>
+              <div class="qlist">
+                <div class="qrow">
+                  <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></span>
+                  <span class="q-b"><span class="q-t">Thank you → Sana Malik</span><span class="q-s">Today, <span class="num">11:04 AM</span> · F-6 Studio · delivered just after the Zuhr window</span></span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></span>
+              <span class="tbd"><span class="th">Scheduled message cancelled</span><span class="td">Thank you → Bilal Khan</span></span>
+              <button class="undo" type="button">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The prayer-window rule is written as <strong>plain scheduling behaviour</strong>, not as a devotional feature: neutral <code>bg.raised</code> surface, the same functional clock glyph the time field uses, and one factual sentence — a message due during a prayer window <em>delivers just after</em> (<code>GA-069</code>'s quiet-hours precedent, §10.3: no brand-green cultural fill, no ornament). The "Sent recently" row states the same fact honestly after the event. Cancelling a queued send is <strong>immediate and reversible</strong> — the row leaves and an Undo toast appears (<code>GA-090</code>) rather than an "Are you sure?" dialog. The time picker keeps a real <code>role="radiogroup"</code> above it and an AM/PM pair at 44pt; digits sit in <code>.num</code> with tabular figures so the wheel columns never jitter.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — saved replies and the scheduling screen">
+      <div class="panel-tag">Dark — saved replies · when to send</div>
+      <div class="rowflex">
+
+        <!-- E · DARK TEMPLATES -->
+        <div class="pcol">
+          <div class="pcap">E · Saved replies — dark</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/host/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="eH">Saved replies</div>
+              <a class="tbar-act" href="/host/messages/templates/new">New</a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Templates and scheduled messages">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Saved replies <span class="cnt num">3</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Scheduled <span class="cnt num">2</span></button>
+              </div>
+
+              <div class="bnote">
+                <span class="bnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span>
+                <span class="bnote-t"><b>Each reply keeps both languages.</b> The guest receives the version that matches the language they're reading in.</span>
+              </div>
+
+              <div class="seclabel">Your replies</div>
+              <div class="tpls">
+                <a class="tpl" href="/host/messages/templates/check-in-info">
+                  <span class="tpl-h"><span class="tpl-t">Check-in info</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en">"Assalam o alaikum <span class="vtok">{guest name}</span>! Check-in at <span class="vtok">{listing name}</span> is from <span class="vtok">{check-in time}</span>."</span></span>
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur" dir="rtl" lang="ur">”السلام علیکم <span class="vtok">{مہمان کا نام}</span>! <span class="vtok">{لسٹنگ کا نام}</span> میں چیک اِن <span class="vtok">{چیک اِن کا وقت}</span> سے ہے۔“</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Sends automatically</span>
+                    <span class="tpl-meta-t">Day before arrival · <span class="num">10:00 AM</span></span>
+                  </span>
+                </a>
+
+                <a class="tpl" href="/host/messages/templates/thank-you">
+                  <span class="tpl-h"><span class="tpl-t">Thank you</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en">"Shukriya for staying, <span class="vtok">{guest name}</span>. Safe travels home."</span></span>
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur" dir="rtl" lang="ur">”قیام کا شکریہ، <span class="vtok">{مہمان کا نام}</span>۔ سفر بخیر۔“</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Sends automatically</span>
+                    <span class="tpl-meta-t">Morning of checkout · <span class="num">11:00 AM</span></span>
+                  </span>
+                </a>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · DARK SCHEDULE -->
+        <div class="pcol">
+          <div class="pcap">F · When to send — dark</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/host/messages/templates/check-in-info" aria-label="Back to the Check-in info reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="fH">When to send</div>
+              <button class="tbar-act" type="button">Save</button>
+            </div>
+            <div class="screen">
+              <div class="seclabel">Send this reply</div>
+              <div class="radios" role="radiogroup" aria-label="When to send this reply">
+                <button class="rrow" type="button" role="radio" aria-checked="true">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">Day before arrival</span><span class="rs">Goes out the day before check-in</span></span>
+                </button>
+                <button class="rrow" type="button" role="radio" aria-checked="false">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">Morning of arrival</span><span class="rs">Goes out on the check-in day</span></span>
+                </button>
+              </div>
+
+              <div class="seclabel">At</div>
+              <div class="tfield">
+                <span class="tf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <span class="tf-v num">10:00 AM</span>
+              </div>
+              <div class="picker">
+                <div class="wheel" role="group" aria-label="Pick a time: 10:00">
+                  <span class="wsel" aria-hidden="true"></span>
+                  <span class="wcol"><span class="wv num">09</span><span class="wv sel num">10</span><span class="wv num">11</span></span>
+                  <span class="wcol"><span class="wv num">45</span><span class="wv sel num">00</span><span class="wv num">15</span></span>
+                </div>
+                <div class="mer" role="group" aria-label="Morning or afternoon">
+                  <button class="mbtn" type="button" aria-pressed="true">AM</button>
+                  <button class="mbtn" type="button" aria-pressed="false">PM</button>
+                </div>
+              </div>
+
+              <div class="pnote">
+                <span class="pnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <span class="pnote-t"><b>Scheduled sends avoid prayer windows.</b> A message due during one is delivered just after, using the prayer times for the listing's city.</span>
+              </div>
+
+              <div class="swrow">
+                <span class="swrow-b"><span class="swrow-t">Send this automatically</span><span class="swrow-s">Applies to every confirmed booking at Gulberg 2 Residence</span></span>
+                <button class="swhit" type="button" role="switch" aria-checked="true" aria-label="Send this automatically"><span class="sw on" aria-hidden="true"><i></i></span></button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (DESIGN §1.6). The variable tokens keep the brand-subtle pill in both themes; the "Sends automatically" chip stays in the muted <code>success</code> register rather than brightening, and the selected wheel band is the same <code>int.subtle</code> + brand hairline pairing used by the selected radio row — one selection idiom across the screen, marked by tint <em>and</em> border <em>and</em> weight, never colour alone (§11).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of saved replies and scheduling">
+      <div class="panel-tag">RTL · اردو — saved replies and the schedule, mirrored</div>
+      <div class="rowflex">
+
+        <!-- G · RTL TEMPLATES -->
+        <div class="pcol">
+          <div class="pcap">محفوظ جوابات — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="gH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/ur/host/messages" aria-label="پیغامات پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="gH">محفوظ جوابات</div>
+              <a class="tbar-act" href="/ur/host/messages/templates/new">نیا</a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="محفوظ جوابات اور طے شدہ پیغامات">
+                <button class="segtab" type="button" role="tab" aria-selected="true">محفوظ جوابات <span class="cnt num">3</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">طے شدہ <span class="cnt num">2</span></button>
+              </div>
+
+              <div class="bnote">
+                <span class="bnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span>
+                <span class="bnote-t"><b>ہر جواب دونوں زبانوں میں محفوظ رہتا ہے۔</b> مہمان کو وہی نسخہ ملتا ہے جو اُن کی زبان سے میل کھاتا ہے۔</span>
+              </div>
+
+              <div class="seclabel">آپ کے جوابات</div>
+              <div class="tpls">
+                <a class="tpl" href="/ur/host/messages/templates/check-in-info">
+                  <span class="tpl-h"><span class="tpl-t">چیک اِن کی معلومات</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur">”السلام علیکم <span class="vtok">{مہمان کا نام}</span>! <span class="vtok">{لسٹنگ کا نام}</span> میں چیک اِن <span class="vtok">{چیک اِن کا وقت}</span> سے ہے۔ گیٹ کوڈ آپ کی آمد والی صبح یہیں بھیج دوں گا۔“</span></span>
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en" dir="ltr" lang="en">"Assalam o alaikum <span class="vtok">{guest name}</span>! Check-in at <span class="vtok">{listing name}</span> is from <span class="vtok">{check-in time}</span>."</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>خودکار طور پر بھیجا جاتا ہے</span>
+                    <span class="tpl-meta-t">آمد سے ایک دن پہلے · <span class="num">10:00 AM</span></span>
+                  </span>
+                </a>
+
+                <a class="tpl" href="/ur/host/messages/templates/thank-you">
+                  <span class="tpl-h"><span class="tpl-t">شکریہ کا پیغام</span><span class="tpl-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></span>
+                  <span class="langs">
+                    <span class="lang"><span class="lang-tag">اردو</span><span class="lang-x ur">”قیام کا شکریہ، <span class="vtok">{مہمان کا نام}</span>۔ سفر بخیر — آپ جب چاہیں دوبارہ تشریف لائیں۔“</span></span>
+                    <span class="lang"><span class="lang-tag">EN</span><span class="lang-x en" dir="ltr" lang="en">"Shukriya for staying, <span class="vtok">{guest name}</span>. Safe travels home."</span></span>
+                  </span>
+                  <span class="tpl-meta">
+                    <span class="tpl-meta-t auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>خودکار طور پر بھیجا جاتا ہے</span>
+                    <span class="tpl-meta-t">چیک آؤٹ کی صبح · <span class="num">11:00 AM</span></span>
+                  </span>
+                </a>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- H · RTL SCHEDULE + QUEUE -->
+        <div class="pcol">
+          <div class="pcap">وقت کا انتخاب اور قطار — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="hH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/ur/host/messages/templates/check-in-info" aria-label="جواب پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="hH">کب بھیجنا ہے</div>
+              <button class="tbar-act" type="button">محفوظ کریں</button>
+            </div>
+            <div class="screen">
+              <div class="seclabel">یہ جواب بھیجیں</div>
+              <div class="radios" role="radiogroup" aria-label="یہ جواب کب بھیجا جائے">
+                <button class="rrow" type="button" role="radio" aria-checked="true">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">آمد سے ایک دن پہلے</span><span class="rs">چیک اِن سے ایک دن قبل جاتا ہے</span></span>
+                </button>
+                <button class="rrow" type="button" role="radio" aria-checked="false">
+                  <span class="rdot" aria-hidden="true"><i></i></span>
+                  <span class="rb"><span class="rl">آمد والی صبح</span><span class="rs">چیک اِن والے دن جاتا ہے</span></span>
+                </button>
+              </div>
+
+              <div class="seclabel">وقت</div>
+              <div class="tfield">
+                <span class="tf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <span class="tf-v num">10:00 AM</span>
+              </div>
+              <div class="picker">
+                <div class="wheel" role="group" aria-label="وقت منتخب کریں: 10:00">
+                  <span class="wsel" aria-hidden="true"></span>
+                  <span class="wcol"><span class="wv num">09</span><span class="wv sel num">10</span><span class="wv num">11</span></span>
+                  <span class="wcol"><span class="wv num">45</span><span class="wv sel num">00</span><span class="wv num">15</span></span>
+                </div>
+                <div class="mer" role="group" aria-label="صبح یا شام">
+                  <button class="mbtn" type="button" aria-pressed="true">AM</button>
+                  <button class="mbtn" type="button" aria-pressed="false">PM</button>
+                </div>
+              </div>
+
+              <div class="pnote">
+                <span class="pnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <span class="pnote-t"><b>طے شدہ پیغامات نماز کے اوقات سے گریز کرتے ہیں۔</b> اگر کوئی پیغام اُس وقت میں آ رہا ہو تو وہ فوراً بعد بھیجا جاتا ہے — لسٹنگ کے شہر کے اوقات کے مطابق۔</span>
+              </div>
+
+              <div class="seclabel">بھیجنے کے لیے قطار میں</div>
+              <div class="qlist">
+                <div class="qrow">
+                  <span class="q-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                  <span class="q-b"><span class="q-t">چیک اِن کی معلومات ← فاطمہ</span><span class="q-s">کل، <span class="num">10:00 AM</span> · گلبرگ <span class="num">2</span> ریزیڈنس</span></span>
+                  <button class="q-cancel" type="button" aria-label="فاطمہ کے لیے طے شدہ پیغام منسوخ کریں">منسوخ</button>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron flips, the "New" action moves to the leading edge, radio dots and queue glyphs swap sides via logical <code>margin-inline</code> / <code>inset-inline</code>, and the template row shows اردو <strong>first</strong> — the language the host is working in leads, with the English variant beneath it rendered LTR in Inter on its own line. Every numeral is a <strong>Western digit inside <code>.num</code></strong> (<code>direction:ltr; unicode-bidi:isolate</code>) — the <span class="num">10:00 AM</span> send time, the wheel columns, the <span class="num">2</span> in گلبرگ <span class="num">2</span> — with Urdu prose around them, and each <code>aria-label</code> repeats exactly the digits on screen (Pass #31). The variable tokens stay readable in both scripts because the token itself is translated (<span dir="rtl" lang="ur">{مہمان کا نام}</span>), not left as an untranslated English key.</p>
+    </section>
+
+  </main>
+</body>
+</html>

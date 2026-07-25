@@ -1,0 +1,274 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Hijri-aware Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --radius-lg:12px; --radius-xl:16px; --radius-2xl:20px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 28px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .grid3 { max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:20px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+
+  .cal { max-width:340px; margin:0 auto; }
+  .cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .cal-head .m { font-size:18px; font-weight:600; color:var(--text-primary); }
+  .cal-head .h { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+  .nav { width:36px; height:36px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .nav svg { width:18px; height:18px; color:var(--text-primary); }
+  .rampill { display:inline-flex; align-items:center; gap:6px; margin:10px 0 6px; padding:3px 10px; border-radius:var(--radius-full); background:var(--int-subtle); font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--int-primary); }
+
+  .wk { display:grid; grid-template-columns:repeat(7,1fr); margin-top:6px; }
+  .wk span { text-align:center; font-size:10px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); padding-bottom:6px; }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); }
+  .day { position:relative; height:46px; display:flex; align-items:center; justify-content:center; border:none; background:transparent; cursor:pointer; padding:0; }
+  .inner { width:40px; height:44px; border-radius:var(--radius-full); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; }
+  .g { font-size:15px; color:var(--text-primary); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .h { font-size:10px; color:var(--text-secondary); line-height:1.1; font-variant-numeric:tabular-nums; }
+  /* Ramadan tint segment */
+  .day.ramadan { background:var(--int-subtle); }
+  /* range band (square fill so adjacent cells form a continuous band) */
+  .day.in-range { background:var(--int-subtle); }
+  .day.range-start { background:linear-gradient(to right, transparent 50%, var(--int-subtle) 50%); }
+  .day.range-end { background:linear-gradient(to left, transparent 50%, var(--int-subtle) 50%); }
+  .day.range-start .inner, .day.range-end .inner { background:var(--int-primary); }
+  .day.range-start .g, .day.range-end .g { color:var(--text-on-brand); }
+  .day.range-start .h, .day.range-end .h { color:var(--text-on-brand); opacity:.85; }
+  /* today ring */
+  .day.today .inner { border:1.5px solid var(--border-brand); }
+  /* disabled / unavailable */
+  .day.disabled { cursor:default; }
+  .day.disabled .g { color:var(--text-disabled); text-decoration:line-through; }
+  .day.disabled .h { color:var(--text-disabled); }
+  /* Eid dot */
+  .day.eid .inner { position:relative; }
+  .eiddot { position:absolute; top:2px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--int-primary); }
+
+  .legend { display:flex; flex-wrap:wrap; gap:10px 16px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border-hairline); }
+  .lg { display:inline-flex; align-items:center; gap:7px; font-size:11.5px; color:var(--text-secondary); }
+  .sw { width:14px; height:14px; border-radius:4px; flex:none; }
+  .sw.range { background:var(--int-primary); }
+  .sw.rmd { background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .sw.today { border:1.5px solid var(--border-brand); border-radius:50%; }
+  .sw.dis { position:relative; }
+  .sw.dis::after { content:""; position:absolute; inset:0; margin:auto; width:100%; height:1.5px; background:var(--text-disabled); }
+  .sw.eiddotsw { position:relative; }
+  .sw.eiddotsw::after { content:""; position:absolute; top:0; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--int-primary); }
+  .foot { font-size:12px; color:var(--text-secondary); margin-top:14px; }
+
+  /* RTL */
+  .cal.rtl { direction:rtl; }
+  /* mirror the range-band half-fills so the band still connects toward the in-range cells */
+  .cal.rtl .day.range-start { background:linear-gradient(to left, transparent 50%, var(--int-subtle) 50%); }
+  .cal.rtl .day.range-end { background:linear-gradient(to right, transparent 50%, var(--int-subtle) 50%); }
+  .cal.rtl .m, .cal.rtl .h, .cal.rtl .wk span, .cal.rtl .rampill, .cal.rtl .foot { font-family:'Noto Nastaliq Urdu',serif; }
+  .cal.rtl .g, .cal.rtl .h { font-family:'Inter',sans-serif; }
+  @media (max-width:980px){ .grid3{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Calendar — Hijri-aware date-range picker</h1>
+    <p>Both Gregorian (primary) and Hijri (secondary) dates, a calm Ramadan band + Eid dot, range selection, disabled/booked dates, and full RTL — the culturally essential date surface. No crescents, no ornament, no green wash. Day cells are ≥44pt.</p>
+  </div>
+  <div class="grid3">
+
+    <!-- LIGHT -->
+    <div class="panel">
+      <div class="panel-tag">Light — range · Ramadan · Eid</div>
+      <div class="cal">
+        <div class="cal-head">
+          <button class="nav" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div style="text-align:center"><div class="m">March 2026</div><div class="h">Ramadan – Shawwal 1447 AH</div></div>
+          <button class="nav" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+        <span class="rampill">Ramadan · begins 1 Ramadan</span>
+        <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+        <div class="days">
+          <button class="day ramadan"><span class="inner"><span class="g">1</span><span class="h">11</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">2</span><span class="h">12</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">3</span><span class="h">13</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">4</span><span class="h">14</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">5</span><span class="h">15</span></span></button>
+          <button class="day ramadan today"><span class="inner"><span class="g">6</span><span class="h">16</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">7</span><span class="h">17</span></span></button>
+
+          <button class="day ramadan"><span class="inner"><span class="g">8</span><span class="h">18</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">9</span><span class="h">19</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">10</span><span class="h">20</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">11</span><span class="h">21</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">12</span><span class="h">22</span></span></button>
+          <button class="day ramadan disabled" aria-disabled="true"><span class="inner"><span class="g">13</span><span class="h">23</span></span></button>
+          <button class="day ramadan disabled" aria-disabled="true"><span class="inner"><span class="g">14</span><span class="h">24</span></span></button>
+
+          <button class="day ramadan"><span class="inner"><span class="g">15</span><span class="h">25</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">16</span><span class="h">26</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">17</span><span class="h">27</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">18</span><span class="h">28</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">19</span><span class="h">29</span></span></button>
+          <button class="day eid" aria-label="20 March, 1 Shawwal, Eid al-Fitr"><span class="inner"><span class="eiddot"></span><span class="g">20</span><span class="h">1</span></span></button>
+          <button class="day"><span class="inner"><span class="g">21</span><span class="h">2</span></span></button>
+
+          <button class="day"><span class="inner"><span class="g">22</span><span class="h">3</span></span></button>
+          <button class="day"><span class="inner"><span class="g">23</span><span class="h">4</span></span></button>
+          <button class="day range-start" aria-label="24 March, 5 Shawwal, check-in"><span class="inner"><span class="g">24</span><span class="h">5</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">25</span><span class="h">6</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">26</span><span class="h">7</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">27</span><span class="h">8</span></span></button>
+          <button class="day range-end" aria-label="28 March, 9 Shawwal, check-out"><span class="inner"><span class="g">28</span><span class="h">9</span></span></button>
+
+          <button class="day"><span class="inner"><span class="g">29</span><span class="h">10</span></span></button>
+          <button class="day"><span class="inner"><span class="g">30</span><span class="h">11</span></span></button>
+          <button class="day"><span class="inner"><span class="g">31</span><span class="h">12</span></span></button>
+        </div>
+        <div class="legend">
+          <span class="lg"><span class="sw range"></span>Check-in / out</span>
+          <span class="lg"><span class="sw rmd"></span>Ramadan</span>
+          <span class="lg"><span class="sw eiddotsw"></span>Eid al-Fitr</span>
+          <span class="lg"><span class="sw today"></span>Today</span>
+          <span class="lg"><span class="sw dis"></span>Unavailable</span>
+        </div>
+        <p class="foot">Hijri dates are approximate and may vary by moon sighting.</p>
+      </div>
+    </div>
+
+    <!-- DARK -->
+    <div class="panel dark">
+      <div class="panel-tag">Dark — same states</div>
+      <div class="cal">
+        <div class="cal-head">
+          <button class="nav" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div style="text-align:center"><div class="m">March 2026</div><div class="h">Ramadan – Shawwal 1447 AH</div></div>
+          <button class="nav" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+        <span class="rampill">Ramadan · begins 1 Ramadan</span>
+        <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+        <div class="days">
+          <button class="day ramadan"><span class="inner"><span class="g">1</span><span class="h">11</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">2</span><span class="h">12</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">3</span><span class="h">13</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">4</span><span class="h">14</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">5</span><span class="h">15</span></span></button>
+          <button class="day ramadan today"><span class="inner"><span class="g">6</span><span class="h">16</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">7</span><span class="h">17</span></span></button>
+
+          <button class="day ramadan"><span class="inner"><span class="g">8</span><span class="h">18</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">9</span><span class="h">19</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">10</span><span class="h">20</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">11</span><span class="h">21</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">12</span><span class="h">22</span></span></button>
+          <button class="day ramadan disabled" aria-disabled="true"><span class="inner"><span class="g">13</span><span class="h">23</span></span></button>
+          <button class="day ramadan disabled" aria-disabled="true"><span class="inner"><span class="g">14</span><span class="h">24</span></span></button>
+
+          <button class="day ramadan"><span class="inner"><span class="g">15</span><span class="h">25</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">16</span><span class="h">26</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">17</span><span class="h">27</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">18</span><span class="h">28</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">19</span><span class="h">29</span></span></button>
+          <button class="day eid" aria-label="20 March, 1 Shawwal, Eid al-Fitr"><span class="inner"><span class="eiddot"></span><span class="g">20</span><span class="h">1</span></span></button>
+          <button class="day"><span class="inner"><span class="g">21</span><span class="h">2</span></span></button>
+
+          <button class="day"><span class="inner"><span class="g">22</span><span class="h">3</span></span></button>
+          <button class="day"><span class="inner"><span class="g">23</span><span class="h">4</span></span></button>
+          <button class="day range-start"><span class="inner"><span class="g">24</span><span class="h">5</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">25</span><span class="h">6</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">26</span><span class="h">7</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">27</span><span class="h">8</span></span></button>
+          <button class="day range-end"><span class="inner"><span class="g">28</span><span class="h">9</span></span></button>
+
+          <button class="day"><span class="inner"><span class="g">29</span><span class="h">10</span></span></button>
+          <button class="day"><span class="inner"><span class="g">30</span><span class="h">11</span></span></button>
+          <button class="day"><span class="inner"><span class="g">31</span><span class="h">12</span></span></button>
+        </div>
+        <div class="legend">
+          <span class="lg"><span class="sw range"></span>Check-in / out</span>
+          <span class="lg"><span class="sw rmd"></span>Ramadan</span>
+          <span class="lg"><span class="sw eiddotsw"></span>Eid al-Fitr</span>
+          <span class="lg"><span class="sw today"></span>Today</span>
+          <span class="lg"><span class="sw dis"></span>Unavailable</span>
+        </div>
+        <p class="foot">Hijri dates are approximate and may vary by moon sighting.</p>
+      </div>
+    </div>
+
+    <!-- RTL -->
+    <div class="panel">
+      <div class="panel-tag">RTL — اردو (mirrored)</div>
+      <div class="cal rtl">
+        <div class="cal-head">
+          <button class="nav" aria-label="اگلا مہینہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <div style="text-align:center"><div class="m">مارچ 2026</div><div class="h">رمضان – شوال ۱۴۴۷ھ</div></div>
+          <button class="nav" aria-label="پچھلا مہینہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+        <span class="rampill">رمضان</span>
+        <div class="wk"><span>اتوار</span><span>پیر</span><span>منگل</span><span>بدھ</span><span>جمعرات</span><span>جمعہ</span><span>ہفتہ</span></div>
+        <div class="days">
+          <button class="day ramadan"><span class="inner"><span class="g">1</span><span class="h">11</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">2</span><span class="h">12</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">3</span><span class="h">13</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">4</span><span class="h">14</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">5</span><span class="h">15</span></span></button>
+          <button class="day ramadan today"><span class="inner"><span class="g">6</span><span class="h">16</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">7</span><span class="h">17</span></span></button>
+
+          <button class="day ramadan"><span class="inner"><span class="g">8</span><span class="h">18</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">9</span><span class="h">19</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">10</span><span class="h">20</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">11</span><span class="h">21</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">12</span><span class="h">22</span></span></button>
+          <button class="day ramadan disabled" aria-disabled="true"><span class="inner"><span class="g">13</span><span class="h">23</span></span></button>
+          <button class="day ramadan disabled" aria-disabled="true"><span class="inner"><span class="g">14</span><span class="h">24</span></span></button>
+
+          <button class="day ramadan"><span class="inner"><span class="g">15</span><span class="h">25</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">16</span><span class="h">26</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">17</span><span class="h">27</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">18</span><span class="h">28</span></span></button>
+          <button class="day ramadan"><span class="inner"><span class="g">19</span><span class="h">29</span></span></button>
+          <button class="day eid" aria-label="عید الفطر"><span class="inner"><span class="eiddot"></span><span class="g">20</span><span class="h">1</span></span></button>
+          <button class="day"><span class="inner"><span class="g">21</span><span class="h">2</span></span></button>
+
+          <button class="day"><span class="inner"><span class="g">22</span><span class="h">3</span></span></button>
+          <button class="day"><span class="inner"><span class="g">23</span><span class="h">4</span></span></button>
+          <button class="day range-start"><span class="inner"><span class="g">24</span><span class="h">5</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">25</span><span class="h">6</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">26</span><span class="h">7</span></span></button>
+          <button class="day in-range"><span class="inner"><span class="g">27</span><span class="h">8</span></span></button>
+          <button class="day range-end"><span class="inner"><span class="g">28</span><span class="h">9</span></span></button>
+
+          <button class="day"><span class="inner"><span class="g">29</span><span class="h">10</span></span></button>
+          <button class="day"><span class="inner"><span class="g">30</span><span class="h">11</span></span></button>
+          <button class="day"><span class="inner"><span class="g">31</span><span class="h">12</span></span></button>
+        </div>
+        <p class="foot">ہجری تاریخیں تخمینی ہیں اور رویتِ ہلال کے مطابق مختلف ہو سکتی ہیں۔</p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

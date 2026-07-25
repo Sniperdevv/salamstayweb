@@ -1,0 +1,446 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Wizard: Pricing (HA-031)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-019 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-primary-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-primary-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  dl,dt,dd { margin:0; }
+  fieldset { border:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { max-width:980px; font-size:14px; color:#5F676D; margin-top:8px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:330px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1060px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host wizard lineage (ha-019 canon); NEVER the guest checkout stepper */
+  .phone { width:330px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:790px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.hc-a,.hc-now,.wcap,h2,.lead,.flabel,.fhint,.tog-t,.tog-d,.abnote p,.pv-h,.pv-sub,.bd dt .lab,.bd .total dt,.reassure,.btn) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — copied byte-for-byte from ha-019 canon */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 0; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  /* wizard progress — 12 thin bars, verify-family sub-progress grammar (§7.6a), copied byte-for-byte from ha-019 */
+  .wprog { padding:8px 18px 0; flex:none; }
+  .wprog .wbars { display:flex; gap:3px; margin-bottom:6px; }
+  .wprog .wbars i { display:block; height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); font-style:normal; }
+  .wprog .wbars i.done, .wprog .wbars i.now { background:var(--int-primary); }
+  .wprog .wbars i.now { opacity:.55; }
+  .wprog .wcap { font-size:11px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+
+  /* price fields — ha-002 amtwrap grammar, verbatim fhint reuse */
+  .fld { margin-bottom:14px; }
+  .flabel { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; }
+  .amtwrap { display:flex; align-items:center; height:46px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); }
+  .amtwrap .pre { font-size:14.5px; font-weight:600; color:var(--text-secondary); padding:0 4px 0 14px; }
+  .amtwrap input { flex:1; border:none; font-family:inherit; font-size:14.5px; color:var(--text-primary); padding:0 14px 0 2px; background:transparent; min-width:0; }
+  .amtwrap input::placeholder { color:var(--text-tertiary); }
+  .fhint { display:block; font-size:11.5px; color:var(--text-tertiary); margin-top:7px; line-height:1.45; }
+
+  /* weekend-price toggle row — ha-023 switch grammar */
+  .togrow { display:flex; gap:11px; align-items:flex-start; padding:11px 0; border-top:1px solid var(--border-hairline); border-bottom:1px solid var(--border-hairline); margin-bottom:14px; }
+  .tog-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .tog-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .tog-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .swbtn { flex:none; width:44px; height:44px; margin:-10px -10px -10px 0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; padding:0; cursor:pointer; }
+  .sw { position:relative; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); display:block; }
+  .sw i { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(16,25,27,.28); display:block; }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { transform:translateX(16px); }
+  .phone.rtl .sw i { left:auto; right:2px; }
+  .phone.rtl .sw.on i { transform:translateX(-16px); }
+
+  /* no-smart-pricing honesty note */
+  .abnote { display:flex; gap:9px; align-items:flex-start; margin-bottom:14px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .abnote svg { width:15px; height:15px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .abnote p { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+
+  /* fee-transparency preview — ga-050 breakdown grammar */
+  .pvwrap { margin-top:2px; padding-top:14px; border-top:1px solid var(--border-hairline); }
+  .pv-h { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:2px; }
+  .pv-sub { font-size:11px; color:var(--text-tertiary); margin-bottom:10px; line-height:1.4; }
+  .bd { display:flex; flex-direction:column; }
+  .bd .row { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:7px 0; border-bottom:1px solid var(--border-hairline); font-size:12px; color:var(--text-primary); }
+  .bd .row dt { color:var(--text-secondary); }
+  .bd .row dt .lab { color:var(--text-secondary); }
+  .bd .row dd { font-weight:600; white-space:nowrap; }
+  .bd .row.total { border-bottom:none; padding-top:10px; font-size:13.5px; font-weight:700; }
+  .bd .row.total dt { color:var(--text-primary); font-weight:700; }
+  .pv-cap { font-size:11px; color:var(--text-tertiary); margin-top:8px; line-height:1.4; }
+
+  /* empty output state — ha-002 grammar */
+  .outempty { display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:24px 18px; border-radius:var(--radius-lg); border:1px dashed var(--border-default); background:var(--bg-sunken); margin-top:2px; }
+  .outempty .oi { width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .outempty .oi svg { width:19px; height:19px; }
+  .outempty .ot { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .outempty .od { font-size:11.5px; color:var(--text-secondary); max-width:280px; }
+
+  .spacer-fill { flex:1; }
+  .reassure { font-size:11px; color:var(--text-tertiary); text-align:center; margin-top:12px; line-height:1.4; }
+  .btn { width:100%; min-height:48px; margin-top:18px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:350px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Wizard: Pricing (HA-031)</h1>
+    <p><b>Step 12 of 12</b> — the first of two screens that <b>share the "Step 12 of 12 · Pricing &amp; availability" caption</b> with <code>HA-032</code> (<code>ha-019</code> convention, byte-for-byte). A nightly base price Input in <b>₨</b> ("you set your price," the <code>HA-002</code> precedent, reused verbatim) with an optional different weekend rate, a cleaning-fee Input, and a <b>fee-transparency preview</b> reusing <code>GA-050</code>'s itemised breakdown grammar so the host sees exactly what the guest sees — nightly × nights, cleaning fee, <b>Service fee (wakala)</b>, and the province's sales tax, as literal PKR figures the host's own numbers produce (never an invented percentage or market rate) — the breakdown spells "PKR," matching <code>GA-050</code> verbatim and DESIGN §8.1's rule that currency is always labelled, never symbol-only; the <b>₨</b> glyph is reserved for the input-field prefix (<code>HA-002</code> precedent), where it functions as a unit adornment rather than a price display. <b>Smart/algorithmic pricing is explicitly absent</b> — a plain honesty line states there is no automatic adjustment. Case continuity: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b> (Punjab jurisdiction, distinct from the shipped Islamabad/ICT example). Panels: empty (light) · priced + guest-preview (light) · priced + guest-preview, dark (weekend rate on) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — empty · priced + preview</span><span>Dark — priced + preview, weekend rate</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — EMPTY · PRICED + PREVIEW ============================ -->
+    <section class="panel" aria-label="Light theme — empty pricing fields, and priced fields with the fee-transparency preview">
+      <div class="panel-tag">Light — A empty, prompt output · B priced, breakdown populated</div>
+      <div class="rowflex">
+
+        <!-- A · EMPTY -->
+        <div class="pcol">
+          <div class="pcap">A · Empty — no price entered yet</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/house-rules" aria-label="Back to House rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Pricing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+              <p class="wcap">Step 12 of 12 · Pricing &amp; availability</p>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Set your price</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment. Your price, your call — see exactly what guests will see.</p>
+
+              <div class="fld">
+                <label class="flabel" for="rate-a">Nightly rate</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="rate-a" type="text" inputmode="numeric" placeholder="e.g. 12,000" /></div>
+                <span class="fhint">You set your price — this isn't a suggested market rate.</span>
+              </div>
+
+              <div class="togrow">
+                <div class="tog-b"><span class="tog-t">Different weekend rate</span><span class="tog-d">Off — Friday and Saturday charge the same as every other night.</span></div>
+                <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Different weekend rate, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="clean-a">Cleaning fee</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="clean-a" type="text" inputmode="numeric" placeholder="e.g. 2,500" /></div>
+                <span class="fhint">Shown to guests separately in their price breakdown — a one-time fee per stay, not per night.</span>
+              </div>
+
+              <div class="abnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>There's no automatic price adjustment — you're always in control of your nightly rate.</p>
+              </div>
+
+              <div class="pvwrap">
+                <div class="pv-h">What guests will see</div>
+                <div class="outempty" role="status">
+                  <span class="oi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l3-3 3 2 4-5"/></svg></span>
+                  <span class="ot">Set your nightly rate</span>
+                  <span class="od">The itemised breakdown guests see at checkout — nightly, cleaning fee, service fee and tax — will show here.</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button" disabled aria-disabled="true">Save &amp; continue</button>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · PRICED + PREVIEW -->
+        <div class="pcol">
+          <div class="pcap">B · Priced — PKR 12,000/night, breakdown populated</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/house-rules" aria-label="Back to House rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Pricing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+              <p class="wcap">Step 12 of 12 · Pricing &amp; availability</p>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Set your price</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment. Your price, your call — see exactly what guests will see.</p>
+
+              <div class="fld">
+                <label class="flabel" for="rate-b">Nightly rate</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="rate-b" type="text" inputmode="numeric" value="12,000" /></div>
+                <span class="fhint">You set your price — this isn't a suggested market rate.</span>
+              </div>
+
+              <div class="togrow">
+                <div class="tog-b"><span class="tog-t">Different weekend rate</span><span class="tog-d">Off — Friday and Saturday charge the same as every other night.</span></div>
+                <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Different weekend rate, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="clean-b">Cleaning fee</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="clean-b" type="text" inputmode="numeric" value="3,000" /></div>
+                <span class="fhint">Shown to guests separately in their price breakdown — a one-time fee per stay, not per night.</span>
+              </div>
+
+              <div class="abnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>There's no automatic price adjustment — you're always in control of your nightly rate.</p>
+              </div>
+
+              <div class="pvwrap">
+                <div class="pv-h">What guests will see</div>
+                <div class="pv-sub">Example: a 3-night stay, recalculated as you change your price or fees.</div>
+                <dl class="bd">
+                  <div class="row"><dt><span class="lab"><span class="num">PKR 12,000</span>&nbsp;×&nbsp;<span class="num">3</span>&nbsp;nights</span></dt><dd class="num">PKR 36,000</dd></div>
+                  <div class="row"><dt>Cleaning fee</dt><dd class="num">PKR 3,000</dd></div>
+                  <div class="row"><dt>Service fee (wakala)</dt><dd class="num">PKR 2,340</dd></div>
+                  <div class="row"><dt>Sales tax · Punjab</dt><dd class="num">PKR 1,950</dd></div>
+                  <div class="row total"><dt>Total (PKR)</dt><dd class="num">PKR 43,290</dd></div>
+                </dl>
+                <p class="pv-cap">Your price and the SalamStay service fee are always shown as separate lines — never folded into one number.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/availability">Save &amp; continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The nightly-rate hint — <b>"you set your price — this isn't a suggested market rate"</b> — is reused <b>verbatim from HA-002</b>'s earnings estimator, keeping the you-set-your-price doctrine identical wherever a host types a rate. There is <b>no algorithmic-pricing control on this screen at all</b> — no "smart pricing" toggle, no suggested-range slider — only the explicit honesty line stating the absence, matching the pattern already used elsewhere in the loop for stating what a screen deliberately does <em>not</em> do (GA-110's "not a journey stepper," GA-132's "no response-time promise"). The fee-transparency preview reuses <code>GA-050</code>'s <code>.bd</code>/row/dt/dd breakdown grammar exactly; the wakala and tax figures are <b>literal rupee amounts</b> derived from the host's own inputs, never a stated percentage or invented market average (NEVER #3).</p>
+    </section>
+
+    <!-- ============================ DARK — PRICED + PREVIEW (WEEKEND RATE ON) ============================ -->
+    <section class="panel dark" aria-label="Dark theme — priced fields with a different weekend rate and the fee-transparency preview">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Dark — PKR 9,500 weekday / PKR 11,000 weekend, breakdown populated</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/house-rules" aria-label="Back to House rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Pricing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+              <p class="wcap">Step 12 of 12 · Pricing &amp; availability</p>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Set your price</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment. Your price, your call — see exactly what guests will see.</p>
+
+              <div class="fld">
+                <label class="flabel" for="rate-c">Nightly rate (weekday)</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="rate-c" type="text" inputmode="numeric" value="9,500" /></div>
+                <span class="fhint">You set your price — this isn't a suggested market rate.</span>
+              </div>
+
+              <div class="togrow">
+                <div class="tog-b"><span class="tog-t">Different weekend rate</span><span class="tog-d">On — Friday and Saturday nights use the rate below.</span></div>
+                <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Different weekend rate, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="wkr-c">Weekend rate (Fri &amp; Sat)</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="wkr-c" type="text" inputmode="numeric" value="11,000" /></div>
+                <span class="fhint">Applies automatically to Friday and Saturday nights only.</span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="clean-c">Cleaning fee</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="clean-c" type="text" inputmode="numeric" value="2,000" /></div>
+                <span class="fhint">Shown to guests separately in their price breakdown — a one-time fee per stay, not per night.</span>
+              </div>
+
+              <div class="abnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>There's no automatic price adjustment — you're always in control of your nightly rate.</p>
+              </div>
+
+              <div class="pvwrap">
+                <div class="pv-h">What guests will see</div>
+                <div class="pv-sub">Example: 3 weekday nights (weekend nights use your weekend rate above).</div>
+                <dl class="bd">
+                  <div class="row"><dt><span class="lab"><span class="num">PKR 9,500</span>&nbsp;×&nbsp;<span class="num">3</span>&nbsp;nights</span></dt><dd class="num">PKR 28,500</dd></div>
+                  <div class="row"><dt>Cleaning fee</dt><dd class="num">PKR 2,000</dd></div>
+                  <div class="row"><dt>Service fee (wakala)</dt><dd class="num">PKR 1,830</dd></div>
+                  <div class="row"><dt>Sales tax · Punjab</dt><dd class="num">PKR 1,450</dd></div>
+                  <div class="row total"><dt>Total (PKR)</dt><dd class="num">PKR 33,780</dd></div>
+                </dl>
+                <p class="pv-cap">Your price and the SalamStay service fee are always shown as separate lines — never folded into one number.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/availability">Save &amp; continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">A second, different price set — with the weekend-rate toggle switched on — proves the fields and the breakdown aren't hard-coded to one example; the arithmetic sums exactly (<span class="num">28,500</span> + <span class="num">2,000</span> + <span class="num">1,830</span> + <span class="num">1,450</span> = <span class="num">33,780</span>). Dark tokens re-resolve every role (§1.5).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — priced with the fee-transparency preview">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — قیمت اور فیس کی شفافیت</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="rH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/new/house-rules" aria-label="گھر کے اصولوں پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">قیمت کا تعین</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">لسٹنگ</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+              <p class="wcap">مرحلہ <span class="num">12</span> از <span class="num">12</span> · قیمت اور دستیابی</p>
+            </div>
+            <div class="screen">
+              <h2 id="rH">اپنی قیمت طے کریں</h2>
+              <p class="lead">کینٹ ویو ریزیڈنس — راولپنڈی کینٹونمنٹ۔ قیمت آپ کی مرضی — دیکھیں مہمان بالکل کیا دیکھیں گے۔</p>
+
+              <div class="fld">
+                <label class="flabel" for="rate-r">فی رات قیمت</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="rate-r" type="text" inputmode="numeric" value="12,000" dir="ltr" /></div>
+                <span class="fhint">قیمت آپ خود طے کرتے ہیں — یہ تجویز کردہ مارکیٹ ریٹ نہیں۔</span>
+              </div>
+
+              <div class="togrow">
+                <div class="tog-b"><span class="tog-t">مختلف ویک اینڈ ریٹ</span><span class="tog-d">آف — جمعہ اور ہفتہ باقی راتوں جیسا ہی چارج ہوں گے۔</span></div>
+                <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="مختلف ویک اینڈ ریٹ، آف"><span class="sw" aria-hidden="true"><i></i></span></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="clean-r">صفائی کی فیس</label>
+                <div class="amtwrap"><span class="pre">₨</span><input id="clean-r" type="text" inputmode="numeric" value="3,000" dir="ltr" /></div>
+                <span class="fhint">مہمانوں کو اُن کی قیمت کی تفصیل میں الگ سے دکھائی جاتی ہے — فی قیام ایک بار، ہر رات نہیں۔</span>
+              </div>
+
+              <div class="abnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p>یہاں کوئی خودکار قیمت تبدیلی نہیں — آپ کی فی رات قیمت ہمیشہ آپ کے کنٹرول میں رہتی ہے۔</p>
+              </div>
+
+              <div class="pvwrap">
+                <div class="pv-h">مہمان یہ دیکھیں گے</div>
+                <div class="pv-sub">مثال: 3 راتوں کا قیام، قیمت یا فیس بدلنے پر خودکار اپڈیٹ ہوتا ہے۔</div>
+                <dl class="bd">
+                  <div class="row"><dt><span class="lab"><span class="num">PKR 12,000</span> × <span class="num">3</span> راتیں</span></dt><dd class="num">PKR 36,000</dd></div>
+                  <div class="row"><dt>صفائی کی فیس</dt><dd class="num">PKR 3,000</dd></div>
+                  <div class="row"><dt>سروس فیس (وکالہ)</dt><dd class="num">PKR 2,340</dd></div>
+                  <div class="row"><dt>سیلز ٹیکس · پنجاب</dt><dd class="num">PKR 1,950</dd></div>
+                  <div class="row total"><dt>مجموعی (PKR)</dt><dd class="num">PKR 43,290</dd></div>
+                </dl>
+                <p class="pv-cap">آپ کی قیمت اور سلام اسٹے کی سروس فیس ہمیشہ الگ الگ لائنوں میں دکھائی جاتی ہیں — کبھی ایک نمبر میں نہیں ملائی جاتیں۔</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/host/listings/new/availability">محفوظ کریں اور جاری رکھیں</a>
+              <p class="reassure">آپ کی پیش رفت خودکار طور پر محفوظ ہوتی ہے — کسی بھی وقت میزبان سیٹ اپ سے دوبارہ شروع کریں۔</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron and wizard-progress bars flip to the reading-start (right) edge; the switch thumb travels toward the reading-start "on" side. The PKR figures, step digits and the amount inputs themselves stay Latin/LTR (<code>dir="ltr"</code> on the numeric inputs, <code>.num</code> elsewhere) inside the RTL sentence flow, matching the convention already set on <code>HA-002</code> and <code>GA-050</code>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

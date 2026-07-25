@@ -1,0 +1,567 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-022 Date-range picker (Hijri-aware)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  ul { list-style:none; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:960px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel.span { grid-column:1 / -1; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone frame */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.bar-cap,.reset,.sum-t,.sum-s,.tab-btn,.chip,.m,.h2wk,.rampill,.foot,.mnote,.banner-tx,.btn-ghost,.btn-primary,.flx-h,.wk span) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl :is(.g,.hj) { font-family:'Inter',sans-serif; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  /* App bar */
+  .appbar { display:flex; align-items:center; gap:8px; padding:6px 8px 8px; border-bottom:1px solid var(--border-hairline); }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .bar-cap { flex:1; text-align:center; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .reset { min-height:44px; padding:0 12px; border:none; background:transparent; font-family:inherit; font-size:14px; font-weight:600; color:var(--int-link); cursor:pointer; }
+  .reset[disabled] { color:var(--text-tertiary); cursor:default; }
+
+  .body { flex:1; overflow-y:auto; max-height:560px; padding:14px 16px 8px; }
+  .body::-webkit-scrollbar { width:0; }
+
+  /* Summary header */
+  .sum-t { font-size:20px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); }
+  .sum-s { font-size:13px; color:var(--text-secondary); margin-top:2px; }
+  .sum-s b { color:var(--text-primary); font-weight:600; }
+
+  /* Dates / Flexible tabs */
+  .tabs { display:flex; gap:4px; margin:14px 0 12px; padding:4px; background:var(--bg-sunken); border-radius:var(--radius-full); }
+  .tab-btn { flex:1; min-height:40px; border:none; background:transparent; border-radius:var(--radius-full); font-family:inherit; font-size:13.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; }
+  .tab-btn.active { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-subtle); }
+
+  /* Chips */
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px; }
+  .chip { min-height:40px; padding:0 14px; border:1px solid var(--border-default); border-radius:var(--radius-full); background:var(--bg-canvas); font-family:inherit; font-size:13px; font-weight:500; color:var(--text-primary); cursor:pointer; }
+  .chip.active { border-color:var(--border-brand); background:var(--int-subtle); color:var(--int-primary); font-weight:600; }
+
+  /* Calendar (reuses the Hijri-aware month-grid pattern) */
+  .cal { margin-top:14px; }
+  .cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+  .cal-head .m { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .cal-head .hj-sub { font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+  .nav { width:40px; height:40px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .nav[disabled] { opacity:.4; cursor:default; }
+  .nav svg { width:18px; height:18px; color:var(--text-primary); }
+  .phone.rtl .nav svg { transform:scaleX(-1); }
+  .rampill { display:inline-flex; align-items:center; gap:6px; margin:10px 0 4px; padding:3px 10px; border-radius:var(--radius-full); background:var(--int-subtle); font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--int-primary); }
+
+  .wk { display:grid; grid-template-columns:repeat(7,1fr); margin-top:6px; }
+  .wk span { text-align:center; font-size:10px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); padding-bottom:6px; }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); }
+  .day { position:relative; height:46px; display:flex; align-items:center; justify-content:center; border:none; background:transparent; cursor:pointer; padding:0; }
+  .inner { width:42px; height:44px; border-radius:var(--radius-full); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .g { font-size:15px; color:var(--text-primary); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .hj { font-size:10px; color:var(--text-secondary); line-height:1.1; font-variant-numeric:tabular-nums; }
+  .day.ramadan { background:var(--int-subtle); }
+  .day.in-range { background:var(--int-subtle); }
+  .day.range-start { background:linear-gradient(to right, transparent 50%, var(--int-subtle) 50%); }
+  .day.range-end { background:linear-gradient(to left, transparent 50%, var(--int-subtle) 50%); }
+  .day.range-start .inner, .day.range-end .inner { background:var(--int-primary); }
+  .day.range-start .g, .day.range-end .g { color:var(--text-on-brand); }
+  .day.range-start .hj, .day.range-end .hj { color:var(--text-on-brand); opacity:.85; }
+  .day.today .inner { border:1.5px solid var(--border-brand); }
+  .day.disabled { cursor:default; }
+  .day.disabled .g { color:var(--text-disabled); text-decoration:line-through; }
+  .day.disabled .hj { color:var(--text-disabled); }
+  .day.eid .inner { position:relative; }
+  .eiddot { position:absolute; top:2px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--int-primary); }
+  .phone.rtl .day.range-start { background:linear-gradient(to left, transparent 50%, var(--int-subtle) 50%); }
+  .phone.rtl .day.range-end { background:linear-gradient(to right, transparent 50%, var(--int-subtle) 50%); }
+
+  .legend { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border-hairline); }
+  .lg { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--text-secondary); }
+  .sw { width:13px; height:13px; border-radius:4px; flex:none; }
+  .sw.range { background:var(--int-primary); }
+  .sw.rmd { background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .sw.today { border:1.5px solid var(--border-brand); border-radius:50%; }
+  .sw.dis { position:relative; }
+  .sw.dis::after { content:""; position:absolute; inset:0; margin:auto; width:100%; height:1.5px; background:var(--text-disabled); }
+  .sw.eiddotsw { position:relative; }
+  .sw.eiddotsw::after { content:""; position:absolute; top:0; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--int-primary); }
+
+  .mnote { display:flex; align-items:flex-start; gap:8px; margin-top:12px; font-size:12px; color:var(--text-secondary); line-height:1.45; }
+  .mnote svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:1px; stroke-width:1.9; }
+  .foot { font-size:11.5px; color:var(--text-secondary); margin-top:10px; }
+
+  /* Flexible-mode blocks */
+  .flx-h { font-size:14px; font-weight:600; color:var(--text-primary); margin:16px 2px 10px; }
+  .mgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .mchip { min-height:64px; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; }
+  .mchip.active { border-color:var(--border-brand); background:var(--int-subtle); }
+  .mchip svg { width:20px; height:20px; color:var(--text-secondary); stroke-width:1.7; }
+  .mchip.active svg { color:var(--int-primary); }
+  .mchip .mm { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .mchip.active .mm { color:var(--int-primary); }
+  .mchip .my { font-size:11px; color:var(--text-secondary); }
+
+  /* Offline banner (info triplet — fully tokenized, theme-aware) */
+  .banner { display:flex; align-items:flex-start; gap:10px; margin:12px 0 2px; padding:10px 12px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .banner svg { width:18px; height:18px; color:var(--info-fg); flex:none; margin-top:1px; stroke-width:1.9; }
+  .banner-tx { font-size:12.5px; color:var(--info-fg); line-height:1.45; }
+  .banner-tx b { font-weight:700; }
+
+  /* Sticky footer */
+  .sheetfoot { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-top:1px solid var(--border-hairline); background:var(--bg-canvas); }
+  .foot-sum { display:flex; flex-direction:column; }
+  .foot-sum .fs-t { font-size:14px; font-weight:700; color:var(--text-primary); }
+  .foot-sum .fs-s { font-size:12px; color:var(--text-secondary); }
+  .btn-ghost { min-height:44px; padding:0 8px; border:none; background:transparent; font-family:inherit; font-size:14px; font-weight:600; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+  .btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 22px; border:none; border-radius:var(--radius-lg); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:15px; font-weight:600; cursor:pointer; }
+  .btn-primary[disabled] { background:var(--bg-sunken); color:var(--text-tertiary); cursor:default; }
+  .btn-primary svg { width:18px; height:18px; stroke-width:2.2; }
+
+  /* Notes */
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-inline-start:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; inset-inline-start:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .notes h2 { font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:12px; }
+  .notes code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-022 — Date-range picker · Hijri-aware (mobile app)</h1>
+    <p>The culturally essential date surface, full-screen. Gregorian is primary; Hijri sits below each day as quiet secondary numerals. A calm labelled Ramadan band and a single Eid dot orient fasting/Eid travel — no crescents, no green wash. Two-tap range selection, unavailable and below-minimum-stay days dimmed and struck (never hidden, so guests see why), a Dates / Flexible toggle with Weekend / Week / Month options, and the honest moon-sighting footnote. Day cells are ≥44pt.</p>
+    <div class="legend">
+      <span>Light · start picked</span>
+      <span>Dark · range complete · offline</span>
+      <span>Light · Flexible · Weekend/Week/Month</span>
+      <span>RTL · اردو · range complete</span>
+      <span>Ramadan band · Eid dot</span>
+      <span>min-stay disabled</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · START PICKED ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — Dates · check-in picked, awaiting checkout</div>
+      <section class="phone" aria-label="Date picker — start selected, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <button class="icon-btn" type="button" aria-label="Back to search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="bar-cap">When?</span>
+          <button class="reset" type="button" disabled>Reset</button>
+        </header>
+
+        <div class="body">
+          <h2 class="sum-t">Select dates</h2>
+          <p class="sum-s"><b>Fri, 24 Mar</b> — add a check-out date</p>
+
+          <div class="tabs" role="tablist" aria-label="Date mode">
+            <button class="tab-btn active" type="button" role="tab" aria-selected="true">Dates</button>
+            <button class="tab-btn" type="button" role="tab" aria-selected="false">Flexible</button>
+          </div>
+
+          <div class="chips" role="group" aria-label="Date flexibility">
+            <button class="chip active" type="button" aria-pressed="true">Exact dates</button>
+            <button class="chip" type="button" aria-pressed="false">± 1 day</button>
+            <button class="chip" type="button" aria-pressed="false">± 2 days</button>
+            <button class="chip" type="button" aria-pressed="false">± 3 days</button>
+          </div>
+
+          <div class="cal">
+            <div class="cal-head">
+              <button class="nav" type="button" aria-label="Previous month" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div style="text-align:center"><div class="m">March 2026</div><div class="hj-sub">Ramadan – Shawwal 1447 AH</div></div>
+              <button class="nav" type="button" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+            <span class="rampill">Ramadan · begins 1 Ramadan</span>
+            <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+            <div class="days" role="grid" aria-label="March 2026, check-in Friday 24 March selected">
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">1</span><span class="hj">11</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">2</span><span class="hj">12</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">3</span><span class="hj">13</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">4</span><span class="hj">14</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">5</span><span class="hj">15</span></span></button>
+              <button class="day ramadan today" role="gridcell" aria-current="date"><span class="inner"><span class="g">6</span><span class="hj">16</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">7</span><span class="hj">17</span></span></button>
+
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">8</span><span class="hj">18</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">9</span><span class="hj">19</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">10</span><span class="hj">20</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">11</span><span class="hj">21</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">12</span><span class="hj">22</span></span></button>
+              <button class="day ramadan disabled" role="gridcell" aria-disabled="true" aria-label="13 March, unavailable"><span class="inner"><span class="g">13</span><span class="hj">23</span></span></button>
+              <button class="day ramadan disabled" role="gridcell" aria-disabled="true" aria-label="14 March, unavailable"><span class="inner"><span class="g">14</span><span class="hj">24</span></span></button>
+
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">15</span><span class="hj">25</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">16</span><span class="hj">26</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">17</span><span class="hj">27</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">18</span><span class="hj">28</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">19</span><span class="hj">29</span></span></button>
+              <button class="day eid" role="gridcell" aria-label="20 March, 1 Shawwal, Eid al-Fitr"><span class="inner"><span class="eiddot"></span><span class="g">20</span><span class="hj">1</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">21</span><span class="hj">2</span></span></button>
+
+              <button class="day" role="gridcell"><span class="inner"><span class="g">22</span><span class="hj">3</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">23</span><span class="hj">4</span></span></button>
+              <button class="day range-start" role="gridcell" aria-label="24 March, 5 Shawwal, check-in — selected"><span class="inner"><span class="g">24</span><span class="hj">5</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">25</span><span class="hj">6</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">26</span><span class="hj">7</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">27</span><span class="hj">8</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">28</span><span class="hj">9</span></span></button>
+
+              <button class="day" role="gridcell"><span class="inner"><span class="g">29</span><span class="hj">10</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">30</span><span class="hj">11</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">31</span><span class="hj">12</span></span></button>
+            </div>
+
+            <div class="mnote">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span>Struck-through dates are unavailable or below this host's 2-night minimum stay.</span>
+            </div>
+            <p class="foot">Hijri dates are approximate and may vary by moon sighting.</p>
+          </div>
+        </div>
+
+        <div class="sheetfoot">
+          <div class="foot-sum"><span class="fs-t">Check-in set</span><span class="fs-s">Pick a check-out date</span></div>
+          <button class="btn-primary" type="button" disabled>Next</button>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>home indicator</span></div>
+      </section>
+    </div>
+
+    <!-- ============================== DARK · RANGE COMPLETE · OFFLINE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Dark</b> — Dates · range complete · offline (stale availability)</div>
+      <section class="phone dark" aria-label="Date picker — range complete, offline, dark">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 6-3.4"/><path d="M12 5c3.4 0 6.6 1.2 9 3.5"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/><path d="M2 2l20 20"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="8" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <button class="icon-btn" type="button" aria-label="Back to search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="bar-cap">When?</span>
+          <button class="reset" type="button">Reset</button>
+        </header>
+
+        <div class="body">
+          <h2 class="sum-t">24 – 28 Mar</h2>
+          <p class="sum-s"><b>4 nights</b> · Fri 24 Mar → Tue 28 Mar</p>
+
+          <div class="banner" role="status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 6-3.4"/><path d="M12 5c3.4 0 6.6 1.2 9 3.5"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/><path d="M2 2l20 20"/></svg>
+            <span class="banner-tx"><b>You're offline.</b> Showing the last saved availability — we'll re-check these dates when you reconnect.</span>
+          </div>
+
+          <div class="cal">
+            <div class="cal-head">
+              <button class="nav" type="button" aria-label="Previous month" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div style="text-align:center"><div class="m">March 2026</div><div class="hj-sub">Ramadan – Shawwal 1447 AH</div></div>
+              <button class="nav" type="button" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+            <span class="rampill">Ramadan · begins 1 Ramadan</span>
+            <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+            <div class="days" role="grid" aria-label="March 2026, 24 to 28 March selected">
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">1</span><span class="hj">11</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">2</span><span class="hj">12</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">3</span><span class="hj">13</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">4</span><span class="hj">14</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">5</span><span class="hj">15</span></span></button>
+              <button class="day ramadan today" role="gridcell" aria-current="date"><span class="inner"><span class="g">6</span><span class="hj">16</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">7</span><span class="hj">17</span></span></button>
+
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">8</span><span class="hj">18</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">9</span><span class="hj">19</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">10</span><span class="hj">20</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">11</span><span class="hj">21</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">12</span><span class="hj">22</span></span></button>
+              <button class="day ramadan disabled" role="gridcell" aria-disabled="true" aria-label="13 March, unavailable"><span class="inner"><span class="g">13</span><span class="hj">23</span></span></button>
+              <button class="day ramadan disabled" role="gridcell" aria-disabled="true" aria-label="14 March, unavailable"><span class="inner"><span class="g">14</span><span class="hj">24</span></span></button>
+
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">15</span><span class="hj">25</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">16</span><span class="hj">26</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">17</span><span class="hj">27</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">18</span><span class="hj">28</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">19</span><span class="hj">29</span></span></button>
+              <button class="day eid" role="gridcell" aria-label="20 March, 1 Shawwal, Eid al-Fitr"><span class="inner"><span class="eiddot"></span><span class="g">20</span><span class="hj">1</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">21</span><span class="hj">2</span></span></button>
+
+              <button class="day" role="gridcell"><span class="inner"><span class="g">22</span><span class="hj">3</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">23</span><span class="hj">4</span></span></button>
+              <button class="day range-start" role="gridcell" aria-label="24 March, 5 Shawwal, check-in"><span class="inner"><span class="g">24</span><span class="hj">5</span></span></button>
+              <button class="day in-range" role="gridcell"><span class="inner"><span class="g">25</span><span class="hj">6</span></span></button>
+              <button class="day in-range" role="gridcell"><span class="inner"><span class="g">26</span><span class="hj">7</span></span></button>
+              <button class="day in-range" role="gridcell"><span class="inner"><span class="g">27</span><span class="hj">8</span></span></button>
+              <button class="day range-end" role="gridcell" aria-label="28 March, 9 Shawwal, check-out"><span class="inner"><span class="g">28</span><span class="hj">9</span></span></button>
+
+              <button class="day" role="gridcell"><span class="inner"><span class="g">29</span><span class="hj">10</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">30</span><span class="hj">11</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">31</span><span class="hj">12</span></span></button>
+            </div>
+
+            <div class="legend">
+              <span class="lg"><span class="sw range"></span>Check-in / out</span>
+              <span class="lg"><span class="sw rmd"></span>Ramadan</span>
+              <span class="lg"><span class="sw eiddotsw"></span>Eid al-Fitr</span>
+              <span class="lg"><span class="sw today"></span>Today</span>
+              <span class="lg"><span class="sw dis"></span>Unavailable</span>
+            </div>
+            <p class="foot">Hijri dates are approximate and may vary by moon sighting.</p>
+          </div>
+        </div>
+
+        <div class="sheetfoot">
+          <div class="foot-sum"><span class="fs-t">4 nights</span><span class="fs-s">24 – 28 Mar</span></div>
+          <button class="btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Confirm dates</button>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>home indicator</span></div>
+      </section>
+    </div>
+
+    <!-- ============================== LIGHT · FLEXIBLE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — Flexible · stay length + month</div>
+      <section class="phone" aria-label="Date picker — flexible mode, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <button class="icon-btn" type="button" aria-label="Back to search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="bar-cap">When?</span>
+          <button class="reset" type="button">Reset</button>
+        </header>
+
+        <div class="body">
+          <h2 class="sum-t">A week in April</h2>
+          <p class="sum-s">Flexible — we'll show stays that fit</p>
+
+          <div class="tabs" role="tablist" aria-label="Date mode">
+            <button class="tab-btn" type="button" role="tab" aria-selected="false">Dates</button>
+            <button class="tab-btn active" type="button" role="tab" aria-selected="true">Flexible</button>
+          </div>
+
+          <p class="flx-h">How long?</p>
+          <div class="chips" role="group" aria-label="Stay length">
+            <button class="chip" type="button" aria-pressed="false">Weekend</button>
+            <button class="chip active" type="button" aria-pressed="true">A week</button>
+            <button class="chip" type="button" aria-pressed="false">A month</button>
+          </div>
+
+          <p class="flx-h">Go when?</p>
+          <div class="mgrid" role="group" aria-label="Choose a month">
+            <button class="mchip" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="mm">March</span><span class="my">2026</span>
+            </button>
+            <button class="mchip active" type="button" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="mm">April</span><span class="my">2026</span>
+            </button>
+            <button class="mchip" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="mm">May</span><span class="my">2026</span>
+            </button>
+            <button class="mchip" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="mm">June</span><span class="my">2026</span>
+            </button>
+            <button class="mchip" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="mm">July</span><span class="my">2026</span>
+            </button>
+            <button class="mchip" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="mm">August</span><span class="my">2026</span>
+            </button>
+          </div>
+
+          <div class="mnote">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            <span>Flexible dates widen your results — you'll pick exact nights on the listing before you book.</span>
+          </div>
+        </div>
+
+        <div class="sheetfoot">
+          <div class="foot-sum"><span class="fs-t">A week</span><span class="fs-s">in April 2026</span></div>
+          <button class="btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Confirm</button>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>home indicator</span></div>
+      </section>
+    </div>
+
+    <!-- ============================== RTL · اردو · RANGE COMPLETE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL</b> — اردو · حدِ تاریخ مکمل</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="تاریخ منتخب کریں — اردو">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <button class="icon-btn" type="button" aria-label="تلاش پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="bar-cap">کب؟</span>
+          <button class="reset" type="button">دوبارہ</button>
+        </header>
+
+        <div class="body">
+          <h2 class="sum-t">۲۴ – ۲۸ مارچ</h2>
+          <p class="sum-s"><b>۴ راتیں</b> · جمعہ ۲۴ مارچ ← منگل ۲۸ مارچ</p>
+
+          <div class="cal">
+            <div class="cal-head">
+              <button class="nav" type="button" aria-label="پچھلا مہینہ" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div style="text-align:center"><div class="m">مارچ ۲۰۲۶</div><div class="hj-sub">رمضان – شوال ۱۴۴۷ھ</div></div>
+              <button class="nav" type="button" aria-label="اگلا مہینہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+            <span class="rampill">رمضان</span>
+            <div class="wk"><span>اتوار</span><span>پیر</span><span>منگل</span><span>بدھ</span><span>جمعرات</span><span>جمعہ</span><span>ہفتہ</span></div>
+            <div class="days" role="grid" aria-label="مارچ ۲۰۲۶، ۲۴ سے ۲۸ مارچ منتخب">
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">1</span><span class="hj">11</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">2</span><span class="hj">12</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">3</span><span class="hj">13</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">4</span><span class="hj">14</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">5</span><span class="hj">15</span></span></button>
+              <button class="day ramadan today" role="gridcell" aria-current="date"><span class="inner"><span class="g">6</span><span class="hj">16</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">7</span><span class="hj">17</span></span></button>
+
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">8</span><span class="hj">18</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">9</span><span class="hj">19</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">10</span><span class="hj">20</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">11</span><span class="hj">21</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">12</span><span class="hj">22</span></span></button>
+              <button class="day ramadan disabled" role="gridcell" aria-disabled="true" aria-label="۱۳ مارچ، دستیاب نہیں"><span class="inner"><span class="g">13</span><span class="hj">23</span></span></button>
+              <button class="day ramadan disabled" role="gridcell" aria-disabled="true" aria-label="۱۴ مارچ، دستیاب نہیں"><span class="inner"><span class="g">14</span><span class="hj">24</span></span></button>
+
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">15</span><span class="hj">25</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">16</span><span class="hj">26</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">17</span><span class="hj">27</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">18</span><span class="hj">28</span></span></button>
+              <button class="day ramadan" role="gridcell"><span class="inner"><span class="g">19</span><span class="hj">29</span></span></button>
+              <button class="day eid" role="gridcell" aria-label="۲۰ مارچ، ۱ شوال، عید الفطر"><span class="inner"><span class="eiddot"></span><span class="g">20</span><span class="hj">1</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">21</span><span class="hj">2</span></span></button>
+
+              <button class="day" role="gridcell"><span class="inner"><span class="g">22</span><span class="hj">3</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">23</span><span class="hj">4</span></span></button>
+              <button class="day range-start" role="gridcell" aria-label="۲۴ مارچ، آمد"><span class="inner"><span class="g">24</span><span class="hj">5</span></span></button>
+              <button class="day in-range" role="gridcell"><span class="inner"><span class="g">25</span><span class="hj">6</span></span></button>
+              <button class="day in-range" role="gridcell"><span class="inner"><span class="g">26</span><span class="hj">7</span></span></button>
+              <button class="day in-range" role="gridcell"><span class="inner"><span class="g">27</span><span class="hj">8</span></span></button>
+              <button class="day range-end" role="gridcell" aria-label="۲۸ مارچ، روانگی"><span class="inner"><span class="g">28</span><span class="hj">9</span></span></button>
+
+              <button class="day" role="gridcell"><span class="inner"><span class="g">29</span><span class="hj">10</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">30</span><span class="hj">11</span></span></button>
+              <button class="day" role="gridcell"><span class="inner"><span class="g">31</span><span class="hj">12</span></span></button>
+            </div>
+            <p class="foot">ہجری تاریخیں تخمینی ہیں اور رویتِ ہلال کے مطابق مختلف ہو سکتی ہیں۔</p>
+          </div>
+        </div>
+
+        <div class="sheetfoot">
+          <div class="foot-sum"><span class="fs-t">۴ راتیں</span><span class="fs-s">۲۴ – ۲۸ مارچ</span></div>
+          <button class="btn-primary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تاریخیں مقرر کریں</button>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>home indicator</span></div>
+      </section>
+    </div>
+
+    <!-- ============================== SPEC NOTES ============================== -->
+    <div class="panel span notes">
+      <h2>GA-022 — states, cultural-UX &amp; a11y coverage</h2>
+      <ul>
+        <li><b>States in DOM.</b> Start picked (check-in only, checkout prompt, Next disabled) · range complete (start / in-range / end, 4 nights, Confirm enabled) · Flexible mode (Weekend / A week / A month + month grid) · offline (last saved availability + re-check-on-reconnect — names next step). Unavailable / below-min-stay days are dimmed + struck, never hidden, so guests see <em>why</em>.</li>
+        <li><b>Hijri as quiet dual info (§10.5).</b> Gregorian primary, Hijri secondary numeral under each day; a labelled Ramadan band + one Eid dot with an accessible label; the honest "approximate / moon sighting" footnote. No crescents, no green wash.</li>
+        <li><b>Range mechanics (§8.6).</b> Two-tap range, in-range fill uses interactive.subtle, endpoints interactive.primary + text.onBrand, today = border.brand ring; the range half-fill mirrors correctly under RTL.</li>
+        <li><b>A11y (§11).</b> <code>role="grid"</code> / <code>gridcell</code>; each day's accessible name reads both dates + state, localized to Urdu; Hijri numerals below 18.66px use text.secondary for AA; nav chevrons mirror under RTL; day cells ≥44pt; digits never reversed under RTL.</li>
+        <li><b>No dead ends.</b> Offline still lets the guest pick and continue; disabled dates explain the minimum-stay rule inline rather than silently blocking.</li>
+        <li><b>Perf (§12).</b> No imagery; a single month rendered at a time; transform/opacity only; reduced-motion honored.</li>
+      </ul>
+    </div>
+  </main>
+</body>
+</html>

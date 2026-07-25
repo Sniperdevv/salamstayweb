@@ -1,0 +1,416 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Gift card purchase &amp; send (GA-127)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage: NO journey stepper (§7.6a — gifting is not a checkout step) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title, .phone.rtl h2, .phone.rtl .lbl, .phone.rtl .amtchip, .phone.rtl .amtinp, .phone.rtl .ta, .phone.rtl .halal-h, .phone.rtl .halal-d, .phone.rtl .pm-t, .phone.rtl .pm-s, .phone.rtl .clbl, .phone.rtl .sendbtn, .phone.rtl .sum, .phone.rtl .rcard, .phone.rtl .rvhero p, .phone.rtl .rvnote, .phone.rtl .rvhint, .phone.rtl .lurl, .phone.rtl .copybtn { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl .halal-d, .phone.rtl .rvhero p, .phone.rtl .rvhint { line-height:1.9; }
+  .phone.rtl .lurl { font-family:'Inter',sans-serif; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; overflow-y:auto; display:flex; flex-direction:column; padding:14px 16px 20px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  .lbl { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 10px; }
+  .lbl:first-of-type { margin-top:2px; }
+
+  /* amount picker — chips (Chip/Filter pill redline, radius-full) + always-visible custom input */
+  .amtchips { display:flex; gap:9px; flex-wrap:wrap; }
+  .amtchip { height:40px; padding:0 16px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:14px; font-weight:600; color:var(--text-primary); cursor:pointer; font-family:inherit; }
+  .amtchip.sel { background:var(--int-subtle); border-color:var(--border-brand); color:var(--int-primary); }
+  .amtcustom { margin-top:12px; }
+  .amtcustom span.pfx-lbl { font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px; }
+  .amtfield { display:flex; align-items:center; height:50px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 14px; gap:8px; }
+  .amtfield .pfx { font-size:15px; font-weight:600; color:var(--text-secondary); }
+  .amtinp { flex:1; min-width:0; border:none; background:transparent; font-family:inherit; font-size:15px; font-weight:600; color:var(--text-primary); outline:none; }
+  .amtinp::placeholder { color:var(--text-tertiary); font-weight:500; }
+
+  /* personal note */
+  .ta { width:100%; min-height:76px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:11px 13px; font-family:inherit; font-size:13.5px; color:var(--text-primary); resize:none; line-height:1.5; }
+  .ta::placeholder { color:var(--text-tertiary); }
+  .tahint { font-size:11.5px; color:var(--text-tertiary); margin-top:6px; }
+
+  /* recipient input */
+  .rcpfield { display:flex; align-items:center; height:50px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 14px; }
+  .rcpfield input { flex:1; min-width:0; border:none; background:transparent; font-family:inherit; font-size:14px; color:var(--text-primary); outline:none; }
+  .rcpfield input::placeholder { color:var(--text-tertiary); }
+
+  /* share-to channel row — WhatsApp-first (ga-110 grammar) */
+  .chlabel { font-size:11.5px; font-weight:600; color:var(--text-secondary); margin:12px 2px 10px; }
+  .channels { display:flex; gap:13px; overflow-x:auto; padding-bottom:2px; }
+  .channel { display:flex; flex-direction:column; align-items:center; gap:7px; background:transparent; border:none; cursor:pointer; font-family:inherit; flex:none; width:56px; }
+  .channel .cbub { width:44px; height:44px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .channel .cbub svg { width:20px; height:20px; color:var(--text-secondary); stroke-width:1.75; }
+  .channel .clbl { font-size:11px; font-weight:500; color:var(--text-secondary); text-align:center; line-height:1.2; }
+  .channel.lead .cbub { background:var(--int-subtle); border-color:var(--border-brand); }
+  .channel.lead .cbub svg { color:var(--int-primary); }
+  .channel.lead .clbl { color:var(--text-primary); font-weight:600; }
+
+  /* halal gifting framing — flat value, never interest; GA-060 redeem-only note */
+  .halal { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:13px 14px; margin-top:18px; background:var(--info-bg); border:1px solid var(--info-border); }
+  .halal-ic { flex:none; margin-top:1px; color:var(--info-fg); }
+  .halal-ic svg { width:19px; height:19px; stroke-width:1.85; }
+  .halal-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .halal-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .halal-d { font-size:12px; color:var(--text-secondary); display:block; line-height:1.5; }
+
+  /* payment method row */
+  .pm { display:flex; align-items:center; gap:12px; min-height:58px; border:1px solid var(--border-default); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 13px; text-decoration:none; margin-top:2px; }
+  .pm-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .pm-ic svg { width:19px; height:19px; stroke-width:1.8; }
+  .pm-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .pm-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .pm-s { font-size:12px; color:var(--text-secondary); display:block; }
+  .pm-chev { flex:none; color:var(--text-tertiary); font-size:12.5px; font-weight:600; }
+
+  .sum { font-size:12.5px; color:var(--text-secondary); text-align:center; margin-top:14px; }
+  .sum b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .sendbtn { margin-top:16px; }
+
+  /* sent confirmation */
+  .sconfirm { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; }
+  .sconfirm .tick { width:60px; height:60px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .sconfirm .tick svg { width:30px; height:30px; stroke-width:2.2; }
+  .sconfirm h2 { font-size:20px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:14px; }
+  .sconfirm p { font-size:13px; color:var(--text-secondary); margin-top:6px; max-width:250px; }
+
+  .rcard { border:1px solid var(--border-hairline); border-radius:var(--radius-xl); background:var(--bg-raised); padding:15px; margin-bottom:16px; }
+  .rc-top { display:flex; align-items:center; gap:11px; }
+  .rc-av { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; }
+  .rc-name { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .rc-via { font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+  .rc-rows { margin-top:13px; border-top:1px solid var(--border-hairline); padding-top:11px; display:flex; flex-direction:column; gap:9px; }
+  .rc-row { display:flex; justify-content:space-between; gap:12px; font-size:12.5px; }
+  .rc-row .rl { color:var(--text-secondary); flex:none; }
+  .rc-row .rv { color:var(--text-primary); font-weight:600; text-align:end; }
+  .rc-note { font-size:12.5px; color:var(--text-secondary); font-style:italic; border-top:1px solid var(--border-hairline); margin-top:11px; padding-top:11px; line-height:1.5; }
+
+  .linkrow { display:flex; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); margin-top:2px; }
+  .phone.rtl .linkrow { padding:8px 14px 8px 8px; }
+  .lurl { flex:1; min-width:0; font-size:12.5px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .copybtn { height:34px; padding:0 14px; border-radius:var(--radius-sm); background:var(--int-primary); color:var(--text-on-brand); font-size:12.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; flex:none; }
+
+  /* received-by-recipient preview */
+  .rvhero { display:flex; flex-direction:column; align-items:center; text-align:center; padding:10px 4px 6px; }
+  .rvhero-ic { width:64px; height:64px; border-radius:var(--radius-2xl); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .rvhero-ic svg { width:28px; height:28px; stroke-width:1.7; }
+  .rvhero h2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .rvhero p { font-size:13px; color:var(--text-secondary); margin-top:6px; }
+  .rvamount { text-align:center; font-size:34px; font-weight:700; color:var(--text-primary); margin:14px 0 2px; letter-spacing:-0.01em; }
+  .rvsub { text-align:center; font-size:12px; color:var(--text-tertiary); margin-bottom:16px; }
+  .rvnote { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px 14px; font-size:13px; color:var(--text-secondary); font-style:italic; line-height:1.55; }
+  .rvnote b { display:block; font-style:normal; font-weight:600; color:var(--text-primary); margin-top:8px; font-size:12px; }
+  .rvhint { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.5; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Gift card purchase &amp; send (GA-127)</h1>
+    <p>Buy and send SalamStay credit at <strong>/account/gift-cards/new</strong> — flat-frame lineage (<code>GA-064</code>, no journey stepper: gifting is not a checkout step, §7.6a). Preset chips (<span class="num">PKR 2,500 / 5,000 / 10,000</span>) plus an always-visible custom amount, a personal note, and delivery via the <strong>WhatsApp-first share row reused verbatim from GA-110</strong>. The <strong>halal-gifting framing</strong> restates GA-110's "flat, never interest" language for a purchased credit, and states plainly that <strong><code>GA-060</code> stays redeem-only</strong> — the recipient adds this credit to their balance on their own Credits &amp; promo screen, never here. Payment is the familiar saved-method row (<code>HBL •••• 8842</code>). Panels: compose (light) · sent confirmation with recipient preview (dark) · received-by-recipient preview (light) · Urdu / RTL compose.</p>
+    <div class="toggle" role="presentation"><span class="on">Compose · light</span><span>Sent · recipient preview · dark</span><span>Received by recipient</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ ROW 1 — COMPOSE (light) · SENT CONFIRMATION (dark) ============================ -->
+    <section class="panel" aria-label="Light theme compose screen, and dark theme sent confirmation with recipient preview">
+      <div class="panel-tag">Light — amount, note, delivery, payment · Dark — sent, recipient preview</div>
+      <div class="rowflex">
+
+        <!-- A · COMPOSE -->
+        <div class="pcol">
+          <div class="pcap">A · Compose — light</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/gift-cards" aria-label="Back to gift cards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Send a gift card</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="lbl">Amount</div>
+              <div class="amtchips" role="group" aria-label="Preset amount">
+                <button class="amtchip" type="button" aria-pressed="false">PKR 2,500</button>
+                <button class="amtchip sel" type="button" aria-pressed="true">PKR 5,000</button>
+                <button class="amtchip" type="button" aria-pressed="false">PKR 10,000</button>
+              </div>
+              <div class="amtcustom">
+                <label class="pfx-lbl" for="amt-custom">Or enter a custom amount</label>
+                <div class="amtfield"><span class="pfx">PKR</span><input class="amtinp" id="amt-custom" type="text" inputmode="numeric" placeholder="e.g. 7,500" /></div>
+              </div>
+
+              <div class="lbl">Personal note (optional)</div>
+              <textarea class="ta" placeholder="Eid Mubarak! Hope you find a lovely stay soon." aria-label="Personal note"></textarea>
+              <p class="tahint">Your recipient sees this note when they open the gift.</p>
+
+              <div class="lbl">Send to</div>
+              <div class="rcpfield"><input type="text" placeholder="Name or WhatsApp number" aria-label="Recipient name or WhatsApp number" /></div>
+              <div class="chlabel">Share via</div>
+              <div class="channels">
+                <button class="channel lead" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span><span class="clbl">WhatsApp</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.5 8L4 21l1.5-4.5A8.5 8.5 0 1 1 21 11.5z"/></svg></span><span class="clbl">Messages</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span class="clbl">Email</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.5 10.5l7-4M8.5 13.5l7 4"/></svg></span><span class="clbl">More</span></button>
+              </div>
+
+              <div class="halal" role="note">
+                <span class="halal-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="halal-b">
+                  <span class="halal-h">SalamStay credit — a flat value, never interest</span>
+                  <p class="halal-d">A gift card is fixed-value SalamStay credit for their next stay — never a percentage, never interest-bearing, exactly like referral credit. Your recipient redeems it on their own Credits &amp; promo screen, which stays redeem-only — you can't redeem it here.</p>
+                </div>
+              </div>
+
+              <div class="lbl">Pay with</div>
+              <a class="pm" href="/account/payments">
+                <span class="pm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span>
+                <span class="pm-b"><span class="pm-t">HBL Credit Card</span><span class="pm-s num">•••• 8842</span></span>
+                <span class="pm-chev">Change</span>
+              </a>
+
+              <p class="sum">You're sending <b class="num">PKR 5,000</b> · charged to <b class="num">HBL •••• 8842</b></p>
+
+              <div class="grow"></div>
+              <button class="btn primary sendbtn" type="submit">Send gift · <span class="num">PKR 5,000</span></button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SENT CONFIRMATION -->
+        <div class="pcol">
+          <div class="pcap">B · Sent — recipient preview, dark</div>
+          <section class="phone dark" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Gift sent</div>
+              <a class="ib" href="/account/gift-cards" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="sconfirm">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="bH">Gift sent to Ayesha</h2>
+                <p>She'll get a WhatsApp message with her gift — she adds it to her own credit when she opens it.</p>
+              </div>
+
+              <div class="rcard">
+                <div class="rc-top">
+                  <span class="rc-av" aria-hidden="true">AB</span>
+                  <div><div class="rc-name">Sana Malik</div><div class="rc-via">Sent via WhatsApp</div></div>
+                </div>
+                <div class="rc-rows">
+                  <div class="rc-row"><span class="rl">Amount</span><span class="rv num">PKR 5,000</span></div>
+                  <div class="rc-row"><span class="rl">Charged to</span><span class="rv num">HBL •••• 8842</span></div>
+                  <div class="rc-row"><span class="rl">Sent</span><span class="rv num">24 Jul 2026</span></div>
+                </div>
+                <p class="rc-note">"Eid Mubarak! Hope you find a lovely stay soon."</p>
+              </div>
+
+              <div class="lbl">Share again</div>
+              <div class="linkrow">
+                <span class="lurl num">salamstay.pk/gift/8k2p9q</span>
+                <button class="copybtn" type="button">Copy</button>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/account/gift-cards">Done</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The compose screen (A) keeps the custom-amount input <b>always visible</b> below the preset chips — no hidden "Other" toggle. The halal-gifting banner reuses <code>GA-110</code>'s "flat, never interest" register verbatim and adds the load-bearing distinction the row note requires: <b>this screen sends</b>; redemption happens on <code>GA-060</code>, which stays redeem-only. The sent confirmation (B) shows a real recipient-preview card — a genuine description list of amount, payment source and send date — plus the same <code>GA-110</code> copy-link row so the sender can re-share independently of the WhatsApp send.</p>
+    </section>
+
+    <!-- ============================ ROW 2 — RECEIVED BY RECIPIENT · RTL ============================ -->
+    <section class="panel" aria-label="Light theme received-by-recipient preview, and the right-to-left Urdu compose screen">
+      <div class="panel-tag">Light — received by recipient · اردو · RTL — compose</div>
+      <div class="rowflex">
+
+        <!-- C · RECEIVED BY RECIPIENT -->
+        <div class="pcol">
+          <div class="pcap">C · What the recipient sees</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">You've received a gift</div>
+              <a class="ib" href="/" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="rvhero">
+                <span class="rvhero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg></span>
+                <h2 id="cH">Ali Raza sent you a gift</h2>
+                <p>SalamStay credit for your next stay</p>
+              </div>
+              <div class="rvamount num">PKR 5,000</div>
+              <p class="rvsub">Flat-value SalamStay credit · never interest</p>
+              <div class="rvnote">
+                "Eid Mubarak! Hope you find a lovely stay soon."
+                <b>— Ali Raza</b>
+              </div>
+              <div class="grow"></div>
+              <button class="btn primary" type="button">Add to my SalamStay credit</button>
+              <p class="rvhint">You'll find it under Credits &amp; promo after you add it — that's also where you redeem it.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · RTL / URDU — COMPOSE -->
+        <div class="pcol">
+          <div class="pcap">D · اردو — گفٹ کارڈ بھیجیں</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/account/gift-cards" aria-label="گفٹ کارڈز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="dH">گفٹ کارڈ بھیجیں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="lbl">رقم</div>
+              <div class="amtchips" role="group" aria-label="مقررہ رقم">
+                <button class="amtchip" type="button" aria-pressed="false">PKR 2,500</button>
+                <button class="amtchip sel" type="button" aria-pressed="true">PKR 5,000</button>
+                <button class="amtchip" type="button" aria-pressed="false">PKR 10,000</button>
+              </div>
+              <div class="amtcustom">
+                <label class="pfx-lbl" for="amt-custom-ur">اپنی مرضی کی رقم درج کریں</label>
+                <div class="amtfield"><span class="pfx">PKR</span><input class="amtinp" id="amt-custom-ur" type="text" inputmode="numeric" placeholder="مثلاً 7,500" /></div>
+              </div>
+
+              <div class="lbl">ذاتی پیغام (اختیاری)</div>
+              <textarea class="ta" placeholder="عید مبارک! امید ہے آپ کو ایک اچھا قیام ملے۔" aria-label="ذاتی پیغام"></textarea>
+              <p class="tahint">آپ کا وصول کنندہ گفٹ کھولتے وقت یہ پیغام دیکھے گا۔</p>
+
+              <div class="lbl">کسے بھیجیں</div>
+              <div class="rcpfield"><input type="text" placeholder="نام یا واٹس ایپ نمبر" aria-label="وصول کنندہ کا نام یا واٹس ایپ نمبر" /></div>
+              <div class="chlabel">شیئر کریں</div>
+              <div class="channels">
+                <button class="channel lead" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span><span class="clbl">واٹس ایپ</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.5 8L4 21l1.5-4.5A8.5 8.5 0 1 1 21 11.5z"/></svg></span><span class="clbl">میسج</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span class="clbl">ای میل</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.5 10.5l7-4M8.5 13.5l7 4"/></svg></span><span class="clbl">مزید</span></button>
+              </div>
+
+              <div class="halal" role="note">
+                <span class="halal-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="halal-b">
+                  <span class="halal-h">سلام اسٹے کریڈٹ — ایک مقررہ قدر، کبھی سود نہیں</span>
+                  <p class="halal-d">گفٹ کارڈ ان کے اگلے قیام کے لیے ایک مقررہ سلام اسٹے کریڈٹ ہے — کبھی فیصد نہیں، کبھی سود پر مبنی نہیں، بالکل ریفرل کریڈٹ کی طرح۔ آپ کا وصول کنندہ اسے اپنی کریڈٹس اینڈ پرومو اسکرین پر ریڈیم کرتا ہے — یہاں نہیں۔</p>
+                </div>
+              </div>
+
+              <div class="lbl">ادائیگی کا ذریعہ</div>
+              <a class="pm" href="/ur/account/payments">
+                <span class="pm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span>
+                <span class="pm-b"><span class="pm-t">HBL کریڈٹ کارڈ</span><span class="pm-s num">•••• 8842</span></span>
+                <span class="pm-chev">تبدیل کریں</span>
+              </a>
+
+              <p class="sum">آپ <b class="num">PKR 5,000</b> بھیج رہے ہیں · <b class="num">HBL •••• 8842</b> سے ادائیگی</p>
+
+              <div class="grow"></div>
+              <button class="btn primary sendbtn" type="submit">گفٹ بھیجیں · <span class="num">PKR 5,000</span></button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Received-by-recipient (C) is a standalone landing state — the top bar shows a close ✕, not a back chevron, since it's often reached from a shared link before deep app context. The primary action is explicit about where redemption lives: <b>"Add to my SalamStay credit"</b>, with a hint naming <code>Credits &amp; promo</code> by name — so <code>GA-060</code>'s redeem-only boundary is never ambiguous. RTL (D) mirrors the whole compose layout; chips, the amount field prefix, and PKR figures keep LTR-isolated tabular digits via <code>.num</code> (§11).</p>
+    </section>
+
+  </main>
+</body>
+</html>

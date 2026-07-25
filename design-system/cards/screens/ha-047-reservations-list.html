@@ -1,0 +1,483 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Reservations list (HA-047)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.stitle,.reqname,.reqmeta,.reqline,.rtag,.rvfy,.reqdl,.reqprice,.rcname,.rcline,.rcflag,.lname,.lmeta,.lchip,.emh,.emb,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:16px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; overflow-y:auto; display:flex; flex-direction:column; padding:0 0 14px; }
+
+  /* segmented tab strip (role=tablist) */
+  .segtabs { display:flex; gap:2px; padding:10px 14px 12px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .segtab { flex:1; display:flex; align-items:center; justify-content:center; gap:5px; min-height:36px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; color:var(--text-secondary); background:transparent; border:none; font-family:inherit; cursor:pointer; }
+  .segtab .cnt { font-size:10.5px; font-weight:700; color:var(--text-on-brand); background:var(--int-primary); border-radius:var(--radius-full); min-width:16px; height:16px; padding:0 4px; display:inline-flex; align-items:center; justify-content:center; }
+  .segtab[aria-selected="true"] { background:var(--int-subtle); color:var(--int-primary); }
+  .segtab[aria-selected="true"] .cnt { background:var(--int-primary); }
+
+  .tabpanel { padding:14px 16px 4px; display:flex; flex-direction:column; gap:12px; flex:1; }
+  .sub-h { font-size:11.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:2px 2px 0; }
+
+  /* request card — the primary artifact of this screen */
+  .reqcard { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; box-shadow:var(--el-hairline); }
+  .reqtop { display:flex; align-items:flex-start; gap:11px; }
+  .reqav { width:42px; height:42px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; }
+  .reqid { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .reqname { font-size:14.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .rvfy { display:inline-flex; align-items:center; gap:3px; font-size:10.5px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:1px 7px; }
+  .rvfy svg { width:10px; height:10px; stroke-width:2.4; }
+  .reqmeta { font-size:12px; color:var(--text-secondary); display:block; }
+  .reqbody { margin-top:11px; display:flex; flex-direction:column; gap:6px; }
+  .reqline { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-secondary); }
+  .reqline svg { width:14px; height:14px; stroke-width:1.8; color:var(--text-tertiary); flex:none; }
+  .reqline b { color:var(--text-primary); font-weight:600; }
+  .reqprice { font-size:13px; color:var(--text-secondary); margin-top:2px; display:block; }
+  .reqprice b { color:var(--text-primary); font-weight:700; }
+  .reqdl { display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-full); padding:4px 10px; margin-top:10px; }
+  .reqdl svg { width:12px; height:12px; stroke-width:2.1; }
+  .reqcta { display:block; text-align:center; min-height:40px; line-height:40px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:13.5px; font-weight:600; text-decoration:none; margin-top:11px; }
+
+  /* compact secondary request (cantonment/foreigner pre-flag) */
+  .reqcard.compact { padding:12px 13px; }
+  .rcflag { display:flex; align-items:flex-start; gap:8px; font-size:11.5px; color:var(--text-secondary); background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-md); padding:8px 10px; margin-top:9px; }
+  .rcflag svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-tertiary); flex:none; margin-top:1px; }
+
+  /* upcoming / current / past rows */
+  .rlist { display:flex; flex-direction:column; gap:9px; }
+  .rrow { display:flex; align-items:center; gap:11px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:11px 12px; text-decoration:none; min-height:64px; }
+  .rav { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; }
+  .rav.checked { background:var(--success-bg); color:var(--success-fg); }
+  .rbody { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .rcname { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .rcline { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .lchip { display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; margin-top:4px; width:fit-content; }
+  .lchip svg { width:10px; height:10px; stroke-width:2; }
+  .rpill { flex:none; font-size:10.5px; font-weight:600; border-radius:var(--radius-full); padding:2px 8px; white-space:nowrap; }
+  .rpill.checked { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .rpill.upcoming { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .rpill.past { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .rchev { flex:none; color:var(--text-tertiary); }
+  .rchev svg { width:16px; height:16px; stroke-width:2; }
+
+  /* empty state */
+  .emptybox { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding:36px 20px; }
+  .emptybox .eg { width:48px; height:48px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .emptybox .eg svg { width:24px; height:24px; stroke-width:1.6; }
+  .emh { font-size:15px; font-weight:600; color:var(--text-primary); display:block; }
+  .emb { font-size:12.5px; color:var(--text-secondary); max-width:230px; line-height:1.55; display:block; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:0 16px; border-radius:var(--radius-md); font-size:13px; font-weight:600; text-decoration:none; border:1px solid var(--border-default); color:var(--text-primary); background:var(--bg-canvas); font-family:inherit; margin-top:4px; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Reservations list (HA-047)</h1>
+    <p>The host reservations home for Aqib, hosting <strong>Gulberg 2 Residence</strong> (Lahore) and <strong>Cantt View Residence</strong> (Rawalpindi Cantonment). A segmented tab strip (Requests · Upcoming · Current · Past) fronts a <strong>request card</strong> for Fatima's incoming request — the host mirror of <code>GA-061</code> — with the 24-hour reply window stated as a calm deadline, <b>"Respond by tomorrow, 3:00 PM,"</b> never a ticking countdown (DESIGN §10.8). Upcoming rows carry a guest-initials avatar, dates, and a <strong>listing chip</strong> so a multi-listing host always knows which property. A second, compact request against Cantt View Residence demonstrates the cantonment/foreigner pre-flag (ARCHITECTURE §11.5.3) as a neutral informational note, never a block. Panels: Requests tab (populated + empty) · Upcoming + Current · dark (Requests + Past) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Requests · populated + empty</span><span>Upcoming · Current</span><span>Dark — Requests · Past</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 — REQUESTS ============================ -->
+    <section class="panel" aria-label="Light theme — the Requests tab, populated and empty">
+      <div class="panel-tag">Light — Requests tab · populated · empty</div>
+      <div class="rowflex">
+
+        <!-- A · REQUESTS — POPULATED -->
+        <div class="pcol">
+          <div class="pcap">A · Requests — Fatima's request + a cantonment example</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="aH">Reservations</div>
+              <a class="ib" href="/host/messages" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Reservation status">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Requests <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Upcoming</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Current</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Past</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="reqcard">
+                  <div class="reqtop">
+                    <span class="reqav" aria-hidden="true">F</span>
+                    <span class="reqid">
+                      <span class="reqname">Fatima <span class="rvfy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span>
+                      <span class="reqmeta">Couple · 2 guests · docs verified</span>
+                    </span>
+                  </div>
+                  <div class="reqbody">
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><b>Gulberg 2 Residence</b>, Lahore</span>
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="num">Fri 14 – Mon 17 Aug 2026</span> · 3 nights</span>
+                  </div>
+                  <span class="reqprice"><b class="num">PKR 12,500</b> / night</span>
+                  <span class="reqdl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>Respond by tomorrow, <span class="num">3:00 PM</span></span></span>
+                  <a class="reqcta" href="/host/reservations/fatima-gulberg2-aug2026">Review request</a>
+                </div>
+
+                <div class="reqcard compact">
+                  <div class="reqtop">
+                    <span class="reqav" aria-hidden="true">J</span>
+                    <span class="reqid">
+                      <span class="reqname">Jonathan <span class="rvfy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span>
+                      <span class="reqmeta">Solo · 1 guest · passport verified</span>
+                    </span>
+                  </div>
+                  <div class="reqbody">
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><b>Cantt View Residence</b>, Rwp. Cantonment</span>
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="num">Sat 22 – Sun 23 Aug 2026</span></span>
+                  </div>
+                  <div class="rcflag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Cantonment area · foreign-guest NOC verification applies before check-in</div>
+                  <span class="reqdl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>Respond by Thu, <span class="num">6:00 PM</span></span></span>
+                  <a class="reqcta" href="/host/reservations/jonathan-canttview-aug2026">Review request</a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · REQUESTS — EMPTY -->
+        <div class="pcol">
+          <div class="pcap">B · Requests — empty, calm orientation</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="bH">Reservations</div>
+              <a class="ib" href="/host/messages" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Reservation status">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Requests</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Upcoming <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Current</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Past</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="emptybox">
+                  <span class="eg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                  <span class="emh">No pending requests</span>
+                  <span class="emb">New booking requests will appear here — we'll notify you the moment a guest asks to stay.</span>
+                  <a class="btn" href="/host/reservations?tab=upcoming">See upcoming stays</a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The request card carries everything the host needs to decide without leaving the list: verified identity, party type, the listing and dates, the nightly rate, and a <strong>calm deadline</strong> — "Respond by tomorrow, 3:00 PM" — never a red ticking clock (§10.8, matching <code>GA-065</code>'s time-remaining register). "Review request" hands off to <code>HA-048</code>/<code>HA-049</code> rather than deciding inline. The Cantt View Residence example shows the cantonment pre-flag (ARCHITECTURE §11.5.3) as a neutral, factual note — informational, never a block, and never singling out the guest. <strong>B</strong> proves the empty state is oriented and calm, not a broken grid (§8.5).</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL 2 — UPCOMING / CURRENT ============================ -->
+    <section class="panel" aria-label="Light theme — Upcoming and Current tabs">
+      <div class="panel-tag">Light — Upcoming (multi-listing chips) · Current (checked-in)</div>
+      <div class="rowflex">
+
+        <!-- C · UPCOMING -->
+        <div class="pcol">
+          <div class="pcap">C · Upcoming — listing chips distinguish the two properties</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="cH">Reservations</div>
+              <a class="ib" href="/host/messages" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Reservation status">
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="true">Upcoming</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Current</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Past</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="rlist">
+                  <a class="rrow" href="/host/reservations/bilal-gulberg2-aug2026">
+                    <span class="rav" aria-hidden="true">BA</span>
+                    <span class="rbody">
+                      <span class="rcname">Bilal Khan</span>
+                      <span class="rcline">Business · 1 guest · <span class="num">5–7 Aug</span></span>
+                      <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Gulberg 2 Residence</span>
+                    </span>
+                    <span class="rpill upcoming">Confirmed</span>
+                  </a>
+                  <a class="rrow" href="/host/reservations/omar-sana-canttview-aug2026">
+                    <span class="rav" aria-hidden="true">OS</span>
+                    <span class="rbody">
+                      <span class="rcname">Omar &amp; Sana</span>
+                      <span class="rcline">Couple · 2 guests · <span class="num">1–4 Aug</span></span>
+                      <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Cantt View Residence</span>
+                    </span>
+                    <span class="rpill upcoming">Confirmed</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · CURRENT -->
+        <div class="pcol">
+          <div class="pcap">D · Current — a guest is checked in</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="dH">Reservations</div>
+              <a class="ib" href="/host/messages" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Reservation status">
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Upcoming</button>
+                <button class="segtab" type="button" role="tab" aria-selected="true">Current</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Past</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="rlist">
+                  <a class="rrow" href="/host/reservations/ayesha-khan-gulberg2-jul2026">
+                    <span class="rav checked" aria-hidden="true">AK</span>
+                    <span class="rbody">
+                      <span class="rcname">Ayesha Khan</span>
+                      <span class="rcline">Family · 4 guests · checkout <span class="num">Mon 27 Jul</span></span>
+                      <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Gulberg 2 Residence</span>
+                    </span>
+                    <span class="rpill checked">Checked in</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every upcoming row carries a <strong>listing chip</strong> (§8.2 card grammar reused as a row tag) so a multi-listing host never has to guess which property a guest belongs to. <strong>Current</strong> reuses <code>HA-046</code>'s Ayesha Khan / Gulberg 2 Residence example for continuity — the same stay the host dashboard surfaces as today's check-in now shown mid-stay with a "Checked in" pill in the muted <code>success</code> register (never a celebratory tone, §10.6).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — REQUESTS · PAST ============================ -->
+    <section class="panel dark" aria-label="Dark theme — Requests tab and Past tab">
+      <div class="panel-tag">Dark — Requests · Past</div>
+      <div class="rowflex">
+
+        <!-- E · REQUESTS (dark, compact) -->
+        <div class="pcol">
+          <div class="pcap">E · Requests — dark</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="eH">Reservations</div>
+              <a class="ib" href="/host/messages" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Reservation status">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Requests <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Upcoming</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Current</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Past</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="reqcard">
+                  <div class="reqtop">
+                    <span class="reqav" aria-hidden="true">F</span>
+                    <span class="reqid">
+                      <span class="reqname">Fatima <span class="rvfy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span>
+                      <span class="reqmeta">Couple · 2 guests · docs verified</span>
+                    </span>
+                  </div>
+                  <div class="reqbody">
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><b>Gulberg 2 Residence</b>, Lahore</span>
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="num">Fri 14 – Mon 17 Aug 2026</span> · 3 nights</span>
+                  </div>
+                  <span class="reqprice"><b class="num">PKR 12,500</b> / night</span>
+                  <span class="reqdl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>Respond by tomorrow, <span class="num">3:00 PM</span></span></span>
+                  <a class="reqcta" href="/host/reservations/fatima-gulberg2-aug2026">Review request</a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · PAST (dark) -->
+        <div class="pcol">
+          <div class="pcap">F · Past — completed stays</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="fH">Reservations</div>
+              <a class="ib" href="/host/messages" aria-label="Inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Reservation status">
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Upcoming</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Current</button>
+                <button class="segtab" type="button" role="tab" aria-selected="true">Past</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="rlist">
+                  <a class="rrow" href="/host/reservations/hassan-canttview-jul2026">
+                    <span class="rav" aria-hidden="true">HR</span>
+                    <span class="rbody">
+                      <span class="rcname">Hassan Raza</span>
+                      <span class="rcline">Couple · 2 guests · <span class="num">12–15 Jul</span></span>
+                      <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Cantt View Residence</span>
+                    </span>
+                    <span class="rpill past">Completed</span>
+                  </a>
+                  <a class="rrow" href="/host/reservations/sana-gulberg2-jun2026">
+                    <span class="rav" aria-hidden="true">SM</span>
+                    <span class="rbody">
+                      <span class="rcname">Sana Malik</span>
+                      <span class="rcline">Family · 3 guests · <span class="num">3–6 Jun</span></span>
+                      <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Gulberg 2 Residence</span>
+                    </span>
+                    <span class="rpill past">Completed</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (DESIGN §1.6). Past rows stay in the neutral <code>bg-sunken</code> pill register — completion is a fact, not a rating moment (reviews live on <code>HA-048</code>'s detail, not this list).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — Requests tab">
+      <div class="panel-tag">RTL · اردو — Requests tab, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Requests — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="uH">بکنگز</div>
+              <a class="ib" href="/ur/host/messages" aria-label="پیغامات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="بکنگ کی حالت">
+                <button class="segtab" type="button" role="tab" aria-selected="true">درخواستیں <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">آئندہ</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">جاری</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">ماضی</button>
+              </div>
+              <div class="tabpanel" role="tabpanel">
+                <div class="reqcard">
+                  <div class="reqtop">
+                    <span class="reqav" aria-hidden="true">F</span>
+                    <span class="reqid">
+                      <span class="reqname">فاطمہ <span class="rvfy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span></span>
+                      <span class="reqmeta">جوڑا · <span class="num">2</span> مہمان · دستاویزات تصدیق شدہ</span>
+                    </span>
+                  </div>
+                  <div class="reqbody">
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><b>گلبرگ ۲ ریزیڈنس</b>، لاہور</span>
+                    <span class="reqline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="num">14 – 17 Aug 2026</span> · <span class="num">3</span> راتیں</span>
+                  </div>
+                  <span class="reqprice"><b class="num">PKR 12,500</b> / رات</span>
+                  <span class="reqdl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>کل <span class="num">3:00 PM</span> تک جواب دیں</span></span>
+                  <a class="reqcta" href="/ur/host/reservations/fatima-gulberg2-aug2026">درخواست دیکھیں</a>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: tab order reverses (Past → Requests reading right-to-left as "درخواستیں" leads), the inbox icon moves to the leading edge, and every label/value pair in the request card swaps sides while dates, the price, and the deadline time stay tabular Latin figures inside <code>.num</code> (§11 — prices and times are never digit-order-mirrored).</p>
+    </section>
+
+  </main>
+</body>
+</html>

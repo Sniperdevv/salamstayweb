@@ -1,0 +1,511 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-032 All reviews (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1320px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1320px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; max-width:384px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); display:flex; flex-direction:column; }
+
+  .sbar { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; flex:none; }
+  .sbar .t { font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .sbar .ic { display:flex; gap:5px; align-items:center; }
+  .sbar .ic svg { width:16px; height:16px; color:var(--text-primary); }
+
+  .appbar { display:flex; align-items:center; gap:4px; padding:2px 8px 10px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .icbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); flex:none; padding:0; }
+  .icbtn svg { width:22px; height:22px; stroke-width:2; }
+  .abttl { flex:1; min-width:0; font-size:16px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-inline-start:2px; }
+
+  .scroll { padding:16px 18px 8px; }
+
+  /* aggregate header */
+  .aggnum { display:flex; align-items:baseline; gap:11px; }
+  .aggnum .big { font-size:40px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1; }
+  .aggstars { display:inline-flex; gap:2px; color:var(--warning-fg); }
+  .aggstars svg { width:16px; height:16px; }
+  .aggcount { font-size:13.5px; color:var(--text-secondary); margin-top:8px; }
+  .twoway { display:flex; gap:8px; align-items:flex-start; margin-top:10px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .twoway svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .twoway span { font-size:12px; color:var(--text-secondary); line-height:1.45; }
+
+  /* category bars */
+  .cats { display:flex; flex-direction:column; gap:11px; margin:16px 0 4px; }
+  .catr { display:flex; align-items:center; gap:12px; }
+  .catr .cl { flex:none; width:118px; font-size:13px; color:var(--text-secondary); }
+  .catr .bar { flex:1; height:6px; border-radius:var(--radius-full); background:var(--bg-sunken); position:relative; overflow:hidden; }
+  .catr .bar i { position:absolute; inset-inline-start:0; top:0; bottom:0; border-radius:var(--radius-full); background:var(--text-primary); }
+  .catr .cv { flex:none; width:32px; text-align:end; font-size:12.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+
+  .rule { height:1px; background:var(--border-hairline); margin:16px 0; border:none; }
+
+  /* sort control */
+  .sortrow { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .sortrow .rc { font-size:13px; color:var(--text-secondary); }
+  .sortrow .rc b { color:var(--text-primary); font-weight:600; }
+  .sortbtn { display:inline-flex; align-items:center; gap:7px; min-height:44px; padding:0 13px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:13.5px; font-weight:600; color:var(--text-primary); cursor:pointer; font-family:inherit; }
+  .sortbtn svg { width:16px; height:16px; color:var(--text-secondary); }
+
+  /* review card */
+  .rlist { margin-top:14px; display:flex; flex-direction:column; gap:12px; }
+  .review { padding:15px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .rv-h { display:flex; align-items:flex-start; gap:11px; }
+  .rv-av { width:38px; height:38px; flex:none; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); }
+  .rv-id { flex:1; min-width:0; }
+  .rv-n { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .rv-meta { font-size:12px; color:var(--text-tertiary); margin-top:2px; line-height:1.4; }
+  .rv-stars { display:inline-flex; gap:1.5px; margin-top:5px; color:var(--warning-fg); }
+  .rv-stars svg { width:13px; height:13px; }
+  .rv-body { font-size:13.5px; color:var(--text-secondary); line-height:1.5; margin-top:11px; }
+
+  /* host response sub-card */
+  .response { margin-top:12px; padding:12px 13px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-md); }
+  .rr-h { display:flex; align-items:center; gap:8px; }
+  .rr-av { width:24px; height:24px; flex:none; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:var(--text-secondary); }
+  .rr-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .rr-tag { display:inline-flex; align-items:center; height:18px; padding:0 7px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); font-size:10px; font-weight:600; color:var(--text-secondary); }
+  .rr-d { font-size:11.5px; color:var(--text-tertiary); margin-inline-start:auto; }
+  .rr-b { font-size:13px; color:var(--text-secondary); line-height:1.5; margin-top:8px; }
+
+  /* per-card report affordance */
+  .rv-foot { display:flex; justify-content:flex-end; margin-top:8px; }
+  .reportlink { display:inline-flex; align-items:center; gap:5px; min-height:44px; padding:0 4px; font-size:12px; color:var(--text-tertiary); background:none; border:none; cursor:pointer; font-family:inherit; }
+  .reportlink svg { width:13px; height:13px; }
+
+  /* show more + web pagination note */
+  .showmore { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; min-height:48px; margin-top:16px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:14px; font-weight:600; color:var(--text-primary); cursor:pointer; font-family:inherit; }
+  .showmore svg { width:16px; height:16px; color:var(--text-secondary); }
+  .pgnote { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.4; }
+
+  /* empty (new-listing) state */
+  .empty { display:flex; flex-direction:column; align-items:center; text-align:center; padding:44px 26px 36px; }
+  .empty .eic { width:60px; height:60px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .empty .eic svg { width:28px; height:28px; color:var(--text-tertiary); stroke-width:1.5; }
+  .empty h3 { font-size:17px; font-weight:600; color:var(--text-primary); }
+  .empty p { font-size:13.5px; color:var(--text-secondary); line-height:1.5; margin-top:8px; max-width:270px; }
+  .empty .newtag { display:inline-flex; align-items:center; height:24px; padding:0 11px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:14px; }
+  .empty .eact { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:48px; padding:0 20px; margin-top:20px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:14.5px; font-weight:600; text-decoration:none; }
+  .empty .eact svg { width:16px; height:16px; }
+
+  .homebar { display:flex; justify-content:center; padding:8px 0 9px; background:var(--bg-canvas); flex:none; }
+  .homebar i { width:120px; height:5px; border-radius:var(--radius-full); background:var(--text-primary); opacity:.18; }
+
+  .sk { background:var(--bg-sunken); border-radius:var(--radius-md); position:relative; overflow:hidden; }
+  .sk::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,var(--bg-raised),transparent); transform:translateX(-100%); animation:shim 1.4s ease-in-out infinite; }
+  @keyframes shim { 100% { transform:translateX(100%); } }
+  @media (prefers-reduced-motion: reduce){ .sk::after { animation:none; } }
+  .skrev { padding:15px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); margin-top:12px; }
+
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-032 — All reviews (mobile app)</h1>
+    <p>The full reviews screen for a listing: an aggregate header with the rating, review count and the four two-way category bars (cleanliness, communication, accuracy, cultural fit), a sort control, review cards carrying the guest's first name, stay-length context and a host response sub-card, plus a quiet per-card report affordance. The "New listing — no reviews yet" empty state is shown as a state frame. Real Islamabad F-7 content (same home as GA-027). Quiet Modern — honest, two-sided, never gamified.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Two-way category bars</span><span>Host response sub-card</span><span>Report affordance</span><span>Star = amber (§1.7)</span><span>Empty / loading states in DOM</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT (full) ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — full · aggregate + reviews + host response</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abttl">Reviews</span>
+          </div>
+
+          <main class="scroll">
+            <div class="aggnum">
+              <span class="big">4.89</span>
+              <span class="aggstars" role="img" aria-label="4.89 out of 5">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+              </span>
+            </div>
+            <p class="aggcount">Based on <b>37 reviews</b> · Bright two-bedroom apartment, F-7</p>
+            <div class="twoway">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 4V6a3 3 0 0 1 3-3z"/></svg>
+              <span>Two-way reviews — guests and hosts review each other after every stay. Each side's review appears once both are in, or after 14 days.</span>
+            </div>
+
+            <div class="cats">
+              <div class="catr"><span class="cl">Cleanliness</span><span class="bar"><i style="width:98%"></i></span><span class="cv">4.9</span></div>
+              <div class="catr"><span class="cl">Communication</span><span class="bar"><i style="width:100%"></i></span><span class="cv">5.0</span></div>
+              <div class="catr"><span class="cl">Accuracy</span><span class="bar"><i style="width:96%"></i></span><span class="cv">4.8</span></div>
+              <div class="catr"><span class="cl">Cultural fit</span><span class="bar"><i style="width:98%"></i></span><span class="cv">4.9</span></div>
+            </div>
+
+            <hr class="rule" />
+
+            <div class="sortrow">
+              <span class="rc"><b>37</b> reviews</span>
+              <button class="sortbtn" aria-haspopup="listbox">Most recent <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            </div>
+
+            <div class="rlist">
+              <!-- Review 1 — with host response -->
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">SM</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Sana M.</span>
+                    <span class="rv-meta">Stayed 3 nights · June 2026 · from Lahore</span>
+                    <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body">Spotless and very central. The prayer mat and marked Qibla were a thoughtful touch, and the backup power meant we never noticed the load-shedding. Ayesha answered every message within minutes.</p>
+                <div class="response">
+                  <div class="rr-h">
+                    <span class="rr-av" aria-hidden="true">AK</span>
+                    <span class="rr-t">Ayesha</span>
+                    <span class="rr-tag">Host</span>
+                    <span class="rr-d">June 2026</span>
+                  </div>
+                  <p class="rr-b">Thank you, Sana — it was a pleasure hosting your family. You left the home spotless. You're always welcome back on your next Islamabad trip.</p>
+                </div>
+                <div class="rv-foot"><button class="reportlink" aria-label="Report this review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report</button></div>
+              </article>
+
+              <!-- Review 2 -->
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">AK</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Ahmed K.</span>
+                    <span class="rv-meta">Stayed 5 nights · May 2026 · overseas guest</span>
+                    <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body">Walkable to F-7 Markaz for dinner and groceries. Clean, quiet, and the fibre Wi-Fi held up for video calls back home. Would stay again on my next trip to Islamabad, in sha Allah.</p>
+                <div class="rv-foot"><button class="reportlink" aria-label="Report this review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report</button></div>
+              </article>
+
+              <!-- Review 3 — fair, slightly critical (4 stars) -->
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">MS</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Mahnoor S.</span>
+                    <span class="rv-meta">Stayed 2 nights · April 2026 · from Karachi</span>
+                    <span class="rv-stars" role="img" aria-label="4 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body">Lovely apartment and a very responsive host. Gas pressure was low one cold morning, but Ayesha had mentioned this up front and the electric heater sorted it out. Fair and honest listing.</p>
+                <div class="rv-foot"><button class="reportlink" aria-label="Report this review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report</button></div>
+              </article>
+            </div>
+
+            <button class="showmore">Show more reviews <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <p class="pgnote">On the web, reviews use numbered pages so any review can be linked to directly.</p>
+          </main>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK (full) ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — full · same content</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abttl">Reviews</span>
+          </div>
+
+          <main class="scroll">
+            <div class="aggnum">
+              <span class="big">4.89</span>
+              <span class="aggstars" role="img" aria-label="4.89 out of 5">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+              </span>
+            </div>
+            <p class="aggcount">Based on <b>37 reviews</b> · Bright two-bedroom apartment, F-7</p>
+            <div class="twoway">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 4V6a3 3 0 0 1 3-3z"/></svg>
+              <span>Two-way reviews — guests and hosts review each other after every stay.</span>
+            </div>
+
+            <div class="cats">
+              <div class="catr"><span class="cl">Cleanliness</span><span class="bar"><i style="width:98%"></i></span><span class="cv">4.9</span></div>
+              <div class="catr"><span class="cl">Communication</span><span class="bar"><i style="width:100%"></i></span><span class="cv">5.0</span></div>
+              <div class="catr"><span class="cl">Accuracy</span><span class="bar"><i style="width:96%"></i></span><span class="cv">4.8</span></div>
+              <div class="catr"><span class="cl">Cultural fit</span><span class="bar"><i style="width:98%"></i></span><span class="cv">4.9</span></div>
+            </div>
+
+            <hr class="rule" />
+
+            <div class="sortrow">
+              <span class="rc"><b>37</b> reviews</span>
+              <button class="sortbtn" aria-haspopup="listbox">Most recent <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            </div>
+
+            <div class="rlist">
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">SM</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Sana M.</span>
+                    <span class="rv-meta">Stayed 3 nights · June 2026 · from Lahore</span>
+                    <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body">Spotless and very central. The prayer mat and marked Qibla were a thoughtful touch, and the backup power meant we never noticed the load-shedding.</p>
+                <div class="response">
+                  <div class="rr-h">
+                    <span class="rr-av" aria-hidden="true">AK</span>
+                    <span class="rr-t">Ayesha</span>
+                    <span class="rr-tag">Host</span>
+                    <span class="rr-d">June 2026</span>
+                  </div>
+                  <p class="rr-b">Thank you, Sana — a pleasure hosting your family. Always welcome back.</p>
+                </div>
+                <div class="rv-foot"><button class="reportlink" aria-label="Report this review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report</button></div>
+              </article>
+
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">AK</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Ahmed K.</span>
+                    <span class="rv-meta">Stayed 5 nights · May 2026 · overseas guest</span>
+                    <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body">Walkable to F-7 Markaz. Clean, quiet, and the fibre Wi-Fi held up for video calls back home. Would stay again, in sha Allah.</p>
+                <div class="rv-foot"><button class="reportlink" aria-label="Report this review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report</button></div>
+              </article>
+            </div>
+
+            <button class="showmore">Show more reviews <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <p class="pgnote">On the web, reviews use numbered pages for direct linking.</p>
+          </main>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · bars fill from reading-start; digits never mirror</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="فہرست پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="abttl ur">جائزے</span>
+          </div>
+
+          <section class="scroll" aria-label="جائزے">
+            <div class="aggnum">
+              <span class="big num">4.89</span>
+              <span class="aggstars" role="img" aria-label="۵ میں سے ۴.۸۹">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>
+              </span>
+            </div>
+            <p class="aggcount ur"><b class="num">37</b> جائزوں کی بنیاد پر · ایف-۷ اپارٹمنٹ</p>
+            <div class="twoway">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 4V6a3 3 0 0 1 3-3z"/></svg>
+              <span class="ur">دو طرفہ جائزے — ہر قیام کے بعد مہمان اور میزبان ایک دوسرے کا جائزہ لیتے ہیں۔</span>
+            </div>
+
+            <div class="cats">
+              <div class="catr"><span class="cl ur">صفائی</span><span class="bar"><i style="width:98%"></i></span><span class="cv num">4.9</span></div>
+              <div class="catr"><span class="cl ur">رابطہ</span><span class="bar"><i style="width:100%"></i></span><span class="cv num">5.0</span></div>
+              <div class="catr"><span class="cl ur">درستگی</span><span class="bar"><i style="width:96%"></i></span><span class="cv num">4.8</span></div>
+              <div class="catr"><span class="cl ur">ثقافتی ہم آہنگی</span><span class="bar"><i style="width:98%"></i></span><span class="cv num">4.9</span></div>
+            </div>
+
+            <hr class="rule" />
+
+            <div class="sortrow">
+              <span class="rc ur"><b class="num">37</b> جائزے</span>
+              <button class="sortbtn ur" aria-haspopup="listbox">تازہ ترین <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            </div>
+
+            <div class="rlist">
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">س</span>
+                  <span class="rv-id">
+                    <span class="rv-n ur">ثناء ایم</span>
+                    <span class="rv-meta ur"><span class="num">3</span> راتیں قیام · جون <span class="num">2026</span> · لاہور سے</span>
+                    <span class="rv-stars" role="img" aria-label="۵ میں سے ۵"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body ur">بےحد صاف اور مرکزی۔ جائے نماز اور قبلہ کی نشاندہی بہت اچھی تھی، اور بیک اپ پاور کی وجہ سے لوڈشیڈنگ کا احساس تک نہ ہوا۔ عائشہ نے ہر پیغام کا فوری جواب دیا۔</p>
+                <div class="response">
+                  <div class="rr-h">
+                    <span class="rr-av" aria-hidden="true">ع</span>
+                    <span class="rr-t ur">عائشہ</span>
+                    <span class="rr-tag ur">میزبان</span>
+                    <span class="rr-d ur">جون <span class="num">2026</span></span>
+                  </div>
+                  <p class="rr-b ur">شکریہ ثناء — آپ کے خاندان کی میزبانی خوشی کی بات تھی۔ اگلی بار بھی خوش آمدید۔</p>
+                </div>
+                <div class="rv-foot"><button class="reportlink ur" aria-label="اس جائزے کی رپورٹ کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>رپورٹ</button></div>
+              </article>
+
+              <article class="review">
+                <div class="rv-h">
+                  <span class="rv-av" aria-hidden="true">ا</span>
+                  <span class="rv-id">
+                    <span class="rv-n ur">احمد کے</span>
+                    <span class="rv-meta ur"><span class="num">5</span> راتیں قیام · مئی <span class="num">2026</span> · بیرونِ ملک مہمان</span>
+                    <span class="rv-stars" role="img" aria-label="۵ میں سے ۵"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-body ur">ایف-۷ مرکز پیدل فاصلے پر۔ صاف، پرسکون، اور فائبر وائی فائی ویڈیو کالز کے لیے بہترین رہا۔ اگلی بار پھر ٹھہروں گا، ان شاء اللہ۔</p>
+                <div class="rv-foot"><button class="reportlink ur" aria-label="اس جائزے کی رپورٹ کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>رپورٹ</button></div>
+              </article>
+            </div>
+
+            <button class="showmore ur">مزید جائزے دکھائیں <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+          </section>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATES ============================================================= -->
+    <div class="col">
+      <div class="cap">States — new listing, no reviews yet (pre-launch empty)</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abttl">Reviews</span>
+          </div>
+          <div class="empty">
+            <span class="newtag">New listing</span>
+            <span class="eic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 10.6l6.9-.7z"/></svg></span>
+            <h3>No reviews yet</h3>
+            <p>This home is new to SalamStay. Once a guest completes a stay, their review — and the host's — will appear here.</p>
+            <a class="eact" href="/rooms/is-f7-2bed">Check availability <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+
+      <div class="cap" style="margin-top:6px">Loading — geometry-matched skeleton</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="appbar">
+            <span class="icbtn"></span>
+            <span class="abttl"><span class="sk" style="display:block;width:96px;height:16px"></span></span>
+          </div>
+          <div class="scroll" aria-busy="true" aria-label="Loading reviews">
+            <span class="sk" style="display:block;width:88px;height:40px;border-radius:8px"></span>
+            <span class="sk" style="display:block;width:100%;height:6px;border-radius:9999px;margin-top:20px"></span>
+            <span class="sk" style="display:block;width:100%;height:6px;border-radius:9999px;margin-top:14px"></span>
+            <span class="sk" style="display:block;width:100%;height:6px;border-radius:9999px;margin-top:14px"></span>
+            <div class="skrev"><span class="sk" style="display:block;width:120px;height:14px"></span><span class="sk" style="display:block;width:100%;height:38px;border-radius:8px;margin-top:12px"></span></div>
+            <div class="skrev"><span class="sk" style="display:block;width:120px;height:14px"></span><span class="sk" style="display:block;width:100%;height:38px;border-radius:8px;margin-top:12px"></span></div>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

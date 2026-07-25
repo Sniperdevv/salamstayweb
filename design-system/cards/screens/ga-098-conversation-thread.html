@@ -1,0 +1,560 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Conversation thread (GA-098)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b, .note strong { color:var(--text-secondary); font-weight:600; }
+
+  /* guest phone frame — no bottom tab bar inside a thread (a pushed route), no checkout stepper (§7.6a) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tid-n,.tid-s,.ctx-t,.ctx-s,.ctx-a,.priv-t,.daysep,.syscap,.bub,.btime,.bstat,.trl,.trattr-t,.off-t,.off-d,.ta,.shn,.shs,.ml,.mfoot,.trbar-t,.trbar-off) { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl :is(.bub,.priv-t,.off-d,.syscap,.mfoot) { line-height:1.95; }
+  .phone.rtl :is(.tid-n,.ml,.shn,.ctx-t) { line-height:1.85; }
+  .phone.rtl .bub.eng { font-family:'Inter',sans-serif; line-height:1.5; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:56px; padding:4px; gap:2px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .phone.rtl .ib.mirror svg { transform:scaleX(-1); }
+  .tid { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; align-items:center; }
+  .tid-n { font-size:15px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .tid-s { font-size:11px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+
+  .screen { flex:1; display:flex; flex-direction:column; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* stay-context strip — continuity with GA-064 / GA-071 */
+  .ctx { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--bg-raised); border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ctx-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ctx-t { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .ctx-s { font-size:11px; color:var(--text-secondary); }
+  .ctx-a { flex:none; font-size:11.5px; font-weight:600; color:var(--int-primary); text-decoration:none; border:1px solid var(--border-brand); border-radius:var(--radius-full); min-height:32px; padding:0 11px; display:inline-flex; align-items:center; }
+
+  /* the privacy truth — GA-061 verbatim */
+  .priv { display:flex; align-items:flex-start; gap:9px; padding:9px 14px 11px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .priv-ic { flex:none; color:var(--text-secondary); display:flex; margin-top:1px; }
+  .priv-ic svg { width:14px; height:14px; stroke-width:1.9; }
+  .priv-t { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+  .priv-t b { color:var(--text-primary); font-weight:600; }
+  .brandmark { font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .brandmark .dot { color:var(--int-primary); }
+
+  /* offline banner — ga-088 register: a state, never an error */
+  .offline { display:flex; align-items:flex-start; gap:9px; padding:10px 14px; background:var(--bg-raised); border-bottom:1px solid var(--border-default); flex:none; }
+  .off-ic { flex:none; color:var(--text-secondary); display:flex; margin-top:1px; }
+  .off-ic svg { width:16px; height:16px; stroke-width:1.85; }
+  .off-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .off-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .off-d { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+
+  /* translation bar */
+  .trbar { display:flex; align-items:center; gap:9px; padding:8px 14px; background:var(--info-bg); border-bottom:1px solid var(--info-border); flex:none; }
+  .trbar-ic { flex:none; color:var(--info-fg); display:flex; }
+  .trbar-ic svg { width:15px; height:15px; stroke-width:1.9; }
+  .trbar-t { flex:1; min-width:0; font-size:11.5px; font-weight:600; color:var(--info-fg); }
+  .trbar-off { flex:none; background:transparent; border:none; font-family:inherit; font-size:11.5px; font-weight:700; color:var(--info-fg); cursor:pointer; min-height:32px; padding:0 4px; text-decoration:underline; }
+
+  /* the log */
+  .log { flex:1; display:flex; flex-direction:column; gap:10px; padding:14px 14px 10px; }
+  .daysep { align-self:center; font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); background:var(--bg-sunken); border-radius:var(--radius-full); padding:3px 11px; }
+  .syscap { align-self:center; font-size:10.5px; color:var(--text-tertiary); text-align:center; max-width:244px; line-height:1.45; }
+
+  .msg { display:flex; flex-direction:column; max-width:84%; }
+  .msg.in { align-self:flex-start; align-items:flex-start; }
+  .msg.out { align-self:flex-end; align-items:flex-end; }
+  .bub { font-size:12.5px; line-height:1.5; border-radius:var(--radius-lg); padding:9px 11px; border:1px solid var(--border-hairline); background:var(--bg-raised); color:var(--text-primary); }
+  .msg.out .bub { background:var(--int-subtle); border-color:var(--border-brand); }
+  .bub.urdu { font-family:'Noto Nastaliq Urdu', serif; line-height:1.95; }
+  .bub.eng { font-family:'Inter',sans-serif; line-height:1.5; }
+  .bmeta { display:flex; align-items:center; gap:6px; margin-top:4px; padding:0 2px; }
+  .btime { font-size:10px; color:var(--text-tertiary); }
+  .bstat { display:inline-flex; align-items:center; font-size:10px; font-weight:600; color:var(--text-tertiary); }
+  .bstat svg { width:11px; height:11px; stroke-width:2.2; margin-inline-end:3px; }
+  .bstat.queued { color:var(--warning-fg); background:var(--warning-bg); border:1px solid var(--warning-border); border-radius:var(--radius-full); padding:1px 7px; }
+
+  /* translation affordances */
+  .trbtn { display:inline-flex; align-items:center; margin-top:4px; background:transparent; border:none; font-family:inherit; cursor:pointer; min-height:32px; padding:0 2px; }
+  .tri { flex:none; color:var(--int-primary); display:flex; margin-inline-end:5px; }
+  .tri svg { width:13px; height:13px; stroke-width:2; }
+  .trl { font-size:11px; font-weight:700; color:var(--int-primary); }
+  .trattr { display:flex; align-items:center; margin-top:4px; padding:0 2px; }
+  .trattr-ic { flex:none; color:var(--text-tertiary); display:flex; margin-inline-end:5px; }
+  .trattr-ic svg { width:12px; height:12px; stroke-width:1.9; }
+  .trattr-t { font-size:10px; color:var(--text-tertiary); }
+  .mirror-bub { margin-top:6px; border-style:dashed; }
+
+  /* composer */
+  .comp { display:flex; align-items:flex-end; gap:4px; padding:8px 8px 10px; border-top:1px solid var(--border-hairline); flex:none; }
+  .ta { flex:1; min-width:0; resize:none; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); color:var(--text-primary); font-family:inherit; font-size:12.5px; line-height:1.45; padding:11px 12px; min-height:44px; }
+  .ta::placeholder { color:var(--text-secondary); opacity:1; }
+  .send { width:44px; height:44px; flex:none; border-radius:var(--radius-full); border:none; background:var(--int-primary); color:var(--text-on-brand); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .send svg { width:19px; height:19px; stroke-width:2; }
+  .phone.rtl .send svg { transform:scaleX(-1); }
+  .comp-ib { width:44px; height:44px; flex:none; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; cursor:pointer; text-decoration:none; }
+  .comp-ib svg { width:20px; height:20px; stroke-width:1.85; }
+
+  /* ⋯ menu — ga-062 sheet grammar, ga-132/133 report + block entries */
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); padding:8px 16px calc(14px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:6px 0 4px; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sh-row { display:flex; align-items:center; gap:11px; padding:8px 4px 12px; border-bottom:1px solid var(--border-hairline); }
+  .av { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; }
+  .shb { min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .shn { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .shs { font-size:12px; color:var(--text-secondary); }
+  .menu { list-style:none; display:flex; flex-direction:column; padding-top:6px; }
+  .menu li { display:block; }
+  .mact { display:flex; align-items:center; width:100%; min-height:52px; background:transparent; border:none; font-family:inherit; font-size:14px; font-weight:600; color:var(--text-primary); cursor:pointer; padding:0 4px; text-align:start; text-decoration:none; }
+  .mact:hover { color:var(--int-primary); }
+  .mact .mi { width:24px; height:24px; flex:none; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin-inline-end:12px; }
+  .mact .mi svg { width:20px; height:20px; stroke-width:1.85; }
+  .ml { flex:1; min-width:0; }
+  .mact.quiet { color:var(--text-secondary); justify-content:center; border-top:1px solid var(--border-hairline); margin-top:4px; }
+  .mfoot { font-size:11px; color:var(--text-tertiary); line-height:1.5; padding:2px 4px 6px; }
+  .msw { flex:none; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-default); position:relative; }
+  .msw i { position:absolute; top:3px; inset-inline-start:3px; width:18px; height:18px; border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-hairline); }
+  .msw.on { background:var(--int-primary); }
+  .msw.on i { inset-inline-start:19px; }
+
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Conversation thread (GA-098)</h1>
+    <p>Fatima's thread with <strong>Ayesha Khan</strong> at <code>/messages/host-ayesha-margalla-view</code> — the guest mirror of <code>HA-053</code>, about <strong>Margalla View Apartment</strong> (F-7, Islamabad), booking <code>SS-7F3K9Q</code>, <span class="num">Fri 14 – Mon 17 Aug 2026</span>. Her <code>GA-061</code> request note is the <strong>opening message</strong>, verbatim. Own bubbles sit right, the host's left; <strong>one-tap translation</strong> is symmetric — Ayesha's اردو renders in English with a plain <em>"Translated from اردو"</em> attribution and a <em>Show original</em> return, and Fatima's own English reply shows the اردو Ayesha receives. Urdu bubbles are natively RTL in Nastaliq inside an English thread (§9-E). The privacy truth is <code>GA-061</code>'s, unedited: <strong>the phone number is shared only after the booking is confirmed — never with the request</strong>, and the thread states the moment that changes. The <code>⋯</code> menu carries translation, the stay, <strong>Report a problem</strong> (<code>GA-132</code>) and <strong>Block</strong> (<code>GA-133</code>). Offline, the reply queues and says so in <code>GA-088</code>'s register — <strong>nothing is lost</strong>. Panels: request thread + translation on (light) · confirmed offline queue + ⋯ menu (light) · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Request thread · light</span><span>Translation on</span><span>Confirmed · offline queued</span><span>⋯ menu</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 — REQUEST THREAD · TRANSLATION ON ============================ -->
+    <section class="panel" aria-label="Light theme — the request thread, and the same thread with translation on">
+      <div class="panel-tag">Light — request stage (original languages) · translation on (symmetric)</div>
+      <div class="rowflex">
+
+        <!-- A · REQUEST THREAD -->
+        <div class="pcol">
+          <div class="pcap">A · Her request note opens the thread</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="aH">Ayesha Khan</span><span class="tid-s">Margalla View Apartment · Request sent</span></div>
+              <button class="ib" type="button" aria-label="Conversation options"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="ctx">
+                <span class="ctx-b"><span class="ctx-t"><span class="num">Fri 14 – Mon 17 Aug 2026</span> · <span class="num">3</span> nights</span><span class="ctx-s">Couple · <span class="num">2</span> guests · documents verified</span></span>
+                <a class="ctx-a" href="/trips/is-f7-2bed-aug2026">Your request</a>
+              </div>
+              <div class="priv">
+                <span class="priv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="priv-t"><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</span>
+              </div>
+
+              <div class="log" role="log" aria-label="Conversation with Ayesha Khan">
+                <span class="daysep">Today</span>
+                <span class="syscap">You sent this with your booking request</span>
+
+                <div class="msg out">
+                  <div class="bub">As-salamu alaikum Ayesha! We're a married couple visiting Islamabad for my cousin's wedding. We'd reach around 4 pm on Friday — is early check-in possible? Also, is parking available for one car? Shukriya.</div>
+                  <span class="bmeta"><span class="btime num">4:02 PM</span><span class="bstat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Sent</span></span>
+                </div>
+
+                <div class="msg in">
+                  <div class="bub urdu" dir="rtl" lang="ur">وعلیکم السلام فاطمہ! جی ہاں — میں جمعہ کو دوپہر <span class="num">2</span> بجے سے فلیٹ کھول سکتی ہوں، اور گیٹ کے اندر ایک گاڑی کی پارکنگ موجود ہے۔</div>
+                  <button class="trbtn" type="button"><span class="tri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trl">Translate to English</span></button>
+                  <span class="bmeta"><span class="btime num">4:26 PM</span></span>
+                </div>
+              </div>
+
+              <div class="comp">
+                <a class="comp-ib" href="/messages/host-ayesha-margalla-view/attach" aria-label="Add an attachment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4L13 4.8a3 3 0 1 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.6-7.6"/></svg></a>
+                <textarea class="ta" rows="1" placeholder="Message Ayesha" aria-label="Message Ayesha"></textarea>
+                <button class="send" type="button" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6z"/></svg></button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · TRANSLATION ON -->
+        <div class="pcol">
+          <div class="pcap">B · Translation on — both directions</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="bH">Ayesha Khan</span><span class="tid-s">Margalla View Apartment · Request sent</span></div>
+              <button class="ib" type="button" aria-label="Conversation options"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="trbar" role="status">
+                <span class="trbar-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span>
+                <span class="trbar-t">Translation on — you read English, Ayesha reads اردو</span>
+                <button class="trbar-off" type="button">Turn off</button>
+              </div>
+
+              <div class="log" role="log" aria-label="Conversation with Ayesha Khan, translated">
+                <span class="daysep">Today</span>
+
+                <div class="msg in">
+                  <div class="bub">Wa alaikum assalam Fatima! Yes — I can open the flat from 2 pm on Friday, and there's parking for one car inside the gate.</div>
+                  <span class="trattr"><span class="trattr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trattr-t">Translated from اردو</span></span>
+                  <button class="trbtn" type="button"><span class="tri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7v10M4 17h10"/></svg></span><span class="trl">Show original</span></button>
+                  <span class="bmeta"><span class="btime num">4:26 PM</span></span>
+                </div>
+
+                <div class="msg out">
+                  <div class="bub">Jazak Allah, that's perfect. Is the masjid within walking distance, and is there backup power during load-shedding hours?</div>
+                  <div class="bub urdu mirror-bub" dir="rtl" lang="ur">جزاک اللہ، یہ بہت مناسب ہے۔ کیا مسجد پیدل فاصلے پر ہے، اور لوڈ شیڈنگ کے اوقات میں بیک اپ بجلی دستیاب ہوتی ہے؟</div>
+                  <span class="trattr"><span class="trattr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trattr-t">Translated to اردو — this is what Ayesha receives</span></span>
+                  <span class="bmeta"><span class="btime num">4:31 PM</span><span class="bstat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Sent</span></span>
+                </div>
+
+                <div class="msg in">
+                  <div class="bub">Yes — Jamia Masjid F-7 Markaz is about a 4-minute walk, and the flat runs on an inverter during load-shedding hours.</div>
+                  <span class="trattr"><span class="trattr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trattr-t">Translated from اردو</span></span>
+                  <span class="bmeta"><span class="btime num">4:44 PM</span></span>
+                </div>
+              </div>
+
+              <div class="comp">
+                <a class="comp-ib" href="/messages/host-ayesha-margalla-view/attach" aria-label="Add an attachment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4L13 4.8a3 3 0 1 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.6-7.6"/></svg></a>
+                <textarea class="ta" rows="1" placeholder="Message Ayesha" aria-label="Message Ayesha"></textarea>
+                <button class="send" type="button" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6z"/></svg></button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Translation is <strong>first-class and symmetric</strong> (§9-E): the same toggle that renders Ayesha's اردو as English also shows Fatima what the host will receive, so neither side is guessing. Attribution is a plain, un-decorated line — <em>"Translated from اردو"</em> / <em>"Translated to اردو"</em> — never a flag, never a badge, and <strong>Show original</strong> is always one tap away because a translation is an aid, not a replacement. In panel <strong>A</strong> the Urdu bubble is natively RTL in Nastaliq with the extra line-height the script needs, sitting on the host's side of an otherwise English thread — each bubble aligns to its own script (§9-E A11y/RTL). The mirrored translation bubble is drawn with a dashed hairline so it is never mistaken for a second message that was actually sent. The privacy strip is <code>GA-061</code>'s sentence, unedited — the guest sees the same promise here that she saw when she wrote the note.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL 2 — CONFIRMED · OFFLINE QUEUE · ⋯ MENU ============================ -->
+    <section class="panel" aria-label="Light theme — the confirmed thread offline, and the conversation menu">
+      <div class="panel-tag">Light — confirmed booking · offline send queue (GA-088 register) · ⋯ menu</div>
+      <div class="rowflex">
+
+        <!-- C · OFFLINE -->
+        <div class="pcol">
+          <div class="pcap">C · Offline — it will send, nothing is lost</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="cH">Ayesha Khan</span><span class="tid-s">Margalla View Apartment · Confirmed</span></div>
+              <button class="ib" type="button" aria-label="Conversation options"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="ctx">
+                <span class="ctx-b"><span class="ctx-t"><span class="num">Fri 14 – Mon 17 Aug 2026</span> · <span class="num">3</span> nights</span><span class="ctx-s">Booking <span class="num">SS-7F3K9Q</span></span></span>
+                <a class="ctx-a" href="/trips/is-f7-2bed-aug2026">View the stay</a>
+              </div>
+
+              <div class="offline" role="status">
+                <span class="off-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M5 12.5a11 11 0 0 1 4-2.6M2 8.8a16 16 0 0 1 5-3M9.5 16a5 5 0 0 1 5-.6M12 20h.01M15.5 10.2A11 11 0 0 1 19 12.5M13 5.2a16 16 0 0 1 9 3.6"/></svg></span>
+                <span class="off-b"><span class="off-t">You're offline</span><span class="off-d"><b>Nothing is lost.</b> We'll send your message the moment you're back online — you don't have to do anything.</span></span>
+              </div>
+
+              <div class="log" role="log" aria-label="Conversation with Ayesha Khan">
+                <span class="daysep">Today</span>
+                <span class="syscap">Booking confirmed. Your phone number is now shared with Ayesha, as stated when you sent the request.</span>
+
+                <div class="msg in">
+                  <div class="bub urdu" dir="rtl" lang="ur">مبارک ہو! جمعہ کو ملاقات ہوگی۔ گیٹ پر گارڈ کے پاس آپ کا نام موجود ہوگا۔</div>
+                  <span class="bmeta"><span class="btime num">6:12 PM</span></span>
+                </div>
+
+                <div class="msg out">
+                  <div class="bub">Shukriya Ayesha. We'll message when we set off from Rawalpindi so you know roughly when to expect us.</div>
+                  <span class="bmeta"><span class="btime num">6:20 PM</span><span class="bstat queued"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>Will send</span></span>
+                </div>
+              </div>
+
+              <div class="comp">
+                <a class="comp-ib" href="/messages/host-ayesha-margalla-view/attach" aria-label="Add an attachment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4L13 4.8a3 3 0 1 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.6-7.6"/></svg></a>
+                <textarea class="ta" rows="1" placeholder="Message Ayesha" aria-label="Message Ayesha"></textarea>
+                <button class="send" type="button" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6z"/></svg></button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · ⋯ MENU -->
+        <div class="pcol">
+          <div class="pcap">D · ⋯ menu — translate, report, block</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="dH">Ayesha Khan</span><span class="tid-s">Margalla View Apartment · Confirmed</span></div>
+              <button class="ib" type="button" aria-label="Conversation options"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <div class="log">
+                <span class="daysep">Today</span>
+                <div class="msg out">
+                  <div class="bub">As-salamu alaikum Ayesha! We're a married couple visiting Islamabad for my cousin's wedding…</div>
+                  <span class="bmeta"><span class="btime num">4:02 PM</span></span>
+                </div>
+                <div class="msg in">
+                  <div class="bub urdu" dir="rtl" lang="ur">وعلیکم السلام فاطمہ! جی ہاں — میں جمعہ کو دوپہر <span class="num">2</span> بجے سے فلیٹ کھول سکتی ہوں۔</div>
+                  <span class="bmeta"><span class="btime num">4:26 PM</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetName">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <div class="sh-row">
+                <span class="av" aria-hidden="true">AK</span>
+                <span class="shb"><span class="shn" id="sheetName">Ayesha Khan</span><span class="shs">Confirmed · Margalla View Apartment</span></span>
+              </div>
+              <ul class="menu">
+                <li><button class="mact" type="button" role="switch" aria-checked="false"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="ml">Translate this conversation</span><span class="msw" aria-hidden="true"><i></i></span></button></li>
+                <li><a class="mact" href="/trips/is-f7-2bed-aug2026"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span class="ml">View the stay</span></a></li>
+                <li><a class="mact" href="/messages/host-ayesha-margalla-view/report"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1 3h6v9h-7l-1-3H4"/></svg></span><span class="ml">Report a problem</span></a></li>
+                <li><a class="mact" href="/messages/host-ayesha-margalla-view/block"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></span><span class="ml">Block Ayesha Khan</span></a></li>
+              </ul>
+              <p class="mfoot">Reporting is private, and blocking is a boundary, not an accusation — either way, <b>they aren't notified</b>.</p>
+              <ul class="menu"><li><button class="mact quiet" type="button">Cancel</button></li></ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Offline is a <strong>state, not a failure</strong>: the banner sits in the muted <code>bg.raised</code> register with a wifi-off glyph — never <code>semantic.error</code> — and the queued message carries a per-message <strong>Will send</strong> status by glyph <em>and</em> word, exactly the pair <code>GA-088</code> established; the promise is quoted rather than reinvented — <strong>nothing is lost, it sends on its own</strong>. The confirmation moment is a plain system caption in the log, not a celebration: it names the one thing that materially changed for the guest's privacy, closing the loop the <code>GA-061</code> strip opened. In the <code>⋯</code> sheet, translation is a real <code>role="switch"</code> row (thread-level, on top of the per-message toggle), and <strong>Report</strong>/<strong>Block</strong> keep <code>GA-132</code>/<code>GA-133</code>'s calm grammar with their two shipped truths restated underneath — no red danger styling, because blocking is a boundary, not a verdict.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — translated thread and the offline queue">
+      <div class="panel-tag">Dark — translation on · offline queued</div>
+      <div class="rowflex">
+
+        <!-- E · DARK TRANSLATED -->
+        <div class="pcol">
+          <div class="pcap">E · Translation on — dark</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="eH">Ayesha Khan</span><span class="tid-s">Margalla View Apartment · Confirmed</span></div>
+              <button class="ib" type="button" aria-label="Conversation options"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="trbar" role="status">
+                <span class="trbar-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span>
+                <span class="trbar-t">Translation on — you read English, Ayesha reads اردو</span>
+                <button class="trbar-off" type="button">Turn off</button>
+              </div>
+
+              <div class="log" role="log" aria-label="Conversation with Ayesha Khan, translated">
+                <span class="daysep">Today</span>
+
+                <div class="msg in">
+                  <div class="bub">Congratulations! I'll see you on Friday. The guard at the gate will have your name.</div>
+                  <span class="trattr"><span class="trattr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trattr-t">Translated from اردو</span></span>
+                  <button class="trbtn" type="button"><span class="tri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7v10M4 17h10"/></svg></span><span class="trl">Show original</span></button>
+                  <span class="bmeta"><span class="btime num">6:12 PM</span></span>
+                </div>
+
+                <div class="msg out">
+                  <div class="bub">Shukriya Ayesha. We'll message when we set off from Rawalpindi so you know roughly when to expect us.</div>
+                  <div class="bub urdu mirror-bub" dir="rtl" lang="ur">شکریہ عائشہ۔ ہم راولپنڈی سے روانہ ہوتے وقت پیغام بھیج دیں گے تاکہ آپ کو اندازہ ہو جائے کہ ہم کب پہنچیں گے۔</div>
+                  <span class="trattr"><span class="trattr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trattr-t">Translated to اردو — this is what Ayesha receives</span></span>
+                  <span class="bmeta"><span class="btime num">6:20 PM</span><span class="bstat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Sent</span></span>
+                </div>
+              </div>
+
+              <div class="comp">
+                <a class="comp-ib" href="/messages/host-ayesha-margalla-view/attach" aria-label="Add an attachment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4L13 4.8a3 3 0 1 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.6-7.6"/></svg></a>
+                <textarea class="ta" rows="1" placeholder="Message Ayesha" aria-label="Message Ayesha"></textarea>
+                <button class="send" type="button" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6z"/></svg></button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · DARK OFFLINE -->
+        <div class="pcol">
+          <div class="pcap">F · Offline queue — dark, a second host</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/messages" aria-label="Back to messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="fH">Nadia S.</span><span class="tid-s">Blue Area Serviced Flat · Request sent</span></div>
+              <button class="ib" type="button" aria-label="Conversation options"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="priv">
+                <span class="priv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="priv-t"><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</span>
+              </div>
+
+              <div class="offline" role="status">
+                <span class="off-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M5 12.5a11 11 0 0 1 4-2.6M2 8.8a16 16 0 0 1 5-3M9.5 16a5 5 0 0 1 5-.6M12 20h.01M15.5 10.2A11 11 0 0 1 19 12.5M13 5.2a16 16 0 0 1 9 3.6"/></svg></span>
+                <span class="off-b"><span class="off-t">You're offline</span><span class="off-d"><b>Nothing is lost.</b> We'll send your message the moment you're back online — you don't have to do anything.</span></span>
+              </div>
+
+              <div class="log" role="log" aria-label="Conversation with Nadia S.">
+                <span class="daysep">Yesterday</span>
+
+                <div class="msg out">
+                  <div class="bub">Assalam-o-alaikum — I've sent a request for the September dates. Is the family floor available then?</div>
+                  <span class="bmeta"><span class="btime num">9:40 AM</span><span class="bstat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Sent</span></span>
+                </div>
+
+                <div class="msg out">
+                  <div class="bub">We're four adults, all family — my parents are travelling with us.</div>
+                  <span class="bmeta"><span class="btime num">9:41 AM</span><span class="bstat queued"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>Will send</span></span>
+                </div>
+              </div>
+
+              <div class="comp">
+                <a class="comp-ib" href="/messages/host-nadia-s/attach" aria-label="Add an attachment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4L13 4.8a3 3 0 1 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.6-7.6"/></svg></a>
+                <textarea class="ta" rows="1" placeholder="Message Nadia" aria-label="Message Nadia"></textarea>
+                <button class="send" type="button" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6z"/></svg></button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (DESIGN §1.6). The translation bar keeps the muted <code>semantic.info</code> tint in both themes — a utility fact, never a brand-green endorsement (§10.3) — and the queued <strong>Will send</strong> chip keeps the muted warning register: legible, never neon. <strong>F</strong> shows the same chrome on a thread that has <em>not</em> been confirmed (Nadia S., Blue Area Serviced Flat), where the <code>GA-061</code> privacy strip is still the standing truth and the header subtitle reads <em>Request sent</em> instead of <em>Confirmed</em> — nothing else about the thread changes.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the thread">
+      <div class="panel-tag">RTL · اردو — the thread, mirrored, with an English host message translated</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">عائشہ خان کے ساتھ گفتگو — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/ur/messages" aria-label="پیغامات پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tid"><span class="tid-n" id="uH">عائشہ خان</span><span class="tid-s"><span dir="ltr">Margalla View Apartment</span> · تصدیق شدہ</span></div>
+              <button class="ib" type="button" aria-label="گفتگو کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="ctx">
+                <span class="ctx-b"><span class="ctx-t"><span class="num">14 – 17 Aug 2026</span> · <span class="num">3</span> راتیں</span><span class="ctx-s">بکنگ <span class="num">SS-7F3K9Q</span></span></span>
+                <a class="ctx-a" href="/ur/trips/is-f7-2bed-aug2026">قیام دیکھیں</a>
+              </div>
+
+              <div class="log" role="log" aria-label="عائشہ خان کے ساتھ گفتگو">
+                <span class="daysep">آج</span>
+                <span class="syscap">بکنگ کی تصدیق ہو گئی۔ اب آپ کا فون نمبر عائشہ کے ساتھ شیئر ہے، جیسا کہ درخواست بھیجتے وقت بتایا گیا تھا۔</span>
+
+                <div class="msg in">
+                  <div class="bub eng" dir="ltr" lang="en">"Congratulations! I'll see you on Friday — the guard at the gate will have your name."</div>
+                  <div class="bub mirror-bub">”مبارک ہو! جمعہ کو ملاقات ہوگی — گیٹ پر گارڈ کے پاس آپ کا نام موجود ہوگا۔“</div>
+                  <span class="trattr"><span class="trattr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="trattr-t">انگریزی سے ترجمہ</span></span>
+                  <span class="bmeta"><span class="btime num">6:12 PM</span></span>
+                </div>
+
+                <div class="msg out">
+                  <div class="bub">شکریہ عائشہ۔ ہم راولپنڈی سے روانہ ہوتے وقت پیغام بھیج دیں گے تاکہ آپ کو اندازہ ہو جائے کہ ہم کب پہنچیں گے۔</div>
+                  <span class="bmeta"><span class="btime num">6:20 PM</span><span class="bstat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>بھیج دیا</span></span>
+                </div>
+
+                <div class="msg out">
+                  <div class="bub">ایک سوال — کیا قریب ترین مسجد پیدل فاصلے پر ہے؟</div>
+                  <span class="bmeta"><span class="btime num">6:24 PM</span><span class="bstat queued"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>بھیجا جائے گا</span></span>
+                </div>
+              </div>
+
+              <div class="comp">
+                <a class="comp-ib" href="/ur/messages/host-ayesha-margalla-view/attach" aria-label="منسلکہ شامل کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11l-8.5 8.5a4.5 4.5 0 0 1-6.4-6.4L13 4.8a3 3 0 1 1 4.2 4.2l-8 8a1.5 1.5 0 0 1-2.1-2.1l7.6-7.6"/></svg></a>
+                <textarea class="ta" rows="1" placeholder="عائشہ کو پیغام لکھیں" aria-label="عائشہ کو پیغام لکھیں"></textarea>
+                <button class="send" type="button" aria-label="بھیجیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6z"/></svg></button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The mirror is the proof of symmetry: with the UI in Urdu the host's message arrives in <strong>English</strong>, is rendered LTR in Inter on its own side of the thread, and is translated <em>into</em> اردو underneath with the plain attribution <span dir="rtl" lang="ur">انگریزی سے ترجمہ</span> — the exact inverse of panel <strong>B</strong>. Layout mirrors completely: the back chevron and the send glyph flip (<code>.mirror</code> / <code>scaleX(-1)</code>), the host's bubbles move to the right and Fatima's to the left, and the queued chip keeps its warning register with the Urdu word <span dir="rtl" lang="ur">بھیجا جائے گا</span> beside the clock glyph — status by glyph <em>and</em> word in both scripts. The listing name is an English proper noun and stays <code>dir="ltr"</code>-isolated rather than transliterated. Every numeral — times, dates, the booking reference <span class="num">SS-7F3K9Q</span> — is a <strong>Western digit inside <code>.num</code></strong> (<code>direction:ltr; unicode-bidi:isolate</code>), and no <code>aria-label</code> uses a different numeral system than the one on screen (Pass #31).</p>
+    </section>
+
+  </main>
+</body>
+</html>

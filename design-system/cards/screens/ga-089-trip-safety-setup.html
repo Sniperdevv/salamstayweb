@@ -1,0 +1,568 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Trip safety setup (GA-089)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b, .note strong { color:var(--text-secondary); font-weight:600; }
+
+  /* guest phone frame — a pushed settings route; the bars below are SUB-progress, NOT the booking journey stepper (§7.6a) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.step-lb,.h2,.lead,.scap,.ott,.ottx,.odd,.sw-t,.sw-s,.st,.shint,.ctrl-t,.ctrl-l,.chip,.btn,.foot,.rev-t,.rev-s,.safechip,.done-h,.done-d) { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl :is(.lead,.odd,.sw-s,.shint,.ctrl-l,.foot,.rev-s,.done-d) { line-height:1.95; }
+  .phone.rtl :is(.h2,.ottx,.sw-t,.st,.ctrl-t,.rev-t,.tbar-title,.done-h) { line-height:1.85; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .phone.rtl .schev svg { transform:scaleX(-1); }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .phone.rtl .ib.mirror svg { transform:scaleX(-1); }
+  .tbar-title { flex:1; font-size:16px; font-weight:600; color:var(--text-primary); text-align:center; }
+  .spacer { width:44px; flex:none; }
+
+  /* thin-bar SUB-progress inside the setup — never the 4-step booking journey stepper (§7.6a) */
+  .stepper { display:flex; gap:4px; padding:10px 16px 4px; flex:none; }
+  .stepper i { height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); }
+  .stepper i.done, .stepper i.now { background:var(--int-primary); }
+  .stepper i.now { opacity:.55; }
+  .step-lb { font-size:11px; color:var(--text-tertiary); padding:2px 16px 0; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 16px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .grow { flex:1; }
+  .h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .lead { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-bottom:14px; }
+  .scap { font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:14px 2px 8px; }
+
+  /* radiogroup rows — GA-125 grammar */
+  .optlist { display:flex; flex-direction:column; gap:8px; }
+  .optrow { display:flex; align-items:flex-start; gap:10px; width:100%; min-height:56px; padding:11px 12px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); font-family:inherit; cursor:pointer; text-align:start; }
+  .optrow[aria-checked="true"] { border-color:var(--border-brand); background:var(--int-subtle); }
+  .orad { flex:none; width:18px; height:18px; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); display:flex; align-items:center; justify-content:center; margin-top:2px; }
+  .optrow[aria-checked="true"] .orad { border-color:var(--int-primary); }
+  .orad i { width:9px; height:9px; border-radius:var(--radius-full); background:transparent; display:block; }
+  .optrow[aria-checked="true"] .orad i { background:var(--int-primary); }
+  .otx { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .ott { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+  .ottx { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .odd { font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .safechip { display:inline-flex; align-items:center; font-size:10px; font-weight:700; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:1px 7px; }
+  .safechip svg { width:9px; height:9px; stroke-width:2.6; margin-inline-end:3px; }
+
+  /* switch rows — GA-091 / GA-125 grammar */
+  .swlist { display:flex; flex-direction:column; gap:8px; }
+  .swrow { display:flex; align-items:center; gap:10px; padding:11px 12px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); min-height:56px; }
+  .sw-ic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sw-ic svg { width:17px; height:17px; stroke-width:1.85; }
+  .sw-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sw-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .sw-s { font-size:11px; color:var(--text-secondary); line-height:1.45; }
+  .switch-hit { flex:none; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; padding:0; }
+  .switch { display:block; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-default); position:relative; }
+  .switch::after { content:""; position:absolute; top:3px; inset-inline-start:3px; width:18px; height:18px; border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-hairline); }
+  .switch[aria-checked="true"] { background:var(--int-primary); }
+  .switch[aria-checked="true"]::after { inset-inline-start:19px; }
+
+  /* preference chips */
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { display:inline-flex; align-items:center; min-height:44px; padding:0 13px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .chip[aria-pressed="true"] { border-color:var(--border-brand); background:var(--int-subtle); color:var(--int-primary); }
+  .chip svg { width:13px; height:13px; stroke-width:2.2; margin-inline-end:6px; }
+
+  /* the you-control / off-by-default block — on every step */
+  .ctrl { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 11px; margin-top:12px; }
+  .ctrl-t { font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:7px; }
+  .ctrl-r { display:flex; align-items:flex-start; gap:8px; margin-bottom:6px; }
+  .ctrl-r:last-child { margin-bottom:0; }
+  .ctrl-r svg { flex:none; width:14px; height:14px; stroke-width:2.1; margin-top:2px; color:var(--int-primary); }
+  .ctrl-r.off svg { color:var(--text-tertiary); }
+  .ctrl-l { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .ctrl-l b { color:var(--text-primary); font-weight:600; }
+
+  /* plain link rows */
+  .grp { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .srow { display:flex; align-items:center; gap:11px; min-height:56px; padding:10px 12px; text-decoration:none; border-bottom:1px solid var(--border-hairline); }
+  .grp > .srow:last-child { border-bottom:none; }
+  .sic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sic svg { width:17px; height:17px; stroke-width:1.85; }
+  .sbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .st { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .shint { font-size:11px; color:var(--text-secondary); line-height:1.45; }
+  .schev { flex:none; color:var(--text-tertiary); display:flex; }
+  .schev svg { width:17px; height:17px; stroke-width:2; }
+
+  /* review + done */
+  .done-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .done-ic svg { width:26px; height:26px; stroke-width:2; }
+  .done-h { font-size:19px; font-weight:600; color:var(--text-primary); margin-bottom:6px; }
+  .done-d { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-bottom:14px; }
+  .revlist { display:flex; flex-direction:column; gap:0; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .revrow { display:flex; align-items:flex-start; gap:9px; padding:10px 12px; border-bottom:1px solid var(--border-hairline); }
+  .revlist > .revrow:last-child { border-bottom:none; }
+  .revrow svg { flex:none; width:15px; height:15px; stroke-width:2.1; margin-top:2px; color:var(--int-primary); }
+  .revrow.off svg { color:var(--text-tertiary); }
+  .rev-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .rev-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .rev-s { font-size:11px; color:var(--text-secondary); line-height:1.45; }
+
+  .btn { display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.ghost { background:transparent; color:var(--text-secondary); }
+  .btnstack { display:flex; flex-direction:column; gap:6px; padding-top:12px; }
+  .foot { font-size:11px; color:var(--text-tertiary); line-height:1.55; padding-top:10px; }
+  .foot b { color:var(--text-secondary); font-weight:600; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Trip safety setup (GA-089)</h1>
+    <p>The four-step walkthrough of the settings <code>GA-125</code> already ships, at <strong>/account/settings/privacy/trip-safety/setup</strong>, reached from the <code>GA-087</code> hub. <strong>Naming follows shipped doctrine, not the registry row:</strong> <code>GA-125</code> labels this surface <em>"Trip safety"</em> and <code>GA-091</code> refuses the "women's mode" framing outright — so neither script carries that phrase, and the §2 row title is parked for the founder. Steps: <strong>who can see and message you</strong> · <strong>where you appear on a map</strong> · <strong>what you'd like to see first when you search</strong> · <strong>arriving somewhere new</strong>, then a plain review. Every step ends with the same two-line block — <strong>what you control</strong> and <strong>what is off unless you turn it on</strong> — so nothing is quietly enabled on a guest's behalf. Progress is a <strong>thin four-bar sub-progress</strong> for this setup only; it is deliberately <em>not</em> the four-step Party → Verify → Price → Confirm booking stepper, and its caption never borrows that journey's wording (§7.6a). Panels: steps <span class="num">1</span>–<span class="num">2</span> (light) · steps <span class="num">3</span>–<span class="num">4</span> (light) · review + step <span class="num">1</span> (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Step 1 · who sees you</span><span>Step 2 · map</span><span>Step 3 · search</span><span>Step 4 · arrival</span><span>Review · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 — STEPS 1 + 2 ============================ -->
+    <section class="panel" aria-label="Light theme — step one and step two of the setup">
+      <div class="panel-tag">Light — step 1, who can see you · step 2, where you appear</div>
+      <div class="rowflex">
+
+        <!-- A · STEP 1 -->
+        <div class="pcol">
+          <div class="pcap">A · Step 1 — already on the safer choice</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/account/settings/privacy/trip-safety" aria-label="Back to trip safety"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Trip safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i></div>
+            <p class="step-lb">Trip safety setup · <span class="num">1</span> of <span class="num">4</span> · Who can see you</p>
+            <div class="screen">
+              <h2 class="h2" id="aH">Who can see and message you</h2>
+              <p class="lead">You're already on the more private choice. Change it whenever you like — this is a setting, not a mode.</p>
+
+              <div class="scap">Who can see your profile</div>
+              <div class="optlist" role="radiogroup" aria-label="Profile visibility">
+                <button class="optrow" type="button" role="radio" aria-checked="true">
+                  <span class="orad" aria-hidden="true"><i></i></span>
+                  <span class="otx"><span class="ott"><span class="ottx">Hosts you book with</span><span class="safechip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Safer default</span></span><span class="odd">Only hosts of a stay you request or book can see your profile.</span></span>
+                </button>
+                <button class="optrow" type="button" role="radio" aria-checked="false">
+                  <span class="orad" aria-hidden="true"><i></i></span>
+                  <span class="otx"><span class="ott"><span class="ottx">Everyone on SalamStay</span></span><span class="odd">Any member can view your public profile — your name and photo.</span></span>
+                </button>
+              </div>
+
+              <div class="scap">Who can message you</div>
+              <div class="optlist" role="radiogroup" aria-label="Messaging scope">
+                <button class="optrow" type="button" role="radio" aria-checked="true">
+                  <span class="orad" aria-hidden="true"><i></i></span>
+                  <span class="otx"><span class="ott"><span class="ottx">Hosts with a booking</span><span class="safechip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Safer default</span></span><span class="odd">Only a host you've requested or booked with can start a chat.</span></span>
+                </button>
+                <button class="optrow" type="button" role="radio" aria-checked="false">
+                  <span class="orad" aria-hidden="true"><i></i></span>
+                  <span class="otx"><span class="ott"><span class="ottx">Anyone on SalamStay</span></span><span class="odd">Any member can message you first. You can still block anyone.</span></span>
+                </button>
+              </div>
+
+              <div class="ctrl">
+                <div class="ctrl-t">On this step</div>
+                <div class="ctrl-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ctrl-l"><b>You control</b> who sees your profile and who may start a chat.</span></div>
+                <div class="ctrl-r off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="ctrl-l"><b>Off unless you change it:</b> being visible to everyone, and messages from members you haven't booked with.</span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <button class="btn primary" type="button">Continue</button>
+                <a class="btn ghost" href="/account/settings/privacy/trip-safety">Skip — keep the defaults</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · STEP 2 -->
+        <div class="pcol">
+          <div class="pcap">B · Step 2 — the map, and who you've blocked</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib mirror" type="button" aria-label="Back to the previous step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Trip safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i></div>
+            <p class="step-lb">Trip safety setup · <span class="num">2</span> of <span class="num">4</span> · Where you appear</p>
+            <div class="screen">
+              <h2 class="h2" id="bH">Where you appear on a map</h2>
+              <p class="lead">Before a booking is confirmed, nobody sees an exact pin — yours or a host's.</p>
+
+              <div class="swlist">
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.3 7-11a7 7 0 0 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Show approximate location</span><span class="sw-s">Your area shows as a general neighbourhood until a booking is confirmed.</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="Show approximate location until a booking is confirmed"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+                </div>
+              </div>
+
+              <div class="scap">People you've blocked</div>
+              <div class="grp">
+                <a class="srow" href="/account/settings/blocked">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></span>
+                  <span class="sbd"><span class="st">Blocked people</span><span class="shint"><span class="num">2</span> people · they're never notified</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="ctrl">
+                <div class="ctrl-t">On this step</div>
+                <div class="ctrl-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ctrl-l"><b>You control</b> whether your area shows as a neighbourhood, and who is blocked.</span></div>
+                <div class="ctrl-r off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="ctrl-l"><b>Never on:</b> your exact location before a booking is confirmed, and your phone or email to other members.</span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <button class="btn primary" type="button">Continue</button>
+                <a class="btn ghost" href="/account/settings/privacy/trip-safety">Skip — keep the defaults</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The bars are <strong>sub-progress inside this setup</strong> — four thin bars for four setup steps — and the caption says so in its own words ("Trip safety setup · <span class="num">1</span> of <span class="num">4</span>"). It deliberately does <em>not</em> reuse the booking journey's "Step N of 4 · Verify / Confirm" phrasing, because this screen sits nowhere in that journey (§7.6a: post-book and account surfaces carry no journey stepper). Steps <strong>1</strong> and <strong>2</strong> reproduce <code>GA-125</code>'s shipped rows rather than restating them — the two radiogroups with their <strong>"Safer default"</strong> chips, the approximate-location Switch on by default, and the blocked-people row whose hint carries <code>GA-133</code>'s load-bearing truth verbatim: <strong>"<span class="num">2</span> people · they're never notified."</strong> The <em>On this step</em> block is the screen's contract: one line for what the guest controls, one for what stays off — and where a thing is structurally never shared (exact location before confirmation, phone, email) it says <strong>"Never on"</strong> rather than pretending it's a toggle. Both footers give an equal-weight escape that keeps the safe defaults, so leaving early never degrades anyone's privacy.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL 2 — STEPS 3 + 4 ============================ -->
+    <section class="panel" aria-label="Light theme — step three and step four of the setup">
+      <div class="panel-tag">Light — step 3, what you see first · step 4, arriving somewhere new</div>
+      <div class="rowflex">
+
+        <!-- C · STEP 3 -->
+        <div class="pcol">
+          <div class="pcap">C · Step 3 — a search preference, never a label on you</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib mirror" type="button" aria-label="Back to the previous step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Trip safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+            <p class="step-lb">Trip safety setup · <span class="num">3</span> of <span class="num">4</span> · What you see first</p>
+            <div class="screen">
+              <h2 class="h2" id="cH">What you'd like to see first</h2>
+              <p class="lead">Some hosts set their home as women-only, or say it suits families. If that helps you, we can put those stays at the top of your results.</p>
+
+              <div class="chips" role="group" aria-label="Stays to show first">
+                <button class="chip" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><path d="M6 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Women-only stays</button>
+                <button class="chip" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Family-friendly</button>
+                <button class="chip" type="button" aria-pressed="false">No preference</button>
+              </div>
+
+              <div class="scap">What this does</div>
+              <div class="grp">
+                <div class="srow">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg></span>
+                  <span class="sbd"><span class="st">It sorts, it doesn't hide</span><span class="shint">Every other stay still appears — just further down. You can clear this in search any time.</span></span>
+                </div>
+                <div class="srow">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+                  <span class="sbd"><span class="st">Hosts never see this</span><span class="shint">It stays on your device's search, not on your profile.</span></span>
+                </div>
+              </div>
+
+              <div class="ctrl">
+                <div class="ctrl-t">On this step</div>
+                <div class="ctrl-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ctrl-l"><b>You control</b> which kinds of stay come first in your own results.</span></div>
+                <div class="ctrl-r off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="ctrl-l"><b>Off by default:</b> nothing is chosen for you. A women-only home is a policy that <b>a host sets for their own home</b> — it is never assumed for you and never attached to your account.</span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <button class="btn primary" type="button">Continue</button>
+                <a class="btn ghost" href="/account/settings/privacy/trip-safety">Skip — no preference</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · STEP 4 -->
+        <div class="pcol">
+          <div class="pcap">D · Step 4 — check-in and arrival, both off until you say</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib mirror" type="button" aria-label="Back to the previous step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Trip safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+            <p class="step-lb">Trip safety setup · <span class="num">4</span> of <span class="num">4</span> · Arriving somewhere new</p>
+            <div class="screen">
+              <h2 class="h2" id="dH">Arriving somewhere new</h2>
+              <p class="lead">At check-in you can confirm you arrived, and tell a trusted contact. Both are optional, every single time.</p>
+
+              <div class="swlist">
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.3 7-11a7 7 0 0 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Offer check-in confirmation</span><span class="sw-s">A one-tap "I've arrived" on the trip, using your location once.</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="Offer check-in confirmation on your trips"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+                </div>
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Share arrival with Ali Raza</span><span class="sw-s">A quick note when you check in — useful for any trip</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="Share arrival with Ali Raza"><span class="switch" aria-hidden="true"></span></button>
+                </div>
+              </div>
+
+              <div class="grp" style="margin-top:9px">
+                <a class="srow" href="/safety/contacts">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                  <span class="sbd"><span class="st">Trusted contacts</span><span class="shint"><span class="num">2</span> contacts · they only see what you choose to share</span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="ctrl">
+                <div class="ctrl-t">On this step</div>
+                <div class="ctrl-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ctrl-l"><b>You control</b> whether check-in is offered, and who hears that you arrived.</span></div>
+                <div class="ctrl-r off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="ctrl-l"><b>Off by default:</b> arrival sharing. And it stays a boundary — it <b>shares your arrival, not your live location</b>, never a continuous position.</span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <button class="btn primary" type="button">Finish</button>
+                <a class="btn ghost" href="/account/settings/privacy/trip-safety">Skip — keep the defaults</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Step <strong>3</strong> is the one that could go wrong, so it is written narrowly: a women-only home is <strong>a policy a host sets for their own home</strong> (<code>GW-006</code>'s shipped sentence), and this chip only changes the order of the guest's own results. The screen says all three limits out loud — it <em>sorts, it doesn't hide</em>; hosts never see it; nothing is chosen for the guest — because a "safety" setting that silently narrows someone's options is not a safety setting. Nowhere does the wizard ask a guest to declare a gender, a vulnerability, or a mode. Step <strong>4</strong> reuses <code>GA-091</code>'s Switch verbatim — label, subtitle, and its <strong>off-by-default</strong> state — and repeats that screen's boundary word for word: <strong>shares your arrival, not your live location</strong>. The check-in switch is on because check-in is an offer the guest can decline in the moment; the sharing switch is off because it involves someone else.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the review, and step one">
+      <div class="panel-tag">Dark — review (what's on, what's off) · step 1</div>
+      <div class="rowflex">
+
+        <!-- E · REVIEW -->
+        <div class="pcol">
+          <div class="pcap">E · Review — the whole state in one screen</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib mirror" type="button" aria-label="Back to the previous step"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Trip safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></div>
+            <p class="step-lb">Trip safety setup · finished</p>
+            <div class="screen">
+              <span class="done-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <h2 class="done-h" id="eH">Trip safety is set</h2>
+              <p class="done-d">This is what's on now. Change any of it in Privacy settings, any time.</p>
+
+              <div class="revlist">
+                <div class="revrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="rev-b"><span class="rev-t">Only hosts you book with can see you</span><span class="rev-s">Profile and messaging both limited</span></span></div>
+                <div class="revrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="rev-b"><span class="rev-t">Your area shows as a neighbourhood</span><span class="rev-s">Until a booking is confirmed</span></span></div>
+                <div class="revrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="rev-b"><span class="rev-t">Family-friendly stays come first</span><span class="rev-s">Everything else still appears, further down</span></span></div>
+                <div class="revrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="rev-b"><span class="rev-t">Check-in is offered on your trips</span><span class="rev-s">One tap, and only if you want it</span></span></div>
+                <div class="revrow off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="rev-b"><span class="rev-t">Arrival sharing is off</span><span class="rev-s">Turn it on at check-in if you want Ali Raza to know</span></span></div>
+                <div class="revrow off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="rev-b"><span class="rev-t"><span class="num">2</span> people blocked</span><span class="rev-s">They're never notified</span></span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <a class="btn primary" href="/account/settings/privacy/trip-safety">Done</a>
+                <a class="btn ghost" href="/safety">Back to Safety</a>
+              </div>
+              <p class="foot">None of this is a special mode, and nothing about it appears on your profile. <b>These are the defaults we'd want for anyone.</b></p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · DARK STEP 1 -->
+        <div class="pcol">
+          <div class="pcap">F · Step 1 — dark</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/account/settings/privacy/trip-safety" aria-label="Back to trip safety"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Trip safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i></div>
+            <p class="step-lb">Trip safety setup · <span class="num">1</span> of <span class="num">4</span> · Who can see you</p>
+            <div class="screen">
+              <h2 class="h2" id="fH">Who can see and message you</h2>
+              <p class="lead">You're already on the more private choice. Change it whenever you like — this is a setting, not a mode.</p>
+
+              <div class="scap">Who can message you</div>
+              <div class="optlist" role="radiogroup" aria-label="Messaging scope">
+                <button class="optrow" type="button" role="radio" aria-checked="true">
+                  <span class="orad" aria-hidden="true"><i></i></span>
+                  <span class="otx"><span class="ott"><span class="ottx">Hosts with a booking</span><span class="safechip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Safer default</span></span><span class="odd">Only a host you've requested or booked with can start a chat.</span></span>
+                </button>
+                <button class="optrow" type="button" role="radio" aria-checked="false">
+                  <span class="orad" aria-hidden="true"><i></i></span>
+                  <span class="otx"><span class="ott"><span class="ottx">Anyone on SalamStay</span></span><span class="odd">Any member can message you first. You can still block anyone.</span></span>
+                </button>
+              </div>
+
+              <div class="ctrl">
+                <div class="ctrl-t">On this step</div>
+                <div class="ctrl-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ctrl-l"><b>You control</b> who sees your profile and who may start a chat.</span></div>
+                <div class="ctrl-r off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="ctrl-l"><b>Off unless you change it:</b> being visible to everyone, and messages from members you haven't booked with.</span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <button class="btn primary" type="button">Continue</button>
+                <a class="btn ghost" href="/account/settings/privacy/trip-safety">Skip — keep the defaults</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (DESIGN §1.6): the "Safer default" chip keeps its muted success register, the selected radio row keeps <code>interactive.subtle</code> rather than glowing, and the completed bars stay full-strength brand. The review is a <strong>ledger, not a celebration</strong> — four on-rows and two off-rows in the same visual weight, each naming the state and the consequence, with the two "off" items given the tertiary glyph so the guest can see at a glance what is <em>not</em> happening. The closing line is the whole design thesis in one sentence: these are the defaults we'd want for anyone, so nobody has to identify themselves as needing protection in order to receive it (§10.8 — empowering and private, never fear-marketing).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the trip safety setup">
+      <div class="panel-tag">RTL · اردو — "ٹرپ سیفٹی", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">مرحلہ 3 — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib mirror" type="button" aria-label="پچھلے مرحلے پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">ٹرپ سیفٹی</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+            <p class="step-lb">ٹرپ سیفٹی سیٹ اپ · <span class="num">3</span> از <span class="num">4</span> · پہلے کیا دکھایا جائے</p>
+            <div class="screen">
+              <h2 class="h2" id="uH">آپ پہلے کیا دیکھنا چاہیں گی</h2>
+              <p class="lead">کچھ میزبان اپنے گھر کو صرف خواتین کے لیے مخصوص کرتے ہیں، یا بتاتے ہیں کہ وہ خاندانوں کے لیے موزوں ہے۔ اگر یہ آپ کے لیے مددگار ہے تو ہم ایسے قیام آپ کے نتائج میں سب سے اوپر دکھا سکتے ہیں۔</p>
+
+              <div class="chips" role="group" aria-label="پہلے کون سے قیام دکھائے جائیں">
+                <button class="chip" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="3.2"/><path d="M6 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>صرف خواتین کے قیام</button>
+                <button class="chip" type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>خاندانوں کے لیے موزوں</button>
+                <button class="chip" type="button" aria-pressed="false">کوئی ترجیح نہیں</button>
+              </div>
+
+              <div class="scap">یہ کیا کرتا ہے</div>
+              <div class="grp">
+                <div class="srow">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg></span>
+                  <span class="sbd"><span class="st">یہ ترتیب دیتا ہے، چھپاتا نہیں</span><span class="shint">باقی تمام قیام پھر بھی نظر آتے ہیں — بس کچھ نیچے۔ آپ اسے تلاش میں کبھی بھی ہٹا سکتی ہیں۔</span></span>
+                </div>
+                <div class="srow">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+                  <span class="sbd"><span class="st">میزبان یہ کبھی نہیں دیکھتے</span><span class="shint">یہ صرف آپ کی تلاش میں رہتا ہے، آپ کی پروفائل پر نہیں۔</span></span>
+                </div>
+              </div>
+
+              <div class="ctrl">
+                <div class="ctrl-t">اس مرحلے پر</div>
+                <div class="ctrl-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ctrl-l"><b>آپ کے اختیار میں:</b> آپ کے اپنے نتائج میں کون سے قیام پہلے آئیں۔</span></div>
+                <div class="ctrl-r off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="ctrl-l"><b>بطورِ ڈیفالٹ آف:</b> آپ کے لیے کچھ منتخب نہیں کیا جاتا۔ صرف خواتین والا گھر <b>میزبان کی اپنے گھر کے لیے مقرر کردہ پالیسی</b> ہے — یہ نہ آپ کے بارے میں فرض کیا جاتا ہے، نہ آپ کے اکاؤنٹ سے جوڑا جاتا ہے۔</span></div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnstack">
+                <button class="btn primary" type="button">جاری رکھیں</button>
+                <a class="btn ghost" href="/ur/account/settings/privacy/trip-safety">چھوڑ دیں — کوئی ترجیح نہیں</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and the row chevrons flip to the reading-start edge, the chips wrap from the right, and the switch thumb travel reverses via logical <code>inset-inline-start</code> (§11). The naming rule holds in <strong>both scripts</strong> — the title is <code>GA-125</code>'s shipped <span dir="rtl" lang="ur">ٹرپ سیفٹی</span>, and <strong>no "women's mode" phrase exists in either language</strong>; where women-only stays are mentioned it is as <span dir="rtl" lang="ur">میزبان کی اپنے گھر کے لیے مقرر کردہ پالیسی</span> — the host's policy for their own home, exactly <code>GW-006</code>'s shipped framing. The sub-progress caption reads <span dir="rtl" lang="ur">ٹرپ سیفٹی سیٹ اپ · <span class="num">3</span> از <span class="num">4</span></span>, using <span dir="rtl" lang="ur">از</span> as the shipped Urdu step connective but <strong>never</strong> the booking journey's <span dir="rtl" lang="ur">مرحلہ 2 از 4 · شناخت</span> wording, which belongs to Verify alone (§7.6a). Both step digits are Western numerals inside <code>.num</code>, LTR-isolated, with Urdu prose around them (Pass #31).</p>
+    </section>
+
+  </main>
+</body>
+</html>

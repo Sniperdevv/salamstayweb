@@ -1,0 +1,620 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-010 Two-step verification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  table { border-collapse:collapse; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.abtitle,.h-title,.h-sub,.opt-h,.opt-p,.primary,.secondary-btn,.ghost-btn,.brandmark,.klabel,.hint,.bcopy,.check-tx,.mrow-h,.mrow-p,.altline,.resend,.count,.banner,.chan) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title,.phone.rtl .abtitle { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .appbar { display:flex; align-items:center; gap:2px; padding:4px 8px 2px; flex:none; }
+  .appbar .abtitle { flex:1; text-align:center; font-size:15px; font-weight:700; color:var(--text-primary); letter-spacing:-0.01em; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .appbar .icon-btn svg,.phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:10px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:23px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:6px; }
+  .h-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; line-height:1.55; }
+  .h-sub b { color:var(--text-primary); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  /* Method / option selector */
+  .opts { display:flex; flex-direction:column; gap:12px; margin-top:20px; }
+  .opt { display:flex; align-items:center; gap:13px; padding:14px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); cursor:pointer; text-align:start; width:100%; font-family:inherit; }
+  .opt[aria-checked="true"] { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .opt-ic { flex:none; width:42px; height:42px; border-radius:var(--radius-md); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; }
+  .opt-ic svg { width:22px; height:22px; color:var(--int-primary); stroke-width:1.8; }
+  .opt-tx { flex:1; }
+  .opt-h { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .opt-p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .opt-p b { color:var(--text-primary); font-weight:600; }
+  .opt-radio { flex:none; width:22px; height:22px; border-radius:var(--radius-full); border:2px solid var(--border-default); display:flex; align-items:center; justify-content:center; }
+  .opt[aria-checked="true"] .opt-radio { border-color:var(--int-primary); }
+  .opt[aria-checked="true"] .opt-radio::after { content:""; width:11px; height:11px; border-radius:var(--radius-full); background:var(--int-primary); }
+
+  .hint { display:flex; gap:9px; align-items:flex-start; margin-top:16px; font-size:12.5px; color:var(--text-secondary); line-height:1.5; }
+  .hint svg { width:16px; height:16px; flex:none; margin-top:1px; color:var(--text-tertiary); stroke-width:1.9; }
+
+  .primary { width:100%; min-height:52px; margin-top:20px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-tertiary); cursor:default; }
+  .primary svg { width:19px; height:19px; }
+  .spin { width:19px; height:19px; border-radius:50%; border:2px solid var(--text-on-brand); border-top-color:transparent; animation:rot .7s linear infinite; }
+  @keyframes rot { 100% { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation:none; } }
+
+  .secondary-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; width:100%; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); color:var(--int-primary); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .secondary-btn:hover { background:var(--bg-raised); }
+  .secondary-btn svg { width:18px; height:18px; }
+  .ghost-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; width:100%; background:transparent; border:none; color:var(--text-secondary); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:8px; }
+  .ghost-btn svg { width:16px; height:16px; }
+  .btn-row { display:flex; gap:10px; margin-top:16px; }
+  .btn-row .secondary-btn { width:auto; flex:1; }
+
+  /* Authenticator QR + manual key */
+  .setup-steps { counter-reset:st; margin-top:16px; display:flex; flex-direction:column; gap:16px; }
+  .step { display:flex; gap:11px; }
+  .step-n { flex:none; width:24px; height:24px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .step-b { flex:1; }
+  .step-h { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .step-p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.45; }
+
+  .qr-wrap { display:flex; justify-content:center; margin-top:12px; }
+  .qrbox { width:168px; height:168px; background:#FFFFFF; border:1px solid var(--border-default); border-radius:var(--radius-md); padding:12px; box-shadow:var(--el-hairline); }
+  .qrbox svg { width:100%; height:100%; display:block; color:#16191B; }
+  .keyrow { display:flex; align-items:center; gap:10px; margin-top:12px; padding:11px 8px 11px 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .keyrow .kwrap { flex:1; min-width:0; }
+  .klabel { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); }
+  .key { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:15px; letter-spacing:2px; color:var(--text-primary); margin-top:2px; }
+  .copybtn { flex:none; min-height:40px; padding:0 12px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); color:var(--int-primary); font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+  .copybtn svg { width:15px; height:15px; }
+
+  /* OTP (shared §14) */
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-top:18px; }
+  .otp { display:flex; gap:9px; margin-top:12px; direction:ltr; unicode-bidi:isolate; }
+  .obox { flex:1; height:54px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .obox.active { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .obox .ocaret { width:2px; height:25px; background:var(--int-primary); }
+  .resend { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; margin-top:14px; font-size:13.5px; color:var(--text-secondary); }
+  .resend .count { color:var(--text-tertiary); font-variant-numeric:tabular-nums; font-weight:700; }
+  .resend a { color:var(--int-link); font-weight:700; }
+  .resend svg { width:15px; height:15px; color:var(--text-tertiary); stroke-width:2; }
+  .chan { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 10px; margin-top:6px; font-size:12.5px; color:var(--text-secondary); }
+  .chan a { color:var(--int-link); font-weight:700; }
+
+  /* Backup codes */
+  .codes { width:100%; margin-top:14px; }
+  .codes td { padding:12px 8px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:15px; letter-spacing:1px; color:var(--text-primary); text-align:center; border:1px solid var(--border-hairline); background:var(--bg-sunken); font-variant-numeric:tabular-nums; }
+  .codes td.used { color:var(--text-tertiary); text-decoration:line-through; }
+  .check { display:flex; gap:11px; align-items:flex-start; margin-top:18px; cursor:pointer; }
+  .checkbox { flex:none; width:22px; height:22px; border-radius:6px; border:2px solid var(--border-default); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .checkbox[aria-checked="true"] { background:var(--int-primary); border-color:var(--int-primary); }
+  .checkbox svg { width:14px; height:14px; color:var(--text-on-brand); opacity:0; }
+  .checkbox[aria-checked="true"] svg { opacity:1; }
+  .check-tx { font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .check-tx b { color:var(--text-primary); font-weight:600; }
+
+  /* Banners */
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:16px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner b { font-weight:700; }
+  .banner.success { background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+
+  /* Enabled confirmation */
+  .crown { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:14px; }
+  .crown-ic { width:60px; height:60px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; }
+  .crown-ic svg { width:30px; height:30px; color:var(--success-fg); stroke-width:2; }
+  .mlist { margin-top:20px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .mrow { display:flex; align-items:center; gap:12px; padding:14px 14px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); width:100%; text-align:start; font-family:inherit; cursor:pointer; border-left:none; border-right:none; border-top:none; }
+  .mrow:last-child { border-bottom:none; }
+  .mrow:hover { background:var(--bg-raised); }
+  .mrow-ic { flex:none; width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; }
+  .mrow-ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.9; }
+  .mrow-tx { flex:1; }
+  .mrow-h { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .mrow-p { font-size:12px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .mrow-h.danger { color:var(--error-fg); }
+  .chev { flex:none; width:18px; height:18px; color:var(--text-tertiary); }
+  .phone.rtl .chev { transform:scaleX(-1); }
+
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:15px 20px calc(4px + env(safe-area-inset-bottom)); font-size:13px; color:var(--text-tertiary); flex:none; line-height:1.5; }
+  .altline a { color:var(--text-secondary); font-weight:600; text-decoration:underline; }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-010 — Two-step verification: setup + verify (mobile app)</h1>
+    <p>Add a second factor from account security (<code>/account/security/2fa-setup</code>) and meet it again at a login challenge on a new device (<code>/login/2fa</code>). Method choice (authenticator app vs SMS/WhatsApp code), the authenticator path (QR + manual key + a §14 code verify), a downloadable backup-codes set, the enabled-confirmation, and the new-device challenge. Security framing is calm and matter-of-fact — a normal safety setting, never fear-marketing. Quiet Modern: tokens only, one brand button, no ornament, registry-only copy.</p>
+    <div class="legend">
+      <span>Light · method choice</span>
+      <span>Dark · authenticator (QR + key + verify)</span>
+      <span>Light · backup codes</span>
+      <span>Light · turned on</span>
+      <span>Dark · login challenge (new device)</span>
+      <span>RTL · اردو</span>
+      <span>≥44pt targets · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · METHOD CHOICE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — choose a second step</div>
+      <section class="phone" aria-label="Two-step verification — method choice, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <a class="icon-btn" href="/account/security" aria-label="Back to security settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <span class="abtitle">Two-step verification</span>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Add a second step</h2>
+          <p class="h-sub">After your password, we'll ask for a one-time code. It keeps your bookings and messages yours, even if someone learns your password.</p>
+
+          <div class="opts" role="radiogroup" aria-label="Choose your second step">
+            <button class="opt" type="button" role="radio" aria-checked="true">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9 6h6M9 9.5h6M9 13h3"/><circle cx="12" cy="18" r="0.6" fill="currentColor"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">Authenticator app</span>
+                <span class="opt-p">Google Authenticator, Authy, or similar. Works <b>without signal</b> — good for travel and weak networks.</span>
+              </span>
+              <span class="opt-radio" aria-hidden="true"></span>
+            </button>
+            <button class="opt" type="button" role="radio" aria-checked="false">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">SMS or WhatsApp code</span>
+                <span class="opt-p">A code to <b dir="ltr">+92 300 ••• ••67</b> each time you log in. Needs signal at sign-in.</span>
+              </span>
+              <span class="opt-radio" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <p class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            You can change this later, and you'll get backup codes to use if you lose your phone.
+          </p>
+
+          <button class="primary" type="button">Continue</button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Two neutral option cards (<code>role="radiogroup"</code>), authenticator pre-highlighted because it survives no-signal — a real PK travel benefit stated plainly, not sold. Nothing is forced; the hint names the safety net (<b>backup codes</b>) before the user commits.</p>
+    </div>
+
+    <!-- ============================== DARK · AUTHENTICATOR SETUP ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — authenticator: scan, then confirm a code</div>
+      <section class="phone dark" aria-label="Two-step verification — authenticator setup, dark">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <a class="icon-btn" href="/account/security/2fa-setup" aria-label="Back to method choice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <span class="abtitle">Authenticator app</span>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <div class="setup-steps">
+            <div class="step">
+              <span class="step-n" aria-hidden="true">1</span>
+              <div class="step-b">
+                <p class="step-h">Scan this code in your app</p>
+                <p class="step-p">Open your authenticator app and add a new account by scanning.</p>
+                <div class="qr-wrap">
+                  <div class="qrbox" role="img" aria-label="QR code to add SalamStay to your authenticator app">
+                    <svg viewBox="0 0 25 25" shape-rendering="crispEdges" aria-hidden="true">
+                      <g fill="currentColor">
+                        <path d="M0 0h7v7h-7z M1 1h5v5h-5z" fill-rule="evenodd"/><rect x="2" y="2" width="3" height="3"/>
+                        <path d="M18 0h7v7h-7z M19 1h5v5h-5z" fill-rule="evenodd"/><rect x="20" y="2" width="3" height="3"/>
+                        <path d="M0 18h7v7h-7z M1 19h5v5h-5z" fill-rule="evenodd"/><rect x="2" y="20" width="3" height="3"/>
+                        <rect x="9" y="0" width="1" height="1"/><rect x="11" y="0" width="1" height="1"/><rect x="14" y="0" width="1" height="1"/><rect x="16" y="0" width="1" height="1"/>
+                        <rect x="10" y="1" width="1" height="1"/><rect x="13" y="1" width="1" height="1"/><rect x="15" y="1" width="1" height="1"/>
+                        <rect x="9" y="2" width="1" height="1"/><rect x="12" y="2" width="1" height="1"/><rect x="16" y="2" width="1" height="1"/>
+                        <rect x="10" y="3" width="1" height="1"/><rect x="14" y="3" width="1" height="1"/><rect x="15" y="3" width="1" height="1"/>
+                        <rect x="9" y="4" width="1" height="1"/><rect x="11" y="4" width="1" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="16" y="4" width="1" height="1"/>
+                        <rect x="12" y="5" width="1" height="1"/><rect x="14" y="5" width="1" height="1"/>
+                        <rect x="9" y="6" width="1" height="1"/><rect x="11" y="6" width="1" height="1"/><rect x="15" y="6" width="1" height="1"/>
+                        <rect x="0" y="9" width="1" height="1"/><rect x="2" y="9" width="1" height="1"/><rect x="4" y="9" width="1" height="1"/><rect x="6" y="9" width="1" height="1"/><rect x="8" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="13" y="9" width="1" height="1"/><rect x="16" y="9" width="1" height="1"/><rect x="18" y="9" width="1" height="1"/><rect x="21" y="9" width="1" height="1"/><rect x="23" y="9" width="1" height="1"/>
+                        <rect x="1" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="12" y="10" width="1" height="1"/><rect x="15" y="10" width="1" height="1"/><rect x="19" y="10" width="1" height="1"/><rect x="22" y="10" width="1" height="1"/>
+                        <rect x="0" y="11" width="1" height="1"/><rect x="3" y="11" width="1" height="1"/><rect x="7" y="11" width="1" height="1"/><rect x="11" y="11" width="1" height="1"/><rect x="14" y="11" width="1" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="20" y="11" width="1" height="1"/><rect x="24" y="11" width="1" height="1"/>
+                        <rect x="2" y="12" width="1" height="1"/><rect x="4" y="12" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="1" height="1"/><rect x="13" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="19" y="12" width="1" height="1"/><rect x="21" y="12" width="1" height="1"/><rect x="23" y="12" width="1" height="1"/>
+                        <rect x="1" y="13" width="1" height="1"/><rect x="6" y="13" width="1" height="1"/><rect x="9" y="13" width="1" height="1"/><rect x="12" y="13" width="1" height="1"/><rect x="15" y="13" width="1" height="1"/><rect x="18" y="13" width="1" height="1"/><rect x="22" y="13" width="1" height="1"/><rect x="24" y="13" width="1" height="1"/>
+                        <rect x="0" y="14" width="1" height="1"/><rect x="4" y="14" width="1" height="1"/><rect x="7" y="14" width="1" height="1"/><rect x="11" y="14" width="1" height="1"/><rect x="14" y="14" width="1" height="1"/><rect x="17" y="14" width="1" height="1"/><rect x="20" y="14" width="1" height="1"/><rect x="23" y="14" width="1" height="1"/>
+                        <rect x="2" y="15" width="1" height="1"/><rect x="5" y="15" width="1" height="1"/><rect x="8" y="15" width="1" height="1"/><rect x="10" y="15" width="1" height="1"/><rect x="13" y="15" width="1" height="1"/><rect x="19" y="15" width="1" height="1"/><rect x="21" y="15" width="1" height="1"/>
+                        <rect x="1" y="16" width="1" height="1"/><rect x="3" y="16" width="1" height="1"/><rect x="6" y="16" width="1" height="1"/><rect x="9" y="16" width="1" height="1"/><rect x="12" y="16" width="1" height="1"/><rect x="15" y="16" width="1" height="1"/><rect x="17" y="16" width="1" height="1"/><rect x="20" y="16" width="1" height="1"/><rect x="22" y="16" width="1" height="1"/><rect x="24" y="16" width="1" height="1"/>
+                        <rect x="9" y="18" width="1" height="1"/><rect x="12" y="18" width="1" height="1"/><rect x="14" y="18" width="1" height="1"/><rect x="17" y="18" width="1" height="1"/><rect x="20" y="18" width="1" height="1"/><rect x="23" y="18" width="1" height="1"/>
+                        <rect x="10" y="19" width="1" height="1"/><rect x="13" y="19" width="1" height="1"/><rect x="16" y="19" width="1" height="1"/><rect x="19" y="19" width="1" height="1"/><rect x="22" y="19" width="1" height="1"/>
+                        <rect x="9" y="20" width="1" height="1"/><rect x="11" y="20" width="1" height="1"/><rect x="15" y="20" width="1" height="1"/><rect x="18" y="20" width="1" height="1"/><rect x="21" y="20" width="1" height="1"/><rect x="24" y="20" width="1" height="1"/>
+                        <rect x="10" y="21" width="1" height="1"/><rect x="12" y="21" width="1" height="1"/><rect x="14" y="21" width="1" height="1"/><rect x="17" y="21" width="1" height="1"/><rect x="20" y="21" width="1" height="1"/><rect x="23" y="21" width="1" height="1"/>
+                        <rect x="9" y="22" width="1" height="1"/><rect x="13" y="22" width="1" height="1"/><rect x="16" y="22" width="1" height="1"/><rect x="19" y="22" width="1" height="1"/><rect x="22" y="22" width="1" height="1"/>
+                        <rect x="11" y="23" width="1" height="1"/><rect x="14" y="23" width="1" height="1"/><rect x="18" y="23" width="1" height="1"/><rect x="21" y="23" width="1" height="1"/><rect x="24" y="23" width="1" height="1"/>
+                        <rect x="9" y="24" width="1" height="1"/><rect x="12" y="24" width="1" height="1"/><rect x="15" y="24" width="1" height="1"/><rect x="17" y="24" width="1" height="1"/><rect x="20" y="24" width="1" height="1"/><rect x="23" y="24" width="1" height="1"/>
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+                <div class="keyrow">
+                  <div class="kwrap">
+                    <div class="klabel">Can't scan? Enter this key</div>
+                    <div class="key" dir="ltr">K7Q2 9XM4 P3RT 8WJ6</div>
+                  </div>
+                  <button class="copybtn" type="button" aria-label="Copy setup key">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <span class="step-n" aria-hidden="true">2</span>
+              <div class="step-b">
+                <p class="step-h">Enter the 6-digit code it shows</p>
+                <div class="otp" role="group" aria-label="Enter the 6-digit code from your authenticator app">
+                  <span class="obox" aria-label="digit 1: 3">3</span>
+                  <span class="obox" aria-label="digit 2: 9">9</span>
+                  <span class="obox" aria-label="digit 3: 1">1</span>
+                  <span class="obox active" aria-label="digit 4, empty, active"><span class="ocaret" aria-hidden="true"></span></span>
+                  <span class="obox" aria-label="digit 5, empty"></span>
+                  <span class="obox" aria-label="digit 6, empty"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="primary" type="button" aria-disabled="true">Verify &amp; turn on</button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">A two-step block: a scannable QR on a fixed white card (a code must stay dark-on-light in either theme) with a <b>manual key fallback</b> for phones that can't scan, then the shared §14 code input to prove the app is paired. <b>Verify</b> stays disabled until six digits land. The setup key digits stay LTR.</p>
+    </div>
+
+    <!-- ============================== LIGHT · BACKUP CODES ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — save your backup codes</div>
+      <section class="phone" aria-label="Two-step verification — backup codes, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <span class="ib-spacer" aria-hidden="true"></span>
+          <span class="abtitle">Backup codes</span>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Save your backup codes</h2>
+          <p class="h-sub">If you ever lose your phone, one of these gets you back in. Each code works once. Keep them somewhere only you can reach.</p>
+
+          <table class="codes" aria-label="Ten single-use backup codes">
+            <tbody>
+              <tr><td>4K2P-9QX7</td><td>8RM3-1TV6</td></tr>
+              <tr><td>2WJ9-6BN4</td><td>7HD5-3KP8</td></tr>
+              <tr><td>9XZ2-4RQ1</td><td>5TM7-8VC3</td></tr>
+              <tr><td>1QP6-2JN9</td><td>6BK4-7XW2</td></tr>
+              <tr><td>3VR8-5HM1</td><td>8DZ3-9QT6</td></tr>
+            </tbody>
+          </table>
+
+          <div class="btn-row">
+            <button class="secondary-btn" type="button" aria-label="Copy all backup codes">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              Copy all
+            </button>
+            <a class="secondary-btn" download="salamstay-backup-codes.txt" href="data:text/plain;charset=utf-8,SalamStay%20backup%20codes%20%E2%80%94%20each%20works%20once%0A4K2P-9QX7%0A8RM3-1TV6%0A2WJ9-6BN4%0A7HD5-3KP8%0A9XZ2-4RQ1%0A5TM7-8VC3%0A1QP6-2JN9%0A6BK4-7XW2%0A3VR8-5HM1%0A8DZ3-9QT6%0A" aria-label="Download backup codes as a text file">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 20h14"/></svg>
+              Download
+            </a>
+          </div>
+
+          <p class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+            Treat these like your password. Don't share them, and don't store them in a chat with anyone.
+          </p>
+
+          <label class="check">
+            <span class="checkbox" role="checkbox" aria-checked="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4 4L19 7"/></svg></span>
+            <span class="check-tx"><b>I've saved my backup codes.</b> I understand I may not see them again.</span>
+          </label>
+
+          <button class="primary" type="button">Done</button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Ten codes in a plain <code>&lt;table&gt;</code> (§17 variants ledger), one-time each, with <b>Copy all</b> and a real <code>data:</code> <b>Download</b> (no server, CSP-safe). The <b>Done</b> button is gated behind a "saved these" checkbox so no one blows past the safety net. Guidance is practical, not scolding.</p>
+    </div>
+
+    <!-- ============================== LIGHT · TURNED ON (CONFIRMATION) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — two-step is on</div>
+      <section class="phone" aria-label="Two-step verification — enabled confirmation, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <a class="icon-btn" href="/account/security" aria-label="Back to security settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <span class="abtitle">Two-step verification</span>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <div class="crown">
+            <span class="crown-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          </div>
+          <h2 class="h-title" style="text-align:center;">Two-step is on</h2>
+          <p class="h-sub" style="text-align:center;">We'll ask for a code from your authenticator app whenever you sign in on a new device.</p>
+
+          <div class="mlist">
+            <button class="mrow" type="button">
+              <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9 6h6M9 9.5h6"/></svg></span>
+              <span class="mrow-tx">
+                <span class="mrow-h">Method</span>
+                <span class="mrow-p">Authenticator app · added today</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <a class="mrow" href="/account/security/2fa-setup/backup-codes">
+              <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9.5 11.5L20 11l-2 2 2 2-3 .5"/></svg></span>
+              <span class="mrow-tx">
+                <span class="mrow-h">Backup codes</span>
+                <span class="mrow-p">10 left · regenerate a new set</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a class="mrow" href="/account/security/2fa-setup/disable">
+              <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18.4 6a9 9 0 1 0 1.6 3"/><path d="M15 9l-6 6M9 9l6 6"/></svg></span>
+              <span class="mrow-tx">
+                <span class="mrow-h danger">Turn off two-step</span>
+                <span class="mrow-p">We'll confirm your password first</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </div>
+
+          <button class="primary" type="button">Done</button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Confirmation is a quiet success tick (never a celebration, §10.6) plus a small manage list — method, backup-code regeneration, and a calm "turn off" that names the password re-check. Turning off is never hidden; security you can't reverse isn't trustworthy.</p>
+    </div>
+
+    <!-- ============================== DARK · LOGIN CHALLENGE (NEW DEVICE) ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — login challenge · new device</div>
+      <section class="phone dark" aria-label="Two-step verification — login challenge on a new device, dark">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/login" aria-label="Back to log in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Verify it's you</h2>
+          <p class="h-sub">This is a new device. Open your authenticator app and enter the 6-digit code for <b>SalamStay</b>.</p>
+
+          <div class="otp" role="group" aria-label="Enter the 6-digit code from your authenticator app">
+            <span class="obox" aria-label="digit 1: 7">7</span>
+            <span class="obox" aria-label="digit 2: 4">4</span>
+            <span class="obox active" aria-label="digit 3, empty, active"><span class="ocaret" aria-hidden="true"></span></span>
+            <span class="obox" aria-label="digit 4, empty"></span>
+            <span class="obox" aria-label="digit 5, empty"></span>
+            <span class="obox" aria-label="digit 6, empty"></span>
+          </div>
+
+          <button class="primary" type="button" aria-disabled="true">Verify &amp; log in</button>
+
+          <a class="ghost-btn" href="/login/2fa/backup-code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9.5 11.5L20 11l-2 2 2 2-3 .5"/></svg>
+            Use a backup code instead
+          </a>
+        </div>
+
+        <div class="altline">Lost your phone and your codes? <a href="/help/account-recovery">Recover your account</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The <code>/login/2fa</code> challenge on an unrecognised device: the same §14 input, a calm "verify it's you" (no alarm), then a laddered set of ways through — <b>backup code</b>, then full <b>account recovery</b> (<code>GA-011</code>). A lost phone is never a locked door.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — method choice</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="Two-step verification — Urdu, right to left">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="appbar">
+          <a class="icon-btn" href="/account/security" aria-label="سیکیورٹی سیٹنگز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <span class="abtitle">دو مرحلوں کی تصدیق</span>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">دوسرا مرحلہ شامل کریں</h2>
+          <p class="h-sub">پاس ورڈ کے بعد ہم ایک بار کا کوڈ مانگیں گے۔ کوئی آپ کا پاس ورڈ جان بھی لے تو آپ کے سفر اور پیغامات محفوظ رہیں گے۔</p>
+
+          <div class="opts" role="radiogroup" aria-label="اپنا دوسرا مرحلہ چنیں">
+            <button class="opt" type="button" role="radio" aria-checked="true">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9 6h6M9 9.5h6M9 13h3"/><circle cx="12" cy="18" r="0.6" fill="currentColor"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">تصدیقی ایپ (Authenticator)</span>
+                <span class="opt-p">گوگل آتھینٹیکیٹر یا آتھی وغیرہ۔ <b>سگنل کے بغیر</b> بھی چلتی ہے۔</span>
+              </span>
+              <span class="opt-radio" aria-hidden="true"></span>
+            </button>
+            <button class="opt" type="button" role="radio" aria-checked="false">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">SMS یا واٹس ایپ کوڈ</span>
+                <span class="opt-p"><b dir="ltr">+92 300 ••• ••67</b> پر ہر لاگ اِن پر کوڈ۔</span>
+              </span>
+              <span class="opt-radio" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <p class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            اسے بعد میں بدلا جا سکتا ہے، اور فون گم ہونے پر کام آنے والے بیک اپ کوڈ بھی ملیں گے۔
+          </p>
+
+          <button class="primary" type="button">جاری رکھیں</button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Fully mirrored: back chevron, option cards, radio and hint icon all swap edges; the <b>+92 number stays LTR</b> (content locale) and a real code grid (in the setup/challenge states) would likewise stay LTR. Urdu is Nastaliq — EN/UR parity.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, security framing &amp; S1 gate compliance · web-variant note</div>
+      <ul>
+        <li><b>Two paths, one grammar.</b> Method choice is a neutral <code>role="radiogroup"</code>; the authenticator path pairs a <b>QR</b> + <b>manual key</b> (§17 variants ledger: "2FA QR/backup codes") with the shared §14 code input; the SMS/WhatsApp path reuses the <code>GA-005</code> OTP + resend countdown, WhatsApp-first per ARCH.</li>
+        <li><b>Backup codes are a first-class safety net.</b> Ten one-time codes in a real <code>&lt;table&gt;</code>, with <b>Copy all</b>, a genuine <code>data:</code> <b>Download</b>, plain "store safely" guidance, and a "saved these" checkbox gating <b>Done</b> — the user cannot skip past their own recovery keys.</li>
+        <li><b>Login challenge with a ladder, not a wall.</b> <code>/login/2fa</code> on a new device asks for the code, then offers <b>backup code → account recovery</b> (<code>GA-011</code>). A lost authenticator is never a dead end (journeys §3.2).</li>
+        <li><b>Calm security tone (§10.6, §10.8).</b> Copy explains the benefit ("keeps your bookings and messages yours") without fear-marketing, threat counts, or scare words; the confirmation is a quiet success tick, not a celebration; turn-off is visible and reversible with a password re-check.</li>
+        <li><b>No color-only state.</b> Selected option = border + ring + filled radio; verified digit = border; checkbox = fill + tick glyph; danger row = icon + label. Every state pairs colour with shape or text (DESIGN §11).</li>
+        <li><b>Real anchors, real controls, [44pt].</b> Back <code>/account/security</code>, backup codes <code>/…/backup-codes</code>, disable <code>/…/disable</code>, challenge fallbacks <code>/login/2fa/backup-code</code> + <code>/help/account-recovery</code>. Radio options, copy, and checkbox are real <code>&lt;button&gt;</code>/<code>role</code> controls with Urdu accessible names; no <code>href="#"</code>, no button-in-anchor.</li>
+        <li><b>On-palette + QR exception.</b> Every colour is a <code>var()</code> token; the QR alone uses a fixed white card + ink modules because a scannable code must stay dark-on-light in both themes — a functional out-of-theme surface, mirroring the sanctioned social-mark exception in <code>GA-007</code>. No ornament, no invented claims.</li>
+        <li><b>Web variant (<code>/account/security/2fa-setup</code> · <code>/login/2fa</code>, SPA).</b> Same steps in a centred ~480px card on the settings/auth chrome; the backup-codes table also prints cleanly; the QR sits beside the manual key ≥ md; the login challenge renders identically with a "Remember this device for 30 days" checkbox that shortens future challenges.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-010 (manage-account, app+web, Phase 3) · components <code>Input §2</code> · <code>Button §1</code> · <code>Switch</code> · <code>OTP §14</code> · QR/backup-codes <code>§17 variants ledger</code> · a11y <code>DESIGN §11</code>. Inbound <code>/account/security</code> + <code>/login</code> step-up (<code>GA-007</code>) → outbound recovery <code>GA-011</code>. <b>Judgment calls:</b> (1) QR on a fixed white card / ink modules — the one deliberate out-of-theme surface, since a code must scan in dark mode. (2) A settings title bar (not the wordmark) on setup states, with the canonical <code>Salam<i>.</i>Stay</code> wordmark kept on the auth-surface login challenge.</p>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Cash reconciliation (GA-121)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 8px; }
+
+  /* stay context line */
+  .ctx { display:flex; gap:9px; align-items:center; font-size:12px; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; }
+  .ctx .ctx-t { min-width:0; }
+  .ctx svg { width:14px; height:14px; stroke-width:1.8; color:var(--text-tertiary); flex:none; }
+
+  /* section heading + calm intro */
+  .rhead { margin-top:14px; }
+  .rhead h2 { font-size:18px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .rhead p { font-size:12.5px; color:var(--text-secondary); margin-top:5px; line-height:1.5; }
+  .rhead p b { color:var(--text-primary); font-weight:600; }
+
+  /* split ledger */
+  .ledger { margin-top:12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .lrow { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 14px; border-bottom:1px solid var(--border-hairline); }
+  .lrow:last-child { border-bottom:none; }
+  .lbd { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .lbd .lt { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .lbd .ld { font-size:11.5px; color:var(--text-tertiary); display:block; }
+  .lright { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex:none; }
+  .lv { font-size:16px; font-weight:700; color:var(--text-primary); white-space:nowrap; }
+  .lrow.cash { background:var(--bg-raised); }
+  .lrow.cash .lv { color:var(--int-primary); }
+  .lrow.total { background:var(--bg-sunken); }
+  .lrow.total .lt { font-size:13px; }
+  .lrow.total .lv { font-size:15px; }
+  .chip { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; border-radius:var(--radius-full); padding:2px 8px; }
+  .chip svg { width:12px; height:12px; stroke-width:2.2; flex:none; }
+  .chip.paid { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .chip.due { color:var(--text-secondary); background:var(--bg-canvas); border:1px solid var(--border-default); }
+  .chip.wait { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .lledger-foot { padding:11px 14px; }
+
+  /* bring-the-exact-amount reminder (ga-058 continuity) */
+  .remind { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:13px 14px; margin-top:14px; }
+  .remind .ri { color:var(--info-fg); flex:none; margin-top:1px; }
+  .remind .ri svg { width:20px; height:20px; stroke-width:1.9; }
+  .remind .rbd { flex:1; min-width:0; }
+  .remind .rh { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .remind p { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .remind b { color:var(--text-primary); font-weight:600; }
+
+  /* what-happens-at-check-in flow */
+  .flow { margin-top:16px; }
+  .fstep { display:flex; gap:12px; align-items:flex-start; padding-bottom:14px; position:relative; }
+  .fstep:not(:last-child)::before { content:""; position:absolute; inset-inline-start:13px; top:28px; bottom:-2px; width:2px; background:var(--border-hairline); }
+  .fstep .fn { width:28px; height:28px; border-radius:var(--radius-full); border:1.5px solid var(--border-default); background:var(--bg-canvas); flex:none; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--text-secondary); z-index:1; }
+  .fstep.done .fn { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .fstep.done .fn svg { width:14px; height:14px; stroke-width:2.6; }
+  .fstep .ftx { min-width:0; }
+  .fstep .ft { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .fstep .fd { font-size:12px; color:var(--text-secondary); margin-top:2px; line-height:1.45; display:block; }
+
+  /* settled / awaiting status header */
+  .status { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:10px; }
+  .status .badge { width:64px; height:64px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; }
+  .status .badge svg { width:32px; height:32px; stroke-width:2.1; }
+  .status.settled .badge { background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); }
+  .status.await .badge { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .status h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:13px; }
+  .status .sp { font-size:13px; color:var(--text-secondary); margin-top:7px; line-height:1.5; max-width:250px; }
+  .status .sp b { color:var(--text-primary); font-weight:600; }
+
+  /* calm "nothing to do" note */
+  .calm { display:flex; gap:10px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:12px 13px; margin-top:16px; }
+  .calm svg { flex:none; width:18px; height:18px; stroke-width:1.9; color:var(--text-tertiary); margin-top:1px; }
+  .calm p { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .calm b { color:var(--text-primary); font-weight:600; }
+
+  /* receipt row (reconciled) */
+  .rcpt { display:flex; gap:12px; align-items:center; min-height:58px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:11px 13px; text-decoration:none; margin-top:14px; }
+  .rcpt .rc-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .rcpt .rc-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .rcpt .rc-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .rcpt .rc-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .rcpt .rc-s { font-size:12px; color:var(--text-secondary); display:block; }
+  .rcpt .rc-chev { flex:none; color:var(--text-tertiary); }
+  .rcpt .rc-chev svg { width:19px; height:19px; stroke-width:2; }
+
+  .grow { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid var(--border-default); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; background:var(--bg-canvas); color:var(--text-primary); margin-top:14px; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); border-color:transparent; }
+  .btn.primary:hover { background:var(--int-primary-hover); }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Cash reconciliation (GA-121)</h1>
+    <p>The pre-stay / stay clarity screen for a cash-on-arrival booking — the post-booking continuation of <code>ga-058</code>. It keeps the split promise literal: the <strong>PKR 4,850 service fee is already paid to SalamStay</strong> (HBL •••• 8842), and the <strong>PKR 37,500 room cost is cash to your host, Ayesha, at check-in</strong> — the exact figure, no rounding. It shows what happens at check-in (host confirms → in-app receipt), then the two after-states: <strong>reconciled / all settled</strong> once the host confirms, and a <strong>calm discrepancy-safe state</strong> for when they haven't yet ("nothing to do — we'll nudge them"). Panels: pre-stay ledger (light) · awaiting confirmation (light) · all settled (dark) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Pre-stay ledger · light</span><span>Awaiting host confirmation</span><span>Dark · all settled</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the pre-stay cash ledger and the awaiting-confirmation state">
+      <div class="panel-tag">Light — split ledger · bring exact amount · awaiting-confirmation</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Before check-in — the split, plain</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Cash at check-in</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg><span class="ctx-t">Margalla View Apartment · F-7 · <span class="num">3</span> nights</span></span>
+
+              <div class="rhead">
+                <h2>What you'll settle</h2>
+                <p>Your SalamStay fee is already paid. The room cost is <b>cash to your host, Ayesha</b>, at check-in.</p>
+              </div>
+
+              <div class="ledger">
+                <div class="lrow">
+                  <span class="lbd"><span class="lt">Service fee — to SalamStay</span><span class="ld">Paid on your card · HBL •••• <span class="num">8842</span></span></span>
+                  <span class="lright"><span class="lv num">PKR 4,850</span><span class="chip paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Paid</span></span>
+                </div>
+                <div class="lrow cash">
+                  <span class="lbd"><span class="lt">Room cost — cash to Ayesha</span><span class="ld">Exact amount — no rounding</span></span>
+                  <span class="lright"><span class="lv num">PKR 37,500</span><span class="chip due"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>At check-in</span></span>
+                </div>
+                <div class="lrow total">
+                  <span class="lbd"><span class="lt">Total for your stay</span><span class="ld">Fee paid + cash at check-in</span></span>
+                  <span class="lright"><span class="lv num">PKR 42,350</span></span>
+                </div>
+              </div>
+
+              <div class="remind" role="note">
+                <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 14h6"/></svg></span>
+                <div class="rbd">
+                  <span class="rh">Bring the exact amount</span>
+                  <p>Carry <b>PKR 37,500</b> in cash for Ayesha. The host can only ask for this figure — if anyone asks for more, don't pay it, and tell us.</p>
+                </div>
+              </div>
+
+              <div class="scap">At check-in</div>
+              <div class="flow">
+                <div class="fstep">
+                  <span class="fn num" aria-hidden="true">1</span>
+                  <span class="ftx"><span class="ft">Hand Ayesha the cash</span><span class="fd">Give exactly PKR 37,500 when you arrive — nothing online, nothing more.</span></span>
+                </div>
+                <div class="fstep">
+                  <span class="fn num" aria-hidden="true">2</span>
+                  <span class="ftx"><span class="ft">Host confirms she received it</span><span class="fd">Ayesha marks the cash as received in her app.</span></span>
+                </div>
+                <div class="fstep">
+                  <span class="fn num" aria-hidden="true">3</span>
+                  <span class="ftx"><span class="ft">Your receipt appears here</span><span class="fd">As soon as she confirms, your in-app receipt is issued — every rupee itemised.</span></span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn" href="/messages/host-ayesha-margalla-view">Message Ayesha</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Cash handed — waiting on the host, calmly</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Cash at check-in</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="status await">
+                <span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+                <h2>Waiting for Ayesha to confirm</h2>
+                <span class="sp">You've handed over <b>PKR 37,500</b>. Your host just needs to confirm she received it.</span>
+              </div>
+
+              <div class="ledger">
+                <div class="lrow">
+                  <span class="lbd"><span class="lt">Service fee — to SalamStay</span><span class="ld">Paid on your card · HBL •••• <span class="num">8842</span></span></span>
+                  <span class="lright"><span class="lv num">PKR 4,850</span><span class="chip paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Paid</span></span>
+                </div>
+                <div class="lrow cash">
+                  <span class="lbd"><span class="lt">Room cost — cash to Ayesha</span><span class="ld">You marked this as handed over</span></span>
+                  <span class="lright"><span class="lv num">PKR 37,500</span><span class="chip wait"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Awaiting</span></span>
+                </div>
+              </div>
+
+              <div class="calm" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p><b>Nothing to do right now.</b> Hosts sometimes confirm a little later — we'll nudge Ayesha for you, and your receipt appears here the moment she does.</p>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn" href="/messages/host-ayesha-margalla-view">Message Ayesha</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Same promise language as <code>ga-058</code>: the <strong>exact figures with no rounding</strong> — fee <span class="num">PKR 4,850</span> paid, room cost <span class="num">PKR 37,500</span> cash to the named host, total <span class="num">PKR 42,350</span> for context. The check-in flow ends where a real receipt is issued (host confirms → in-app receipt). The awaiting state is <strong>discrepancy-safe and calm</strong> — it never accuses, never demands action; "nothing to do — we'll nudge them" holds the guest's dignity while the host catches up. All amounts keep tabular figures; no journey stepper (this is post-checkout).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the reconciled, all-settled state with the receipt row">
+      <div class="panel-tag">Dark — reconciled · all settled · receipt issued</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Host confirmed — all settled</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Cash at check-in</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="status settled">
+                <span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2>All settled</h2>
+                <span class="sp">Ayesha confirmed your cash. Your stay is fully paid — nothing else is owed.</span>
+              </div>
+
+              <div class="ledger">
+                <div class="lrow">
+                  <span class="lbd"><span class="lt">Service fee — to SalamStay</span><span class="ld">Paid on your card · HBL •••• <span class="num">8842</span></span></span>
+                  <span class="lright"><span class="lv num">PKR 4,850</span><span class="chip paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Paid</span></span>
+                </div>
+                <div class="lrow cash">
+                  <span class="lbd"><span class="lt">Room cost — cash to Ayesha</span><span class="ld">Confirmed received by your host</span></span>
+                  <span class="lright"><span class="lv num">PKR 37,500</span><span class="chip paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Received</span></span>
+                </div>
+                <div class="lrow total">
+                  <span class="lbd"><span class="lt">Total paid for your stay</span><span class="ld">Fee + cash, all settled</span></span>
+                  <span class="lright"><span class="lv num">PKR 42,350</span></span>
+                </div>
+              </div>
+
+              <a class="rcpt" href="/trips/is-f7-2bed-aug2026/receipt">
+                <span class="rc-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg></span>
+                <span class="rc-b"><span class="rc-t">View your receipt</span><span class="rc-s">Itemised — fee &amp; cash · SS-<span class="num">7F3K9Q</span></span></span>
+                <span class="rc-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Reconciled: both lines carry the success <code>Paid</code> / <code>Received</code> chip, the total reads <em>all settled</em>, and the <strong>receipt row</strong> is a real <code>&lt;a href&gt;</code> to the itemised receipt (the "every rupee shown" promise, §5 claim 9). The confirmation is calm — a quiet success tick, no celebration — and the figures are unchanged from the pre-stay ledger, so the numbers a guest saw at check-in are exactly the numbers they end on.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the pre-stay cash ledger">
+      <div class="panel-tag">RTL · اردو — "چیک اِن پر نقد", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Before check-in — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="اپنے سفر پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">چیک اِن پر نقد</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg><span class="ctx-t">مارگلہ ویو اپارٹمنٹ · F-7 · <span class="num">3</span> راتیں</span></span>
+
+              <div class="rhead">
+                <h2>آپ کیا ادا کریں گے</h2>
+                <p>سلام اسٹے کی فیس ادا ہو چکی ہے۔ کمرے کی رقم <b>چیک اِن پر میزبان عائشہ کو نقد</b> ہے۔</p>
+              </div>
+
+              <div class="ledger">
+                <div class="lrow">
+                  <span class="lbd"><span class="lt">سروس فیس — سلام اسٹے کو</span><span class="ld">کارڈ سے ادا · HBL •••• <span class="num">8842</span></span></span>
+                  <span class="lright"><span class="lv num">PKR 4,850</span><span class="chip paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>ادا</span></span>
+                </div>
+                <div class="lrow cash">
+                  <span class="lbd"><span class="lt">کمرے کی رقم — عائشہ کو نقد</span><span class="ld">بالکل درست رقم — کوئی گول نہیں</span></span>
+                  <span class="lright"><span class="lv num">PKR 37,500</span><span class="chip due"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>چیک اِن پر</span></span>
+                </div>
+                <div class="lrow total">
+                  <span class="lbd"><span class="lt">قیام کی کل رقم</span><span class="ld">فیس ادا + چیک اِن پر نقد</span></span>
+                  <span class="lright"><span class="lv num">PKR 42,350</span></span>
+                </div>
+              </div>
+
+              <div class="remind" role="note">
+                <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 14h6"/></svg></span>
+                <div class="rbd">
+                  <span class="rh">بالکل درست رقم لائیں</span>
+                  <p>عائشہ کے لیے <b class="num">PKR 37,500</b> نقد ساتھ رکھیں۔ میزبان صرف یہی رقم مانگ سکتی ہیں — اگر کوئی اس سے زیادہ مانگے تو ادا نہ کریں، ہمیں بتائیں۔</p>
+                </div>
+              </div>
+
+              <div class="scap">چیک اِن پر</div>
+              <div class="flow">
+                <div class="fstep">
+                  <span class="fn num" aria-hidden="true">1</span>
+                  <span class="ftx"><span class="ft">عائشہ کو نقد دیں</span><span class="fd">پہنچنے پر بالکل <span class="num">PKR 37,500</span> دیں — نہ آن لائن کچھ، نہ اس سے زیادہ۔</span></span>
+                </div>
+                <div class="fstep">
+                  <span class="fn num" aria-hidden="true">2</span>
+                  <span class="ftx"><span class="ft">میزبان وصولی کی تصدیق کریں</span><span class="fd">عائشہ اپنی ایپ میں نقد وصولی مارک کرتی ہیں۔</span></span>
+                </div>
+                <div class="fstep">
+                  <span class="fn num" aria-hidden="true">3</span>
+                  <span class="ftx"><span class="ft">آپ کی رسید یہاں آ جائے گی</span><span class="fd">تصدیق ہوتے ہی آپ کی رسید جاری ہو جاتی ہے — ہر روپیہ واضح۔</span></span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn" href="/messages/host-ayesha-margalla-view">عائشہ کو پیغام بھیجیں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the back chevron flips to the reading-start edge, ledger label/value pairs swap sides, and every amount keeps LTR tabular figures via <code>.num { direction:ltr; unicode-bidi:isolate }</code> — "PKR 37,500" is never digit-order-mirrored (§11, <code>ga-056</code>/<code>ga-090</code> precedent). The venue name and card brand stay Latin; the host's name and all copy are real Urdu, and the exact-figure promise carries faithfully across scripts.</p>
+    </section>
+
+  </main>
+</body>
+</html>

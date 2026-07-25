@@ -1,0 +1,509 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Trip detail (GA-071)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --map-land:#EEF0F1; --map-water:#E4EDEC; --map-park:#E7F1EB; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --map-land:#141918; --map-water:#101716; --map-park:#132019; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1000px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; font-family:'Noto Nastaliq Urdu', serif; line-height:1.95; }
+  .phone.rtl .num, .phone.rtl .latin, .phone.rtl .bk-v, .phone.rtl .bk-hijri, .phone.rtl .tl-s, .phone.rtl .emrow-s { font-family:'Inter', sans-serif; line-height:1.5; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:0 0 16px; }
+
+  /* hero */
+  .thero { position:relative; height:150px; background:var(--bg-sunken); }
+  .thero img { width:100%; height:100%; object-fit:cover; display:block; }
+  .thero-status { position:absolute; inset-block-start:12px; inset-inline-start:12px; display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:4px 10px; box-shadow:var(--el-hairline); }
+  .thero-status svg { width:12px; height:12px; stroke-width:2.4; flex:none; }
+  .thero-head { padding:13px 16px 4px; }
+  .thero-title { display:block; font-size:17px; font-weight:600; color:var(--text-primary); }
+  .thero-loc { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--text-secondary); margin-top:2px; }
+  .thero-loc svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+
+  .sec { padding:16px 16px 4px; border-top:1px solid var(--border-hairline); margin-top:14px; }
+  .sec:first-of-type { border-top:none; margin-top:6px; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:12px; }
+
+  /* booking dl */
+  .bk { display:flex; flex-direction:column; gap:12px; margin-bottom:8px; }
+  .brow { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+  .bk-dt { font-size:12.5px; color:var(--text-secondary); flex:none; padding-top:1px; }
+  .bk-dd { display:flex; flex-direction:column; gap:2px; text-align:end; align-items:flex-end; }
+  .bk-v { font-size:12.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .bk-hijri { font-size:11px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .verified { display:inline-flex; align-items:center; gap:5px; margin-top:2px; font-size:11px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:3px 9px; }
+  .verified svg { width:12px; height:12px; stroke-width:2.4; flex:none; }
+  .moon-note { font-size:11px; color:var(--text-tertiary); margin-top:2px; }
+
+  /* host block */
+  .host { display:flex; align-items:center; gap:12px; padding:12px 13px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .host-av { width:44px; height:44px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); font-size:17px; font-weight:600; }
+  .host-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .host-name { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .host-role { font-size:12px; color:var(--text-secondary); display:inline-flex; align-items:center; gap:5px; }
+  .host-role svg { width:12px; height:12px; stroke-width:2.2; color:var(--success-fg); flex:none; }
+  .host-msg { flex:none; display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:0 14px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); font-size:13px; font-weight:600; }
+  .host-msg svg { width:16px; height:16px; stroke-width:1.9; flex:none; }
+
+  /* map preview */
+  .tmap { position:relative; height:130px; border-radius:var(--radius-lg); overflow:hidden; background:var(--map-land); border:1px solid var(--border-hairline); }
+  .road { position:absolute; background:var(--map-road); border-radius:2px; }
+  .road.thin { background:var(--map-road2); }
+  .park { position:absolute; border-radius:50% 40% 55% 45%; background:var(--map-park); }
+  .mlbl { position:absolute; font-size:10px; font-weight:500; color:var(--map-label); letter-spacing:.02em; }
+  .tmap-pin { position:absolute; top:50%; left:50%; transform:translate(-50%,-100%); width:22px; height:22px; }
+  .tmap-pin svg { width:22px; height:22px; color:var(--int-primary); stroke-width:1.8; }
+  .tmap-area { position:absolute; inset-block-end:10px; inset-inline-start:10px; font-size:10.5px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:3px 9px; box-shadow:var(--el-hairline); }
+
+  .linkrow { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:44px; margin-top:10px; font-size:13px; font-weight:600; color:var(--int-primary); }
+  .linkrow svg { width:18px; height:18px; stroke-width:2; flex:none; }
+
+  /* timeline */
+  .tl { list-style:none; display:flex; flex-direction:column; }
+  .tl-item { display:flex; gap:12px; padding-bottom:16px; position:relative; }
+  .tl-item:last-child { padding-bottom:2px; }
+  .tl-item:not(:last-child)::before { content:""; position:absolute; inset-inline-start:11px; top:24px; bottom:0; width:2px; background:var(--border-default); }
+  .tl-dot { width:24px; height:24px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .tl-item.done .tl-dot { background:var(--int-primary); color:var(--text-on-brand); }
+  .tl-item.done .tl-dot svg { width:14px; height:14px; stroke-width:2.6; }
+  .tl-item.current .tl-dot { background:var(--bg-canvas); border:2px solid var(--int-primary); box-shadow:0 0 0 4px var(--int-subtle); }
+  .tl-item.upcoming .tl-dot { background:var(--bg-canvas); border:2px solid var(--border-default); }
+  .tl-body { display:flex; flex-direction:column; gap:1px; padding-top:2px; }
+  .tl-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .tl-item.upcoming .tl-t { color:var(--text-secondary); }
+  .tl-s { font-size:12px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+
+  /* policy */
+  .policy { display:flex; gap:11px; align-items:flex-start; padding:12px 13px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .policy-ic { flex:none; color:var(--text-secondary); margin-top:1px; }
+  .policy-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .policy-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .policy-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .policy-s { font-size:12px; color:var(--text-secondary); }
+
+  /* payment */
+  .pay { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .pay-l { font-size:12.5px; color:var(--text-secondary); }
+  .pay-v { font-size:16px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+
+  /* emergency block */
+  .em-intro { font-size:12px; color:var(--text-secondary); margin-bottom:12px; }
+  .emlist { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .emrow { display:flex; gap:12px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:9px 13px; text-decoration:none; }
+  .emrow-ic { width:36px; height:36px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-sunken); color:var(--text-secondary); }
+  .emrow-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .emrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .emrow-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .emrow-s { font-size:11.5px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .emrow-call { flex:none; display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--int-primary); }
+  .emrow-call svg { width:15px; height:15px; stroke-width:2; flex:none; }
+  .emrow-dist { flex:none; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:var(--text-tertiary); font-variant-numeric:tabular-nums; }
+  .emrow-dist svg { width:16px; height:16px; stroke-width:2; flex:none; }
+
+  /* safety entry */
+  .saferow { display:flex; gap:12px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 13px; text-decoration:none; margin-top:12px; }
+  .saferow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .saferow-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .saferow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .saferow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .saferow-s { font-size:12px; color:var(--text-secondary); }
+  .saferow-chev { flex:none; color:var(--text-tertiary); }
+  .saferow-chev svg { width:19px; height:19px; stroke-width:2; }
+
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Trip detail (GA-071)</h1>
+    <p>The dense home for one confirmed stay at <code>/trips/is-f7-2bed-aug2026</code> — organised into calm labelled sections so nothing shouts. Gregorian dates lead; the <strong>Hijri date is a quiet secondary line</strong> with the moon-sighting note (§10.5), never the pinned primary. It carries the party-type summary (Couple · documents verified), the host block (Ayesha, initials avatar + message), check-in/out times, a static muted-palette map preview, a booked→check-in→check-out <strong>timeline</strong>, the cancellation summary, the paid total + receipt link, and the factual <strong>local-help block</strong> (police 15 · rescue 1122 · nearest hospital &amp; masjid) that closes with the safety toolkit — reassuring, never alarmist (§10.8). Panels: full detail (light) · full detail (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Full detail · light</span><span>Timeline + local help · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — full trip detail">
+      <div class="panel-tag">Light — booking · host · map · timeline · policy · payment · local help</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Trip detail — full</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Your trip</div>
+              <button class="ib" aria-label="More options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="thero">
+                <img src="../../assets/photos/is-f7-view.jpg" alt="Green Margalla foothills above the Margalla View Apartment in F-7, Islamabad" loading="eager" data-prod-loading="lazy" />
+                <span class="thero-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Confirmed</span>
+              </div>
+              <div class="thero-head">
+                <span class="thero-title latin">Margalla View Apartment</span>
+                <span class="thero-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</span>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Your booking</div>
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">Dates</dt><dd class="bk-dd"><span class="bk-v">Fri 14 – Mon 17 Aug 2026 · 3 nights</span><span class="bk-hijri">2 – 5 Rabi ul-Awwal 1448 AH</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Check-in</dt><dd class="bk-dd"><span class="bk-v">From 2:00 PM</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Check-out</dt><dd class="bk-dd"><span class="bk-v">By 11:00 AM</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Guests</dt><dd class="bk-dd"><span class="bk-v">2 guests · Couple</span><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Documents verified</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Booking</dt><dd class="bk-dd"><span class="bk-v">SS-7F3K9Q</span></dd></div>
+                </dl>
+                <p class="moon-note">Hijri dates are approximate and may vary by moon sighting.</p>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Your host</div>
+                <div class="host">
+                  <span class="host-av latin" aria-hidden="true">A</span>
+                  <span class="host-b"><span class="host-name">Ayesha</span><span class="host-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>CNIC-verified host</span></span>
+                  <a class="host-msg" href="/messages/host-margalla-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Message</a>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Where you'll stay</div>
+                <div class="tmap" role="img" aria-label="Map showing the stay in F-7, Islamabad">
+                  <span class="park" style="right:-24px;top:-20px;width:120px;height:110px"></span>
+                  <span class="road" style="top:78px;left:-20px;width:360px;height:6px;transform:rotate(-9deg)"></span>
+                  <span class="road thin" style="top:20px;left:150px;width:5px;height:150px;transform:rotate(7deg)"></span>
+                  <span class="mlbl" style="top:58px;left:20px">Margalla Rd</span>
+                  <span class="mlbl" style="top:96px;left:180px">F-7 Markaz</span>
+                  <span class="tmap-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="tmap-area">F-7 · Islamabad</span>
+                </div>
+                <a class="linkrow" href="/trips/is-f7-2bed-aug2026/directions">Get directions<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Trip timeline</div>
+                <ol class="tl">
+                  <li class="tl-item done"><span class="tl-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tl-body"><span class="tl-t">Booked &amp; paid</span><span class="tl-s">24 Jul 2026 · PKR 42,350</span></span></li>
+                  <li class="tl-item upcoming" aria-current="step"><span class="tl-dot"></span><span class="tl-body"><span class="tl-t">Check-in</span><span class="tl-s">Fri 14 Aug · from 2:00 PM</span></span></li>
+                  <li class="tl-item upcoming"><span class="tl-dot"></span><span class="tl-body"><span class="tl-t">Check-out</span><span class="tl-s">Mon 17 Aug · by 11:00 AM</span></span></li>
+                </ol>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Cancellation</div>
+                <div class="policy">
+                  <span class="policy-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg></span>
+                  <span class="policy-b"><span class="policy-t">Free cancellation until 7 Aug</span><span class="policy-s">After that, the first night is non-refundable.</span></span>
+                </div>
+                <a class="linkrow" href="/trips/is-f7-2bed-aug2026/cancellation-policy">Full cancellation policy<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Payment</div>
+                <div class="pay"><span class="pay-l">Total paid</span><span class="pay-v num">PKR 42,350</span></div>
+                <a class="linkrow" href="/trips/is-f7-2bed-aug2026/receipt">View receipt &amp; tax invoice — every rupee shown<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">If you need help nearby</div>
+                <p class="em-intro">Good to have on hand for F-7 — the national emergency lines and the nearest hospital and masjid.</p>
+                <ul class="emlist">
+                  <li>
+                    <a class="emrow" href="tel:15">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Police</span><span class="emrow-s">Nationwide · dial 15</span></span>
+                      <span class="emrow-call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>15</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="tel:1122">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Rescue &amp; ambulance</span><span class="emrow-s">Rescue 1122 · dial 1122</span></span>
+                      <span class="emrow-call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>1122</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="/trips/is-f7-2bed-aug2026/nearby/hospital">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V6l8-3 8 3v15M9 21v-4h6v4M12 8v5M9.5 10.5h5"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Kulsum International Hospital</span><span class="emrow-s">F-8 Markaz, Islamabad</span></span>
+                      <span class="emrow-dist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>~4 km</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="/trips/is-f7-2bed-aug2026/nearby/masjid">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Jamia Masjid, F-7 Markaz</span><span class="emrow-s">Nearest masjid</span></span>
+                      <span class="emrow-dist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>~500 m</span>
+                    </a>
+                  </li>
+                </ul>
+                <a class="saferow" href="/safety">
+                  <span class="saferow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="saferow-b"><span class="saferow-t">Safety toolkit</span><span class="saferow-s">Emergency, trusted contacts &amp; women's-safety</span></span>
+                  <span class="saferow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Every booking fact is a real <code>&lt;dl&gt;</code> — Gregorian dates primary, the <strong>Hijri line a quiet <code>text.secondary</code> subline</strong> with the honest moon-sighting note; no single Hijri day is pinned as the primary date (§10.5). The map preview is a static muted substrate (generated from the Slate ramp), not a live tile. The timeline is an <code>&lt;ol&gt;</code> with done / next (<code>aria-current="step"</code>) / upcoming carried by glyph + text (§8.7). The local-help rows are factual utility — the real nationwide lines <strong>15</strong> and <strong>1122</strong> as tel links, hospital and masjid as F-7/F-8 placeholders with distance — calm at rest, no red panic surface (§10.8).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — trip detail, timeline and local help">
+      <div class="panel-tag">Dark — booking (Hijri) · timeline · local help</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Trip detail — dark</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Your trip</div>
+              <button class="ib" aria-label="More options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="thero">
+                <img src="../../assets/photos/is-f7-view.jpg" alt="Green Margalla foothills above the Margalla View Apartment in F-7, Islamabad" loading="eager" data-prod-loading="lazy" />
+                <span class="thero-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Confirmed</span>
+              </div>
+              <div class="thero-head">
+                <span class="thero-title latin">Margalla View Apartment</span>
+                <span class="thero-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</span>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Your booking</div>
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">Dates</dt><dd class="bk-dd"><span class="bk-v">Fri 14 – Mon 17 Aug 2026 · 3 nights</span><span class="bk-hijri">2 – 5 Rabi ul-Awwal 1448 AH</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Guests</dt><dd class="bk-dd"><span class="bk-v">2 guests · Couple</span><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Documents verified</span></dd></div>
+                </dl>
+                <p class="moon-note">Hijri dates are approximate and may vary by moon sighting.</p>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Your host</div>
+                <div class="host">
+                  <span class="host-av latin" aria-hidden="true">A</span>
+                  <span class="host-b"><span class="host-name">Ayesha</span><span class="host-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>CNIC-verified host</span></span>
+                  <a class="host-msg" href="/messages/host-margalla-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Message</a>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">Trip timeline</div>
+                <ol class="tl">
+                  <li class="tl-item done"><span class="tl-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tl-body"><span class="tl-t">Booked &amp; paid</span><span class="tl-s">24 Jul 2026 · PKR 42,350</span></span></li>
+                  <li class="tl-item upcoming" aria-current="step"><span class="tl-dot"></span><span class="tl-body"><span class="tl-t">Check-in</span><span class="tl-s">Fri 14 Aug · from 2:00 PM</span></span></li>
+                  <li class="tl-item upcoming"><span class="tl-dot"></span><span class="tl-body"><span class="tl-t">Check-out</span><span class="tl-s">Mon 17 Aug · by 11:00 AM</span></span></li>
+                </ol>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">If you need help nearby</div>
+                <p class="em-intro">Good to have on hand for F-7 — the national emergency lines and the nearest hospital and masjid.</p>
+                <ul class="emlist">
+                  <li>
+                    <a class="emrow" href="tel:15">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Police</span><span class="emrow-s">Nationwide · dial 15</span></span>
+                      <span class="emrow-call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>15</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="tel:1122">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Rescue &amp; ambulance</span><span class="emrow-s">Rescue 1122 · dial 1122</span></span>
+                      <span class="emrow-call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>1122</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="/trips/is-f7-2bed-aug2026/nearby/masjid">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">Jamia Masjid, F-7 Markaz</span><span class="emrow-s">Nearest masjid</span></span>
+                      <span class="emrow-dist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>~500 m</span>
+                    </a>
+                  </li>
+                </ul>
+                <a class="saferow" href="/safety">
+                  <span class="saferow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="saferow-b"><span class="saferow-t">Safety toolkit</span><span class="saferow-s">Emergency, trusted contacts &amp; women's-safety</span></span>
+                  <span class="saferow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Dark carries the same structure through a single <code>.dark</code> scope — the timeline rail, the muted local-help rows, and the safety entry all recede calmly. The masjid row uses a neutral map-pin, never an ornamented religious glyph (§10.2 / NEVER #2); the emergency register stays quiet, only the tel affordances lean brand-primary.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the trip detail">
+      <div class="panel-tag">RTL · اردو — "آپ کا سفر", mirrored</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">آپ کا سفر — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">آپ کا سفر</div>
+              <button class="ib" aria-label="مزید اختیارات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="thero">
+                <img src="../../assets/photos/is-f7-view.jpg" alt="ایف-۷، اسلام آباد میں مارگلہ کی سبز پہاڑیاں" loading="eager" data-prod-loading="lazy" />
+                <span class="thero-status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+              </div>
+              <div class="thero-head">
+                <span class="thero-title latin">Margalla View Apartment</span>
+                <span class="thero-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>ایف-۷، اسلام آباد</span>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">آپ کی بکنگ</div>
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">تاریخیں</dt><dd class="bk-dd"><span class="bk-v"><span class="num">14 – 17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span><span class="bk-hijri"><span class="num">2 – 5</span> ربیع الاول <span class="num">1448</span>ھ</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">چیک اِن</dt><dd class="bk-dd"><span class="bk-v">دوپہر <span class="num">2:00</span> بجے سے</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">مہمان</dt><dd class="bk-dd"><span class="bk-v"><span class="num">2</span> مہمان · جوڑا</span><span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>دستاویزات تصدیق شدہ</span></dd></div>
+                </dl>
+                <p class="moon-note">ہجری تاریخیں تخمینی ہیں اور رویتِ ہلال کے مطابق مختلف ہو سکتی ہیں۔</p>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">آپ کے میزبان</div>
+                <div class="host">
+                  <span class="host-av" aria-hidden="true">ع</span>
+                  <span class="host-b"><span class="host-name">عائشہ</span><span class="host-role"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>شناختی کارڈ تصدیق شدہ میزبان</span></span>
+                  <a class="host-msg" href="/messages/host-margalla-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>پیغام</a>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">سفر کی ترتیب</div>
+                <ol class="tl">
+                  <li class="tl-item done"><span class="tl-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tl-body"><span class="tl-t">بکنگ و ادائیگی</span><span class="tl-s"><span class="num">24</span> جولائی <span class="num">2026</span> · <span class="num">PKR 42,350</span></span></span></li>
+                  <li class="tl-item upcoming" aria-current="step"><span class="tl-dot"></span><span class="tl-body"><span class="tl-t">چیک اِن</span><span class="tl-s">جمعہ <span class="num">14</span> اگست · <span class="num">2:00 PM</span> سے</span></span></li>
+                  <li class="tl-item upcoming"><span class="tl-dot"></span><span class="tl-body"><span class="tl-t">چیک آؤٹ</span><span class="tl-s">پیر <span class="num">17</span> اگست · <span class="num">11:00 AM</span> تک</span></span></li>
+                </ol>
+              </div>
+
+              <div class="sec">
+                <div class="sec-label">قریب مدد درکار ہو تو</div>
+                <p class="em-intro">ایف-۷ کے لیے کارآمد — قومی ہنگامی نمبر اور قریب ترین اسپتال و مسجد۔</p>
+                <ul class="emlist">
+                  <li>
+                    <a class="emrow" href="tel:15">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">پولیس</span><span class="emrow-s">ملک بھر · <span class="num">15</span> ڈائل کریں</span></span>
+                      <span class="emrow-call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>15</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="tel:1122">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">ریسکیو و ایمبولینس</span><span class="emrow-s">ریسکیو <span class="num">1122</span> · <span class="num">1122</span> ڈائل کریں</span></span>
+                      <span class="emrow-call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>1122</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="emrow" href="/trips/is-f7-2bed-aug2026/nearby/masjid">
+                      <span class="emrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                      <span class="emrow-b"><span class="emrow-t">جامع مسجد، ایف-۷ مرکز</span><span class="emrow-s">قریب ترین مسجد</span></span>
+                      <span class="emrow-dist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>~500 m</span>
+                    </a>
+                  </li>
+                </ul>
+                <a class="saferow" href="/safety">
+                  <span class="saferow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="saferow-b"><span class="saferow-t">حفاظتی سہولیات</span><span class="saferow-s">ہنگامی، قابلِ اعتماد رابطے اور خواتین کی حفاظت</span></span>
+                  <span class="saferow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+                </a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored: section labels, host row, timeline rail and chevrons move to the leading (right) edge; the Hijri subline reads real Urdu (<span lang="ur">ربیع الاول 1448ھ</span>) while the amount and 15 / 1122 keep tabular Latin figures (§11). The host initials avatar uses <span lang="ur">ع</span> for عائشہ — no real face on a fictional identity.</p>
+    </section>
+
+  </main>
+</body>
+</html>

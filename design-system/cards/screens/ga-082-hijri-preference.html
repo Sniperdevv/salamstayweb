@@ -1,0 +1,402 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Hijri calendar preference (GA-082)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064/ga-123 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .phone.rtl .pv-v, .phone.rtl .pv-h, .phone.rtl .moon-note { font-family:'Noto Nastaliq Urdu', serif; line-height:1.85; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 15px 18px; }
+  .lead { font-size:12.5px; color:var(--text-secondary); margin:2px 2px 14px; line-height:1.5; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 8px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* switch row — ga-091 grammar */
+  .swrow { display:flex; align-items:center; gap:12px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; }
+  .sw-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sw-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .sw-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sw-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .sw-s { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .switch { width:48px; height:30px; border-radius:var(--radius-full); border:none; background:var(--border-default); position:relative; flex:none; padding:0; }
+  .switch::after { content:""; position:absolute; top:3px; inset-inline-start:3px; width:24px; height:24px; border-radius:50%; background:var(--bg-canvas); box-shadow:var(--el-hairline); transition:transform .15s; }
+  .switch[aria-checked="true"] { background:var(--int-primary); }
+  .switch[aria-checked="true"]::after { transform:translateX(18px); }
+  .phone.rtl .switch[aria-checked="true"]::after { transform:translateX(-18px); }
+  .switch-hit { width:48px; height:44px; display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; padding:0; cursor:pointer; }
+
+  /* Select trigger (calendar authority) */
+  .field { margin-bottom:4px; }
+  .flabel { font-size:12px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:6px; padding-left:2px; }
+  .seltrig { display:flex; align-items:center; gap:10px; min-height:48px; border:1px solid var(--border-default); background:var(--bg-sunken); border-radius:var(--radius-md); padding:0 12px; cursor:pointer; text-decoration:none; }
+  .sel-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .sel-v { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .sel-x { font-size:11px; color:var(--text-secondary); }
+  .selchev { flex:none; color:var(--text-tertiary); display:flex; }
+  .selchev svg { width:18px; height:18px; stroke-width:2; }
+  .fhelp { font-size:11.5px; color:var(--text-secondary); margin-top:8px; padding-left:2px; line-height:1.5; }
+
+  /* Select panel — open state (authority options) */
+  .selpanel { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); box-shadow:var(--el-popover); overflow:hidden; margin-top:8px; }
+  .selopt { display:flex; align-items:flex-start; gap:11px; padding:13px 13px; border-bottom:1px solid var(--border-hairline); background:transparent; border-left:none; border-right:none; border-top:none; width:100%; text-align:inherit; font-family:inherit; cursor:pointer; }
+  .selopt:last-child { border-bottom:none; }
+  .selopt.sel { background:var(--int-subtle); }
+  .selopt-check { flex:none; width:20px; height:20px; color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .selopt-check svg { width:18px; height:18px; stroke-width:2.4; }
+  .selopt-check.blank { color:transparent; }
+  .selopt-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .selopt-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .selopt-d { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.5; }
+
+  /* moon-sighting note */
+  .moon-note { display:flex; gap:7px; align-items:flex-start; font-size:11.5px; color:var(--text-tertiary); margin-top:10px; line-height:1.5; padding:0 2px; }
+  .moon-note svg { width:14px; height:14px; stroke-width:1.9; flex:none; margin-top:1px; }
+
+  /* live preview — Gregorian primary + Hijri quiet secondary (ga-071 treatment) */
+  .preview { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:4px 14px 12px; }
+  .pv-tag { font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); padding:11px 0 4px; display:flex; align-items:center; gap:6px; }
+  .pv-tag svg { width:13px; height:13px; stroke-width:2; }
+  .pvrow { display:flex; align-items:flex-start; gap:12px; padding:11px 0; border-top:1px solid var(--border-hairline); }
+  .pv-ic { flex:none; width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .pv-ic svg { width:17px; height:17px; stroke-width:1.8; }
+  .pv-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .pv-l { font-size:11px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; color:var(--text-tertiary); display:block; }
+  .pv-v { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .pv-h { font-size:11.5px; color:var(--text-secondary); font-variant-numeric:tabular-nums; display:block; }
+
+  /* app-scope note */
+  .appnote { display:flex; gap:11px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px; margin-top:14px; }
+  .an-ic { flex:none; width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .an-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .an-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .an-h { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .an-d { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.5; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Hijri calendar preference (GA-082)</h1>
+    <p>How dates read across SalamStay (§7.6a: no journey stepper). A Switch turns on the <strong>Hijri date as a quiet second line beside the Gregorian</strong> — the default per §10.5, and never a separate "Islamic mode" or a Hijri-primary flip. A calendar-authority <strong>Select</strong> lets the guest follow the <strong>Ruet-e-Hilal Committee</strong> or the <strong>Khyber Pakhtunkhwa announcement</strong> — the regional difference stated factually and respectfully (ARCH §14.1), never adjudicated. The honest moon-sighting note travels with it, a <strong>live preview</strong> shows a real date in both modes (the GA-071 quiet-secondary treatment), and a note explains Ramadan/Eid-sensitive surfaces follow this setting. Calendar UI is plain text + a neutral calendar glyph — no religious ornament, no green wash (§10.5). Panels: preference on (light) · authority Select open + Hijri-off preview (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Preference · light</span><span>Authority · Hijri-off · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — PREFERENCE (HIJRI ON) ============================ -->
+    <section class="panel" aria-label="Light theme — the calendar preference with Hijri shown">
+      <div class="panel-tag">Light — Hijri quiet-secondary on · authority · preview</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Calendar preference — Hijri as a quiet second line</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Calendar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">Dates always show in Gregorian. You can add the Hijri date alongside as a quiet second line.</p>
+
+              <div class="swrow">
+                <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+                <span class="sw-b"><span class="sw-t">Show Hijri dates alongside Gregorian</span><span class="sw-s">Hijri appears as a quiet second line — Gregorian stays primary.</span></span>
+                <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="Show Hijri dates alongside Gregorian"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+              </div>
+
+              <div class="scap">Which announcement to follow</div>
+              <div class="field">
+                <a class="seltrig" href="/account/settings/calendar/authority" aria-label="Choose which moon-sighting authority to follow, currently the Ruet-e-Hilal Committee">
+                  <span class="sel-b"><span class="sel-v">Ruet-e-Hilal Committee</span><span class="sel-x">National announcement</span></span>
+                  <span class="selchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </a>
+                <p class="fhelp">Some years the Khyber Pakhtunkhwa announcement differs. Choose the one you follow — we'll match your Hijri dates to it.</p>
+              </div>
+
+              <div class="moon-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+                <span>Hijri dates are approximate until the moon sighting confirms them.</span>
+              </div>
+
+              <div class="scap">Preview</div>
+              <div class="preview">
+                <div class="pv-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>How a date will look</div>
+                <div class="pvrow">
+                  <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+                  <span class="pv-b">
+                    <span class="pv-l">Check-in</span>
+                    <span class="pv-v">Fri 14 Aug 2026</span>
+                    <span class="pv-h">2 Rabi ul-Awwal 1448 AH</span>
+                  </span>
+                </div>
+                <div class="pvrow">
+                  <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4M8 14h3"/></svg></span>
+                  <span class="pv-b">
+                    <span class="pv-l">Your stay</span>
+                    <span class="pv-v">14 – 17 Aug 2026 · 3 nights</span>
+                    <span class="pv-h">2 – 5 Rabi ul-Awwal 1448 AH</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="appnote">
+                <span class="an-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                <span class="an-b">
+                  <span class="an-h">Ramadan &amp; Eid follow this setting</span>
+                  <span class="an-d">Calendars, reminders, and host availability around Ramadan and Eid use the announcement you chose — and stay approximate until the sighting.</span>
+                </span>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The Switch is on by default (§10.5): the Hijri date is added as a <strong>quiet <code>text.secondary</code> second line</strong> — Gregorian stays the primary numeral, and no single Hijri day is ever pinned as the headline date. The authority <code>Select</code> frames the Ruet-e-Hilal Committee / KP difference as a <strong>factual regional choice the guest makes</strong>, never a ruling SalamStay hands down. The preview reuses the GA-071 booking treatment verbatim (<code>.pv-v</code> primary + <code>.pv-h</code> secondary). Calendar UI is plain text + a neutral calendar glyph — no religious ornament, no green religious framing (§10.5, NEVER #2).</p>
+    </section>
+
+    <!-- ============================ DARK — AUTHORITY SELECT + HIJRI OFF ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the authority Select open and the Hijri-off preview">
+      <div class="panel-tag">Dark — authority Select (open) · Hijri off (Gregorian-only preview)</div>
+      <div class="rowflex">
+
+        <!-- B · AUTHORITY SELECT OPEN -->
+        <div class="pcol">
+          <div class="pcap">Authority — a respectful regional choice</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings/calendar" aria-label="Back to calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Which announcement</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">Pakistan follows more than one moon-sighting announcement. Pick the one you observe — we'll match every Hijri date to it.</p>
+
+              <div class="field">
+                <span class="flabel">Moon-sighting announcement</span>
+                <div class="selpanel" role="radiogroup" aria-label="Moon-sighting announcement">
+                  <button class="selopt sel" type="button" role="radio" aria-checked="true">
+                    <span class="selopt-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="selopt-b"><span class="selopt-t">Ruet-e-Hilal Committee</span><span class="selopt-d">Pakistan's national committee. The default for most of the country.</span></span>
+                  </button>
+                  <button class="selopt" type="button" role="radio" aria-checked="false">
+                    <span class="selopt-check blank" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="selopt-b"><span class="selopt-t">Khyber Pakhtunkhwa announcement</span><span class="selopt-d">Some years KP announces the new month a day earlier. Choose this if you follow it.</span></span>
+                  </button>
+                </div>
+                <div class="moon-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+                  <span>Either way, Hijri dates are approximate until the moon sighting confirms them.</span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · HIJRI OFF — GREGORIAN ONLY PREVIEW -->
+        <div class="pcol">
+          <div class="pcap">Hijri off — Gregorian-only, the other mode</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Calendar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">With Hijri turned off, dates show in Gregorian only — the authority setting and moon note step aside.</p>
+
+              <div class="swrow">
+                <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+                <span class="sw-b"><span class="sw-t">Show Hijri dates alongside Gregorian</span><span class="sw-s">Off — you'll see Gregorian dates only.</span></span>
+                <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="Show Hijri dates alongside Gregorian"><span class="switch" aria-checked="false" aria-hidden="true"></span></button>
+              </div>
+
+              <div class="scap">Preview</div>
+              <div class="preview">
+                <div class="pv-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>How a date will look</div>
+                <div class="pvrow">
+                  <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+                  <span class="pv-b">
+                    <span class="pv-l">Check-in</span>
+                    <span class="pv-v">Fri 14 Aug 2026</span>
+                  </span>
+                </div>
+                <div class="pvrow">
+                  <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4M8 14h3"/></svg></span>
+                  <span class="pv-b">
+                    <span class="pv-l">Your stay</span>
+                    <span class="pv-v">14 – 17 Aug 2026 · 3 nights</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The authority choice is a <code>role="radiogroup"</code> with redundant selection encoding (check <strong>and</strong> subtle fill, §3 inputs). The framing is deliberately even-handed — the KP announcement is described as a factual regional difference the guest may follow, with no judgment about which is correct. The Hijri-off preview is the <strong>same preview block with the secondary line removed</strong>, so the two modes read as one control's two states, not two designs.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU — PREFERENCE ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the calendar preference">
+      <div class="panel-tag">RTL · اردو — "کیلنڈر", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Calendar preference — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">کیلنڈر</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">تاریخیں ہمیشہ عیسوی (Gregorian) میں دکھائی جاتی ہیں۔ آپ ساتھ میں ہجری تاریخ کو ایک خاموش دوسری سطر کے طور پر شامل کر سکتے ہیں۔</p>
+
+              <div class="swrow">
+                <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+                <span class="sw-b"><span class="sw-t">عیسوی کے ساتھ ہجری تاریخیں دکھائیں</span><span class="sw-s">ہجری ایک خاموش دوسری سطر کے طور پر — عیسوی بنیادی رہتی ہے۔</span></span>
+                <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="عیسوی کے ساتھ ہجری تاریخیں دکھائیں"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+              </div>
+
+              <div class="scap">کون سا اعلان</div>
+              <div class="field">
+                <a class="seltrig" href="/account/settings/calendar/authority" aria-label="رویتِ ہلال کی کون سی اتھارٹی، فی الحال رویتِ ہلال کمیٹی">
+                  <span class="sel-b"><span class="sel-v">رویتِ ہلال کمیٹی</span><span class="sel-x">قومی اعلان</span></span>
+                  <span class="selchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </a>
+                <p class="fhelp">بعض سالوں میں خیبر پختونخوا کا اعلان مختلف ہوتا ہے۔ جس کی آپ پیروی کرتے ہیں اسے منتخب کریں — ہم آپ کی ہجری تاریخیں اسی سے ملائیں گے۔</p>
+              </div>
+
+              <div class="moon-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+                <span>ہجری تاریخیں تخمینی ہیں اور رویتِ ہلال کی تصدیق تک مختلف ہو سکتی ہیں۔</span>
+              </div>
+
+              <div class="scap">پیش منظر</div>
+              <div class="preview">
+                <div class="pv-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>تاریخ کیسے دکھے گی</div>
+                <div class="pvrow">
+                  <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+                  <span class="pv-b">
+                    <span class="pv-l">چیک اِن</span>
+                    <span class="pv-v">جمعہ <span class="num">14</span> اگست <span class="num">2026</span></span>
+                    <span class="pv-h"><span class="num">2</span> ربیع الاول <span class="num">1448</span>ھ</span>
+                  </span>
+                </div>
+                <div class="pvrow">
+                  <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4M8 14h3"/></svg></span>
+                  <span class="pv-b">
+                    <span class="pv-l">آپ کا قیام</span>
+                    <span class="pv-v"><span class="num">14 – 17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span>
+                    <span class="pv-h"><span class="num">2 – 5</span> ربیع الاول <span class="num">1448</span>ھ</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and Select chevron flip to the reading-start edge; the preview's Gregorian primary and Hijri secondary both set in Nastaliq (<span lang="ur">ربیع الاول 1448ھ</span>) while the honest moon-sighting note reads identically. Gregorian stays the primary line in Urdu too — the §10.5 rule holds across scripts, never a Hijri-primary flip.</p>
+    </section>
+
+  </main>
+</body>
+</html>

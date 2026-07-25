@@ -1,0 +1,656 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-033 Host profile · guest view (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1360px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1360px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; max-width:384px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); display:flex; flex-direction:column; }
+
+  .sbar { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; flex:none; }
+  .sbar .t { font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .sbar .ic { display:flex; gap:5px; align-items:center; }
+  .sbar .ic svg { width:16px; height:16px; color:var(--text-primary); }
+
+  .appbar { display:flex; align-items:center; gap:4px; padding:2px 8px 8px; flex:none; }
+  .icbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); flex:none; padding:0; }
+  .icbtn svg { width:22px; height:22px; stroke-width:2; }
+  .abspacer { flex:1; }
+
+  .scroll { padding:4px 18px 10px; }
+
+  /* identity header */
+  .idhdr { display:flex; flex-direction:column; align-items:center; text-align:center; padding:8px 0 4px; }
+  .av { width:88px; height:88px; flex:none; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:600; color:var(--text-secondary); position:relative; }
+  .av .tick { position:absolute; bottom:0; right:0; width:28px; height:28px; border-radius:var(--radius-full); background:var(--success-bg); border:3px solid var(--bg-canvas); display:flex; align-items:center; justify-content:center; }
+  .av .tick svg { width:15px; height:15px; color:var(--success-fg); stroke-width:2.6; }
+  .idname { font-size:22px; font-weight:600; color:var(--text-primary); margin-top:14px; letter-spacing:-.01em; }
+  .idtags { display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-top:9px; }
+  .tag { display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 10px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:12px; font-weight:600; color:var(--text-secondary); }
+  .tag svg { width:13px; height:13px; }
+  .tag.verified { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .idsub { font-size:13px; color:var(--text-secondary); margin-top:10px; }
+
+  /* KPI tiles (§14 nav — calm reliability, not a scoreboard) */
+  .kpis { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
+  .kpi { padding:13px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .kpi .kv { font-size:19px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; display:flex; align-items:center; gap:5px; letter-spacing:-.01em; line-height:1.1; }
+  .kpi .kv svg { width:16px; height:16px; color:var(--warning-fg); flex:none; }
+  .kpi .kl { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+  .statinfo { margin-top:10px; }
+  .statinfo button { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 2px; background:none; border:none; cursor:pointer; font-family:inherit; font-size:12.5px; color:var(--text-secondary); }
+  .statinfo button svg { width:15px; height:15px; color:var(--text-tertiary); }
+
+  /* languages */
+  .lang { display:flex; align-items:center; gap:11px; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-hairline); }
+  .lang > svg { width:20px; height:20px; color:var(--text-secondary); flex:none; stroke-width:1.75; }
+  .lang .lx { min-width:0; }
+  .lang .lt { font-size:11.5px; color:var(--text-tertiary); }
+  .lang .lv { font-size:14px; font-weight:600; color:var(--text-primary); margin-top:1px; }
+
+  /* contact host */
+  .contact { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; margin-top:16px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:14.5px; font-weight:600; color:var(--text-primary); cursor:pointer; text-decoration:none; font-family:inherit; }
+  .contact svg { width:18px; height:18px; color:var(--text-secondary); }
+
+  .rule { height:1px; background:var(--border-hairline); margin:18px 0; border:none; }
+  h3.sh { font-size:17px; font-weight:600; color:var(--text-primary); margin-bottom:10px; letter-spacing:-.005em; }
+  .about { font-size:13.5px; color:var(--text-secondary); line-height:1.55; }
+
+  /* how-they-host neutral rows (equal weight; no brand fill §10.1) */
+  .hostfeat { display:grid; grid-template-columns:1fr 1fr; gap:12px 10px; margin-top:4px; }
+  .hf { display:flex; gap:10px; align-items:center; }
+  .hf .hfic { width:32px; height:32px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .hf .hfic svg { width:16px; height:16px; color:var(--text-secondary); stroke-width:1.75; }
+  .hf .hft { font-size:12.5px; font-weight:500; color:var(--text-primary); line-height:1.3; }
+
+  /* listings carousel */
+  .seeall { display:flex; align-items:center; justify-content:space-between; }
+  .seeall a { display:inline-flex; align-items:center; gap:4px; min-height:44px; font-size:13.5px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .seeall a svg { width:16px; height:16px; }
+  .lscroll { display:flex; gap:12px; overflow-x:auto; margin:6px -18px 0; padding:6px 18px 6px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+  .lcard { flex:none; width:222px; scroll-snap-align:start; text-decoration:none; }
+  .lph { display:block; width:100%; aspect-ratio:4/3; border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .lph img { display:block; width:100%; height:100%; object-fit:cover; }
+  .lt { font-size:14px; font-weight:600; color:var(--text-primary); margin-top:9px; line-height:1.3; }
+  .lm { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--text-secondary); margin-top:3px; }
+  .lm .lstar { display:inline-flex; color:var(--warning-fg); }
+  .lm .lstar svg { width:12px; height:12px; }
+  .lm .newpill { display:inline-flex; align-items:center; height:18px; padding:0 7px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:10.5px; font-weight:600; color:var(--text-secondary); }
+  .lp { font-size:13px; color:var(--text-primary); margin-top:6px; }
+  .lp b { font-weight:700; font-variant-numeric:tabular-nums; }
+  .lp span { color:var(--text-secondary); }
+  .lhost { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; color:var(--text-tertiary); margin-top:6px; }
+  .lhost svg { width:12px; height:12px; }
+
+  /* review highlights */
+  .review { padding:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .review + .review { margin-top:10px; }
+  .rv-h { display:flex; align-items:center; gap:10px; }
+  .rv-av { width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); flex:none; }
+  .rv-id { min-width:0; display:flex; flex-direction:column; }
+  .rv-n { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .rv-d { font-size:12px; color:var(--text-tertiary); margin-top:1px; }
+  .rv-stars { margin-inline-start:auto; display:inline-flex; gap:1.5px; color:var(--warning-fg); }
+  .rv-stars svg { width:13px; height:13px; }
+  .rv-body { font-size:13.5px; color:var(--text-secondary); line-height:1.5; margin-top:9px; }
+  .allrev { display:inline-flex; align-items:center; gap:5px; min-height:44px; margin-top:12px; font-size:14px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .allrev svg { width:16px; height:16px; }
+
+  /* later-phase reserved slots */
+  .reserved { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .rsv { display:flex; align-items:center; gap:12px; padding:14px; border-radius:var(--radius-lg); border:1px dashed var(--border-default); background:var(--bg-canvas); }
+  .rsv .ri { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; }
+  .rsv .ri svg { width:17px; height:17px; color:var(--text-tertiary); stroke-width:1.75; }
+  .rsv .rt { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .rsv .rtt { font-size:13.5px; font-weight:600; color:var(--text-tertiary); }
+  .rsv .rtd { font-size:12px; color:var(--text-tertiary); margin-top:1px; }
+  .rsv .rtag { flex:none; display:inline-flex; align-items:center; height:20px; padding:0 9px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); font-size:10.5px; font-weight:600; color:var(--text-tertiary); }
+
+  /* new-host honesty panel */
+  .newhost { margin-top:16px; padding:15px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .newhost .nh-t { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .newhost .nh-t svg { width:17px; height:17px; color:var(--text-secondary); }
+  .newhost .nh-d { font-size:13px; color:var(--text-secondary); line-height:1.5; margin-top:8px; }
+  .facts2 { display:flex; flex-direction:column; gap:9px; margin-top:14px; }
+  .fact2 { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-primary); }
+  .fact2 svg { width:16px; height:16px; color:var(--success-fg); flex:none; }
+  .fact2.muted svg { color:var(--text-tertiary); }
+  .fact2.muted { color:var(--text-secondary); }
+
+  /* report user */
+  .reportrow { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); display:flex; justify-content:center; }
+  .reportuser { display:inline-flex; align-items:center; gap:7px; min-height:44px; padding:0 6px; font-size:13px; color:var(--text-secondary); text-decoration:none; }
+  .reportuser svg { width:15px; height:15px; }
+
+  .homebar { display:flex; justify-content:center; padding:8px 0 9px; background:var(--bg-canvas); flex:none; }
+  .homebar i { width:120px; height:5px; border-radius:var(--radius-full); background:var(--text-primary); opacity:.18; }
+
+  .sk { background:var(--bg-sunken); border-radius:var(--radius-md); position:relative; overflow:hidden; }
+  .sk::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,var(--bg-raised),transparent); transform:translateX(-100%); animation:shim 1.4s ease-in-out infinite; }
+  @keyframes shim { 100% { transform:translateX(100%); } }
+  @media (prefers-reduced-motion: reduce){ .sk::after { animation:none; } }
+
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-033 — Host profile · guest view (mobile app)</h1>
+    <p>The rich public host profile a guest reads to trust a stranger with their stay (DESIGN §9-K). Required photo slot (dignified initials fallback per §8.3), SalamStar tag + success-tone verified tick, a calm KPI cluster (rating + reviews, years hosting, response rate/time — the host's own data, never a scoreboard), languages, a 50+-word about, a listings carousel annotated "Hosting for N years", review highlights, and guidebook / co-host slots reserved for a later phase. Includes the honest "New host" variant (no fabricated stats; women-hosted signal surfaced neutrally) and a report-user link (→ GA-132). Real Islamabad content. Quiet Modern — reliability, not pressure.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span><span>Verified tick = success, not brand</span><span>Calm KPI tiles (§14)</span><span>Listings carousel (real photos)</span><span>New-host honest variant</span><span>Report user → GA-132</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT — established host (full) ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — established host · full anatomy</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abspacer"></span>
+            <button class="icbtn" aria-label="More options, including report this host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+          </div>
+
+          <main class="scroll">
+            <div class="idhdr">
+              <span class="av" aria-hidden="true">AK<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+              <h2 class="idname">Ayesha K.</h2>
+              <div class="idtags">
+                <span class="tag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>SalamStar</span>
+                <span class="tag verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+              <p class="idsub">Host in Islamabad · Hosting since 2023</p>
+            </div>
+
+            <div class="kpis">
+              <div class="kpi"><div class="kv"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.89</div><div class="kl">214 reviews</div></div>
+              <div class="kpi"><div class="kv">3</div><div class="kl">Years hosting</div></div>
+              <div class="kpi"><div class="kv">99%</div><div class="kl">Response rate</div></div>
+              <div class="kpi"><div class="kv">&lt; 1 hr</div><div class="kl">Responds</div></div>
+            </div>
+            <div class="statinfo">
+              <button aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>How response stats are measured</button>
+            </div>
+
+            <div class="lang">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+              <div class="lx"><div class="lt">Speaks</div><div class="lv">Urdu, English and Punjabi</div></div>
+            </div>
+
+            <a class="contact" href="/messages/new?host=ayesha-k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.5A8 8 0 1 1 20 12z"/></svg>Message Ayesha</a>
+
+            <hr class="rule" />
+
+            <h3 class="sh">About Ayesha</h3>
+            <p class="about">Assalam-o-alaikum, I'm Ayesha. I was born and raised in Islamabad and have hosted guests across F-7 and F-8 since 2023. I look after every home myself — I live close by and can usually be at the door within minutes. I know the city well: the quiet cafés, the Margalla walking trails, and where to find good nihari on a Sunday morning. Families and long-stay guests are especially welcome.</p>
+
+            <hr class="rule" />
+
+            <h3 class="sh">How Ayesha hosts</h3>
+            <div class="hostfeat">
+              <div class="hf"><span class="hfic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg></span><span class="hft">Prayer space in every home</span></div>
+              <div class="hf"><span class="hfic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span><span class="hft">Halal kitchen</span></div>
+              <div class="hf"><span class="hfic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><path d="M3 19v-1.5a3.5 3.5 0 0 1 7 0V19M14 19v-1.5a3.5 3.5 0 0 1 7 0V19"/></svg></span><span class="hft">Families welcome</span></div>
+              <div class="hf"><span class="hfic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="hft">Women-only section on request</span></div>
+            </div>
+
+            <hr class="rule" />
+
+            <div class="seeall">
+              <h3 class="sh" style="margin-bottom:0">Ayesha's homes</h3>
+              <a href="/users/ayesha-k/listings">See all 3 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+            </div>
+            <div class="lscroll">
+              <a class="lcard" href="/rooms/is-f7-2bed">
+                <span class="lph"><img src="../../assets/photos/is-f7-living.jpg" alt="Sunlit living room of Ayesha's bright two-bedroom apartment in F-7, Islamabad" data-prod-loading="lazy" /></span>
+                <span class="lt">Margalla View Apartment</span>
+                <span class="lm"><span class="lstar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>4.89 · F-7, Islamabad</span>
+                <span class="lp"><b>PKR 12,500</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Hosting this home for 3 years</span>
+              </a>
+              <a class="lcard" href="/rooms/is-f8-studio">
+                <span class="lph"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="Neutral, tidy bedroom in Ayesha's studio near F-8 Markaz, Islamabad" data-prod-loading="lazy" /></span>
+                <span class="lt">Cosy studio near F-8 Markaz</span>
+                <span class="lm"><span class="lstar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>4.80 · F-8, Islamabad</span>
+                <span class="lp"><b>PKR 9,800</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Hosting this home for 2 years</span>
+              </a>
+              <a class="lcard" href="/rooms/is-e7-suite">
+                <span class="lph"><img src="../../assets/photos/is-f7-view.jpg" alt="Green Margalla foothills seen from Ayesha's guest suite in E-7, Islamabad" data-prod-loading="lazy" /></span>
+                <span class="lt">Margalla-view guest suite</span>
+                <span class="lm"><span class="newpill">New</span>E-7, Islamabad</span>
+                <span class="lp"><b>PKR 18,000</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Hosting this home for 1 year</span>
+              </a>
+            </div>
+
+            <hr class="rule" />
+
+            <h3 class="sh">What guests say</h3>
+            <div class="review">
+              <div class="rv-h">
+                <span class="rv-av" aria-hidden="true">SM</span>
+                <span class="rv-id"><span class="rv-n">Sana M.</span><span class="rv-d">June 2026 · F-7 apartment</span></span>
+                <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+              </div>
+              <p class="rv-body">Ayesha answered every message within minutes and the home was exactly as described. A genuinely reliable host.</p>
+            </div>
+            <div class="review">
+              <div class="rv-h">
+                <span class="rv-av" aria-hidden="true">AK</span>
+                <span class="rv-id"><span class="rv-n">Ahmed K.</span><span class="rv-d">May 2026 · F-8 studio</span></span>
+                <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+              </div>
+              <p class="rv-body">Clear directions, a spotless place, and honest about the winter gas pressure. Would book with Ayesha again.</p>
+            </div>
+            <a class="allrev" href="/users/ayesha-k/reviews">Show all 214 reviews <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+
+            <hr class="rule" />
+
+            <h3 class="sh">Coming later</h3>
+            <div class="reserved">
+              <div class="rsv" aria-disabled="true">
+                <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5V20.5"/></svg></span>
+                <span class="rt"><span class="rtt">Ayesha's guidebook</span><span class="rtd">Her picks for food, walks and prayer nearby</span></span>
+                <span class="rtag">Coming soon</span>
+              </div>
+              <div class="rsv" aria-disabled="true">
+                <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1.5a4 4 0 0 1 8 0V20M16 5.5a3 3 0 0 1 0 5.5M21 20v-1.5a4 4 0 0 0-3-3.8"/></svg></span>
+                <span class="rt"><span class="rtt">Co-hosts</span><span class="rtd">People who help Ayesha look after guests</span></span>
+                <span class="rtag">Coming soon</span>
+              </div>
+            </div>
+
+            <div class="reportrow">
+              <a class="reportuser" href="/users/ayesha-k/report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report this host</a>
+            </div>
+          </main>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK — established host (full) ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — established host · full anatomy</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abspacer"></span>
+            <button class="icbtn" aria-label="More options, including report this host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+          </div>
+
+          <main class="scroll">
+            <div class="idhdr">
+              <span class="av" aria-hidden="true">AK<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+              <h2 class="idname">Ayesha K.</h2>
+              <div class="idtags">
+                <span class="tag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>SalamStar</span>
+                <span class="tag verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+              <p class="idsub">Host in Islamabad · Hosting since 2023</p>
+            </div>
+
+            <div class="kpis">
+              <div class="kpi"><div class="kv"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.89</div><div class="kl">214 reviews</div></div>
+              <div class="kpi"><div class="kv">3</div><div class="kl">Years hosting</div></div>
+              <div class="kpi"><div class="kv">99%</div><div class="kl">Response rate</div></div>
+              <div class="kpi"><div class="kv">&lt; 1 hr</div><div class="kl">Responds</div></div>
+            </div>
+            <div class="statinfo">
+              <button aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>How response stats are measured</button>
+            </div>
+
+            <div class="lang">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+              <div class="lx"><div class="lt">Speaks</div><div class="lv">Urdu, English and Punjabi</div></div>
+            </div>
+
+            <a class="contact" href="/messages/new?host=ayesha-k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.5A8 8 0 1 1 20 12z"/></svg>Message Ayesha</a>
+
+            <hr class="rule" />
+
+            <h3 class="sh">About Ayesha</h3>
+            <p class="about">Assalam-o-alaikum, I'm Ayesha. I was born and raised in Islamabad and have hosted guests across F-7 and F-8 since 2023. I look after every home myself — I live close by and can usually be at the door within minutes. I know the city well: the quiet cafés, the Margalla walking trails, and where to find good nihari on a Sunday morning. Families and long-stay guests are especially welcome.</p>
+
+            <hr class="rule" />
+
+            <div class="seeall">
+              <h3 class="sh" style="margin-bottom:0">Ayesha's homes</h3>
+              <a href="/users/ayesha-k/listings">See all 3 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+            </div>
+            <div class="lscroll">
+              <a class="lcard" href="/rooms/is-f7-2bed">
+                <span class="lph"><img src="../../assets/photos/is-f7-living.jpg" alt="Sunlit living room of Ayesha's bright two-bedroom apartment in F-7, Islamabad" data-prod-loading="lazy" /></span>
+                <span class="lt">Margalla View Apartment</span>
+                <span class="lm"><span class="lstar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>4.89 · F-7, Islamabad</span>
+                <span class="lp"><b>PKR 12,500</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Hosting this home for 3 years</span>
+              </a>
+              <a class="lcard" href="/rooms/is-f8-studio">
+                <span class="lph"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="Neutral, tidy bedroom in Ayesha's studio near F-8 Markaz, Islamabad" data-prod-loading="lazy" /></span>
+                <span class="lt">Cosy studio near F-8 Markaz</span>
+                <span class="lm"><span class="lstar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>4.80 · F-8, Islamabad</span>
+                <span class="lp"><b>PKR 9,800</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Hosting this home for 2 years</span>
+              </a>
+              <a class="lcard" href="/rooms/is-e7-suite">
+                <span class="lph"><img src="../../assets/photos/is-f7-view.jpg" alt="Green Margalla foothills seen from Ayesha's guest suite in E-7, Islamabad" data-prod-loading="lazy" /></span>
+                <span class="lt">Margalla-view guest suite</span>
+                <span class="lm"><span class="newpill">New</span>E-7, Islamabad</span>
+                <span class="lp"><b>PKR 18,000</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Hosting this home for 1 year</span>
+              </a>
+            </div>
+
+            <hr class="rule" />
+
+            <h3 class="sh">What guests say</h3>
+            <div class="review">
+              <div class="rv-h">
+                <span class="rv-av" aria-hidden="true">SM</span>
+                <span class="rv-id"><span class="rv-n">Sana M.</span><span class="rv-d">June 2026 · F-7 apartment</span></span>
+                <span class="rv-stars" role="img" aria-label="5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+              </div>
+              <p class="rv-body">Ayesha answered every message within minutes and the home was exactly as described. A genuinely reliable host.</p>
+            </div>
+            <a class="allrev" href="/users/ayesha-k/reviews">Show all 214 reviews <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+
+            <hr class="rule" />
+
+            <h3 class="sh">Coming later</h3>
+            <div class="reserved">
+              <div class="rsv" aria-disabled="true">
+                <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5V20.5"/></svg></span>
+                <span class="rt"><span class="rtt">Ayesha's guidebook</span><span class="rtd">Her picks for food, walks and prayer nearby</span></span>
+                <span class="rtag">Coming soon</span>
+              </div>
+              <div class="rsv" aria-disabled="true">
+                <span class="ri" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1.5a4 4 0 0 1 8 0V20M16 5.5a3 3 0 0 1 0 5.5M21 20v-1.5a4 4 0 0 0-3-3.8"/></svg></span>
+                <span class="rt"><span class="rtt">Co-hosts</span><span class="rtd">People who help Ayesha look after guests</span></span>
+                <span class="rtag">Coming soon</span>
+              </div>
+            </div>
+
+            <div class="reportrow">
+              <a class="reportuser" href="/users/ayesha-k/report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report this host</a>
+            </div>
+          </main>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu — established host ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · mirrored (verified tick &amp; star do not mirror; digits LTR)</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="abspacer"></span>
+            <button class="icbtn" aria-label="مزید اختیارات، بشمول میزبان کی رپورٹ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+          </div>
+
+          <section class="scroll" aria-label="میزبان کا پروفائل">
+            <div class="idhdr">
+              <span class="av" aria-hidden="true">ع<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+              <h2 class="idname ur">عائشہ کے</h2>
+              <div class="idtags">
+                <span class="tag ur"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>سلام اسٹار</span>
+                <span class="tag verified ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+              </div>
+              <p class="idsub ur">اسلام آباد میں میزبان · <span class="num">2023</span> سے میزبانی</p>
+            </div>
+
+            <div class="kpis">
+              <div class="kpi"><div class="kv num"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.89</div><div class="kl ur"><span class="num">214</span> جائزے</div></div>
+              <div class="kpi"><div class="kv num">3</div><div class="kl ur">سال میزبانی</div></div>
+              <div class="kpi"><div class="kv num">99%</div><div class="kl ur">جوابی شرح</div></div>
+              <div class="kpi"><div class="kv ur">ایک گھنٹے میں</div><div class="kl ur">جواب</div></div>
+            </div>
+            <div class="statinfo">
+              <button class="ur" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>جوابی اعداد و شمار کیسے ماپے جاتے ہیں</button>
+            </div>
+
+            <div class="lang">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+              <div class="lx"><div class="lt ur">بولتے ہیں</div><div class="lv ur">اردو، انگریزی اور پنجابی</div></div>
+            </div>
+
+            <a class="contact ur" href="/messages/new?host=ayesha-k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.5A8 8 0 1 1 20 12z"/></svg>عائشہ کو پیغام بھیجیں</a>
+
+            <hr class="rule" />
+
+            <h3 class="sh ur">عائشہ کے بارے میں</h3>
+            <p class="about ur">السلام علیکم، میں عائشہ ہوں۔ میں اسلام آباد میں پیدا ہوئی اور یہیں پلی بڑھی، اور <span class="num">2023</span> سے ایف-۷ اور ایف-۸ میں مہمانوں کی میزبانی کر رہی ہوں۔ ہر گھر کی دیکھ بھال میں خود کرتی ہوں — قریب ہی رہتی ہوں اور عموماً چند منٹ میں دروازے پر پہنچ سکتی ہوں۔ شہر کو اچھی طرح جانتی ہوں: پرسکون کیفے، مارگلہ کی چہل قدمی کے راستے، اور اتوار کی صبح اچھی نہاری کہاں ملتی ہے۔ خاندان اور طویل قیام کے مہمان خاص طور پر خوش آمدید ہیں۔</p>
+
+            <hr class="rule" />
+
+            <div class="seeall">
+              <h3 class="sh ur" style="margin-bottom:0">عائشہ کے گھر</h3>
+              <a class="ur" href="/users/ayesha-k/listings">سب دیکھیں <span class="num">3</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+            </div>
+            <div class="lscroll">
+              <a class="lcard" href="/rooms/is-f7-2bed">
+                <span class="lph"><img src="../../assets/photos/is-f7-living.jpg" alt="ایف-۷ اپارٹمنٹ کا روشن رہائشی کمرہ" data-prod-loading="lazy" /></span>
+                <span class="lt ur">مارگلہ ویو اپارٹمنٹ</span>
+                <span class="lm ur"><span class="lstar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span><span class="num">4.89</span> · ایف-۷</span>
+                <span class="lp"><b class="num">PKR 12,500</b> <span class="ur">/ رات</span></span>
+                <span class="lhost ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg><span class="num">3</span> سال سے میزبانی</span>
+              </a>
+              <a class="lcard" href="/rooms/is-f8-studio">
+                <span class="lph"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="ایف-۸ اسٹوڈیو کا صاف بیڈروم" data-prod-loading="lazy" /></span>
+                <span class="lt ur">ایف-۸ مرکز کے قریب اسٹوڈیو</span>
+                <span class="lm ur"><span class="lstar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span><span class="num">4.80</span> · ایف-۸</span>
+                <span class="lp"><b class="num">PKR 9,800</b> <span class="ur">/ رات</span></span>
+                <span class="lhost ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg><span class="num">2</span> سال سے میزبانی</span>
+              </a>
+            </div>
+
+            <hr class="rule" />
+
+            <h3 class="sh ur">مہمان کیا کہتے ہیں</h3>
+            <div class="review">
+              <div class="rv-h">
+                <span class="rv-av" aria-hidden="true">ث</span>
+                <span class="rv-id"><span class="rv-n ur">ثناء ایم</span><span class="rv-d ur">جون <span class="num">2026</span> · ایف-۷</span></span>
+                <span class="rv-stars" role="img" aria-label="۵ میں سے ۵"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></span>
+              </div>
+              <p class="rv-body ur">عائشہ نے ہر پیغام کا چند منٹ میں جواب دیا اور گھر بالکل ویسا ہی تھا جیسا بتایا گیا۔ واقعی قابلِ بھروسہ میزبان۔</p>
+            </div>
+            <a class="allrev ur" href="/users/ayesha-k/reviews">تمام <span class="num">214</span> جائزے دیکھیں <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+
+            <div class="reportrow">
+              <a class="reportuser ur" href="/users/ayesha-k/report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>اس میزبان کی رپورٹ کریں</a>
+            </div>
+          </section>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATES — new host + loading ============================================================= -->
+    <div class="col">
+      <div class="cap">States — new host (honest, no fabricated stats · women-hosted signal)</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abspacer"></span>
+            <button class="icbtn" aria-label="More options, including report this host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button>
+          </div>
+          <div class="scroll">
+            <div class="idhdr">
+              <span class="av" aria-hidden="true">AK<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+              <h2 class="idname">Ayesha K.</h2>
+              <div class="idtags">
+                <span class="tag">New host</span>
+                <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.5-7 8.5-4-1-7-4.1-7-8.5V6z"/></svg>Women-hosted</span>
+                <span class="tag verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+              <p class="idsub">Host in Rawalpindi · Joined July 2026</p>
+            </div>
+
+            <div class="newhost">
+              <div class="nh-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>New to hosting</div>
+              <p class="nh-d">Ayesha joined SalamStay in July 2026 and doesn't have reviews yet — every established host started right here. We show only what's confirmed, never a placeholder rating.</p>
+              <div class="facts2">
+                <div class="fact2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Identity verified (CNIC)</div>
+                <div class="fact2 muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Response rate — building</div>
+                <div class="fact2 muted"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>No reviews yet</div>
+              </div>
+            </div>
+
+            <div class="lang">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+              <div class="lx"><div class="lt">Speaks</div><div class="lv">Urdu and English</div></div>
+            </div>
+
+            <a class="contact" href="/messages/new?host=ayesha-k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.5A8 8 0 1 1 20 12z"/></svg>Message Ayesha</a>
+
+            <hr class="rule" />
+
+            <h3 class="sh">About Ayesha</h3>
+            <p class="about">Assalam-o-alaikum, I'm Ayesha. I recently opened the upper portion of my family home in Bahria Town as a women-only guest room. I'm new to hosting but not to looking after guests — you'll find the room clean, quiet and safe, with a separate entrance. I'm happy to help with directions, local food, and anything you need during your stay.</p>
+
+            <hr class="rule" />
+
+            <h3 class="sh">Ayesha's first home</h3>
+            <div class="lscroll">
+              <a class="lcard" href="/rooms/rwp-bahria-womens-room">
+                <span class="lph"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="Clean, quiet women-only guest room in Ayesha's home in Bahria Town, Rawalpindi" data-prod-loading="lazy" /></span>
+                <span class="lt">Women-only guest room</span>
+                <span class="lm"><span class="newpill">New</span>Bahria Town, Rawalpindi</span>
+                <span class="lp"><b>PKR 7,500</b> <span>/ night</span></span>
+                <span class="lhost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>Listed this month</span>
+              </a>
+            </div>
+
+            <div class="reportrow">
+              <a class="reportuser" href="/users/ayesha-k/report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Report this host</a>
+            </div>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+
+      <div class="cap" style="margin-top:6px">Loading — geometry-matched skeleton</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="appbar">
+            <span class="icbtn"></span>
+            <span class="abspacer"></span>
+            <span class="icbtn"></span>
+          </div>
+          <div class="scroll" aria-busy="true" aria-label="Loading host profile">
+            <div class="idhdr">
+              <span class="sk" style="display:block;width:88px;height:88px;border-radius:9999px"></span>
+              <span class="sk" style="display:block;width:120px;height:20px;margin-top:14px"></span>
+              <span class="sk" style="display:block;width:180px;height:14px;margin-top:12px"></span>
+            </div>
+            <div class="kpis">
+              <span class="sk" style="display:block;height:60px"></span>
+              <span class="sk" style="display:block;height:60px"></span>
+              <span class="sk" style="display:block;height:60px"></span>
+              <span class="sk" style="display:block;height:60px"></span>
+            </div>
+            <span class="sk" style="display:block;width:100%;height:48px;border-radius:8px;margin-top:16px"></span>
+            <span class="sk" style="display:block;width:100%;height:72px;border-radius:8px;margin-top:16px"></span>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

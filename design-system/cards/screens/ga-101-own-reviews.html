@@ -1,0 +1,373 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Your reviews (GA-101)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:320px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ga-064 flat-frame lineage */
+  .phone { width:320px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:680px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.85; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+
+  /* segmented tabs — real tablist */
+  .tabs { display:flex; background:var(--bg-sunken); border-radius:var(--radius-md); padding:3px; margin-bottom:16px; }
+  .tab { flex:1; min-height:38px; border:none; background:none; border-radius:var(--radius-sm); font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; }
+  .tab[aria-selected="true"] { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-hairline); }
+
+  /* review card — reused grammar */
+  .rlist { list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .review { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:13px 14px; }
+  .rv-top { display:flex; align-items:flex-start; gap:10px; }
+  .rv-av { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+  .rv-id { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .rv-n { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .rv-meta { font-size:11.5px; color:var(--text-tertiary); display:block; }
+  .rv-stars { flex:none; display:inline-flex; gap:2px; color:var(--warning-fg); margin-top:2px; }
+  .rv-stars svg { width:13px; height:13px; }
+  .rv-text { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-top:9px; }
+  .rv-ctx { display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:11px; font-weight:600; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:4px 10px; }
+  .rv-ctx svg { width:12px; height:12px; color:var(--text-tertiary); }
+  .rv-foot { display:flex; justify-content:flex-end; margin-top:8px; }
+  .replylink { display:inline-flex; align-items:center; gap:5px; min-height:36px; padding:0 4px; font-size:12px; font-weight:600; color:var(--int-primary); background:none; border:none; cursor:pointer; font-family:inherit; }
+  .replylink svg { width:14px; height:14px; }
+
+  /* reply composer — opened inline under a review */
+  .composer { margin-top:11px; padding:12px 13px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .composer-h { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:7px; }
+  .composer-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .composer-close { width:28px; height:28px; border-radius:var(--radius-full); border:none; background:none; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .composer-close svg { width:15px; height:15px; }
+  .ta { width:100%; min-height:64px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); padding:10px 12px; font-family:inherit; font-size:12.5px; color:var(--text-primary); line-height:1.5; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); }
+  .composer-actions { display:flex; gap:8px; margin-top:9px; }
+  .cbtn { flex:1; min-height:38px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; }
+  .cbtn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .cbtn.ghost { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  /* listing context chip — Written by you */
+  .lchip { display:flex; align-items:center; gap:8px; margin-top:9px; padding:8px 10px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .lchip-th { flex:none; width:32px; height:32px; border-radius:var(--radius-sm); background:linear-gradient(150deg,var(--int-subtle),var(--bg-sunken)); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .lchip-th svg { width:15px; height:15px; stroke-width:1.6; }
+  .lchip-b { flex:1; min-width:0; }
+  .lchip-n { font-size:12px; font-weight:600; color:var(--text-primary); display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lchip-s { font-size:10.5px; color:var(--text-tertiary); display:block; }
+
+  /* empty state */
+  .empty { display:flex; flex-direction:column; align-items:center; text-align:center; padding:44px 20px 8px; }
+  .empty .eic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; margin-bottom:14px; color:var(--text-tertiary); }
+  .empty .eic svg { width:26px; height:26px; stroke-width:1.5; }
+  .empty h3 { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .empty p { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-top:7px; max-width:250px; }
+  .empty .eact { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:44px; padding:0 18px; margin-top:16px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:13.5px; font-weight:600; text-decoration:none; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Your reviews (GA-101)</h1>
+    <p>Fatima's <code>/reviews</code> hub — a real <code>tablist</code> between <strong>"About you"</strong> (what hosts wrote about her) and <strong>"Written by you"</strong> (what she wrote about hosts), each a preview list of review cards (initials avatar, muted-amber stars, date, listing-context chip on her own reviews). One card on the "About you" tab shows the <strong>reply composer opened inline</strong> — the same public-response affordance detailed fully on <code>GA-131</code>, previewed here in the hub. Empty states for both tabs live in DOM. No journey stepper — post-stay. Panels: "About you," a reply composer open (light) · "Written by you," populated (dark) · اردو / RTL · empty states for both tabs.</p>
+    <div class="toggle" role="presentation"><span class="on">About you · reply open · light</span><span>Written by you · dark</span><span>اردو · RTL</span><span>Empty states</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — ABOUT YOU, REPLY OPEN ============================ -->
+    <section class="panel" aria-label="Light theme — the About you tab with a reply composer open under a review">
+      <div class="panel-tag">Light — About you · reply composer open</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">A · About you — reply composer open</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Reviews</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="true" id="tab-about">About you</button>
+                <button class="tab" role="tab" aria-selected="false" id="tab-written">Written by you</button>
+              </div>
+
+              <ul class="rlist" role="tabpanel" aria-labelledby="tab-about">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">A</span>
+                    <span class="rv-id">
+                      <span class="rv-n">Ayesha</span>
+                      <span class="rv-meta">Host in Islamabad · Aug 2026</span>
+                      <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text">Fatima and her family kept the home spotless and always let us know their plans. A calm, easy guest to host.</p>
+                  <div class="composer">
+                    <div class="composer-h"><span class="composer-t">Reply publicly</span><button class="composer-close" type="button" aria-label="Close reply composer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+                    <textarea class="ta" placeholder="Thank Ayesha, or add context for future hosts — optional.">Thank you, Ayesha — it was a lovely stay, and this review means a lot.</textarea>
+                    <div class="composer-actions"><button class="cbtn ghost" type="button">Cancel</button><button class="cbtn primary" type="button">Post reply</button></div>
+                  </div>
+                </li>
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">Y</span>
+                    <span class="rv-id">
+                      <span class="rv-n">Yusuf</span>
+                      <span class="rv-meta">Host in Islamabad · Mar 2026</span>
+                      <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text">Respectful and tidy, and easy to reach throughout. Would gladly host again.</p>
+                  <div class="rv-foot"><button class="replylink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17l-4-4 4-4M5 13h11a4 4 0 0 0 4-4V6"/></svg>Reply publicly</button></div>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The tab strip is a real <code>tablist</code> (§9-J). Review cards carry the established grammar — initials avatar, <b>muted-amber</b> stars (<code>--warning-fg</code>, never brand green), date, and the host's name. The <b>reply composer</b> opens inline under a review, matching the placeholder tone used across the family ("thank the host, or add context") — the full public-response window language lives on the deeper surface, <code>GA-131</code>.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — WRITTEN BY YOU ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the Written by you tab, populated">
+      <div class="panel-tag">Dark — Written by you · populated</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">B · Written by you — with listing context</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Reviews</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="false" id="tab-about-b">About you</button>
+                <button class="tab" role="tab" aria-selected="true" id="tab-written-b">Written by you</button>
+              </div>
+
+              <ul class="rlist" role="tabpanel" aria-labelledby="tab-written-b">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">F</span>
+                    <span class="rv-id">
+                      <span class="rv-n">You reviewed Ayesha</span>
+                      <span class="rv-meta">Aug 2026</span>
+                      <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text">Quiet, spotless, and exactly as described. The marked Qibla direction and prayer space were a thoughtful touch.</p>
+                  <div class="lchip">
+                    <span class="lchip-th" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5"/></svg></span>
+                    <span class="lchip-b"><span class="lchip-n">Margalla View Apartment</span><span class="lchip-s">F-7, Islamabad</span></span>
+                  </div>
+                </li>
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">F</span>
+                    <span class="rv-id">
+                      <span class="rv-n">You reviewed Yusuf</span>
+                      <span class="rv-meta">Mar 2026</span>
+                      <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text">Walkable to Bahria Town shops, clean and quiet. Yusuf answered every message within minutes.</p>
+                  <div class="lchip">
+                    <span class="lchip-th" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5"/></svg></span>
+                    <span class="lchip-b"><span class="lchip-n">Bahria Enclave Studio</span><span class="lchip-s">Bahria Town, Islamabad</span></span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every role AA-proven (§11). "Written by you" rows carry a <b>listing context chip</b> (CSS-placeholder thumbnail, name, area) instead of a reply affordance — a guest doesn't respond to her own review. Ratings stay this-trip facts only, never rolled into any aggregate platform figure (SEO §5/§6).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the reviews hub">
+      <div class="panel-tag">RTL · اردو — "جائزے", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · اردو — About you</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/account/profile" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur" id="uH">جائزے</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="جائزے">
+                <button class="tab ur" role="tab" aria-selected="true" id="tab-about-u">آپ کے بارے میں</button>
+                <button class="tab ur" role="tab" aria-selected="false" id="tab-written-u">آپ کے لکھے ہوئے</button>
+              </div>
+
+              <ul class="rlist" role="tabpanel" aria-labelledby="tab-about-u">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">ع</span>
+                    <span class="rv-id">
+                      <span class="rv-n ur">عائشہ</span>
+                      <span class="rv-meta ur">اسلام آباد میں میزبان · اگست <span class="num">2026</span></span>
+                      <span class="rv-stars" role="img" aria-label="پانچ میں سے پانچ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text ur">فاطمہ اور ان کا خاندان گھر کو صاف ستھرا رکھتے اور بروقت اطلاع دیتے رہے۔ ایک پُرسکون، آسان مہمان۔</p>
+                  <div class="rv-foot"><button class="replylink ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l4-4-4-4M19 13H8a4 4 0 0 1-4-4V6"/></svg>عوامی جواب دیں</button></div>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): the tab order and review-card content flow right-to-left, the reply icon flips to point in the reading direction, and numerals (the year) keep <code>direction:ltr</code> isolation via <code>.num</code>.</p>
+    </section>
+
+    <!-- ============================ STATES — EMPTY (BOTH TABS) ============================ -->
+    <section class="panel" aria-label="Empty states for both the About you and Written by you tabs">
+      <div class="panel-tag">States — empty, both tabs</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · About you — empty</div>
+          <section class="phone" aria-labelledby="dH" style="min-height:520px">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Reviews</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="true">About you</button>
+                <button class="tab" role="tab" aria-selected="false">Written by you</button>
+              </div>
+              <div class="empty">
+                <span class="eic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 10.6l6.9-.7z"/></svg></span>
+                <h3>No reviews yet</h3>
+                <p>Once a host reviews a completed stay, it will show up here.</p>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">E · Written by you — empty, one next step</div>
+          <section class="phone" aria-labelledby="eH" style="min-height:520px">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="eH">Reviews</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="false">About you</button>
+                <button class="tab" role="tab" aria-selected="true">Written by you</button>
+              </div>
+              <div class="empty">
+                <span class="eic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 10.6l6.9-.7z"/></svg></span>
+                <h3>You haven't written a review yet</h3>
+                <p>After a stay ends, you can share how it went.</p>
+                <a class="eact" href="/trips">See your trips <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M9 18l6-6-6-6"/></svg></a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Empty states follow the §8-nav pattern: one line, one calm action, no mascots. "About you" has no action (a host must write it), so it states the fact plainly; "Written by you" names the single next step — see your trips — never a dead end.</p>
+    </section>
+
+  </main>
+</body>
+</html>

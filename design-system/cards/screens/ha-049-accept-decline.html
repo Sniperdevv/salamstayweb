@@ -1,0 +1,505 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Accept / decline request (HA-049)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  /* phone frame */
+  .phone { position:relative; width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:680px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.gname,.gmeta,.sum-h,.dl-t,.dl-d,.pathh,.pathd,.nt,.nd,.honestp,.sh-h,.sel-t,.sel-d,.flabel,.ta,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; overflow-y:auto; display:flex; flex-direction:column; padding:14px 16px 16px; gap:13px; }
+
+  .gcard { display:flex; align-items:center; gap:11px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 13px; }
+  .gav { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; font-size:13.5px; font-weight:600; }
+  .gid { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .gname { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .gmeta { font-size:11.5px; color:var(--text-secondary); display:block; }
+
+  .sumcard { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:12px 13px; }
+  .sum-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:8px; display:block; }
+  .dl-rows { display:flex; flex-direction:column; gap:7px; }
+  .dl-row { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .dl-t { font-size:12px; color:var(--text-secondary); flex:none; display:block; }
+  .dl-d { font-size:12px; font-weight:600; color:var(--text-primary); text-align:end; font-variant-numeric:tabular-nums; display:block; }
+
+  /* two-way outcome preview */
+  .pathlist { display:flex; flex-direction:column; }
+  .pathrow { display:flex; gap:11px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border-hairline); }
+  .pathrow:last-child { border-bottom:none; }
+  .pathic { width:28px; height:28px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-sunken); color:var(--text-secondary); border:1px solid var(--border-hairline); }
+  .pathic.accept { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .pathic svg { width:15px; height:15px; stroke-width:1.9; }
+  .pathh { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .pathd { font-size:11.5px; color:var(--text-secondary); margin-top:1px; display:block; }
+
+  .grow { flex:1; min-height:4px; }
+  .btnrow { display:flex; flex-direction:column; gap:9px; }
+  .btn { display:flex; align-items:center; justify-content:center; min-height:46px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; text-decoration:none; border:1px solid transparent; font-family:inherit; cursor:pointer; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.outline-error { background:var(--bg-canvas); color:var(--error-fg); border-color:var(--error-border); }
+  .btn.ghost { background:transparent; color:var(--int-primary); }
+
+  /* decline reason sheet */
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); display:flex; flex-direction:column; max-height:92%; border-top:1px solid var(--border-hairline); }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; flex:none; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sh-h { font-size:16px; font-weight:600; color:var(--text-primary); padding:6px 18px 4px; display:block; }
+  .sh-sub { font-size:12px; color:var(--text-secondary); padding:0 18px 10px; display:block; }
+  .sh-body { overflow-y:auto; padding:0 14px 4px; }
+  .flabel { font-size:12px; font-weight:600; color:var(--text-primary); margin:4px 4px 7px; display:block; }
+  .sel-list { list-style:none; display:flex; flex-direction:column; gap:2px; margin-bottom:10px; }
+  .sel-opt { width:100%; display:flex; align-items:flex-start; gap:10px; padding:10px 10px; border-radius:var(--radius-md); background:none; border:none; cursor:pointer; font-family:inherit; text-align:start; }
+  .sel-opt:hover, .sel-opt.on { background:var(--int-subtle); }
+  .sel-check { width:19px; height:19px; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .sel-opt.on .sel-check { border-color:var(--int-primary); background:var(--int-primary); color:var(--text-on-brand); }
+  .sel-check svg { width:11px; height:11px; stroke-width:3; }
+  .sel-tx { display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .sel-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .sel-d { font-size:11px; color:var(--text-secondary); line-height:1.4; }
+  .ta { width:100%; min-height:70px; resize:none; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-primary); font-size:13px; font-family:inherit; line-height:1.5; padding:10px 11px; margin:2px 4px 10px; width:calc(100% - 8px); }
+  .ta::placeholder { color:var(--text-tertiary); }
+  .honestnote { display:flex; gap:9px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-md); padding:10px 11px; margin:0 4px 12px; }
+  .honestnote svg { width:16px; height:16px; stroke-width:1.9; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .honestp { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .sh-foot { flex:none; border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:11px 16px calc(14px + env(safe-area-inset-bottom)); }
+
+  /* confirmation states */
+  .hero { display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .hero .icn { width:56px; height:56px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; border:1px solid transparent; }
+  .hero .icn svg { width:28px; height:28px; stroke-width:2; }
+  .hero .icn.success { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .hero .icn.neutral { background:var(--bg-sunken); border-color:var(--border-hairline); color:var(--text-secondary); }
+  .hero h2 { font-size:18px; font-weight:600; color:var(--text-primary); margin-top:12px; letter-spacing:-0.01em; }
+  .hero .sub { font-size:13px; color:var(--text-secondary); margin-top:6px; line-height:1.55; }
+  .hero .sub b { color:var(--text-primary); font-weight:600; }
+
+  .nextcard { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-canvas); }
+  .nstep { display:flex; gap:10px; align-items:flex-start; padding:11px 13px; border-bottom:1px solid var(--border-hairline); }
+  .nstep:last-child { border-bottom:none; }
+  .ni { width:28px; height:28px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .ni svg { width:15px; height:15px; stroke-width:1.9; }
+  .ni.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .nt { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .nd { font-size:11px; color:var(--text-secondary); margin-top:1px; display:block; }
+
+  .previewcard { border:1px dashed var(--border-default); background:var(--bg-sunken); border-radius:var(--radius-lg); padding:12px 13px; }
+  .previewlabel { font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); display:block; margin-bottom:7px; }
+  .previewh { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .previewd { font-size:11.5px; color:var(--text-secondary); margin-top:3px; display:block; line-height:1.5; }
+
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Accept / decline request (HA-049)</h1>
+    <p>The decision surface for Fatima's request. <strong>Deciding</strong> shows the request summary plus a plain two-way preview of what happens either way — the accept branch states it exactly as <code>GA-065</code> put it from the guest side ("accepted → you confirm &amp; pay"), restated here from the host's ("Fatima confirms &amp; pays"). <strong>Declining</strong> opens a reason Select — <em>Dates unavailable / Not suitable for this stay / Other</em> — with an optional note; whichever reason is picked, the guest always sees <code>GA-066</code>'s dignified framing verbatim ("This stay isn't available for your dates" / "Aqib couldn't take your booking for these dates"), never the raw category. The no-penalty line ties to the real <code>response rate</code> KPI shipped on <code>GA-033</code> — no invented visibility-penalty stat is added since none is shipped. Panels: deciding + decline-reason sheet · accepted + declined confirmations · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Deciding · decline sheet</span><span>Accepted · declined confirm</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 ============================ -->
+    <section class="panel" aria-label="Light theme — deciding, and the decline-reason sheet open">
+      <div class="panel-tag">Light — deciding · decline-reason sheet</div>
+      <div class="rowflex">
+
+        <!-- A · DECIDING -->
+        <div class="pcol">
+          <div class="pcap">A · Deciding — both outcomes previewed</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reservations/fatima-gulberg2-aug2026" aria-label="Back to reservation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Respond to Fatima</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="gcard">
+                <span class="gav" aria-hidden="true">F</span>
+                <span class="gid">
+                  <span class="gname">Fatima · Couple · 2 guests</span>
+                  <span class="gmeta">Gulberg 2 Residence · <span class="num">Fri 14 – Mon 17 Aug 2026</span></span>
+                </span>
+              </div>
+
+              <div class="sumcard">
+                <span class="sum-h">If you accept, you receive</span>
+                <div class="dl-rows">
+                  <div class="dl-row"><span class="dl-t">Gross <span class="num">(PKR 12,500 × 3)</span></span><span class="dl-d num">PKR 37,500</span></div>
+                  <div class="dl-row"><span class="dl-t">Net payout</span><span class="dl-d num">PKR 35,325</span></div>
+                </div>
+              </div>
+
+              <div class="sumcard">
+                <span class="sum-h">Two ways this can go</span>
+                <div class="pathlist">
+                  <div class="pathrow">
+                    <span class="pathic accept" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span><span class="pathh">Accept → Fatima confirms &amp; pays</span><span class="pathd">Her price and dates are held for her; once she pays, the booking is confirmed and chat opens.</span></span>
+                  </div>
+                  <div class="pathrow">
+                    <span class="pathic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 6l6 6-6 6"/></svg></span>
+                    <span><span class="pathh">Decline → nothing is charged</span><span class="pathd">Fatima is told this stay isn't available for her dates and shown similar stays.</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnrow">
+                <button class="btn primary" type="button">Accept request</button>
+                <button class="btn secondary" type="button">Decline</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · DECLINE REASON SHEET -->
+        <div class="pcol">
+          <div class="pcap">B · Decline — reason Select, optional note</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reservations/fatima-gulberg2-aug2026" aria-label="Back to reservation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Respond to Fatima</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="gcard">
+                <span class="gav" aria-hidden="true">F</span>
+                <span class="gid">
+                  <span class="gname">Fatima · Couple · 2 guests</span>
+                  <span class="gmeta">Gulberg 2 Residence · <span class="num">Fri 14 – Mon 17 Aug 2026</span></span>
+                </span>
+              </div>
+
+              <div class="scrim" aria-hidden="true"></div>
+              <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t">
+                <div class="grab" aria-hidden="true"><i></i></div>
+                <span class="sh-h" id="sh-t">Why are you declining?</span>
+                <span class="sh-sub">This helps us understand patterns — Fatima always sees a plain, dignified message, never this category.</span>
+                <div class="sh-body">
+                  <span class="flabel">Reason</span>
+                  <ul class="sel-list" role="listbox" aria-label="Decline reason">
+                    <li><button class="sel-opt on" type="button" role="option" aria-selected="true"><span class="sel-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="sel-tx"><span class="sel-t">Dates unavailable</span><span class="sel-d">These dates don't work for this listing.</span></span></button></li>
+                    <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Not suitable for this stay</span><span class="sel-d">The listing isn't the right fit for this booking.</span></span></button></li>
+                    <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Other</span><span class="sel-d">Something else — add a short note below.</span></span></button></li>
+                  </ul>
+                  <span class="flabel">Note to Fatima (optional)</span>
+                  <textarea class="ta" placeholder="These dates are already booked — you'd be very welcome another time."></textarea>
+                  <div class="honestnote">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    <span class="honestp"><b>Declining is okay.</b> A timely response — even a decline — keeps your response rate healthy. What matters is replying within the window, not always saying yes.</span>
+                  </div>
+                </div>
+                <div class="sh-foot">
+                  <button class="btn outline-error" type="button">Confirm decline</button>
+                </div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The reason Select is <strong>internal categorisation</strong> — Fatima never reads "Dates unavailable" or "Other" as raw text. Whatever reason is picked, and whether or not a note is added, her screen renders exactly <code>GA-066</code>'s two variants: a quoted "note from the host" when Aqib writes one, or "No reason was given — and that's okay" when he doesn't. The honesty banner ties to the real <code>response rate</code> KPI already shipped on <code>GA-033</code>'s host profile — no invented "declines hurt your visibility" penalty is stated, because no shipped card supports that claim.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL 2 — CONFIRMATIONS ============================ -->
+    <section class="panel" aria-label="Light theme — accepted and declined confirmations">
+      <div class="panel-tag">Light — accepted confirmation · declined confirmation</div>
+      <div class="rowflex">
+
+        <!-- C · ACCEPTED -->
+        <div class="pcol">
+          <div class="pcap">C · Accepted — confirm state</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="cH">Request accepted</div>
+              <a class="ib" href="/host/reservations/fatima-gulberg2-aug2026" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn success" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="cH2">You accepted Fatima's request</h2>
+                <span class="sub">She's been notified. Your price and dates are held for her — nothing is confirmed until she pays.</span>
+              </div>
+
+              <div class="nextcard">
+                <div class="nstep">
+                  <span class="ni ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span><span class="nt">Fatima confirms &amp; pays</span><span class="nd">She has until tomorrow, 3:00 PM to complete payment.</span></span>
+                </div>
+                <div class="nstep">
+                  <span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                  <span><span class="nt">Chat opens once she pays</span><span class="nd">Contact details are shared only after that.</span></span>
+                </div>
+                <div class="nstep">
+                  <span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span><span class="nt">You're paid after check-in</span><span class="nd">Her payment is held in amanah and released to you once she checks in.</span></span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/host/reservations/fatima-gulberg2-aug2026">Back to reservation</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · DECLINED -->
+        <div class="pcol">
+          <div class="pcap">D · Declined — confirm state, guest-view preview</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="dH">Request declined</div>
+              <a class="ib" href="/host/reservations?tab=requests" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M9.5 14.5l5 5M14.5 14.5l-5 5"/></svg></span>
+                <h2 id="dH2">You declined this request</h2>
+                <span class="sub">Reason logged: <b>Dates unavailable</b>. Nothing was charged, so there's nothing to refund.</span>
+              </div>
+
+              <div class="previewcard">
+                <span class="previewlabel">What Fatima sees</span>
+                <span class="previewh">"This stay isn't available for your dates"</span>
+                <span class="previewd">"Aqib couldn't take your booking for Fri 14 – Mon 17 Aug. It happens sometimes — this is about the dates, not about you." Plus your note, quoted plainly, and similar stays free for her dates.</span>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span class="honestp"><b>Declining is okay.</b> It won't count against you the way a missed response would.</span>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn secondary" href="/host/reservations?tab=requests">Back to requests</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The declined confirmation shows Aqib exactly what Fatima will see — a literal preview of <code>GA-066</code>'s title and sub-line, so the host understands his decline never reads as blame on her end. <strong>C</strong> restates <code>GA-065</code>'s "accepted → you confirm &amp; pay" from the host's side, with the same 24-hour language and the same amanah release timing as <code>GA-059</code>/<code>HA-048</code>.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — deciding and declined confirmation">
+      <div class="panel-tag">Dark — deciding · declined confirmation</div>
+      <div class="rowflex">
+
+        <!-- E · DECIDING (dark) -->
+        <div class="pcol">
+          <div class="pcap">E · Deciding — dark</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reservations/fatima-gulberg2-aug2026" aria-label="Back to reservation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="eH">Respond to Fatima</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="gcard">
+                <span class="gav" aria-hidden="true">F</span>
+                <span class="gid">
+                  <span class="gname">Fatima · Couple · 2 guests</span>
+                  <span class="gmeta">Gulberg 2 Residence · <span class="num">Fri 14 – Mon 17 Aug 2026</span></span>
+                </span>
+              </div>
+              <div class="sumcard">
+                <span class="sum-h">Two ways this can go</span>
+                <div class="pathlist">
+                  <div class="pathrow">
+                    <span class="pathic accept" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span><span class="pathh">Accept → Fatima confirms &amp; pays</span><span class="pathd">Her price and dates are held; once she pays, chat opens.</span></span>
+                  </div>
+                  <div class="pathrow">
+                    <span class="pathic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 6l6 6-6 6"/></svg></span>
+                    <span><span class="pathh">Decline → nothing is charged</span><span class="pathd">Fatima is told this stay isn't available for her dates.</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="grow"></div>
+              <div class="btnrow">
+                <button class="btn primary" type="button">Accept request</button>
+                <button class="btn secondary" type="button">Decline</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · DECLINED (dark) -->
+        <div class="pcol">
+          <div class="pcap">F · Declined confirmation — dark</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="fH">Request declined</div>
+              <a class="ib" href="/host/reservations?tab=requests" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M9.5 14.5l5 5M14.5 14.5l-5 5"/></svg></span>
+                <h2 id="fH2">You declined this request</h2>
+                <span class="sub">No note added. Fatima will see a dignified, no-reason message — not this category.</span>
+              </div>
+              <div class="previewcard">
+                <span class="previewlabel">What Fatima sees</span>
+                <span class="previewh">"This stay isn't available for your dates"</span>
+                <span class="previewd">"No reason was given — and that's okay. Hosts don't have to explain a decline." Plus similar stays free for her dates.</span>
+              </div>
+              <div class="grow"></div>
+              <a class="btn secondary" href="/host/reservations?tab=requests">Back to requests</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set (§1.6). <strong>F</strong> proves the no-note path stays equally dignified — the guest-facing preview matches <code>GA-066</code>'s "No reason was given — and that's okay" variant exactly.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — deciding">
+      <div class="panel-tag">RTL · اردو — deciding, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Deciding — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/reservations/fatima-gulberg2-aug2026" aria-label="بکنگ پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">فاطمہ کو جواب دیں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="gcard">
+                <span class="gav" aria-hidden="true">F</span>
+                <span class="gid">
+                  <span class="gname">فاطمہ · جوڑا · <span class="num">2</span> مہمان</span>
+                  <span class="gmeta">گلبرگ <span class="num">2</span> ریزیڈنس · <span class="num">14 – 17 Aug 2026</span></span>
+                </span>
+              </div>
+
+              <div class="sumcard">
+                <span class="sum-h">قبول کرنے پر آپ کو ملیں گے</span>
+                <div class="dl-rows">
+                  <div class="dl-row"><span class="dl-t">مجموعی <span class="num">(PKR 12,500 × 3)</span></span><span class="dl-d num">PKR 37,500</span></div>
+                  <div class="dl-row"><span class="dl-t">خالص ادائیگی</span><span class="dl-d num">PKR 35,325</span></div>
+                </div>
+              </div>
+
+              <div class="sumcard">
+                <span class="sum-h">دو ممکنہ نتائج</span>
+                <div class="pathlist">
+                  <div class="pathrow">
+                    <span class="pathic accept" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span><span class="pathh">قبول → فاطمہ تصدیق اور ادائیگی کریں گی</span><span class="pathd">ان کی قیمت اور تاریخیں محفوظ رہیں گی؛ ادائیگی کے بعد بات چیت کھل جائے گی۔</span></span>
+                  </div>
+                  <div class="pathrow">
+                    <span class="pathic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H4M11 6l-6 6 6 6"/></svg></span>
+                    <span><span class="pathh">مسترد → کوئی رقم نہیں کٹے گی</span><span class="pathd">فاطمہ کو بتایا جائے گا کہ یہ قیام ان کی تاریخوں کے لیے دستیاب نہیں۔</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnrow">
+                <button class="btn primary" type="button">درخواست قبول کریں</button>
+                <button class="btn secondary" type="button">مسترد کریں</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: back chevron and path-outcome icons flip to the reading direction, label/value pairs swap sides, and every amount, date, and time stays tabular Latin figures inside <code>.num</code> (§11). The "accept → confirms &amp; pays" / "decline → nothing charged" pairing survives translation unchanged.</p>
+    </section>
+
+  </main>
+</body>
+</html>

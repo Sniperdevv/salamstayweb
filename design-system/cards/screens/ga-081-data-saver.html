@@ -1,0 +1,394 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Data saver &amp; Wi-Fi-only (GA-081)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; }
+  .intro { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin:0 2px 4px; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 8px; }
+
+  /* acknowledgement banner (active data-saver) */
+  .ack { display:flex; gap:10px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:11px 13px; }
+  .ack .ai { color:var(--info-fg); flex:none; margin-top:1px; }
+  .ack .ai svg { width:19px; height:19px; stroke-width:1.9; }
+  .ack .abd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ack .ah { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .ack .ad { font-size:12px; color:var(--text-secondary); display:block; line-height:1.45; }
+
+  /* image-quality tier Select */
+  .field { display:block; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; margin-bottom:7px; }
+  .sel { display:flex; align-items:center; gap:10px; width:100%; min-height:52px; background:var(--bg-sunken); border:1px solid var(--border-default); border-radius:var(--radius-md); padding:0 13px; font-family:inherit; cursor:pointer; text-align:start; }
+  .sel[aria-expanded="true"] { border-color:var(--border-brand); }
+  .sel .svic { width:34px; height:34px; border-radius:var(--radius-full); flex:none; background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sel .svic svg { width:18px; height:18px; stroke-width:1.8; }
+  .sel .svbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .sel .svt { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .sel .svs { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .sel .svchev { flex:none; color:var(--text-tertiary); }
+  .sel .svchev svg { width:18px; height:18px; stroke-width:2; }
+  .sel[aria-expanded="true"] .svchev { transform:rotate(180deg); }
+  .selhelp { font-size:11.5px; color:var(--text-tertiary); line-height:1.45; margin:8px 2px 0; }
+
+  /* Select popover */
+  .selpanel { margin-top:8px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); box-shadow:var(--el-popover); overflow:hidden; }
+  .selopt { display:flex; align-items:flex-start; gap:11px; width:100%; min-height:56px; padding:11px 13px; background:transparent; border:none; border-bottom:1px solid var(--border-hairline); font-family:inherit; cursor:pointer; text-align:start; }
+  .selopt:last-child { border-bottom:none; }
+  .selopt .ock { width:22px; height:22px; flex:none; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); display:flex; align-items:center; justify-content:center; color:var(--text-on-brand); margin-top:1px; }
+  .selopt .ock svg { width:14px; height:14px; stroke-width:2.4; opacity:0; }
+  .selopt .obd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .selopt .ot { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .selopt .od { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .selopt[aria-selected="true"] { background:var(--int-subtle); }
+  .selopt[aria-selected="true"] .ock { background:var(--int-primary); border-color:var(--int-primary); }
+  .selopt[aria-selected="true"] .ock svg { opacity:1; }
+  .selopt[aria-selected="true"] .ot { color:var(--int-primary); }
+
+  /* switch rows (Wi-Fi-only / defer big downloads) */
+  .swlist { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .swrow { display:flex; align-items:center; gap:11px; padding:12px 13px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .swrow:last-child { border-bottom:none; }
+  .sw-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sw-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .sw-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sw-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .sw-s { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .switch-hit { width:48px; height:44px; display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; padding:0; cursor:pointer; }
+  .switch { width:48px; height:30px; border-radius:var(--radius-full); border:none; background:var(--border-default); position:relative; cursor:pointer; flex:none; padding:0; transition:background .15s; display:block; }
+  .switch::after { content:""; position:absolute; top:3px; inset-inline-start:3px; width:24px; height:24px; border-radius:50%; background:var(--bg-canvas); box-shadow:var(--el-hairline); transition:transform .15s; }
+  .switch[aria-checked="true"] { background:var(--int-primary); }
+  .switch[aria-checked="true"]::after { transform:translateX(18px); }
+  .phone.rtl .switch[aria-checked="true"]::after { transform:translateX(-18px); }
+
+  /* honors-OS note + qualitative savings */
+  .osnote { display:flex; gap:9px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:11px 13px; }
+  .osnote svg { flex:none; width:17px; height:17px; stroke-width:1.9; color:var(--text-tertiary); margin-top:1px; }
+  .osnote p { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .osnote b { color:var(--text-primary); font-weight:600; }
+  .savings { display:flex; gap:9px; align-items:flex-start; margin-top:12px; padding:0 2px; }
+  .savings svg { flex:none; width:16px; height:16px; stroke-width:1.9; color:var(--success-fg); margin-top:1px; }
+  .savings p { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .savings b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Data saver &amp; Wi-Fi-only (GA-081)</h1>
+    <p>An app-only settings screen built for the cost of Pakistan mobile data (§12) — the guest controls how much data SalamStay spends. An <strong>image-quality tier</strong> Select (Auto / Data saver / Full quality) drops to the smallest sufficient step of the responsive pyramid; <strong>Wi-Fi-only for media</strong> and <strong>defer big downloads</strong> Switches hold heavy fetches for a free connection; and a factual note says SalamStay also follows the phone's own Data Saver setting. Savings are stated <strong>qualitatively — "noticeably less data"</strong>, never an invented MB or percentage. Panels: default (Auto) + the tier Select open (light) · active Data-saver state acknowledged (dark) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Default · Auto · light</span><span>Tier Select open</span><span>Dark · Data saver active</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the default data-saver settings and the tier Select open">
+      <div class="panel-tag">Light — default (Auto) · tier Select open</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Default — Auto quality</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Data saver</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="intro">Control how much mobile data SalamStay uses. On a slow or costly connection, lighter images still look sharp.</p>
+
+              <div class="scap">Image quality</div>
+              <div class="field">
+                <span class="flabel">Photos load at</span>
+                <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Image quality, Auto">
+                  <span class="svic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5"/></svg></span>
+                  <span class="svbd"><span class="svt">Auto</span><span class="svs">Matches your connection speed</span></span>
+                  <span class="svchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </button>
+                <p class="selhelp">Auto uses the smallest images that still look sharp for your connection. Switch to Data saver to force the lightest, or Full quality on Wi-Fi.</p>
+              </div>
+
+              <div class="scap">Media &amp; downloads</div>
+              <div class="swlist">
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><path d="M12 20h.01"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Load media on Wi-Fi only</span><span class="sw-s">Photos and video wait for a Wi-Fi connection</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="Load media on Wi-Fi only"><span class="switch" aria-hidden="true"></span></button>
+                </div>
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 21h14"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Defer big downloads</span><span class="sw-s">Large files wait until you're on Wi-Fi</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="Defer big downloads"><span class="switch" aria-hidden="true"></span></button>
+                </div>
+              </div>
+
+              <div class="scap">Your phone's setting</div>
+              <div class="osnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <p><b>SalamStay follows your phone's Data Saver too.</b> When Android Data Saver is on, images load lighter automatically — no need to change anything here.</p>
+              </div>
+
+              <div class="savings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <p>Data saver uses <b>noticeably less data</b> — the smallest images that still look sharp.</p>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Tier Select — Auto / Data saver / Full quality</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Data saver</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="scap">Image quality</div>
+              <div class="field">
+                <span class="flabel">Photos load at</span>
+                <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="true" aria-label="Image quality, Auto">
+                  <span class="svic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5"/></svg></span>
+                  <span class="svbd"><span class="svt">Auto</span><span class="svs">Matches your connection speed</span></span>
+                  <span class="svchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </button>
+                <ul class="selpanel" role="listbox" aria-label="Image quality">
+                  <li>
+                    <button class="selopt" type="button" role="option" aria-selected="true">
+                      <span class="ock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                      <span class="obd"><span class="ot">Auto</span><span class="od">Matches your connection — light on data, sharp on Wi-Fi</span></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="selopt" type="button" role="option" aria-selected="false">
+                      <span class="ock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                      <span class="obd"><span class="ot">Data saver</span><span class="od">Always the smallest images that still look sharp</span></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="selopt" type="button" role="option" aria-selected="false">
+                      <span class="ock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                      <span class="obd"><span class="ot">Full quality</span><span class="od">Sharpest photos — uses the most data</span></span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The tier Select reuses the Input/Select shell (§8.1) — a <code>bg.sunken</code> trigger + chevron opening an <code>elevation.popover</code> <code>role="listbox"</code>; the chosen option is marked by <strong>a filled check <em>and</em> a tint row, never colour alone</strong> (§11). Every description is plain PK-data-cost language ("the smallest images that still look sharp"), and savings are stated <strong>qualitatively — no invented MB or percentage</strong> (SEO §6 no-invented-stats). The two Switches map to the §12 rules: drop a pyramid step and defer non-critical media.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the active Data-saver state with the UI acknowledging it">
+      <div class="panel-tag">Dark — Data saver active · UI acknowledges it</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Data saver on — acknowledged</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Data saver</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="ack" role="status">
+                <span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="abd"><span class="ah">Data saver is on</span><span class="ad">Photos load at the lightest size, and big downloads wait for Wi-Fi.</span></span>
+              </div>
+
+              <div class="scap">Image quality</div>
+              <div class="field">
+                <span class="flabel">Photos load at</span>
+                <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Image quality, Data saver">
+                  <span class="svic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5"/></svg></span>
+                  <span class="svbd"><span class="svt">Data saver</span><span class="svs">Smallest images that still look sharp</span></span>
+                  <span class="svchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </button>
+              </div>
+
+              <div class="scap">Media &amp; downloads</div>
+              <div class="swlist">
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><path d="M12 20h.01"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Load media on Wi-Fi only</span><span class="sw-s">Photos and video wait for a Wi-Fi connection</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="Load media on Wi-Fi only"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+                </div>
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 21h14"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">Defer big downloads</span><span class="sw-s">Large files wait until you're on Wi-Fi</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="Defer big downloads"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+                </div>
+              </div>
+
+              <div class="savings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <p>You're now using <b>noticeably less data</b> as you browse.</p>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">When Data saver is the chosen tier, the UI <strong>acknowledges it</strong> — a calm <code>role="status"</code> banner at the top, the tier trigger reading "Data saver", and both media Switches shown on — so the guest can see the setting is in effect. The confirmation stays qualitative ("noticeably less data"); no fabricated savings figure appears anywhere.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the data-saver settings">
+      <div class="panel-tag">RTL · اردو — "ڈیٹا سیور", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Data saver — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="سیٹنگز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">ڈیٹا سیور</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="intro">قابو کریں کہ سلام اسٹے کتنا موبائل ڈیٹا استعمال کرے۔ سست یا مہنگے کنکشن پر ہلکی تصاویر بھی صاف نظر آتی ہیں۔</p>
+
+              <div class="scap">تصویر کا معیار</div>
+              <div class="field">
+                <span class="flabel">تصاویر کھلیں</span>
+                <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="تصویر کا معیار، آٹو">
+                  <span class="svic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5"/></svg></span>
+                  <span class="svbd"><span class="svt">آٹو</span><span class="svs">آپ کے کنکشن کی رفتار کے مطابق</span></span>
+                  <span class="svchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </button>
+                <p class="selhelp">آٹو آپ کے کنکشن کے لیے سب سے چھوٹی مگر صاف تصاویر استعمال کرتا ہے۔</p>
+              </div>
+
+              <div class="scap">میڈیا اور ڈاؤن لوڈ</div>
+              <div class="swlist">
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><path d="M12 20h.01"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">میڈیا صرف Wi-Fi پر لوڈ کریں</span><span class="sw-s">تصاویر اور ویڈیو Wi-Fi کا انتظار کریں</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="میڈیا صرف Wi-Fi پر لوڈ کریں"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+                </div>
+                <div class="swrow">
+                  <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M5 21h14"/></svg></span>
+                  <span class="sw-b"><span class="sw-t">بڑی ڈاؤن لوڈ مؤخر کریں</span><span class="sw-s">بڑی فائلیں Wi-Fi تک انتظار کریں</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="بڑی ڈاؤن لوڈ مؤخر کریں"><span class="switch" aria-hidden="true"></span></button>
+                </div>
+              </div>
+
+              <div class="scap">آپ کے فون کی ترتیب</div>
+              <div class="osnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <p><b>سلام اسٹے آپ کے فون کے ڈیٹا سیور کی بھی پیروی کرتا ہے۔</b> جب اینڈرائیڈ ڈیٹا سیور آن ہو تو تصاویر خود بخود ہلکی لوڈ ہوتی ہیں۔</p>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the back chevron flips to the reading-start edge, rows align trailing, and the switch thumb travel reverses (§11). "Wi-Fi" stays LTR as a proper noun; everything else is real Urdu. Every promise stays qualitative — the data-cost respect reads faithfully in Nastaliq without any invented figure.</p>
+    </section>
+
+  </main>
+</body>
+</html>

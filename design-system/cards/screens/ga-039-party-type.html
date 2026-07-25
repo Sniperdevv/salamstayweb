@@ -1,0 +1,590 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-039 Party-type declaration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:760px; }
+  .head .toggle { display:inline-flex; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+
+  /* phone frame + safe-area chrome */
+  .phone { background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+  .appbar { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; }
+  .iconbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .iconbtn:hover { background:var(--bg-raised); }
+  .iconbtn svg { width:22px; height:22px; stroke-width:2; }
+  .appbar .spacer { flex:1; }
+  .appbar .step-of { font-size:12px; font-weight:600; color:var(--text-tertiary); }
+
+  /* checkout progress indicator (shared across the trio) */
+  .steps { display:flex; align-items:flex-start; list-style:none; padding:2px 24px 14px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:11px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .steps .dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .steps .dot svg { width:13px; height:13px; stroke-width:2.75; }
+  .steps .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:6px; }
+  .steps li.done .dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .dot { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+
+  .screen { flex:1; overflow-y:auto; padding:6px 22px 22px; }
+  .screen h2 { font-size:23px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .screen .lede { font-size:14px; color:var(--text-secondary); margin-top:6px; }
+  .screen h3 { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:22px 0 10px; }
+
+  fieldset { border:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* nationality segmented control (radiogroup) */
+  .seg { display:flex; gap:4px; background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-md); padding:4px; }
+  .segopt { flex:1; position:relative; }
+  .segopt input { position:absolute; opacity:0; inset:0; width:100%; height:100%; margin:0; cursor:pointer; }
+  .segopt span { display:flex; align-items:center; justify-content:center; gap:6px; min-height:40px; border-radius:6px; font-size:13px; font-weight:600; color:var(--text-secondary); text-align:center; padding:0 6px; }
+  .segopt span svg { width:15px; height:15px; stroke-width:1.9; }
+  .segopt:has(input:checked) span { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-card); }
+  .segopt:has(input:focus-visible) span { outline:2px solid var(--int-primary); outline-offset:2px; }
+  .seg-hint { font-size:12px; color:var(--text-tertiary); margin-top:8px; }
+
+  /* party option radio-cards */
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt { display:flex; align-items:center; gap:13px; min-height:56px; padding:13px 14px; border:1.5px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); cursor:pointer; position:relative; }
+  .opt input { position:absolute; opacity:0; width:1px; height:1px; }
+  .opt .radio { width:22px; height:22px; border-radius:var(--radius-full); border:1.5px solid var(--border-default); flex:none; display:flex; align-items:center; justify-content:center; }
+  .opt .radio::after { content:""; width:11px; height:11px; border-radius:var(--radius-full); background:var(--int-primary); transform:scale(0); transition:transform .12s ease; }
+  .opt .ic { width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .opt .ic svg { width:20px; height:20px; stroke-width:1.75; }
+  .opt .body { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .opt .t { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .opt .d { font-size:12.5px; color:var(--text-secondary); margin-top:1px; }
+  .opt .req { font-size:11px; font-weight:600; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:5px 10px; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; }
+  .opt .req svg { width:12px; height:12px; stroke-width:1.9; }
+  .opt .req.none { color:var(--text-tertiary); }
+  .opt:has(input:checked) { border-color:var(--int-primary); background:var(--int-subtle); }
+  .opt:has(input:checked) .radio { border-color:var(--int-primary); }
+  .opt:has(input:checked) .radio::after { transform:scale(1); }
+  .opt:has(input:checked) .req { border-color:var(--int-primary); color:var(--int-primary); background:var(--bg-canvas); }
+  .opt:has(input:focus-visible) { outline:2px solid var(--int-primary); outline-offset:2px; }
+
+  /* "why we ask" — quiet popover (§10 tone) */
+  .why-trigger { display:inline-flex; align-items:center; gap:6px; min-height:44px; background:none; border:none; padding:0; color:var(--info-fg); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .why-trigger svg { width:16px; height:16px; stroke-width:1.9; }
+  .popover { margin-top:10px; border:1px solid var(--info-border); background:var(--info-bg); border-radius:var(--radius-lg); padding:14px 15px; box-shadow:var(--el-popover); }
+  .popover .p-h { font-size:13px; font-weight:600; color:var(--info-fg); display:flex; align-items:center; gap:7px; }
+  .popover .p-h svg { width:16px; height:16px; stroke-width:1.9; }
+  .popover p { font-size:12.5px; color:var(--text-secondary); margin-top:7px; line-height:1.55; }
+  .popover a { color:var(--info-fg); font-weight:600; text-decoration:underline; }
+
+  /* couple-selected doc checklist */
+  .doccard { margin-top:12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:14px; }
+  .doccard .dc-h { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); }
+  .checkrow { display:flex; align-items:center; gap:11px; padding:10px 0 2px; }
+  .checkrow .cbub { width:30px; height:30px; border-radius:var(--radius-full); background:var(--info-bg); border:1px solid var(--info-border); flex:none; display:flex; align-items:center; justify-content:center; color:var(--info-fg); }
+  .checkrow .cbub svg { width:16px; height:16px; stroke-width:1.9; }
+  .checkrow .ct { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .checkrow .cs { font-size:12px; color:var(--text-secondary); }
+  .checkrow .pill { margin-inline-start:auto; font-size:11px; font-weight:600; color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-full); padding:4px 9px; }
+
+  /* sticky CTA bar (safe-area bottom) */
+  .ctabar { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(14px + env(safe-area-inset-bottom)); }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .cta[aria-disabled="true"] { background:var(--bg-sunken); color:var(--text-tertiary); border:1px solid var(--border-default); cursor:not-allowed; }
+  .cta-note { font-size:12px; color:var(--text-tertiary); text-align:center; margin-top:9px; }
+
+  /* skeleton (loading) — geometry-matched, transform-only shimmer (§8) */
+  .sk { position:relative; overflow:hidden; background:var(--skeleton-base); border-radius:var(--radius-md); }
+  .sk::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,var(--skeleton-shine),transparent); animation:sh039 1.4s ease-in-out infinite; }
+  @keyframes sh039 { 100% { transform:translateX(100%); } }
+  .sk.line { height:12px; border-radius:var(--radius-full); }
+  .opt.skopt { cursor:default; }
+  @media (prefers-reduced-motion: reduce) { .sk::after { animation:none; opacity:.5; } }
+
+  /* offline banner — neutral semantic.info, calm recovery (§8.5 banner) */
+  .offbanner { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-top:2px; }
+  .offbanner .oi { color:var(--info-fg); flex:none; margin-top:1px; }
+  .offbanner .oi svg { width:19px; height:19px; stroke-width:1.9; }
+  .offbanner .oh { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .offbanner p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+
+  /* Urdu / RTL */
+  .urdu .screen, .urdu .cta, .urdu .steps .slab, .urdu .seg, .urdu .opt .t, .urdu .opt .d, .urdu .popover, .urdu .doccard, .urdu .cta-note { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu .screen h2 { line-height:1.9; }
+  .urdu .opt .d, .urdu .popover p { line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Party-type declaration (GA-039)</h1>
+    <p>Checkout step 1 of the §9-C flow: who's staying, and the nationality branch that routes documents (Pakistani → CNIC · foreigner → passport). Options are stated as neutral facts, <strong>nothing is pre-selected</strong>, and a calm "why we ask" popover carries the dignity — no judgment, no assumptions (§10.7). Left: unselected. Middle: couple selected with the Nikah Nama checklist. Then Urdu / RTL, and two deferred states — a geometry-matched loading skeleton (§8) while the host's house rules load, and a calm offline state that keeps the selection.</p>
+    <div class="toggle"><span class="on">Light · unselected</span><span>Dark · couple selected</span><span>اردو · RTL</span><span>Loading</span><span>Offline</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ LIGHT · UNSELECTED STATE ============ -->
+      <div class="device">
+        <p class="devlabel">Light — nothing pre-selected (Continue disabled)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 1 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <!-- checkout progress indicator: step 1 current -->
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="cur" aria-current="step"><span class="dot">1</span><span class="slab">Party</span></li>
+            <li><span class="dot">2</span><span class="slab">Verify</span></li>
+            <li><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Who's staying?</h2>
+            <p class="lede">This helps us match the host's house rules. Nothing is pre-selected, and we only ask for a document when a rule applies.</p>
+
+            <h3>Where's your ID from?</h3>
+            <!-- segmented = radiogroup; neither option checked = no assumption -->
+            <fieldset class="seg" role="radiogroup" aria-label="Where your ID is from">
+              <label class="segopt"><input type="radio" name="nat-a" />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>Pakistani · CNIC</span></label>
+              <label class="segopt"><input type="radio" name="nat-a" />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M8 9h6M8 13h8M8 17h5"/></svg>Foreign · Passport</span></label>
+            </fieldset>
+            <p class="seg-hint">Pakistani IDs verify with CNIC; overseas guests use a passport. Pick one to continue.</p>
+
+            <h3>Choose your party</h3>
+            <fieldset class="opts">
+              <legend class="sr-only">Who is this stay for</legend>
+
+              <label class="opt"><input type="radio" name="party-a" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/></svg></span>
+                <span class="body"><span class="t">Just me</span><span class="d">One traveller, any gender</span></span>
+                <span class="req none">No extra docs</span></label>
+
+              <label class="opt"><input type="radio" name="party-a" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0v1M11.5 20v-1a4.5 4.5 0 0 1 9 0v1"/></svg></span>
+                <span class="body"><span class="t">Couple</span><span class="d">A married man and woman</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>Nikah Nama</span></label>
+
+              <label class="opt"><input type="radio" name="party-a" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M4 20v-1a4 4 0 0 1 8 0M12 20v-1a4 4 0 0 1 8 0"/><path d="M12 4v3"/></svg></span>
+                <span class="body"><span class="t">Siblings</span><span class="d">Brother and sister travelling</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>FRC</span></label>
+
+              <label class="opt"><input type="radio" name="party-a" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="8" r="2.4"/><circle cx="17" cy="8" r="2.4"/><circle cx="12" cy="14" r="1.9"/><path d="M3 19a4 4 0 0 1 8 0M13 19a4 4 0 0 1 8 0"/></svg></span>
+                <span class="body"><span class="t">Family</span><span class="d">Adults with children on the booking</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>B-Form</span></label>
+
+              <label class="opt"><input type="radio" name="party-a" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M4 20v-1a4 4 0 0 1 8 0M12 20v-1a4 4 0 0 1 8 0"/></svg></span>
+                <span class="body"><span class="t">Group of women</span><span class="d">Women travelling together</span></span>
+                <span class="req none">No extra docs</span></label>
+
+              <label class="opt"><input type="radio" name="party-a" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="3"/><path d="M4 20v-1a6 6 0 0 1 11-3.3"/><path d="M17 14v6M14 17h6"/></svg></span>
+                <span class="body"><span class="t">Booking for someone else</span><span class="d">You're arranging this for another guest</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>PoA / Wakala</span></label>
+            </fieldset>
+
+            <button class="why-trigger" type="button" aria-expanded="false" aria-controls="why-a">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+              Why do we ask this?
+            </button>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta" aria-disabled="true">Continue</button>
+            <p class="cta-note">Select who's staying to continue</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ DARK · COUPLE SELECTED + DOC CHECKLIST + POPOVER OPEN ============ -->
+      <div class="device">
+        <p class="devlabel">Dark — couple selected · Nikah Nama · "why we ask" open</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 1 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="cur" aria-current="step"><span class="dot">1</span><span class="slab">Party</span></li>
+            <li><span class="dot">2</span><span class="slab">Verify</span></li>
+            <li><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Who's staying?</h2>
+            <p class="lede">This helps us match the host's house rules. We only ask for a document when a rule applies.</p>
+
+            <h3>Where's your ID from?</h3>
+            <fieldset class="seg" role="radiogroup" aria-label="Where your ID is from">
+              <label class="segopt"><input type="radio" name="nat-b" checked />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>Pakistani · CNIC</span></label>
+              <label class="segopt"><input type="radio" name="nat-b" />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M8 9h6M8 13h8M8 17h5"/></svg>Foreign · Passport</span></label>
+            </fieldset>
+            <p class="seg-hint">You'll verify with your CNIC in the next step.</p>
+
+            <h3>Your party</h3>
+            <fieldset class="opts">
+              <legend class="sr-only">Who is this stay for</legend>
+
+              <label class="opt"><input type="radio" name="party-b" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/></svg></span>
+                <span class="body"><span class="t">Just me</span><span class="d">One traveller, any gender</span></span>
+                <span class="req none">No extra docs</span></label>
+
+              <label class="opt"><input type="radio" name="party-b" checked /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0v1M11.5 20v-1a4.5 4.5 0 0 1 9 0v1"/></svg></span>
+                <span class="body"><span class="t">Couple</span><span class="d">A married man and woman</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>Nikah Nama</span></label>
+
+              <label class="opt"><input type="radio" name="party-b" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="8" r="2.4"/><circle cx="17" cy="8" r="2.4"/><circle cx="12" cy="14" r="1.9"/><path d="M3 19a4 4 0 0 1 8 0M13 19a4 4 0 0 1 8 0"/></svg></span>
+                <span class="body"><span class="t">Family</span><span class="d">Adults with children on the booking</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>B-Form</span></label>
+            </fieldset>
+
+            <!-- "why we ask" popover — OPEN (§10 tone, no judgment) -->
+            <div class="popover" id="why-b" role="note">
+              <div class="p-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>Why we ask</div>
+              <p>Some hosts set house rules for who can share a home, in line with local norms. When a rule applies, we ask for one document to confirm it — nothing more. Your documents are private, used only to verify this booking, and never shown to the host or other guests. <a href="/shariah-policy">Read our party &amp; documents policy</a></p>
+            </div>
+
+            <!-- couple → doc checklist preview -->
+            <div class="doccard">
+              <div class="dc-h">Documents for this booking</div>
+              <div class="checkrow">
+                <span class="cbub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                <span><span class="ct" style="display:block">Nikah Nama</span><span class="cs">Marriage certificate — you'll add it in the next step</span></span>
+                <span class="pill">Required</span>
+              </div>
+              <div class="checkrow">
+                <span class="cbub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg></span>
+                <span><span class="ct" style="display:block">CNIC</span><span class="cs">Baseline for every Pakistani guest</span></span>
+                <span class="pill">Required</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Continue to verification</button>
+            <p class="cta-note">Next: add your Nikah Nama &amp; CNIC (Step 2)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ URDU / RTL · COUPLE SELECTED ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — couple selected</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of num">1 / 4</span>
+            <button class="iconbtn" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="چیک آؤٹ کی پیش رفت">
+            <li class="cur" aria-current="step"><span class="dot num">1</span><span class="slab">پارٹی</span></li>
+            <li><span class="dot num">2</span><span class="slab">شناخت</span></li>
+            <li><span class="dot num">3</span><span class="slab">قیمت</span></li>
+            <li><span class="dot num">4</span><span class="slab">تصدیق</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>کون ٹھہر رہا ہے؟</h2>
+            <p class="lede">اس سے میزبان کے گھر کے اصولوں سے مطابقت ہوتی ہے۔ پہلے سے کچھ منتخب نہیں، اور دستاویز صرف تب مانگی جاتی ہے جب کوئی اصول لاگو ہو۔</p>
+
+            <h3>آپ کی شناخت کہاں سے ہے؟</h3>
+            <fieldset class="seg" role="radiogroup" aria-label="آپ کی شناخت کہاں سے ہے">
+              <label class="segopt"><input type="radio" name="nat-c" checked />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>پاکستانی · شناختی کارڈ</span></label>
+              <label class="segopt"><input type="radio" name="nat-c" />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M8 9h6M8 13h8M8 17h5"/></svg>غیر ملکی · پاسپورٹ</span></label>
+            </fieldset>
+
+            <h3>آپ کی پارٹی</h3>
+            <fieldset class="opts">
+              <legend class="sr-only">یہ قیام کن کے لیے ہے</legend>
+
+              <label class="opt"><input type="radio" name="party-c" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/></svg></span>
+                <span class="body"><span class="t">صرف میں</span><span class="d">ایک مسافر، کسی بھی جنس کا</span></span>
+                <span class="req none">اضافی دستاویز نہیں</span></label>
+
+              <label class="opt"><input type="radio" name="party-c" checked /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0v1M11.5 20v-1a4.5 4.5 0 0 1 9 0v1"/></svg></span>
+                <span class="body"><span class="t">میاں بیوی</span><span class="d">شادی شدہ مرد اور عورت</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>نکاح نامہ</span></label>
+
+              <label class="opt"><input type="radio" name="party-c" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M4 20v-1a4 4 0 0 1 8 0M12 20v-1a4 4 0 0 1 8 0"/><path d="M12 4v3"/></svg></span>
+                <span class="body"><span class="t">بہن بھائی</span><span class="d">ساتھ سفر کرنے والے بھائی اور بہن</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>FRC</span></label>
+            </fieldset>
+
+            <div class="popover" role="note">
+              <div class="p-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>ہم یہ کیوں پوچھتے ہیں</div>
+              <p>کچھ میزبان مقامی روایات کے مطابق طے کرتے ہیں کہ ایک گھر میں کون ٹھہر سکتا ہے۔ جب کوئی اصول لاگو ہو تو ہم صرف ایک دستاویز مانگتے ہیں — اس سے زیادہ کچھ نہیں۔ آپ کی دستاویزات نجی ہیں اور میزبان یا دیگر مہمانوں کو کبھی نہیں دکھائی جاتیں۔ <a href="/shariah-policy">پارٹی اور دستاویزات کی پالیسی پڑھیں</a></p>
+            </div>
+
+            <div class="doccard">
+              <div class="dc-h">اس بکنگ کے لیے دستاویزات</div>
+              <div class="checkrow">
+                <span class="cbub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                <span><span class="ct" style="display:block">نکاح نامہ</span><span class="cs">اگلے مرحلے میں شامل کریں</span></span>
+                <span class="pill">لازمی</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">تصدیق کی طرف جاری رکھیں</button>
+            <p class="cta-note">اگلا: اپنا نکاح نامہ اور شناختی کارڈ شامل کریں</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ LOADING · HOUSE-RULES SKELETON ============ -->
+      <div class="device">
+        <p class="devlabel">Loading — host house-rules loading (skeleton · Continue disabled)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 1 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="cur" aria-current="step"><span class="dot">1</span><span class="slab">Party</span></li>
+            <li><span class="dot">2</span><span class="slab">Verify</span></li>
+            <li><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Who's staying?</h2>
+            <p class="lede">This helps us match the host's house rules. We're loading the rules for this home.</p>
+
+            <h3>Where's your ID from?</h3>
+            <!-- skeleton mirrors the segmented control geometry (zero CLS) -->
+            <div class="seg" aria-hidden="true">
+              <span class="sk" style="flex:1;height:40px;border-radius:6px"></span>
+              <span class="sk" style="flex:1;height:40px;border-radius:6px"></span>
+            </div>
+
+            <h3>Choose your party</h3>
+            <div class="opts" role="group" aria-busy="true" aria-label="Loading who can stay">
+              <span class="sr-only" role="status">Loading party options…</span>
+              <div class="opt skopt" aria-hidden="true">
+                <span class="sk" style="width:22px;height:22px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="sk" style="width:38px;height:38px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="body"><span class="sk line" style="width:40%"></span><span class="sk line" style="width:66%;margin-top:7px"></span></span>
+                <span class="sk" style="width:74px;height:26px;border-radius:var(--radius-full);flex:none"></span>
+              </div>
+              <div class="opt skopt" aria-hidden="true">
+                <span class="sk" style="width:22px;height:22px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="sk" style="width:38px;height:38px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="body"><span class="sk line" style="width:32%"></span><span class="sk line" style="width:58%;margin-top:7px"></span></span>
+                <span class="sk" style="width:88px;height:26px;border-radius:var(--radius-full);flex:none"></span>
+              </div>
+              <div class="opt skopt" aria-hidden="true">
+                <span class="sk" style="width:22px;height:22px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="sk" style="width:38px;height:38px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="body"><span class="sk line" style="width:44%"></span><span class="sk line" style="width:70%;margin-top:7px"></span></span>
+                <span class="sk" style="width:60px;height:26px;border-radius:var(--radius-full);flex:none"></span>
+              </div>
+              <div class="opt skopt" aria-hidden="true">
+                <span class="sk" style="width:22px;height:22px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="sk" style="width:38px;height:38px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="body"><span class="sk line" style="width:38%"></span><span class="sk line" style="width:74%;margin-top:7px"></span></span>
+                <span class="sk" style="width:72px;height:26px;border-radius:var(--radius-full);flex:none"></span>
+              </div>
+              <div class="opt skopt" aria-hidden="true">
+                <span class="sk" style="width:22px;height:22px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="sk" style="width:38px;height:38px;border-radius:var(--radius-full);flex:none"></span>
+                <span class="body"><span class="sk line" style="width:46%"></span><span class="sk line" style="width:52%;margin-top:7px"></span></span>
+                <span class="sk" style="width:64px;height:26px;border-radius:var(--radius-full);flex:none"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta" aria-disabled="true" aria-busy="true">Continue</button>
+            <p class="cta-note">Loading who can stay — one moment</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ OFFLINE · SELECTION SAVED (dark) ============ -->
+      <div class="device">
+        <p class="devlabel">Offline — selection saved, calm recovery (dark · Continue disabled)</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 3l20 18M5 12.5a12 12 0 0 1 4.5-2.7M2 9.5a15 15 0 0 1 5.5-3.2M16.5 10.6a12 12 0 0 1 2.6 1.9M12 20h.01"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 1 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="cur" aria-current="step"><span class="dot">1</span><span class="slab">Party</span></li>
+            <li><span class="dot">2</span><span class="slab">Verify</span></li>
+            <li><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="offbanner" role="status">
+              <span class="oi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3l20 18M5 12.5a12 12 0 0 1 4.5-2.7M2 9.5a15 15 0 0 1 5.5-3.2M16.5 10.6a12 12 0 0 1 2.6 1.9M12 20h.01"/></svg></span>
+              <div><div class="oh">You're offline</div><p>Selection saved — we'll continue when you're back.</p></div>
+            </div>
+
+            <h2>Who's staying?</h2>
+            <p class="lede">This helps us match the host's house rules. We only ask for a document when a rule applies.</p>
+
+            <h3>Where's your ID from?</h3>
+            <fieldset class="seg" role="radiogroup" aria-label="Where your ID is from">
+              <label class="segopt"><input type="radio" name="nat-off" checked />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>Pakistani · CNIC</span></label>
+              <label class="segopt"><input type="radio" name="nat-off" />
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12H4z"/><path d="M8 9h6M8 13h8M8 17h5"/></svg>Foreign · Passport</span></label>
+            </fieldset>
+
+            <h3>Your party</h3>
+            <fieldset class="opts">
+              <legend class="sr-only">Who is this stay for</legend>
+              <label class="opt"><input type="radio" name="party-off" /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/></svg></span>
+                <span class="body"><span class="t">Just me</span><span class="d">One traveller, any gender</span></span>
+                <span class="req none">No extra docs</span></label>
+              <label class="opt"><input type="radio" name="party-off" checked /><span class="radio"></span>
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0v1M11.5 20v-1a4.5 4.5 0 0 1 9 0v1"/></svg></span>
+                <span class="body"><span class="t">Couple</span><span class="d">A married man and woman</span></span>
+                <span class="req"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>Nikah Nama</span></label>
+            </fieldset>
+
+            <div class="doccard">
+              <div class="dc-h">Documents for this booking</div>
+              <div class="checkrow">
+                <span class="cbub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                <span><span class="ct" style="display:block">Nikah Nama</span><span class="cs">You'll add it in the next step</span></span>
+                <span class="pill">Required</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta" aria-disabled="true">Continue to verification</button>
+            <p class="cta-note">Reconnect to continue — your choice is saved</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

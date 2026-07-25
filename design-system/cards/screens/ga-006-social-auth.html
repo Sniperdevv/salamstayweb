@@ -1,0 +1,424 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-006 Social auth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.h-title,.h-sub,.flabel,.fhint,.sbtn,.primary,.secondary-btn,.ghost-btn,.banner,.legal,.altline,.brandmark,.nt-h,.nt-p,.id-tx .n,.id-tx .s,.link-join,.hoff-h) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:8px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:25px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:8px; }
+  .h-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; line-height:1.55; }
+  .h-sub b { color:var(--text-primary); font-weight:600; }
+  .h-sub b.num { font-variant-numeric:tabular-nums; }
+
+  /* Provider handoff */
+  .handoff { padding:34px 24px 24px; display:flex; flex-direction:column; align-items:center; text-align:center; flex:1 1 auto; }
+  .prov-ring { position:relative; width:86px; height:86px; margin-bottom:24px; flex:none; }
+  .prov-spin { position:absolute; inset:0; border-radius:var(--radius-full); border:3px solid var(--sa-stripe); border-top-color:var(--int-primary); animation:rot .9s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .prov-spin { animation:none; } }
+  .prov-mark { position:absolute; inset:12px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .prov-mark svg { width:34px; height:34px; color:var(--text-primary); }
+  .hoff-h { font-size:20px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); }
+  .handoff .h-sub { max-width:284px; margin-top:10px; }
+  .hoff-spacer { flex:1 1 auto; min-height:16px; }
+
+  /* Identity rows / linking card */
+  .link-card { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; margin-top:20px; background:var(--bg-raised); }
+  .id-row { display:flex; align-items:center; gap:12px; padding:13px 14px; }
+  .id-ava { flex:none; width:40px; height:40px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; }
+  .id-ava.prov { background:var(--bg-canvas); border:1px solid var(--border-hairline); }
+  .id-ava.prov svg { width:21px; height:21px; color:var(--text-primary); }
+  .id-ava.init { background:var(--int-subtle); color:var(--int-primary); }
+  .id-tx { min-width:0; }
+  .id-tx .n { display:block; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .id-tx .s { display:block; font-size:12.5px; color:var(--text-secondary); margin-top:2px; }
+  .id-tx .s b { color:var(--success-fg); font-weight:700; }
+  .link-join { display:flex; align-items:center; justify-content:center; gap:8px; padding:9px; font-size:11px; font-weight:700; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.06em; border-top:1px solid var(--border-hairline); border-bottom:1px solid var(--border-hairline); background:var(--bg-canvas); }
+  .link-join svg { width:15px; height:15px; color:var(--int-primary); }
+  .id-box { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); margin-top:6px; }
+
+  .field { margin-top:18px; }
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:8px; }
+  .fwrap { display:flex; align-items:center; gap:11px; height:52px; padding:0 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); }
+  .fwrap.focus { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .prefix { font-size:15px; font-weight:600; color:var(--text-secondary); padding-right:11px; border-right:1px solid var(--border-default); }
+  .fval { font-size:16px; color:var(--text-primary); letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+  .fval.ph { color:var(--text-tertiary); }
+  .caret { display:inline-block; width:1.5px; height:22px; background:var(--int-primary); vertical-align:-4px; margin-left:1px; }
+  .fhint { font-size:12px; color:var(--text-secondary); margin-top:8px; line-height:1.45; }
+
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:16px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner a { text-decoration:underline; font-weight:600; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .banner.info a { color:var(--info-fg); }
+
+  .primary { width:100%; min-height:52px; margin-top:20px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-tertiary); cursor:default; }
+  .spin { width:19px; height:19px; border-radius:50%; border:2px solid var(--text-on-brand); border-top-color:transparent; animation:rot .7s linear infinite; }
+  @keyframes rot { 100% { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation:none; } }
+
+  .social { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .sbtn { display:flex; align-items:center; justify-content:center; gap:10px; min-height:48px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:15px; font-weight:600; color:var(--text-primary); }
+  .sbtn:hover { background:var(--bg-raised); }
+  .sbtn svg { width:19px; height:19px; color:var(--text-primary); }
+
+  .secondary-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; width:100%; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); color:var(--int-primary); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:10px; }
+  .secondary-btn:hover { background:var(--bg-raised); }
+  .ghost-btn { display:flex; align-items:center; justify-content:center; min-height:48px; width:100%; background:transparent; border:none; color:var(--text-secondary); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:8px; }
+
+  /* Calm outlined notice (no filled error) */
+  .notice { display:flex; gap:12px; padding:15px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-top:12px; }
+  .notice-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .notice-ic svg { width:20px; height:20px; color:var(--warning-fg); stroke-width:1.9; }
+  .nt-h { font-size:15px; font-weight:700; color:var(--text-primary); }
+  .nt-p { font-size:12.5px; color:var(--text-secondary); margin-top:4px; line-height:1.5; }
+
+  .legal { font-size:12px; color:var(--text-tertiary); text-align:center; margin-top:16px; line-height:1.55; }
+  .legal a { color:var(--text-secondary); text-decoration:underline; }
+
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:15px 20px calc(4px + env(safe-area-inset-bottom)); font-size:13.5px; color:var(--text-secondary); flex:none; }
+  .altline a { color:var(--int-link); font-weight:700; }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-006 — Social auth (mobile app)</h1>
+    <p>The federated sign-in / sign-up handoff (<code>/auth/google</code> · <code>/auth/apple</code>): a provider hand-off interstitial, an account-linking confirm when an existing phone account is found, a first-time social sign-up that still asks for a mobile number (PK identity policy), and a calm cancelled/error return with no dead end. Monochrome provider glyphs (tokens-only; production may swap the vendors' brand assets). Quiet Modern: one calm brand button, registry-only copy, no ornament.</p>
+    <div class="legend">
+      <span>Light · provider handoff</span>
+      <span>Dark · account linking</span>
+      <span>First social sign-up · phone required</span>
+      <span>Cancelled / error · calm return</span>
+      <span>RTL · اردو</span>
+      <span>≥44pt targets · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · PROVIDER HANDOFF ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — provider handoff</div>
+      <section class="phone" aria-label="Social auth — continuing with Google">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="Cancel and go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="handoff" role="status" aria-live="polite">
+          <div class="prov-ring">
+            <span class="prov-spin" aria-hidden="true"></span>
+            <span class="prov-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+          </div>
+          <h2 class="hoff-h">Continuing with Google…</h2>
+          <p class="h-sub">Confirming your Google account in a secure window. You'll come right back to SalamStay — nothing to do here.</p>
+          <span class="hoff-spacer" aria-hidden="true"></span>
+          <a class="ghost-btn" href="/signup">Cancel</a>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">A brief, honest interstitial while the OS/provider sheet is open: a <code>role="status"</code> live region, a transform-only ring (stops under reduced-motion), and a real <b>Cancel</b> route back to <code>/signup</code>. The Google mark is a monochrome placeholder — see the judgment note.</p>
+    </div>
+
+    <!-- ============================== DARK · ACCOUNT LINKING ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — existing account found · link confirm</div>
+      <section class="phone dark" aria-label="Social auth — link to existing account">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/login" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Link your accounts?</h2>
+          <p class="h-sub">You already have a SalamStay account with this email. Link Google to sign in with one tap from now on — your trips, saves and verification stay exactly as they are.</p>
+
+          <div class="link-card">
+            <div class="id-row">
+              <span class="id-ava prov" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+              <span class="id-tx"><span class="n">Signing in with Google</span><span class="s">aqib.gulab@gmail.com</span></span>
+            </div>
+            <div class="link-join"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M8 8a4 4 0 0 0 0 8h1"/><path d="M16 8a4 4 0 0 1 0 8h-1"/></svg> Link to your existing account</div>
+            <div class="id-row">
+              <span class="id-ava init" aria-hidden="true">AG</span>
+              <span class="id-tx"><span class="n">Your SalamStay account</span><span class="s" dir="ltr">+92 300 ••• ••67 · <b>Verified</b></span></span>
+            </div>
+          </div>
+
+          <button class="primary" type="button">Link and continue</button>
+          <a class="secondary-btn" href="/login">Sign in another way</a>
+          <p class="legal">Only you can link accounts you own. We never post to Google, and we only read your name and email.</p>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">When the provider email matches an existing account, SalamStay <b>never silently merges</b> — it asks. Two named identities, an explicit link glyph, and a live second path (<code>/login</code>) if the guest would rather not link. The existing account's verified state is shown so nothing feels lost.</p>
+    </div>
+
+    <!-- ============================== LIGHT · FIRST SOCIAL SIGN-UP (PHONE REQUIRED) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — first social sign-up · number still required</div>
+      <section class="phone" aria-label="Social auth — first sign-up, mobile number required">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Add your mobile number</h2>
+          <p class="h-sub">You're signed in with Google. In Pakistan we confirm a mobile number for every account — it's how hosts and guests reach each other, and how we keep bookings safe.</p>
+
+          <div class="id-box">
+            <div class="id-row">
+              <span class="id-ava prov" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+              <span class="id-tx"><span class="n">Aqib Gulab</span><span class="s">aqib.gulab@gmail.com · via Google</span></span>
+            </div>
+          </div>
+
+          <div class="field" role="group" aria-labelledby="f-ph-l f-ph-h">
+            <span class="flabel" id="f-ph-l">Mobile number</span>
+            <div class="fwrap focus">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval" dir="ltr">300 123 4567</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="fhint" id="f-ph-h">We'll send a one-time code to confirm it.</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+            <span>You'll verify your CNIC before you book — not now. SalamStay runs on <a href="/legal/verification">CNIC-verified guests and hosts via NADRA Verisys</a>.</span>
+          </div>
+
+          <button class="primary" type="button">Send code</button>
+          <p class="legal">By continuing, you agree to our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Social identity does <b>not</b> skip PK phone identity: a first Google/Apple sign-up still captures a <code>+92</code> number and routes to OTP <code>GA-005</code>. The CNIC line is the same just-in-time reassurance as <code>GA-004</code> — verification is at booking, never here. Registry claim used verbatim.</p>
+    </div>
+
+    <!-- ============================== LIGHT · CANCELLED / ERROR ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — cancelled / error · calm return</div>
+      <section class="phone" aria-label="Social auth — sign-in did not finish">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/welcome" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Sign-in didn't finish</h2>
+          <p class="h-sub">The Google window closed before we could confirm it. That's fine — nothing was saved, and nothing is wrong on your side.</p>
+
+          <div class="notice" role="alert">
+            <span class="notice-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+            <div>
+              <p class="nt-h">Nothing to worry about</p>
+              <p class="nt-p">This usually happens if the window was dismissed or the connection dropped. You can try again, or continue another way — your choice.</p>
+            </div>
+          </div>
+
+          <a class="secondary-btn" href="/auth/google">Try Google again</a>
+          <div class="social">
+            <a class="sbtn" href="/auth/apple" aria-label="Continue with Apple">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.3-.6 2.6-.6 1.2 0 1.5.6 2.6.6 1 0 1.7-.9 2.4-1.9.5-.8.8-1.5.8-1.6-.1 0-2.2-.9-2.2-3.3zM14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z"/></svg>
+              Continue with Apple
+            </a>
+          </div>
+          <a class="ghost-btn" href="/signup">Use your mobile number instead</a>
+        </div>
+
+        <div class="altline">Already have an account? <a href="/login">Log in</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Cancel is not failure: a calm outlined <code>role="alert"</code> notice (colour carried by icon + text, no red fill), an explicit "nothing was saved," and <b>three live paths</b> — retry Google, switch to Apple, or fall back to the mobile-number sign-up. No dead end, no blame.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو (HANDOFF) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — provider handoff</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="Social auth — Urdu, continuing with Google">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="منسوخ کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="handoff" role="status" aria-live="polite">
+          <div class="prov-ring">
+            <span class="prov-spin" aria-hidden="true"></span>
+            <span class="prov-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+          </div>
+          <h2 class="hoff-h">گوگل کے ساتھ جاری ہے…</h2>
+          <p class="h-sub">ایک محفوظ ونڈو میں آپ کے گوگل اکاؤنٹ کی تصدیق ہو رہی ہے۔ آپ سیدھے SalamStay پر واپس آ جائیں گے — یہاں کچھ کرنے کی ضرورت نہیں۔</p>
+          <span class="hoff-spacer" aria-hidden="true"></span>
+          <a class="ghost-btn" href="/signup">منسوخ کریں</a>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Fully mirrored: the cancel affordance and back chevron move to the reading-start edge and the directional glyph flips. The provider ring is non-directional and does not mirror; the <b>email stays LTR</b> (content locale). Urdu strings are Nastaliq.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, security &amp; S1 gate compliance · web-variant note</div>
+      <ul>
+        <li><b>Handoff is honest, not fake progress.</b> The interstitial is a <code>role="status"</code> live region shown only while the provider/OS sheet is open; it always carries a real <b>Cancel</b> back to <code>/signup</code>, and the ring is transform-only (stops under reduced-motion).</li>
+        <li><b>Never silently merge.</b> When a provider email matches an existing account, the guest is asked to <b>link</b> — two named identities, an explicit action, and a "sign in another way" escape to <code>/login</code>. Consent is required; the existing verified state is shown so nothing feels at risk.</li>
+        <li><b>Social does not bypass PK phone identity.</b> A first Google/Apple sign-up still captures a <code>+92</code> number and routes to OTP <code>GA-005</code>; the CNIC line reuses the <code>GA-004</code> just-in-time framing (verify at booking, not now).</li>
+        <li><b>Cancelled / error is calm.</b> An outlined <code>role="alert"</code> notice (icon + text, never a red fill), "nothing was saved," and three live exits — retry, switch provider, or mobile-number sign-up. No shame, no dead end.</li>
+        <li><b>Real anchors, real controls.</b> Providers <code>/auth/google</code> · <code>/auth/apple</code>, sign-up <code>/signup</code>, login <code>/login</code>, verification <code>/legal/verification</code>, Terms/Privacy. The link and send actions are real <code>&lt;button&gt;</code>s; recovery actions are standalone anchors (no button-in-anchor). [44pt] throughout.</li>
+        <li><b>On-palette, dignified, bilingual.</b> Every colour is a <code>var()</code> token; monochrome provider marks; no ornament; EN/UR parity; copy is registry-verbatim or plain descriptive — no invented stats or social proof.</li>
+        <li><b>Web variant (<code>/auth/callback</code>, SPA).</b> Same four states as an in-page card on the auth chrome: the handoff is the redirect-return spinner, linking and first-sign-up render identically, and the cancelled state reads the provider <code>error</code>/<code>state</code> params to show the same calm return with a CSRF-safe retry.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-006 (onboard, app+web) · components <code>Button (secondary) §1</code> · <code>banner §17</code> · <code>Input §2</code> · a11y <code>DESIGN §11</code>. Inbound from <code>GA-004</code>/<code>GA-007</code>; outbound to OTP <code>GA-005</code> → profile <code>GA-009</code>. <b>Judgment calls:</b> (1) Google/Apple marks are drawn monochrome to honour NEVER #1 (tokens only); production substitutes the vendors' official brand assets as a sanctioned out-of-token exception per Google/Apple brand guidelines. (2) The cancelled state uses an outlined notice rather than a filled error banner because the token set ships no <code>error.bg</code> role — keeping the alarm in icon + text also reads calmer, matching the no-shame rule.</p>
+    </div>
+  </main>
+</body>
+</html>

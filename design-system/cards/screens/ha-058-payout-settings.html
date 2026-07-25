@@ -1,0 +1,496 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Payout settings (HA-058)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1300px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1300px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:302px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage (ha-016/ha-047); NO checkout stepper */
+  .phone { width:302px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:712px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.sech,.dn,.dmeta,.dchip,.mi-t,.flabel,.field-sub,.stv,.opt .on,.opt .od,.halal-h,.halal-p,.halal-a,.matchnote p,.addrow-t,.addrow-s,.toast-msg,.toast-act,.btn,.helplink,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sech { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:4px 0 9px; display:block; }
+
+  /* destination rows — masked tails only, no bank/wallet logos or brand colors */
+  .dlist { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+  .drow { display:flex; align-items:center; gap:11px; min-height:66px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 8px 10px 12px; }
+  .phone.rtl .drow { padding:10px 12px 10px 8px; }
+  .drow.isdefault { border-color:var(--border-default); background:var(--bg-raised); }
+  .dg { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); flex:none; display:flex; align-items:center; justify-content:center; }
+  .dg svg { width:18px; height:18px; stroke-width:1.7; }
+  .db { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .dn { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .defbadge { font-size:10px; font-weight:700; border-radius:var(--radius-full); padding:1px 8px; color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-hairline); white-space:nowrap; }
+  .dmeta { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .dchip { display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:600; border-radius:var(--radius-full); padding:2px 8px; width:fit-content; white-space:nowrap; }
+  .dchip svg { width:11px; height:11px; stroke-width:2.4; }
+  .dchip.ok { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .dchip.pend { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .kebab { width:44px; height:44px; flex:none; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .kebab:hover { background:var(--bg-sunken); color:var(--text-secondary); }
+  .kebab svg { width:20px; height:20px; }
+
+  /* per-destination ⋯ menu */
+  .menucard { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:6px; margin:-4px 0 14px; }
+  .menucard .mi-h { font-size:11px; color:var(--text-tertiary); padding:6px 10px 4px; display:block; }
+  .menu { display:flex; flex-direction:column; }
+  .menu li { display:block; }
+  .mi { display:flex; align-items:center; gap:10px; width:100%; min-height:44px; padding:0 10px; background:transparent; border:none; border-radius:var(--radius-md); font-family:inherit; cursor:pointer; text-align:start; }
+  .mi:hover { background:var(--bg-sunken); }
+  .mi svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .mi-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .mi.danger .mi-t { color:var(--error-fg); }
+  .mi.danger svg { color:var(--error-fg); }
+
+  /* add-a-destination row */
+  .addrow { display:flex; align-items:center; gap:11px; min-height:60px; border:1px dashed var(--border-default); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:11px 13px; margin-bottom:14px; text-decoration:none; }
+  .addrow-ic { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; }
+  .addrow-ic svg { width:19px; height:19px; stroke-width:2; }
+  .addrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .addrow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .addrow-s { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .addrow-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .addrow-chev svg { width:17px; height:17px; stroke-width:2; }
+
+  /* fields — Input/Select shell (§8.1) */
+  .fld { margin-bottom:13px; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .select-trig { width:100%; min-height:48px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 13px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+  .txtinput { width:100%; min-height:48px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 13px; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .txtinput::placeholder { color:var(--text-tertiary); font-weight:500; }
+  .select-trig:focus-visible, .txtinput:focus-visible { outline:none; border-color:var(--int-primary); box-shadow:0 0 0 2px var(--int-subtle); }
+
+  /* method choice rows (ha-016 grammar, verbatim) */
+  .opts { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .opt { display:flex; align-items:flex-start; gap:11px; padding:13px 14px; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); cursor:pointer; }
+  .opt.sel { border-color:var(--int-primary); background:var(--int-subtle); box-shadow:inset 0 0 0 1px var(--int-primary); }
+  .opt .rad { width:20px; height:20px; border-radius:var(--radius-full); border:2px solid var(--border-strong); flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .opt.sel .rad { border-color:var(--int-primary); }
+  .opt.sel .rad::after { content:""; width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); }
+  .opt .og { width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .opt .og svg { width:17px; height:17px; stroke-width:1.7; }
+  .opt .obd { flex:1; display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .opt .on { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .opt .od { font-size:12px; color:var(--text-secondary); line-height:1.4; }
+
+  /* account-title match note — dignified, never accusatory (§10.6) */
+  .matchnote { display:flex; gap:10px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:11px 13px; margin-bottom:14px; }
+  .matchnote .mn-i { color:var(--info-fg); flex:none; margin-top:1px; }
+  .matchnote .mn-i svg { width:17px; height:17px; stroke-width:1.9; }
+  .matchnote p { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .matchnote p b { color:var(--text-primary); font-weight:600; }
+
+  /* amanah settlement card — verbatim from ha-016 / ga-059 */
+  .halal { display:flex; gap:11px; align-items:flex-start; background:var(--int-subtle); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .halal .hi { color:var(--int-primary); flex:none; margin-top:1px; }
+  .halal .hi svg { width:19px; height:19px; stroke-width:1.7; }
+  .halal-b { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .halal-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .halal-p { font-size:12px; color:var(--text-secondary); line-height:1.55; display:block; }
+  .halal-a { display:inline-flex; align-items:center; min-height:44px; margin-top:2px; font-size:12px; font-weight:600; color:var(--int-primary); width:fit-content; }
+  .halal-a:hover { text-decoration:underline; }
+
+  /* undo toast (ga-102 snackbar grammar) */
+  .toast { position:absolute; inset-inline:12px; bottom:34px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:var(--radius-md); background:var(--text-primary); color:var(--bg-canvas); box-shadow:var(--el-popover); z-index:20; }
+  .toast-msg { font-size:12.5px; font-weight:500; }
+  .toast-act { background:transparent; border:none; color:var(--bg-canvas); font-family:inherit; font-size:13px; font-weight:700; text-decoration:underline; cursor:pointer; flex:none; min-height:44px; padding:0 4px; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .helplink { display:flex; align-items:center; justify-content:center; min-height:44px; margin-top:6px; font-size:12.5px; color:var(--int-primary); font-weight:600; }
+  .helplink:hover { text-decoration:underline; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Payout settings (HA-058)</h1>
+    <p>The standing settings surface at <code>/host/payout-settings</code> (get-paid, ARCH §6) — where <code>HA-016</code>'s one-time onboarding setup becomes something a host manages. Destinations are <b>plain rows with masked tails and a neutral generic glyph — no bank or wallet logos, no brand colors</b>: Meezan Bank <span class="num">••••4821</span> holds <b>Default</b>, a second JazzCash wallet is still <b>Verifying</b> against its test deposit. The per-destination <code>⋯</code> menu is the set-default and remove affordance; removal is <b>optimistic and reversible</b> — a calm Undo snackbar, never an "Are you sure?" modal. Payout frequency is a plain Select (after each stay / weekly / monthly — no invented rates or SLAs), and the <b>amanah settlement card restates <code>HA-016</code>/<code>GA-059</code>'s wording verbatim</b>: a payout is rent collected on the host's behalf, held in trust with Meezan until check-in, never interest. Adding a destination reuses <code>HA-016</code>'s method grammar exactly — Bank account · JazzCash · EasyPaisa. Case: host Aqib, Lahore. Panels: destinations + row menu · add a destination (light) · remove + Undo (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — destinations · row menu · add form</span><span>Dark — removed, Undo snackbar</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — LIST + MENU + ADD FORM ============================ -->
+    <section class="panel" aria-label="Light theme — the destinations list with a row menu open, and the add-a-destination form">
+      <div class="panel-tag">Light — A · Destinations, row menu open · B · Add a destination</div>
+      <div class="rowflex">
+
+        <!-- A · DESTINATIONS LIST -->
+        <div class="pcol">
+          <div class="pcap">A · Destinations, frequency &amp; settlement</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Payout settings</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Where your payouts go</h2>
+              <p class="lead">Your default destination receives every payout. You can change this anytime.</p>
+
+              <span class="sech">Destinations</span>
+              <ul class="dlist" role="list">
+                <li class="drow isdefault">
+                  <span class="dg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span>
+                  <span class="db">
+                    <span class="dn">Meezan Bank <span class="defbadge">Default</span></span>
+                    <span class="dmeta">Bank account · <span class="num">••••4821</span></span>
+                    <span class="dchip ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for Meezan Bank, ending 4821" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+                <li class="drow">
+                  <span class="dg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/></svg></span>
+                  <span class="db">
+                    <span class="dn">JazzCash</span>
+                    <span class="dmeta">Mobile wallet · <span class="num">••••7702</span></span>
+                    <span class="dchip pend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Verifying</span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for JazzCash wallet, ending 7702" aria-haspopup="menu" aria-expanded="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="menucard" role="menu" aria-label="Options for JazzCash wallet, ending 7702">
+                <span class="mi-h">JazzCash · <span class="num">••••7702</span></span>
+                <ul class="menu" role="none">
+                  <li role="none">
+                    <button class="mi" type="button" role="menuitem">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                      <span class="mi-t">Set as default</span>
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button class="mi" type="button" role="menuitem">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                      <span class="mi-t">Edit details</span>
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button class="mi danger" type="button" role="menuitem">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg>
+                      <span class="mi-t">Remove this destination</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <a class="addrow" href="/host/payout-settings/add">
+                <span class="addrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="addrow-b"><span class="addrow-t">Add a destination</span><span class="addrow-s">Bank account, JazzCash or EasyPaisa</span></span>
+                <span class="addrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="fld">
+                <span class="flabel" id="freqlbA">Payout frequency</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="freqlbA"><span class="stv">After each stay</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">Or choose weekly or monthly instead.</span>
+              </div>
+
+              <div class="halal">
+                <span class="hi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="halal-b">
+                  <span class="halal-h">How your payout works</span>
+                  <span class="halal-p">Your payout is rent collected on your behalf. Guest payments are held in <b>amanah</b> — a trust — with Meezan Bank until your guest checks in, then released to you as rent for the use of your home. Never interest, never riba.</span>
+                  <a class="halal-a" href="/host/help/fees#wakala">See how the service fee (wakala) is calculated</a>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/host/help/getting-paid">How payouts work</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · ADD A DESTINATION -->
+        <div class="pcol">
+          <div class="pcap">B · Add a destination — HA-016 grammar, reused</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/payout-settings" aria-label="Back to Payout settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Add a destination</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">How would you like to get paid?</h2>
+              <p class="lead">Add where your payout goes — you can change this anytime.</p>
+
+              <div class="opts" role="radiogroup" aria-label="Payout method">
+                <label class="opt sel">
+                  <span class="rad" aria-hidden="true"></span>
+                  <span class="og" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span>
+                  <span class="obd"><span class="on">Bank account</span><span class="od">IBAN transfer — most Pakistani banks</span></span>
+                </label>
+                <label class="opt">
+                  <span class="rad" aria-hidden="true"></span>
+                  <span class="og" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/></svg></span>
+                  <span class="obd"><span class="on">JazzCash</span><span class="od">Mobile wallet</span></span>
+                </label>
+                <label class="opt">
+                  <span class="rad" aria-hidden="true"></span>
+                  <span class="og" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/></svg></span>
+                  <span class="obd"><span class="on">EasyPaisa</span><span class="od">Mobile wallet</span></span>
+                </label>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="acctitle">Account holder name</label>
+                <input class="txtinput" id="acctitle" type="text" placeholder="e.g. Muhammad Aqib Khan" />
+              </div>
+
+              <div class="matchnote">
+                <span class="mn-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <p><b>The account must be in your name</b> — it's how we keep payouts safe.</p>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="iban">IBAN</label>
+                <input class="txtinput num" id="iban" type="text" placeholder="PK00 XXXX 0000000000000000" />
+                <span class="field-sub"><span class="num">24</span> characters, starts with PK — find it in your bank's app or passbook.</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">Verify this account</button>
+              <a class="helplink" href="/host/help/payout-verification">How verification works</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Rows are <b>non-interactive containers with a single nested <code>&lt;button&gt;</code> menu trigger</b> — no button inside an anchor (<code>GA-062</code> precedent), and every trigger is a full <span class="num">44</span>×<span class="num">44</span> target. Exactly one destination holds the <code>Default</code> chip; the second sits at <b>Verifying</b> in the calm <code>info</code> register because <code>HA-016</code>'s test-deposit check hasn't been confirmed yet — a pending state, never an error. "Add a destination" is a real <code>&lt;a href&gt;</code> to the method chooser rather than an inline rail, so bank / JazzCash / EasyPaisa is chosen in <b>one</b> canonical place, with <code>HA-016</code>'s option strings ("IBAN transfer — most Pakistani banks", "Mobile wallet") and its account-title note reused word for word. The amanah card is <code>HA-016</code>'s paragraph verbatim — no new settlement claim is authored here.</p>
+    </section>
+
+    <!-- ============================ DARK — REMOVED + UNDO ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a destination removed, with the Undo snackbar">
+      <div class="panel-tag">Dark — C · Removed, Undo snackbar (no confirm modal)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Removed — reversible, never a dead end</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Payout settings</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Where your payouts go</h2>
+              <p class="lead">Your default destination receives every payout. You can change this anytime.</p>
+
+              <span class="sech">Destinations</span>
+              <ul class="dlist" role="list">
+                <li class="drow isdefault">
+                  <span class="dg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span>
+                  <span class="db">
+                    <span class="dn">Meezan Bank <span class="defbadge">Default</span></span>
+                    <span class="dmeta">Bank account · <span class="num">••••4821</span></span>
+                    <span class="dchip ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for Meezan Bank, ending 4821" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <a class="addrow" href="/host/payout-settings/add">
+                <span class="addrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="addrow-b"><span class="addrow-t">Add a destination</span><span class="addrow-s">Bank account, JazzCash or EasyPaisa</span></span>
+                <span class="addrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="matchnote">
+                <span class="mn-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+                <p>You'll always keep one default destination. <b>Set another as default before removing this one.</b></p>
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="freqlbC">Payout frequency</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="freqlbC"><span class="stv">After each stay</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">Or choose weekly or monthly instead.</span>
+              </div>
+
+              <div class="halal">
+                <span class="hi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="halal-b">
+                  <span class="halal-h">How your payout works</span>
+                  <span class="halal-p">Your payout is rent collected on your behalf. Guest payments are held in <b>amanah</b> — a trust — with Meezan Bank until your guest checks in, then released to you as rent for the use of your home. Never interest, never riba.</span>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="toast" role="status">
+              <span class="toast-msg">JazzCash <span class="num">••••7702</span> removed</span>
+              <button class="toast-act" type="button">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Removal is <b>optimistic and reversible</b>: the row leaves instantly and a snackbar offers <b>Undo</b> for a few seconds — no "Are you sure?" modal (<code>GA-062</code>/<code>GA-102</code> precedent). The remaining note states the one real constraint plainly ("Set another as default before removing this one") so the host is never trapped in a state with nowhere for money to land. Dark keeps every role AA-proven (§11); the snackbar action sits at full contrast on the inverse surface.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the destinations list, frequency and the amanah settlement card">
+      <div class="panel-tag">RTL · اردو — ادائیگی کی ترتیبات، mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · ادائیگی کی ترتیبات — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/earnings" aria-label="کمائی پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">ادائیگی کی ترتیبات</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="dH">آپ کی ادائیگیاں کہاں جاتی ہیں</h2>
+              <p class="lead">ہر ادائیگی آپ کے ڈیفالٹ اکاؤنٹ میں جاتی ہے۔ آپ اسے کبھی بھی تبدیل کر سکتے ہیں۔</p>
+
+              <span class="sech">اکاؤنٹس</span>
+              <ul class="dlist" role="list">
+                <li class="drow isdefault">
+                  <span class="dg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span>
+                  <span class="db">
+                    <span class="dn">میزان بینک <span class="defbadge">ڈیفالٹ</span></span>
+                    <span class="dmeta">بینک اکاؤنٹ · <span class="num">••••4821</span></span>
+                    <span class="dchip ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="میزان بینک ••••4821 کے اختیارات" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+                <li class="drow">
+                  <span class="dg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/></svg></span>
+                  <span class="db">
+                    <span class="dn">JazzCash</span>
+                    <span class="dmeta">موبائل والٹ · <span class="num">••••7702</span></span>
+                    <span class="dchip pend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>تصدیق جاری</span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="JazzCash ••••7702 کے اختیارات" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <a class="addrow" href="/ur/host/payout-settings/add">
+                <span class="addrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="addrow-b"><span class="addrow-t">نیا اکاؤنٹ شامل کریں</span><span class="addrow-s">بینک اکاؤنٹ، JazzCash یا EasyPaisa</span></span>
+                <span class="addrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+              </a>
+
+              <div class="fld">
+                <span class="flabel" id="freqlbD">ادائیگی کی تعدد</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="freqlbD"><span class="stv">ہر قیام کے بعد</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">یا ہفتہ وار / ماہانہ منتخب کریں۔</span>
+              </div>
+
+              <div class="halal">
+                <span class="hi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="halal-b">
+                  <span class="halal-h">آپ کی ادائیگی کیسے کام کرتی ہے</span>
+                  <span class="halal-p">آپ کی ادائیگی آپ کی جانب سے وصول کیا گیا کرایہ ہے۔ مہمانوں کی ادائیگیاں چیک ان تک <b>میزان بینک</b> کے پاس امانت میں محفوظ رہتی ہیں، پھر آپ کے گھر کے کرائے کے طور پر آپ کو جاری کر دی جاتی ہیں — کبھی سود نہیں۔</span>
+                  <a class="halal-a" href="/ur/host/help/fees#wakala">سروس فیس (وکالہ) کا حساب دیکھیں</a>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/ur/host/help/getting-paid">ادائیگیاں کیسے کام کرتی ہیں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron and the add-row chevron flip to the reading direction, the Select chevron stays pointing down (non-directional), and the row's asymmetric padding swaps via a <code>.phone.rtl</code> override so the <code>⋯</code> trigger keeps its optical inset. <b>Masked tails and all digits are <code>.num</code>-isolated</b> — Western numerals, <code>direction:ltr; unicode-bidi:isolate</code> — so <span class="num">••••4821</span> and <span class="num">••••7702</span> never reorder. "میزان بینک", "امانت" and "کبھی سود نہیں" are <code>HA-016</code>'s shipped Urdu verbatim; "JazzCash"/"EasyPaisa" stay Latin proper nouns exactly as <code>HA-016</code> and <code>GA-062</code> render them.</p>
+    </section>
+
+  </main>
+</body>
+</html>

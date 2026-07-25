@@ -1,0 +1,594 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — HA-046 Host dashboard (Today)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    /* dataviz (mirrors @salamstay/design-tokens dataviz.light) */
+    --dv-series-1:#3B8371; --dv-series-2:#34527E; --dv-series-3:#8A5A16;
+    --dv-axis:#5F676D; --dv-gridline:#E7E9EA;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --shadow-card:var(--el-card);
+    /* dataviz (mirrors @salamstay/design-tokens dataviz.dark) */
+    --dv-series-1:#579D8B; --dv-series-2:#9AC0F4; --dv-series-3:#E0B36B;
+    --dv-axis:#A7AFAD; --dv-gridline:#2A3230;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* demo header (outside the screen frame) */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .panel { border-radius:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); overflow:hidden; background:var(--bg-canvas); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:18px 24px 0; background:var(--bg-canvas); }
+  .note { font-size:12px; color:var(--text-tertiary); padding:8px 24px 16px; background:var(--bg-canvas); max-width:960px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  .app { background:var(--bg-canvas); }
+
+  /* slim authenticated header */
+  .hdr { display:flex; align-items:center; gap:16px; height:60px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .wordmark { font-size:19px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; text-decoration:none; white-space:nowrap; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hostchip { font-size:12px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:4px 11px; white-space:nowrap; }
+  .spacer { flex:1; }
+  .txtlink { font-size:14px; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .txtlink:hover { color:var(--text-primary); }
+  .langsw { display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { font-size:13px; line-height:1; padding:7px 12px; color:var(--text-secondary); text-decoration:none; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current] { background:var(--int-primary); color:var(--text-on-brand); font-weight:600; }
+  .curr { font-size:14px; color:var(--text-secondary); white-space:nowrap; }
+  .iconbtn { width:38px; height:38px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); text-decoration:none; }
+  .iconbtn svg { width:18px; height:18px; }
+  .avatar { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; text-decoration:none; }
+
+  /* host section nav */
+  .hostnav { display:flex; align-items:center; gap:4px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .hostnav a.tab { font-size:15px; color:var(--text-secondary); text-decoration:none; padding:14px 12px; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; }
+  .hostnav a.tab:hover { color:var(--text-primary); }
+  .hostnav a.tab[aria-current] { color:var(--text-primary); font-weight:600; border-bottom-color:var(--int-primary); }
+  .navspacer { flex:1; }
+
+  /* buttons */
+  .btn { font-family:inherit; font-size:14px; font-weight:600; border-radius:var(--radius-md); padding:9px 16px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; gap:7px; border:1px solid transparent; }
+  .btn.sm { font-size:13px; padding:7px 13px; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--int-primary); }
+  .btn-primary:hover { background:var(--int-hover); border-color:var(--int-hover); }
+  .btn-ghost { background:transparent; color:var(--text-primary); border-color:var(--border-default); }
+  .btn-ghost:hover { background:var(--bg-sunken); }
+
+  /* main region */
+  .main { max-width:1148px; margin:0 auto; padding:28px 24px 36px; display:flex; flex-direction:column; gap:22px; }
+  .greet h2 { font-size:28px; font-weight:600; letter-spacing:-0.015em; color:var(--text-primary); }
+  .greet .date { font-size:14px; color:var(--text-secondary); margin-top:4px; }
+
+  /* KPI stat tiles */
+  .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .kpi { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:16px 18px; display:flex; flex-direction:column; gap:7px; text-decoration:none; color:inherit; }
+  a.kpi:hover { border-color:var(--border-default); }
+  .kpi .label { font-size:13px; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; gap:6px; }
+  .kpi .val { font-size:26px; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1.15; }
+  .kpi .foot { font-size:12.5px; color:var(--text-tertiary); }
+  .delta { display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .delta svg { width:14px; height:14px; }
+  .delta.up { color:var(--success-fg); }
+  .delta.down { color:var(--error-fg); }
+  .delta .per { color:var(--text-tertiary); font-weight:500; }
+  .kpi.hero { grid-column:span 1; }
+  .kpi.hero .toprow { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+  .spark { width:96px; height:34px; flex:none; }
+  .info { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:var(--radius-full); color:var(--text-tertiary); text-decoration:none; }
+  .info svg { width:14px; height:14px; }
+  .info:hover { color:var(--text-secondary); }
+
+  /* inline banner */
+  .banner { display:flex; gap:14px; align-items:flex-start; border-radius:var(--radius-lg); padding:15px 18px; border:1px solid var(--info-border); background:var(--info-bg); }
+  .banner .bicon { flex:none; width:22px; height:22px; color:var(--info-fg); margin-top:1px; }
+  .banner .bicon svg { width:22px; height:22px; }
+  .banner .btext { flex:1; }
+  .banner .btitle { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .banner .bbody { font-size:13.5px; color:var(--text-secondary); margin-top:3px; }
+  .banner .bacts { display:flex; gap:8px; margin-top:11px; }
+  .banner .bdismiss { flex:none; background:transparent; border:none; color:var(--text-tertiary); cursor:pointer; padding:2px; border-radius:var(--radius-sm); }
+  .banner .bdismiss svg { width:18px; height:18px; display:block; }
+
+  /* section heads */
+  .sec-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .sec-head h3 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .sec-head a { font-size:13.5px; color:var(--int-primary); text-decoration:none; font-weight:500; }
+  .sec-head a:hover { text-decoration:underline; }
+
+  /* reservations list */
+  .card { background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .res-list { list-style:none; }
+  .res { display:flex; align-items:center; gap:14px; padding:14px 18px; border-top:1px solid var(--border-hairline); }
+  .res:first-child { border-top:none; }
+  .rav { flex:none; width:42px; height:42px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; }
+  .rinfo { flex:1; min-width:0; }
+  .rname { font-size:15px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .rmeta { font-size:13px; color:var(--text-secondary); margin-top:2px; }
+  .badge { font-size:11.5px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 9px; white-space:nowrap; }
+  .rtime { flex:none; text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px; min-width:150px; }
+  .pill { font-size:11.5px; font-weight:600; border-radius:var(--radius-full); padding:2px 10px; white-space:nowrap; }
+  .pill-arrive { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .pill-self { color:var(--int-primary); background:var(--int-subtle); border:1px solid transparent; }
+  .pill-out { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .rtime .t { font-size:13px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .ract { flex:none; }
+
+  /* listings quick-status strip */
+  .lstrip { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .lcard { display:flex; gap:13px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:12px; text-decoration:none; color:inherit; }
+  .lcard:hover { border-color:var(--border-default); }
+  .lthumb { flex:none; width:64px; height:64px; border-radius:var(--radius-md); background:linear-gradient(135deg,var(--bg-sunken),var(--border-hairline)); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .lthumb svg { width:24px; height:24px; }
+  .lbody { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+  .ltitle { font-size:14.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lsub { font-size:12.5px; color:var(--text-secondary); }
+  .lrow { display:flex; align-items:center; gap:9px; margin-top:auto; }
+  .status { font-size:11.5px; font-weight:600; border-radius:var(--radius-full); padding:2px 9px; }
+  .status-live { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .status-snooze { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .status-review { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .lstat { font-size:12px; color:var(--text-tertiary); font-variant-numeric:tabular-nums; }
+
+  /* empty / onboarding */
+  .empty { max-width:520px; margin:36px auto; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; padding:24px; }
+  .empty .eglyph { width:56px; height:56px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; color:var(--int-primary); }
+  .empty .eglyph svg { width:28px; height:28px; }
+  .empty h3 { font-size:21px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .empty p { font-size:14.5px; color:var(--text-secondary); max-width:420px; }
+  .empty .acts { display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
+  .empty .ehint { font-size:12.5px; color:var(--text-tertiary); margin-top:2px; }
+
+  /* rtl */
+  [dir="rtl"] .rtime { text-align:left; align-items:flex-start; }
+  [dir="rtl"] .urdu-t { font-family:'Noto Nastaliq Urdu',serif; line-height:2.1; }
+  .urdu { font-family:'Noto Nastaliq Urdu',serif; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:920px){
+    .kpi-row{ grid-template-columns:repeat(2,1fr); }
+    .lstrip{ grid-template-columns:1fr; }
+    .hostnav{ overflow-x:auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>HA-046 — Host dashboard (Today)</h1>
+    <p>Authenticated web dashboard home for hosts: an at-a-glance <strong>KPI stat-tile row</strong> (§14), today's reservations, a non-punitive compliance nudge, and a listings quick-status strip — under the slim host chrome (host-mode header + section nav). Quiet Modern; every value is the host's own data. Tokens only (incl. <code>dataviz</code> for the earnings sparkline). Light · dark · new-host empty · one RTL/اردو panel.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ============ LIGHT — primary, populated ============ -->
+    <div class="panel">
+      <div class="panel-tag">Light — populated · logged-in host</div>
+      <div class="note">Slim header carries the <code>Hosting</code> mode chip + account; the host section nav marks <code>Today</code> as <code>aria-current</code>. KPI tiles read as one number + a muted delta (never a bright arrow).</div>
+      <div class="app">
+        <header class="hdr">
+          <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <a class="txtlink" href="/">Switch to travelling</a>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/today" aria-current="true" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/today" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR ₨</span>
+          <a class="iconbtn" href="/help" aria-label="Help centre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+          </a>
+          <a class="avatar" href="/account" aria-label="Your account, Aqib">AK</a>
+        </header>
+        <nav class="hostnav" aria-label="Host sections">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings">Earnings</a>
+          <a class="tab" href="/host/insights">Insights</a>
+          <span class="navspacer"></span>
+          <a class="btn btn-primary sm" href="/host/listings/new">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Create a listing
+          </a>
+        </nav>
+
+        <main class="main">
+          <div class="greet">
+            <h2>Assalam-o-alaikum, Aqib</h2>
+            <p class="date">Thursday, 24 July 2026 · 3 stays hosting in Lahore, Islamabad &amp; Rawalpindi</p>
+          </div>
+
+          <!-- KPI stat-tile row (§14) -->
+          <section aria-label="Today at a glance">
+            <div class="kpi-row">
+              <div class="kpi">
+                <span class="label">Check-ins today</span>
+                <span class="val">3</span>
+                <span class="foot">2 check-outs · 1 self check-in</span>
+              </div>
+              <a class="kpi" href="/host/messages">
+                <span class="label">Unread messages</span>
+                <span class="val">5</span>
+                <span class="foot">2 need a reply today</span>
+              </a>
+              <div class="kpi">
+                <span class="label">Occupancy this month</span>
+                <span class="val">78%</span>
+                <span class="delta up">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                  +6% <span class="per">vs last month</span>
+                </span>
+              </div>
+              <a class="kpi hero" href="/host/earnings">
+                <span class="label">Earnings this month</span>
+                <div class="toprow">
+                  <span class="val">PKR 214,600</span>
+                  <svg class="spark" viewBox="0 0 96 34" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M2 28 L17 24 L32 26 L47 15 L62 11 L79 13 L94 6" stroke="var(--dv-series-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="delta up">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                  +12% <span class="per">vs last month</span>
+                </span>
+              </a>
+            </div>
+          </section>
+
+          <!-- action-needed banner (non-punitive, info tone) -->
+          <aside class="banner" aria-label="Action needed">
+            <span class="bicon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M8 3v3M16 3v3M3.5 9.5h17"/><path d="M11 13.5l1 1 2.5-2.5"/></svg>
+            </span>
+            <div class="btext">
+              <div class="btitle">Your Punjab tourism registration renews on 14 Nov 2026</div>
+              <div class="bbody">Renew the registration for <strong>Gulberg 2 Residence</strong> before <strong>14 Nov 2026</strong> to keep it live. There's nothing to do yet — we'll remind you as it gets close, and your listing stays bookable in the meantime.</div>
+              <div class="bacts">
+                <a class="btn btn-ghost sm" href="/host/listings/gulberg-2-residence/compliance">Review details</a>
+                <a class="btn btn-ghost sm" href="/help/tourism-registration">How renewal works</a>
+              </div>
+            </div>
+            <button class="bdismiss" type="button" aria-label="Dismiss reminder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </aside>
+
+          <!-- today's reservations -->
+          <section aria-label="Today's reservations">
+            <div class="sec-head">
+              <h3>Today's reservations</h3>
+              <a href="/host/reservations">View all reservations</a>
+            </div>
+            <ul class="res-list card">
+              <li class="res">
+                <span class="rav" aria-hidden="true">AK</span>
+                <div class="rinfo">
+                  <div class="rname">Ayesha Khan <span class="badge">Family · 4 guests</span></div>
+                  <div class="rmeta">Gulberg 2 Residence, Lahore · 4 nights</div>
+                </div>
+                <div class="rtime">
+                  <span class="pill pill-arrive">Arriving today</span>
+                  <span class="t">Check-in 2:00 PM</span>
+                </div>
+                <div class="ract"><a class="btn btn-ghost sm" href="/host/messages/ayesha-khan">Message</a></div>
+              </li>
+              <li class="res">
+                <span class="rav" aria-hidden="true">BA</span>
+                <div class="rinfo">
+                  <div class="rname">Bilal Ahmed <span class="badge">Business · 1 guest</span></div>
+                  <div class="rmeta">F-6 Studio, Islamabad · 2 nights</div>
+                </div>
+                <div class="rtime">
+                  <span class="pill pill-self">Self check-in</span>
+                  <span class="t">Arrives 4:30 PM</span>
+                </div>
+                <div class="ract"><a class="btn btn-ghost sm" href="/host/messages/bilal-ahmed">Message</a></div>
+              </li>
+              <li class="res">
+                <span class="rav" aria-hidden="true">OS</span>
+                <div class="rinfo">
+                  <div class="rname">Omar &amp; Sana <span class="badge">Couple · 2 guests</span></div>
+                  <div class="rmeta">Cantt View Residence, Rawalpindi Cantonment · checking out</div>
+                </div>
+                <div class="rtime">
+                  <span class="pill pill-out">Checking out</span>
+                  <span class="t">Checkout by 11:00 AM</span>
+                </div>
+                <div class="ract"><a class="btn btn-ghost sm" href="/host/reservations/omar-sana/review">Review stay</a></div>
+              </li>
+            </ul>
+          </section>
+
+          <!-- listings quick-status strip -->
+          <section aria-label="Your listings">
+            <div class="sec-head">
+              <h3>Your listings</h3>
+              <a href="/host/listings">Manage listings</a>
+            </div>
+            <div class="lstrip">
+              <a class="lcard" href="/host/listings/gulberg-2-residence">
+                <span class="lthumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <div class="lbody">
+                  <div class="ltitle">Gulberg 2 Residence</div>
+                  <div class="lsub">Lahore · Entire place</div>
+                  <div class="lrow"><span class="status status-live">Live</span><span class="lstat">4.9 · 128 reviews</span></div>
+                </div>
+              </a>
+              <a class="lcard" href="/host/listings/f6-studio">
+                <span class="lthumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <div class="lbody">
+                  <div class="ltitle">F-6 Studio</div>
+                  <div class="lsub">Islamabad · Private room</div>
+                  <div class="lrow"><span class="status status-live">Live</span><span class="lstat">New</span></div>
+                </div>
+              </a>
+              <a class="lcard" href="/host/listings/cantt-view-residence">
+                <span class="lthumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <div class="lbody">
+                  <div class="ltitle">Cantt View Residence</div>
+                  <div class="lsub">Rawalpindi Cantonment · Entire place</div>
+                  <div class="lrow"><span class="status status-snooze">Snoozed</span><span class="lstat">Reopens 1 Aug</span></div>
+                </div>
+              </a>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ============ DARK ============ -->
+    <div class="panel dark">
+      <div class="panel-tag">Dark — populated</div>
+      <div class="note">Every surface, border, semantic tone and the sparkline's <code>--dv-series-1</code> swap to their dark siblings; the muted delta stays muted (no neon).</div>
+      <div class="app">
+        <div class="hdr">
+          <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <a class="txtlink" href="/">Switch to travelling</a>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/today" aria-current="true" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/today" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/account" aria-label="Your account, Aqib">AK</a>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings">Earnings</a>
+          <span class="navspacer"></span>
+          <a class="btn btn-primary sm" href="/host/listings/new">Create a listing</a>
+        </div>
+        <div class="main">
+          <div class="greet">
+            <h2>Assalam-o-alaikum, Aqib</h2>
+            <p class="date">Thursday, 24 July 2026 · 3 stays hosting</p>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi">
+              <span class="label">Check-ins today</span>
+              <span class="val">3</span>
+              <span class="foot">2 check-outs · 1 self check-in</span>
+            </div>
+            <a class="kpi" href="/host/messages">
+              <span class="label">Unread messages</span>
+              <span class="val">5</span>
+              <span class="foot">2 need a reply today</span>
+            </a>
+            <div class="kpi">
+              <span class="label">Occupancy this month</span>
+              <span class="val">78%</span>
+              <span class="delta up">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                +6% <span class="per">vs last month</span>
+              </span>
+            </div>
+            <a class="kpi hero" href="/host/earnings">
+              <span class="label">Earnings this month</span>
+              <div class="toprow">
+                <span class="val">PKR 214,600</span>
+                <svg class="spark" viewBox="0 0 96 34" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M2 28 L17 24 L32 26 L47 15 L62 11 L79 13 L94 6" stroke="var(--dv-series-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="delta up">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                +12% <span class="per">vs last month</span>
+              </span>
+            </a>
+          </div>
+          <div class="banner" aria-label="Action needed">
+            <span class="bicon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M8 3v3M16 3v3M3.5 9.5h17"/><path d="M11 13.5l1 1 2.5-2.5"/></svg>
+            </span>
+            <div class="btext">
+              <div class="btitle">Your Punjab tourism registration renews on 14 Nov 2026</div>
+              <div class="bbody">Renew the registration for <strong>Gulberg 2 Residence</strong> before <strong>14 Nov 2026</strong>. We'll remind you again at 14 days; your listing stays bookable meanwhile.</div>
+              <div class="bacts">
+                <a class="btn btn-ghost sm" href="/host/listings/gulberg-2-residence/compliance">Review details</a>
+              </div>
+            </div>
+          </div>
+          <section aria-label="Today's reservations (dark)">
+            <div class="sec-head"><h3>Today's reservations</h3><a href="/host/reservations">View all</a></div>
+            <ul class="res-list card">
+              <li class="res">
+                <span class="rav" aria-hidden="true">AK</span>
+                <div class="rinfo">
+                  <div class="rname">Ayesha Khan <span class="badge">Family · 4 guests</span></div>
+                  <div class="rmeta">Gulberg 2 Residence, Lahore · 4 nights</div>
+                </div>
+                <div class="rtime"><span class="pill pill-arrive">Arriving today</span><span class="t">Check-in 2:00 PM</span></div>
+                <div class="ract"><a class="btn btn-ghost sm" href="/host/messages/ayesha-khan">Message</a></div>
+              </li>
+              <li class="res">
+                <span class="rav" aria-hidden="true">OS</span>
+                <div class="rinfo">
+                  <div class="rname">Omar &amp; Sana <span class="badge">Couple · 2 guests</span></div>
+                  <div class="rmeta">Cantt View Residence, Rawalpindi Cantonment · checking out</div>
+                </div>
+                <div class="rtime"><span class="pill pill-out">Checking out</span><span class="t">Checkout by 11:00 AM</span></div>
+                <div class="ract"><a class="btn btn-ghost sm" href="/host/reservations/omar-sana/review">Review stay</a></div>
+              </li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ EMPTY — new host onboarding ============ -->
+    <div class="panel">
+      <div class="panel-tag">Empty — new host (no reservations yet)</div>
+      <div class="note">Calm onboarding nudge instead of a broken/blank grid: one line glyph, a warm headline, one primary next step — never "0 bookings" shouting at a new host.</div>
+      <div class="app">
+        <div class="hdr">
+          <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <a class="txtlink" href="/">Switch to travelling</a>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/account" aria-label="Your account">AK</a>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings">Earnings</a>
+        </div>
+        <div class="main">
+          <div class="empty">
+            <span class="eglyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>
+            </span>
+            <h3>Welcome to hosting, Aqib</h3>
+            <p>Your check-ins, guest messages, and earnings will appear here. Finish your listing to go live and take your first booking.</p>
+            <div class="acts">
+              <a class="btn btn-primary" href="/host/listings/new/continue">Continue your listing</a>
+              <a class="btn btn-ghost" href="/host/listings/preview">Preview your listing</a>
+            </div>
+            <p class="ehint">About 6 steps left · verification takes 1–2 days</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RTL / اردو ============ -->
+    <div class="panel">
+      <div class="panel-tag">RTL · اردو — chrome + content mirror</div>
+      <div class="note">Header mirrors (wordmark → right, account → left); the host nav order reverses; tiles/rows align to the reading-start. ₨ stays labelled, digits are not mirrored. Urdu set in <code>Noto Nastaliq Urdu</code>.</div>
+      <div class="app" dir="rtl" lang="ur">
+        <div class="hdr">
+          <a class="wordmark" href="/ur/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip urdu">میزبانی</span>
+          <span class="spacer"></span>
+          <a class="txtlink urdu" href="/ur/">مسافری پر جائیں</a>
+          <div class="langsw" role="group" aria-label="زبان">
+            <a href="/host/today" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/today" aria-current="true" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/ur/account" aria-label="آپ کا اکاؤنٹ">AK</a>
+        </div>
+        <div class="hostnav">
+          <a class="tab urdu" href="/ur/host/today" aria-current="page">آج</a>
+          <a class="tab urdu" href="/ur/host/calendar">کیلنڈر</a>
+          <a class="tab urdu" href="/ur/host/listings">فہرستیں</a>
+          <a class="tab urdu" href="/ur/host/reservations">بکنگز</a>
+          <a class="tab urdu" href="/ur/host/earnings">کمائی</a>
+        </div>
+        <div class="main">
+          <div class="greet">
+            <h2 class="urdu urdu-t">السلام علیکم، عاقب</h2>
+            <p class="date urdu urdu-t">جمعرات، <span class="num">24</span> جولائی <span class="num">2026</span></p>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi">
+              <span class="label urdu">آج کی آمد</span>
+              <span class="val num">3</span>
+              <span class="foot urdu"><span class="num">2</span> روانگیاں</span>
+            </div>
+            <div class="kpi">
+              <span class="label urdu">نئے پیغامات</span>
+              <span class="val num">5</span>
+              <span class="foot urdu"><span class="num">2</span> کا آج جواب دیں</span>
+            </div>
+            <div class="kpi">
+              <span class="label urdu">اس ماہ آکوپینسی</span>
+              <span class="val num">78%</span>
+              <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg> <span class="num">+6%</span></span>
+            </div>
+            <div class="kpi hero">
+              <span class="label urdu">اس ماہ کی کمائی</span>
+              <div class="toprow">
+                <span class="val">PKR 214,600</span>
+                <svg class="spark" viewBox="0 0 96 34" fill="none" aria-hidden="true" focusable="false" style="transform:scaleX(-1)">
+                  <path d="M2 28 L17 24 L32 26 L47 15 L62 11 L79 13 L94 6" stroke="var(--dv-series-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg> <span class="num">+12%</span></span>
+            </div>
+          </div>
+          <section aria-label="آج کی بکنگز">
+            <div class="sec-head"><h3 class="urdu">آج کی بکنگز</h3><a class="urdu" href="/ur/host/reservations">سب دیکھیں</a></div>
+            <ul class="res-list card">
+              <li class="res">
+                <span class="rav" aria-hidden="true">AK</span>
+                <div class="rinfo">
+                  <div class="rname urdu">عائشہ خان <span class="badge urdu">فیملی · <span class="num">4</span></span></div>
+                  <div class="rmeta urdu">گلبرگ <span class="num">2</span> ریزیڈنس، لاہور</div>
+                </div>
+                <div class="rtime"><span class="pill pill-arrive urdu">آج آمد</span><span class="t urdu">چیک اِن <span class="num">2:00</span> بجے</span></div>
+                <div class="ract"><a class="btn btn-ghost sm urdu" href="/ur/host/messages/ayesha-khan">پیغام</a></div>
+              </li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

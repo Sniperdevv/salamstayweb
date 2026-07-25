@@ -1,0 +1,380 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Reviews about you (GA-131)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:320px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ga-064 flat-frame lineage */
+  .phone { width:320px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:720px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.85; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+
+  .tabs { display:flex; background:var(--bg-sunken); border-radius:var(--radius-md); padding:3px; margin-bottom:16px; }
+  .tab { flex:1; min-height:38px; border:none; background:none; border-radius:var(--radius-sm); font-size:13px; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; }
+  .tab[aria-selected="true"] { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-hairline); }
+
+  /* full review card */
+  .rlist { list-style:none; display:flex; flex-direction:column; gap:14px; }
+  .review { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:14px 15px; }
+  .rv-top { display:flex; align-items:flex-start; gap:10px; }
+  .rv-av { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+  .rv-id { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .rv-n { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .rv-meta { font-size:11.5px; color:var(--text-tertiary); display:block; }
+  .rv-stars { flex:none; display:inline-flex; gap:2px; color:var(--warning-fg); margin-top:2px; }
+  .rv-stars svg { width:14px; height:14px; }
+  .rv-text { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:10px; }
+
+  /* full 5-star category track — review detail (§8 inputs) */
+  .cattrack { display:flex; flex-direction:column; gap:6px; margin-top:11px; padding-top:11px; border-top:1px solid var(--border-hairline); }
+  .catln { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .catln .cl { font-size:11.5px; color:var(--text-secondary); }
+  .catln .cs { flex:none; display:inline-flex; gap:1.5px; color:var(--warning-fg); }
+  .catln .cs svg { width:11px; height:11px; }
+  .catln .cs svg.off { color:var(--border-strong); }
+
+  .rv-actions { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:11px; }
+  .replylink, .flaglink { display:inline-flex; align-items:center; gap:5px; min-height:36px; padding:0 4px; font-size:12px; font-weight:600; background:none; border:none; cursor:pointer; font-family:inherit; }
+  .replylink { color:var(--int-primary); }
+  .flaglink { color:var(--text-tertiary); }
+  .replylink svg, .flaglink svg { width:14px; height:14px; }
+
+  /* public response composer — window stated honestly */
+  .composer { margin-top:11px; padding:12px 13px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .composer-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:3px; }
+  .composer-window { display:flex; gap:8px; align-items:flex-start; margin-bottom:9px; }
+  .composer-window svg { width:14px; height:14px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .composer-window span { font-size:11px; color:var(--text-tertiary); line-height:1.5; }
+  .ta { width:100%; min-height:64px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); padding:10px 12px; font-family:inherit; font-size:12.5px; color:var(--text-primary); line-height:1.5; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); }
+  .composer-actions { display:flex; gap:8px; margin-top:9px; }
+  .cbtn { flex:1; min-height:38px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; }
+  .cbtn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .cbtn.ghost { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  /* responded state — guest's public reply beneath the review */
+  .pubreply { margin-top:11px; padding:12px 13px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-md); }
+  .pr-h { display:flex; align-items:center; gap:8px; }
+  .pr-av { width:24px; height:24px; flex:none; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+  .pr-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .pr-tag { display:inline-flex; align-items:center; height:18px; padding:0 7px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); font-size:10px; font-weight:600; color:var(--text-secondary); }
+  .pr-d { font-size:11px; color:var(--text-tertiary); margin-inline-start:auto; }
+  .pr-b { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-top:7px; }
+
+  /* flag/dispute bottom sheet — ga-036 / ga-132 grammar */
+  .backdrop { position:absolute; inset:0; background:var(--scrim); z-index:6; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:7; background:var(--bg-canvas); border-top-left-radius:var(--radius-2xl); border-top-right-radius:var(--radius-2xl); box-shadow:var(--el-popover); padding:0 0 calc(14px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); display:block; }
+  .shead { padding:6px 18px 12px; border-bottom:1px solid var(--border-hairline); }
+  .shead h2 { font-size:17px; font-weight:600; color:var(--text-primary); }
+  .shead p { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.4; }
+  .sbody { padding:14px 18px 4px; }
+  .reasons { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .reason { display:flex; gap:11px; align-items:flex-start; padding:11px 12px; border-radius:var(--radius-lg); border:1px solid var(--border-default); background:var(--bg-canvas); cursor:pointer; text-align:start; width:100%; font-family:inherit; }
+  .reason .radio { width:20px; height:20px; flex:none; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .reason .radio i { width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); opacity:0; display:block; }
+  .rx { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .rx .t { font-size:13.5px; font-weight:600; color:var(--text-primary); line-height:1.3; display:block; }
+  .rx .d { font-size:12px; color:var(--text-secondary); line-height:1.4; display:block; }
+  .reason.on { border-color:var(--border-brand); background:var(--int-subtle); }
+  .reason.on .radio { border-color:var(--int-primary); }
+  .reason.on .radio i { opacity:1; }
+  .foot { padding:0 18px 4px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Reviews about you (GA-131)</h1>
+    <p>The deeper about-you surface reached from Fatima's public profile (<code>GA-128</code> "Show all"). Full review cards carry the 5-star category track (§8 inputs, review-detail full track), a quiet <strong>flag/dispute affordance</strong> reusing the <code>GA-036</code>/<code>GA-132</code> reason-list grammar (inaccurate · violates guidelines · not about your stay), and a <strong>public response composer</strong> that states its window honestly — "you can reply publicly for 14 days," matching <code>DESIGN.md</code> §9-J verbatim, never an invented figure. A responded state shows the guest's own public reply beneath the review it answers. No journey stepper — post-stay. Panels: full cards, response composer open (light) · flag/dispute reason sheet open (dark) · اردو / RTL · a responded state.</p>
+    <div class="toggle" role="presentation"><span class="on">Response composer open · light</span><span>Flag/dispute sheet · dark</span><span>اردو · RTL</span><span>Responded state</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — RESPONSE COMPOSER OPEN ============================ -->
+    <section class="panel" aria-label="Light theme — full review cards with the public response composer open">
+      <div class="panel-tag">Light — full cards · public response composer open</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">A · Public response composer — window stated honestly</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Reviews about you</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="true">About you</button>
+                <button class="tab" role="tab" aria-selected="false">Written by you</button>
+              </div>
+
+              <ul class="rlist">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">A</span>
+                    <span class="rv-id">
+                      <span class="rv-n">Ayesha</span>
+                      <span class="rv-meta">Host in Islamabad · Aug 2026</span>
+                      <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text">Fatima and her family kept the home spotless and always let us know their plans. A calm, easy guest to host.</p>
+                  <div class="cattrack">
+                    <div class="catln"><span class="cl">Cleanliness</span><span class="cs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                    <div class="catln"><span class="cl">Communication</span><span class="cs" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                  </div>
+                  <div class="rv-actions">
+                    <button class="flaglink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Flag</button>
+                    <button class="replylink" type="button" aria-expanded="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17l-4-4 4-4M5 13h11a4 4 0 0 0 4-4V6"/></svg>Reply publicly</button>
+                  </div>
+                  <div class="composer">
+                    <div class="composer-h">Your public reply</div>
+                    <div class="composer-window"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>You can reply publicly for <span class="num">14</span> days. Your reply appears under Ayesha's review for anyone who sees it.</span></div>
+                    <textarea class="ta" placeholder="Thank Ayesha, or add context for future guests — optional.">Thank you, Ayesha — we loved staying at your place and hope to visit Islamabad again soon.</textarea>
+                    <div class="composer-actions"><button class="cbtn ghost" type="button">Cancel</button><button class="cbtn primary" type="button">Post reply</button></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full review cards use the review-detail <b>5-star category track</b> (§8 inputs) — muted amber throughout, never brand green. The public-response window is stated <b>honestly and verbatim from the blueprint</b> ("you can reply publicly for 14 days," <code>DESIGN.md</code> §9-J) — not an invented figure. Flag sits at equal visual weight to Reply, never emphasised as the primary action.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — FLAG/DISPUTE SHEET OPEN ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the flag/dispute reason sheet open over a review">
+      <div class="panel-tag">Dark — flag/dispute reason sheet open</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">B · Flag this review — reasons</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Reviews about you</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="true">About you</button>
+                <button class="tab" role="tab" aria-selected="false">Written by you</button>
+              </div>
+              <ul class="rlist">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">Y</span>
+                    <span class="rv-id"><span class="rv-n">Yusuf</span><span class="rv-meta">Host in Islamabad · Mar 2026</span></span>
+                  </div>
+                  <p class="rv-text">Respectful and tidy, and easy to reach throughout. Would gladly host again.</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="backdrop" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="flagH">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <div class="shead">
+                <h2 id="flagH">Flag this review</h2>
+                <p>Tell us what's wrong — our safety team will take a look.</p>
+              </div>
+              <div class="sbody">
+                <div class="reasons" role="radiogroup" aria-label="Reason for flagging">
+                  <button type="button" class="reason on" role="radio" aria-checked="true"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Inaccurate</span><span class="d">Something in this review doesn't match what happened.</span></span></button>
+                  <button type="button" class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Violates guidelines</span><span class="d">Discriminatory, abusive, or otherwise against our content rules.</span></span></button>
+                  <button type="button" class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Not about your stay</span><span class="d">This review seems to be about someone or something else.</span></span></button>
+                </div>
+              </div>
+              <div class="foot"><button class="btn primary" type="button">Send to our safety team</button></div>
+            </div>
+
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every role AA-proven (§11). The flag sheet reuses the exact reason-list grammar from <code>GA-036</code>/<code>GA-132</code> — plain radio rows, one clear label + one calm description each — with the three reasons this row calls for: <b>inaccurate, violates guidelines, not about your stay</b>. Tone stays non-accusatory throughout (§10.6): "tell us what's wrong," never "prove your case."</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the reviews-about-you surface">
+      <div class="panel-tag">RTL · اردو — "آپ کے بارے میں جائزے", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/account/profile" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur" id="uH">آپ کے بارے میں جائزے</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="جائزے">
+                <button class="tab ur" role="tab" aria-selected="true">آپ کے بارے میں</button>
+                <button class="tab ur" role="tab" aria-selected="false">آپ کے لکھے ہوئے</button>
+              </div>
+
+              <ul class="rlist">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">ع</span>
+                    <span class="rv-id">
+                      <span class="rv-n ur">عائشہ</span>
+                      <span class="rv-meta ur">اسلام آباد میں میزبان · اگست <span class="num">2026</span></span>
+                      <span class="rv-stars" role="img" aria-label="پانچ میں سے پانچ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text ur">فاطمہ اور ان کا خاندان گھر کو صاف ستھرا رکھتے اور بروقت اطلاع دیتے رہے۔ ایک پُرسکون، آسان مہمان۔</p>
+                  <div class="rv-actions">
+                    <button class="flaglink ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21V4H9l1.5 4H4l1.5 4H19"/></svg>نشان زد کریں</button>
+                    <button class="replylink ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l4-4-4-4M19 13H8a4 4 0 0 1-4-4V6"/></svg>عوامی جواب دیں</button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): tab order, card content, and the flag/reply action row all flow right-to-left, and the reply icon flips to point in the reading direction. Numerals (the star count, the year) keep <code>direction:ltr</code> isolation via <code>.num</code>.</p>
+    </section>
+
+    <!-- ============================ STATES — RESPONDED ============================ -->
+    <section class="panel" aria-label="A review with the guest's public reply already posted beneath it">
+      <div class="panel-tag">State — responded · public reply beneath the review</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · Responded — your reply is public</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Reviews about you</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tabs" role="tablist" aria-label="Reviews">
+                <button class="tab" role="tab" aria-selected="true">About you</button>
+                <button class="tab" role="tab" aria-selected="false">Written by you</button>
+              </div>
+
+              <ul class="rlist">
+                <li class="review">
+                  <div class="rv-top">
+                    <span class="rv-av" aria-hidden="true">A</span>
+                    <span class="rv-id">
+                      <span class="rv-n">Ayesha</span>
+                      <span class="rv-meta">Host in Islamabad · Aug 2026</span>
+                      <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                    </span>
+                  </div>
+                  <p class="rv-text">Fatima and her family kept the home spotless and always let us know their plans. A calm, easy guest to host.</p>
+                  <div class="pubreply">
+                    <div class="pr-h"><span class="pr-av" aria-hidden="true">F</span><span class="pr-t">Fatima</span><span class="pr-tag">Reply</span><span class="pr-d">Aug 2026</span></div>
+                    <p class="pr-b">Thank you, Ayesha — we loved staying at your place and hope to visit Islamabad again soon.</p>
+                  </div>
+                  <div class="rv-actions"><span></span><button class="flaglink" type="button" style="margin-inline-start:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg>Flag</button></div>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Once posted, the public reply renders as its own quiet sub-card beneath the review it answers — the same "response beneath the original" grammar as a host's reply on a listing (<code>GA-032</code>), just from the guest's side. The composer and its "Reply publicly" action are gone once a reply exists; Flag remains available.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Data &amp; privacy (GA-080)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064/ga-123 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 15px 18px; }
+  .h-title { font-size:19px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .lead { font-size:13px; color:var(--text-secondary); margin:8px 0 16px; line-height:1.55; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* Select trigger (format) — reuses the Input shell + chevron (§3 inputs) */
+  .field { margin-bottom:14px; }
+  .flabel { font-size:12px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:6px; padding-left:2px; }
+  .seltrig { display:flex; align-items:center; gap:10px; min-height:48px; border:1px solid var(--border-default); background:var(--bg-sunken); border-radius:var(--radius-md); padding:0 12px; cursor:pointer; text-decoration:none; }
+  .sel-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .sel-v { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .sel-x { font-size:11px; color:var(--text-secondary); }
+  .selchev { flex:none; color:var(--text-tertiary); display:flex; }
+  .selchev svg { width:18px; height:18px; stroke-width:2; }
+  .fhelp { font-size:11.5px; color:var(--text-secondary); margin-top:7px; padding-left:2px; line-height:1.45; }
+
+  /* honesty / info box — neutral, not sold */
+  .infobox { display:flex; gap:11px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px; margin:4px 0 16px; }
+  .ib-ic { flex:none; width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .ib-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .ib-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .ib-h { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .ib-d { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.5; }
+
+  /* buttons */
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.destructive { background:var(--error-fg); color:var(--text-on-brand); }
+  .btn + .btn { margin-top:10px; }
+
+  /* job-status tracker — timeline (§8.7 §19 nav) */
+  .tl { list-style:none; margin:4px 0 0; padding:0; }
+  .tl-item { position:relative; display:flex; gap:13px; padding-bottom:20px; }
+  .tl-item:last-child { padding-bottom:0; }
+  .tl-mark { flex:none; position:relative; width:26px; display:flex; justify-content:center; }
+  .tl-dot { width:26px; height:26px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; border:2px solid var(--border-default); background:var(--bg-canvas); color:var(--text-tertiary); }
+  .tl-dot svg { width:15px; height:15px; stroke-width:2.4; }
+  .tl-dot.done { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .tl-dot.ready { background:var(--int-subtle); border-color:var(--int-primary); color:var(--int-primary); }
+  .tl-item:not(:last-child) .tl-mark::after { content:""; position:absolute; top:26px; bottom:-4px; left:12px; width:2px; background:var(--border-default); }
+  .tl-item.done .tl-mark::after { background:var(--int-primary); }
+  .tl-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; padding-top:2px; }
+  .tl-t { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .tl-item.todo .tl-t { color:var(--text-secondary); }
+  .tl-s { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.45; }
+  .dl-wrap { display:block; margin-top:8px; }
+  .expiry { display:flex; align-items:flex-start; gap:6px; font-size:11px; color:var(--text-tertiary); margin-top:9px; line-height:1.45; }
+  .expiry svg { width:13px; height:13px; stroke-width:2; flex:none; margin-top:1px; }
+  .expiry-t { flex:1; min-width:0; }
+
+  /* delete — consequences list (plain, calm, not guilt-tripping) */
+  .conseq { list-style:none; margin:2px 0 4px; padding:0; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .conseq-item { display:flex; gap:11px; align-items:flex-start; padding:13px 13px; border-bottom:1px solid var(--border-hairline); }
+  .conseq-item:last-child { border-bottom:none; }
+  .conseq-ic { flex:none; width:22px; height:22px; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .conseq-ic svg { width:18px; height:18px; stroke-width:1.85; }
+  .conseq-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .conseq-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .conseq-d { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.5; }
+
+  /* cooling-off confirm */
+  .cfm-ic { width:48px; height:48px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .cfm-ic svg { width:24px; height:24px; stroke-width:1.7; }
+  .cfm-h { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .cfm-d { font-size:13px; color:var(--text-secondary); margin-top:9px; line-height:1.55; }
+  .cool { display:flex; gap:10px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:12px 13px; margin-top:16px; }
+  .cool-ic { flex:none; color:var(--text-secondary); margin-top:1px; }
+  .cool-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .cool-t { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .cool-t b { color:var(--text-primary); font-weight:600; }
+  .btnbar { margin-top:20px; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Data &amp; privacy (GA-080)</h1>
+    <p>Two account-owner rights, handled with dignity (§7.6a: no journey stepper). <strong>Export</strong> (<code>/account/settings/privacy/export</code>): pick a format, request it, and follow a <strong>job-status tracker</strong> — requested → preparing → ready to download, with a plain expiry — and an honesty note that your <strong>NADRA verification documents are never included; they stay redacted</strong>. <strong>Delete</strong> (<code>/account/settings/delete</code>): a calm consequences list — completed bookings are <strong>kept in anonymized form as the law requires</strong> — a cooling-off window, and a final confirm that is the <em>only</em> place the destructive token appears. Nothing here is guilt-tripping or panic-red (§10.8). Panels: export request + tracker (light) · delete request + cooling-off confirm (dark) · اردو / RTL export.</p>
+    <div class="toggle" role="presentation"><span class="on">Export · tracker · light</span><span>Delete · cooling-off · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — EXPORT REQUEST + TRACKER ============================ -->
+    <section class="panel" aria-label="Light theme — request an export and the job-status tracker">
+      <div class="panel-tag">Light — request export · job-status tracker (ready to download)</div>
+      <div class="rowflex">
+
+        <!-- A · EXPORT REQUEST -->
+        <div class="pcol">
+          <div class="pcap">A · Request your data — format + honesty</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings/privacy" aria-label="Back to privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Export your data</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="h-title">Get a copy of your data</h2>
+              <p class="lead">We'll gather your bookings, messages, reviews, and profile into one file you can download.</p>
+
+              <div class="field">
+                <span class="flabel">Format</span>
+                <a class="seltrig" href="/account/settings/privacy/export/format" aria-label="Choose a file format, currently JSON">
+                  <span class="sel-b"><span class="sel-v">JSON</span><span class="sel-x">Keeps the full structure</span></span>
+                  <span class="selchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </a>
+                <p class="fhelp">Choose <strong>CSV</strong> instead if you'd rather open it in a spreadsheet.</p>
+              </div>
+
+              <div class="infobox">
+                <span class="ib-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="ib-b">
+                  <span class="ib-h">Your NADRA documents aren't included</span>
+                  <span class="ib-d">Your CNIC and family verification documents stay redacted — they aren't part of the export, even for you.</span>
+                </span>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/account/settings/privacy/export/request">Request my data</a>
+              <p class="fhelp" style="text-align:center; margin-top:10px;">Preparing it takes a little while. We'll message you when it's ready.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · JOB-STATUS TRACKER -->
+        <div class="pcol">
+          <div class="pcap">B · Tracker — requested → preparing → ready</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings/privacy" aria-label="Back to privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Export your data</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="h-title">Your file is ready</h2>
+              <p class="lead">Here's where your export stands. You'll always see each step.</p>
+
+              <ol class="tl">
+                <li class="tl-item done">
+                  <span class="tl-mark"><span class="tl-dot done" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                  <span class="tl-b"><span class="tl-t">Requested</span><span class="tl-s">Today, <span class="num">2:14 PM</span> · JSON</span></span>
+                </li>
+                <li class="tl-item done">
+                  <span class="tl-mark"><span class="tl-dot done" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                  <span class="tl-b"><span class="tl-t">Prepared</span><span class="tl-s">Gathered your bookings, messages, reviews, and profile</span></span>
+                </li>
+                <li class="tl-item" aria-current="step">
+                  <span class="tl-mark"><span class="tl-dot ready" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 4 5-4"/><path d="M5 21h14"/></svg></span></span>
+                  <span class="tl-b">
+                    <span class="tl-t">Ready to download</span>
+                    <span class="tl-s"><span class="num">2.1 MB</span> · salamstay-data.json</span>
+                    <span class="dl-wrap"><a class="btn primary" href="/account/settings/privacy/export/download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 11l5 4 5-4"/><path d="M5 21h14"/></svg>Download</a></span>
+                    <span class="expiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="expiry-t">Available until <span class="num">31 Jul 2026</span> — after that we delete the file for you.</span></span>
+                  </span>
+                </li>
+              </ol>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Format is a real <code>Select</code> (Input shell + chevron, §3 inputs) defaulting to JSON with a CSV alternative named in plain words. The honesty box is neutral (<code>bg.raised</code>, a shield-check glyph) — the NADRA redaction is <strong>stated, not sold</strong> (§10). The tracker is an <code>&lt;ol&gt;</code> with <code>aria-current="step"</code>: done steps carry a brand check, the ready step a brand-subtle download glyph — state by <strong>glyph + text, never colour alone</strong> (§8.7). The expiry is honest utility copy: the file is removed after the window. Nothing here is destructive, so nothing here is red.</p>
+    </section>
+
+    <!-- ============================ DARK — DELETE REQUEST + COOLING-OFF ============================ -->
+    <section class="panel dark" aria-label="Dark theme — request account deletion and the cooling-off confirm">
+      <div class="panel-tag">Dark — delete request (plain consequences) · cooling-off confirm (destructive once)</div>
+      <div class="rowflex">
+
+        <!-- C · DELETE REQUEST -->
+        <div class="pcol">
+          <div class="pcap">C · Delete account — plain consequences, no guilt</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Delete account</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="h-title">Delete your account</h2>
+              <p class="lead">You can close your SalamStay account whenever you like. Here's exactly what happens.</p>
+
+              <ul class="conseq">
+                <li class="conseq-item">
+                  <span class="conseq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span>
+                  <span class="conseq-b"><span class="conseq-t">Your profile and saved places are removed</span><span class="conseq-d">Profile, wishlists, drafts, and messages are deleted.</span></span>
+                </li>
+                <li class="conseq-item">
+                  <span class="conseq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 12h6M9 16h4"/></svg></span>
+                  <span class="conseq-b"><span class="conseq-t">Completed bookings are kept, anonymized</span><span class="conseq-d">Bookings you've completed are retained in anonymized form, as the law requires — not linked to you.</span></span>
+                </li>
+                <li class="conseq-item">
+                  <span class="conseq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <span class="conseq-b"><span class="conseq-t">Your NADRA documents stay redacted</span><span class="conseq-d">They were never readable to us, and they're deleted with your account.</span></span>
+                </li>
+                <li class="conseq-item">
+                  <span class="conseq-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="conseq-b"><span class="conseq-t">Finish any active trip or payout first</span><span class="conseq-d">You have no active trips right now, so you're free to continue.</span></span>
+                </li>
+              </ul>
+
+              <div class="grow"></div>
+              <div class="btnbar">
+                <a class="btn secondary" href="/account/settings/delete/confirm">Continue</a>
+                <a class="btn primary" href="/account/settings">Keep my account</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · COOLING-OFF CONFIRM -->
+        <div class="pcol">
+          <div class="pcap">D · Confirm — a cooling-off window, then the one destructive action</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings/delete" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Confirm deletion</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="cfm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></span>
+              <h2 class="cfm-h">Ready to delete your account?</h2>
+              <p class="cfm-d">We'll schedule your account for deletion. You won't be able to book or host in the meantime.</p>
+
+              <div class="cool">
+                <span class="cool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="cool-t">You have <b><span class="num">14 days</span></b> to change your mind — just sign back in and your account is restored, nothing lost. After that, deletion is permanent.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="btnbar">
+                <button class="btn destructive" type="button">Delete my account</button>
+                <a class="btn secondary" href="/account/settings">Cancel</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The delete request is a plain consequences <code>&lt;ul&gt;</code> — no red, no shame, no "are you sure you want to lose everything?". The load-bearing line is stated exactly per the registry note: <strong>completed bookings are retained in anonymized form as the law requires</strong>, and NADRA documents stay redacted. "Continue" is a quiet <strong>secondary</strong> button; "Keep my account" is the confident default. Only the final cooling-off confirm's <strong>Delete my account</strong> uses the destructive token — once, at the point of action (§10.8, Button §1). The <span class="num">14-day</span> window is framed as reversible reassurance, not a threat.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU — EXPORT REQUEST ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the export request">
+      <div class="panel-tag">RTL · اردو — "اپنا ڈیٹا ایکسپورٹ کریں", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Export request — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings/privacy" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">اپنا ڈیٹا ایکسپورٹ کریں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="h-title">اپنے ڈیٹا کی نقل حاصل کریں</h2>
+              <p class="lead">ہم آپ کی بکنگز، پیغامات، جائزے اور پروفائل کو ایک فائل میں جمع کر دیں گے جسے آپ ڈاؤن لوڈ کر سکتے ہیں۔</p>
+
+              <div class="field">
+                <span class="flabel">فارمیٹ</span>
+                <a class="seltrig" href="/account/settings/privacy/export/format" aria-label="فائل فارمیٹ منتخب کریں، فی الحال JSON">
+                  <span class="sel-b"><span class="sel-v">JSON</span><span class="sel-x">مکمل ساخت برقرار رکھتا ہے</span></span>
+                  <span class="selchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+                </a>
+                <p class="fhelp">اگر آپ اسپریڈ شیٹ میں کھولنا چاہیں تو <strong>CSV</strong> منتخب کریں۔</p>
+              </div>
+
+              <div class="infobox">
+                <span class="ib-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="ib-b">
+                  <span class="ib-h">آپ کے NADRA دستاویزات شامل نہیں</span>
+                  <span class="ib-d">آپ کا شناختی کارڈ اور خاندانی تصدیقی دستاویزات محفوظ (redacted) رہتے ہیں — یہ ایکسپورٹ کا حصہ نہیں، آپ کے لیے بھی نہیں۔</span>
+                </span>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/account/settings/privacy/export/request">میرا ڈیٹا طلب کریں</a>
+              <p class="fhelp" style="text-align:center; margin-top:10px;">تیاری میں کچھ وقت لگتا ہے۔ تیار ہونے پر ہم آپ کو پیغام دیں گے۔</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the back chevron and Select chevron flip to the reading-start edge; Nastaliq gets its line-height room. Latin format names (JSON, CSV, NADRA) stay LTR in-line; copy reads identically calm in Urdu. The RTL panel shows the <strong>non-destructive</strong> export request deliberately — the destructive token appears exactly once on the whole card, on the dark delete confirm, so it is never duplicated across a translation panel.</p>
+    </section>
+
+  </main>
+</body>
+</html>

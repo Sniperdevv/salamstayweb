@@ -1,0 +1,397 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Wizard: Published success (HA-034)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-032 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-primary-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-primary-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  dl,dt,dd { margin:0; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { max-width:1000px; font-size:14px; color:#5F676D; margin-top:8px; line-height:1.6; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:322px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — post-flow (§7.6a): no wizard stepper, calm success (ga-064 lineage, no confetti) */
+  .phone { width:322px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:1000px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.sp,.paid,.trip-title,.trip-loc,.tdt,.tdd,.nsec-h,.nrow-t,.nrow-s,.wa-t,.wa-s,.fsec-h,.frow-t,.frow-s,.gate-h,.gate-t,.gate-d,.banner-t,.banner-d,.btn,.reassure,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; overflow-y:auto; }
+
+  /* success block — calm, no confetti (GA-064 lineage) */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:16px; }
+  .success .tick { width:58px; height:58px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .success .tick svg { width:30px; height:30px; stroke-width:2.2; }
+  .success h2 { font-size:20px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:12px; }
+  .success .sp { font-size:13px; color:var(--text-secondary); margin-top:6px; max-width:270px; }
+  .success .sp b { color:var(--text-primary); font-weight:600; }
+
+  /* listing card — the hero, condensed GA-025 grammar */
+  .lcard { border:1px solid var(--border-hairline); border-radius:var(--radius-xl); overflow:hidden; background:var(--bg-raised); margin-bottom:16px; box-shadow:var(--el-hairline); }
+  .lcard-media { height:120px; position:relative; background:linear-gradient(150deg,var(--int-subtle),var(--bg-sunken)); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); border-bottom:1px solid var(--border-hairline); }
+  .lcard-media svg { width:36px; height:36px; stroke-width:1.4; opacity:.7; }
+  .lcard-media .livetag { position:absolute; inset-block-start:9px; inset-inline-start:9px; display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; color:var(--success-fg); background:var(--bg-canvas); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:3px 10px; }
+  .lcard-media .livetag i { width:6px; height:6px; border-radius:50%; background:var(--success-fg); display:block; }
+  .lcard-body { padding:13px 14px 15px; }
+  .lcard-title { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .lcard-loc { font-size:12px; color:var(--text-secondary); margin-top:2px; margin-bottom:9px; display:flex; align-items:center; gap:6px; }
+  .lcard-loc svg { width:13px; height:13px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+  .lcard-price { font-size:14.5px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .lcard-price span { font-size:12px; font-weight:400; color:var(--text-secondary); }
+
+  /* honest-gating banner — reused verbatim from HA-014 / HA-033 */
+  .gate { margin-bottom:16px; }
+  .gate-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:9px; }
+  .avail { display:flex; flex-direction:column; gap:8px; }
+  .av-row { display:flex; align-items:flex-start; gap:10px; border-radius:var(--radius-lg); padding:11px 12px; border:1px solid var(--border-hairline); background:var(--bg-raised); }
+  .av-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .av-ic svg { width:14px; height:14px; stroke-width:2.2; }
+  .av-row.open .av-ic { background:var(--success-bg); color:var(--success-fg); }
+  .av-row.off .av-ic { background:var(--bg-sunken); color:var(--text-tertiary); }
+  .av-b { display:flex; flex-direction:column; gap:2px; }
+  .av-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .av-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .av-d a { color:var(--int-primary); font-weight:600; }
+  .av-d a:hover { text-decoration:underline; }
+
+  /* what-happens-next rows — plain facts, no invented projections */
+  .nsec-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin:2px 2px 10px; }
+  .nlist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .nrow { display:flex; gap:12px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 13px; }
+  .nrow-ic { width:36px; height:36px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .nrow-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .nrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .nrow-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .nrow-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* share row — WhatsApp-first, GA-110 grammar */
+  .sharebox { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:13px 14px 14px; margin-bottom:16px; }
+  .share-h { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:3px; }
+  .share-s { font-size:11.5px; color:var(--text-secondary); margin-bottom:12px; line-height:1.4; }
+  .wa-row { display:flex; align-items:center; gap:11px; background:var(--int-subtle); border:1px solid var(--border-brand); border-radius:var(--radius-md); padding:10px 12px; text-decoration:none; width:100%; font-family:inherit; cursor:pointer; text-align:start; }
+  .wa-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-brand); display:flex; align-items:center; justify-content:center; color:var(--int-primary); }
+  .wa-ic svg { width:19px; height:19px; stroke-width:1.8; }
+  .wa-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .wa-t { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .wa-s { display:block; font-size:11px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .otherchans { display:flex; gap:9px; margin-top:10px; }
+  .ochan { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; height:38px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:11.5px; font-weight:600; color:var(--text-secondary); }
+  .ochan svg { width:15px; height:15px; stroke-width:1.8; }
+
+  /* first-steps suggestions — encouragement, not metrics */
+  .fsec-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin:2px 2px 10px; }
+  .flist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .frow { display:flex; gap:12px; align-items:center; min-height:52px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 13px; text-decoration:none; }
+  .frow-ic { width:32px; height:32px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); }
+  .frow-ic svg { width:16px; height:16px; stroke-width:1.8; }
+  .frow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .frow-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .frow-s { font-size:11px; color:var(--text-secondary); }
+  .frow-chev { flex:none; color:var(--text-tertiary); }
+  .frow-chev svg { width:16px; height:16px; stroke-width:2; }
+  .phone.rtl .frow-chev svg { transform:scaleX(-1); }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; margin-top:6px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); margin-top:10px; }
+  .reassure { font-size:11px; color:var(--text-tertiary); text-align:center; margin-top:12px; line-height:1.4; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:360px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Wizard: Published success (HA-034)</h1>
+    <p>The calm payoff after <code>HA-033</code> — "your listing is live," no confetti, no counting spinner (<code>GA-064</code> lineage, §9-C/§6.4). <b>No wizard stepper</b> — this is fully post-flow (§7.6a). The <b>listing card is the hero</b>, followed by the same <b>honest-gating banner</b> from <code>HA-033</code>/<code>HA-014</code> (Pakistani guests bookable now, international bookings pending the cantonment NOC), three plain <b>what-happens-next</b> rows (no invented projections — no "expect N bookings," just what genuinely happens), a <b>WhatsApp-first share row</b> (<code>GA-110</code> grammar), and calm <b>first-steps suggestions</b> framed as encouragement, never metrics ("check your calendar," never a fabricated response-rate target). Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b>, "Quiet 3-bed portion in Rawalpindi Cantt," <span class="num">PKR 12,000</span>/night. Panels: live (light) · live with the NOC-pending banner emphasised (light) · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Live · light</span><span>Live · NOC-pending banner</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — A LIVE · B NOC-PENDING EMPHASIS ============================ -->
+    <section class="panel" aria-label="Light theme — the live listing success screen, twice, with the NOC-pending banner">
+      <div class="panel-tag">Light — A live, full screen · B live, NOC-pending banner + first steps</div>
+      <div class="rowflex">
+
+        <!-- A · LIVE -->
+        <div class="pcol">
+          <div class="pcap">A · Live — hero card, gating banner, next steps</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Listing published</div>
+              <a class="ib" href="/host/today" aria-label="Close, go to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="aH">Your listing is live</h2>
+                <span class="sp"><b>Cantt View Residence</b> is now visible to guests searching Rawalpindi.</span>
+              </div>
+
+              <div class="lcard" role="img" aria-label="Quiet 3-bed portion in Rawalpindi Cantt, Rawalpindi Cantonment, live, PKR 12,000 per night">
+                <div class="lcard-media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg><span class="livetag"><i aria-hidden="true"></i>Live</span></div>
+                <div class="lcard-body">
+                  <div class="lcard-title">Quiet 3-bed portion in Rawalpindi Cantt</div>
+                  <div class="lcard-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Rawalpindi Cantonment</div>
+                  <div class="lcard-price"><span class="num">PKR 12,000</span> <span>/ night</span></div>
+                </div>
+              </div>
+
+              <div class="gate">
+                <div class="gate-h">Who can book right now</div>
+                <div class="avail">
+                  <div class="av-row open"><span class="av-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><div class="av-b"><span class="av-t">Pakistani guests</span><span class="av-d">Can find and book you right away.</span></div></div>
+                  <div class="av-row off"><span class="av-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8"/></svg></span><div class="av-b"><span class="av-t">International guests</span><span class="av-d">Open once your cantonment NOC is verified. <a href="/host/listings/cantt-view-residence/compliance/noc/upload">Manage NOC</a></span></div></div>
+                </div>
+              </div>
+
+              <p class="nsec-h">What happens next</p>
+              <ul class="nlist">
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="nrow-b"><span class="nrow-t">Guests can find you in search</span><span class="nrow-s">Rawalpindi results, from today</span></span></li>
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span class="nrow-b"><span class="nrow-t">Requests arrive in your inbox</span><span class="nrow-s">You'll get a notification for each one</span></span></li>
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span><span class="nrow-b"><span class="nrow-t">Payouts after each stay</span><span class="nrow-s">Every rupee itemised — fees &amp; tax</span></span></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/stays/rwp-cantt-view">View live listing</a>
+              <a class="btn secondary" href="/host/listings">Go to my listings</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SHARE + FIRST STEPS (NOC-PENDING BANNER RESTATED) -->
+        <div class="pcol">
+          <div class="pcap">B · Share &amp; first steps — NOC-pending note carried through</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Listing published</div>
+              <a class="ib" href="/host/today" aria-label="Close, go to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="bH">Your listing is live</h2>
+                <span class="sp">Pakistani guests can book <b>Cantt View Residence</b> right away — international bookings open once your NOC verifies.</span>
+              </div>
+
+              <div class="sharebox">
+                <div class="share-h">Share your listing</div>
+                <div class="share-s">Send your friends and family a direct link.</div>
+                <button class="wa-row" type="button">
+                  <span class="wa-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span>
+                  <span class="wa-b"><span class="wa-t">Share on WhatsApp</span><span class="wa-s num">salamstay.pk/r/cantt-view-residence</span></span>
+                </button>
+                <div class="otherchans">
+                  <span class="ochan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy link</span>
+                  <span class="ochan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.5 10.5l7-4M8.5 13.5l7 4"/></svg>More</span>
+                </div>
+              </div>
+
+              <p class="fsec-h">Good first steps</p>
+              <ul class="flist">
+                <li><a class="frow" href="/host/calendar"><span class="frow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span class="frow-b"><span class="frow-t">Double-check your calendar</span><span class="frow-s">Make sure the dates you're open are right</span></span><span class="frow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="frow" href="/host/messages"><span class="frow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span class="frow-b"><span class="frow-t">Reply to requests promptly</span><span class="frow-s">Guests appreciate a quick, friendly reply</span></span><span class="frow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="frow" href="/host/listings/cantt-view-residence/compliance/noc/upload"><span class="frow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span><span class="frow-b"><span class="frow-t">Finish your cantonment NOC</span><span class="frow-s">Opens international bookings once verified</span></span><span class="frow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/stays/rwp-cantt-view">View live listing</a>
+              <a class="btn secondary" href="/host/listings">Go to my listings</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Deliberately calm (§9-C, §6.4): a quiet tick, no confetti, no counting animation. <b>A</b> and <b>B</b> are the same scrolling screen split across two panels for legibility — the listing card is the hero, the gating banner restates <code>HA-033</code>'s exact facts (never buried), next-step rows state only what genuinely happens (no invented booking-count or response-rate projections, per SEO §5/§6), and the share row (<b>B</b>) reuses <code>GA-110</code>'s WhatsApp-first grammar byte-for-byte. "Good first steps" frames the calendar check and reply habit as encouragement, never a metric or deadline.</p>
+    </section>
+
+    <!-- ============================ DARK — LIVE, FULL SCREEN ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the live listing success screen">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Dark — live, gating banner, next steps</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Listing published</div>
+              <a class="ib" href="/host/today" aria-label="Close, go to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="cH">Your listing is live</h2>
+                <span class="sp"><b>Cantt View Residence</b> is now visible to guests searching Rawalpindi.</span>
+              </div>
+
+              <div class="lcard" role="img" aria-label="Quiet 3-bed portion in Rawalpindi Cantt, Rawalpindi Cantonment, live, PKR 12,000 per night">
+                <div class="lcard-media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg><span class="livetag"><i aria-hidden="true"></i>Live</span></div>
+                <div class="lcard-body">
+                  <div class="lcard-title">Quiet 3-bed portion in Rawalpindi Cantt</div>
+                  <div class="lcard-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Rawalpindi Cantonment</div>
+                  <div class="lcard-price"><span class="num">PKR 12,000</span> <span>/ night</span></div>
+                </div>
+              </div>
+
+              <div class="gate">
+                <div class="gate-h">Who can book right now</div>
+                <div class="avail">
+                  <div class="av-row open"><span class="av-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><div class="av-b"><span class="av-t">Pakistani guests</span><span class="av-d">Can find and book you right away.</span></div></div>
+                  <div class="av-row off"><span class="av-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8"/></svg></span><div class="av-b"><span class="av-t">International guests</span><span class="av-d">Open once your cantonment NOC is verified. <a href="/host/listings/cantt-view-residence/compliance/noc/upload">Manage NOC</a></span></div></div>
+                </div>
+              </div>
+
+              <p class="nsec-h">What happens next</p>
+              <ul class="nlist">
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="nrow-b"><span class="nrow-t">Guests can find you in search</span><span class="nrow-s">Rawalpindi results, from today</span></span></li>
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span class="nrow-b"><span class="nrow-t">Requests arrive in your inbox</span><span class="nrow-s">You'll get a notification for each one</span></span></li>
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span><span class="nrow-b"><span class="nrow-t">Payouts after each stay</span><span class="nrow-s">Every rupee itemised — fees &amp; tax</span></span></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/stays/rwp-cantt-view">View live listing</a>
+              <a class="btn secondary" href="/host/listings">Go to my listings</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark tokens re-resolve every role (§1.5); the success tick, live-tag dot and gating-banner contrast stay AA on the dark canvas — no new colours for dark, same semantic roles on inverted surfaces.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the live listing success screen">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — لسٹنگ لائیو ہے</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">لسٹنگ شائع ہوگئی</div>
+              <a class="ib" href="/ur/host/today" aria-label="بند کریں، آج پر جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="dH">آپ کی لسٹنگ لائیو ہے</h2>
+                <span class="sp"><b>کینٹ ویو ریزیڈنس</b> اب راولپنڈی میں تلاش کرنے والے مہمانوں کو نظر آتی ہے۔</span>
+              </div>
+
+              <div class="lcard" role="img" aria-label="راولپنڈی کینٹ میں پرسکون 3 کمروں کا پورشن، راولپنڈی کینٹونمنٹ، لائیو، PKR 12,000 فی رات">
+                <div class="lcard-media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg><span class="livetag"><i aria-hidden="true"></i>لائیو</span></div>
+                <div class="lcard-body">
+                  <div class="lcard-title">راولپنڈی کینٹ میں پرسکون 3 کمروں کا پورشن</div>
+                  <div class="lcard-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>راولپنڈی کینٹونمنٹ</div>
+                  <div class="lcard-price"><span class="num">PKR 12,000</span> <span>/ رات</span></div>
+                </div>
+              </div>
+
+              <div class="gate">
+                <div class="gate-h">ابھی کون بک کر سکتا ہے</div>
+                <div class="avail">
+                  <div class="av-row open"><span class="av-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><div class="av-b"><span class="av-t">پاکستانی مہمان</span><span class="av-d">ابھی آپ کو تلاش کر کے بک کر سکتے ہیں۔</span></div></div>
+                  <div class="av-row off"><span class="av-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8"/></svg></span><div class="av-b"><span class="av-t">بین الاقوامی مہمان</span><span class="av-d">آپ کا کینٹونمنٹ NOC تصدیق ہوتے ہی کھلے گا۔ <a href="/ur/host/listings/cantt-view-residence/compliance/noc/upload">NOC کا انتظام کریں</a></span></div></div>
+                </div>
+              </div>
+
+              <p class="nsec-h">آگے کیا ہوگا</p>
+              <ul class="nlist">
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="nrow-b"><span class="nrow-t">مہمان آپ کو تلاش میں پائیں گے</span><span class="nrow-s">آج سے راولپنڈی کے نتائج میں</span></span></li>
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span><span class="nrow-b"><span class="nrow-t">درخواستیں آپ کے اِن باکس میں آئیں گی</span><span class="nrow-s">ہر ایک کے لیے اطلاع ملے گی</span></span></li>
+                <li class="nrow"><span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span><span class="nrow-b"><span class="nrow-t">ہر قیام کے بعد ادائیگی</span><span class="nrow-s">ہر روپیہ تفصیل سے — فیس اور ٹیکس</span></span></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/stays/rwp-cantt-view">لائیو لسٹنگ دیکھیں</a>
+              <a class="btn secondary" href="/ur/host/listings">میری لسٹنگز دیکھیں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the close button and every row's leading icon flip to their reading-order positions; the "what happens next" and gating rows keep icon+text pairing (never colour-only). <span class="num">PKR 12,000</span> and every count stay Latin, tabular and LTR-isolated (<code>.num</code>) inside the Urdu sentence, matching the checkout and wizard convention established since Pass #16.</p>
+    </section>
+
+  </main>
+</body>
+</html>

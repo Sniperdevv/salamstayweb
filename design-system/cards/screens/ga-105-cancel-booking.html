@@ -1,0 +1,375 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Cancel booking flow (GA-105)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage; NO journey stepper (post-book, §7.6a) */
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; overflow-y:auto; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 10px; }
+  .sec-label:first-child { margin-top:2px; }
+  .lede { font-size:12.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* non-judgmental reason select — radio list */
+  .reasons { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .rradio { display:flex; align-items:center; gap:12px; min-height:52px; padding:11px 13px; border:1.5px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); cursor:pointer; }
+  .rradio.sel { border-color:var(--border-brand); background:var(--int-subtle); }
+  .rradio .rdot { width:20px; height:20px; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); flex:none; display:flex; align-items:center; justify-content:center; }
+  .rradio.sel .rdot { border-color:var(--int-primary); }
+  .rradio.sel .rdot i { width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); }
+  .rradio .rlab { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+
+  .taf { margin-top:12px; width:100%; min-height:64px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:10px 12px; font-family:inherit; font-size:12.5px; color:var(--text-primary); resize:none; }
+  .taf::placeholder { color:var(--text-secondary); }
+
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:14.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; margin-top:16px; }
+  .btn.ghost { background:var(--bg-canvas); color:var(--text-secondary); border:1px solid var(--border-default); margin-top:10px; }
+  .grow { flex:1; }
+
+  /* booking-being-cancelled summary */
+  .bksum { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:12px 13px; }
+  .bk { display:flex; flex-direction:column; gap:9px; }
+  .brow { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .bk-dt { font-size:12px; color:var(--text-secondary); flex:none; padding-top:1px; }
+  .bk-dd { display:flex; flex-direction:column; gap:2px; text-align:end; align-items:flex-end; }
+  .bk-v { font-size:12.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+
+  /* refund calculation — literal line items, quiet-grey never red (ga-034 lineage) */
+  .policy { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-top:12px; }
+  .policy svg { width:17px; height:17px; stroke-width:1.9; color:var(--info-fg); flex:none; margin-top:1px; }
+  .policy-tx { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .policy-tx b { color:var(--text-primary); font-weight:600; }
+
+  .refcalc { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:13px 14px; margin-top:12px; }
+  .rline { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .rline + .rline { margin-top:10px; padding-top:10px; border-top:1px solid var(--border-hairline); }
+  .rline-b { display:flex; flex-direction:column; gap:1px; }
+  .rline-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .rline-s { font-size:11px; color:var(--text-secondary); }
+  .rline.none .rline-t, .rline.none .rline-s { color:var(--text-tertiary); }
+  .rline-v { font-size:13px; font-weight:600; color:var(--success-fg); font-variant-numeric:tabular-nums; flex:none; }
+  .rline.none .rline-v { color:var(--text-tertiary); }
+  .rtotal { display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border-default); }
+  .rtotal .tl { font-size:13.5px; font-weight:700; color:var(--text-primary); }
+  .rtotal .tv { font-size:19px; font-weight:700; color:var(--success-fg); font-variant-numeric:tabular-nums; }
+
+  .destrow { display:flex; align-items:center; gap:11px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); margin-top:10px; }
+  .destrow .dic { width:34px; height:30px; border-radius:var(--radius-sm); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .destrow .dic svg { width:18px; height:18px; stroke-width:1.7; }
+  .destrow-b { display:flex; flex-direction:column; gap:1px; }
+  .destrow-t { font-size:12px; color:var(--text-secondary); }
+  .destrow-v { font-size:13px; font-weight:600; color:var(--text-primary); }
+
+  /* confirm step — Keep my booking is the prominent default */
+  .keepbtn { width:100%; min-height:50px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:700; border:none; cursor:pointer; font-family:inherit; margin-top:18px; }
+  .cancellink { display:block; width:100%; text-align:center; min-height:44px; line-height:44px; margin-top:10px; background:transparent; border:none; font-family:inherit; font-size:13px; font-weight:600; color:var(--error-fg); cursor:pointer; }
+
+  /* cancelled confirmation state */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin:10px 0 18px; }
+  .success .tick { width:60px; height:60px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .success .tick svg { width:30px; height:30px; stroke-width:2.1; }
+  .success h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:13px; }
+  .success .sp { font-size:13px; color:var(--text-secondary); margin-top:6px; max-width:260px; }
+
+  .trackrow { display:flex; align-items:center; gap:12px; min-height:60px; margin-top:16px; padding:12px 13px; border:1px solid var(--border-brand); border-radius:var(--radius-lg); background:var(--int-subtle); text-decoration:none; }
+  .trackrow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-canvas); color:var(--int-primary); }
+  .trackrow-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .trackrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .trackrow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .trackrow-s { font-size:11.5px; color:var(--text-secondary); }
+  .trackrow-chev { flex:none; color:var(--int-primary); }
+  .trackrow-chev svg { width:18px; height:18px; stroke-width:2; }
+
+  a { color:var(--int-primary); text-decoration:none; }
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Cancel booking flow (GA-105)</h1>
+    <p>Cancelling <strong>Margalla View Apartment · F-7, Islamabad</strong> — a non-judgmental reason picker, then the <strong>refund calculation shown literally before any confirmation</strong>: what's refunded, what isn't (quiet-grey, matching <code>GA-034</code>'s no-refund treatment — never red), the computed total, and the exact destination card. The confirm step keeps <strong>"Keep my booking" as the prominent default</strong> — cancelling is still one tap away, just never the visually loudest one. No journey stepper (§7.6a — this is a post-book management flow). Panels: reason select + refund review (light) · cancelled state (dark) · اردو / RTL refund review.</p>
+    <div class="toggle" role="presentation"><span class="on">Reason select · light</span><span>Refund review · confirm · light</span><span>Cancelled state · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — reason select and the refund review with confirm step">
+      <div class="panel-tag">Light — reason (non-judgmental) → refund calculation → confirm</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Step 1 — Why are you cancelling?</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+              <div class="tbar-title" id="aH">Cancel booking</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lede">We're sorry it's not working out. Tell us why so we can help — there's no wrong answer.</p>
+
+              <div class="reasons" role="radiogroup" aria-label="Reason for cancelling">
+                <label class="rradio"><span class="rdot" aria-hidden="true"></span><span class="rlab">My plans changed</span></label>
+                <label class="rradio sel"><span class="rdot" aria-hidden="true"><i></i></span><span class="rlab">The dates are wrong</span></label>
+                <label class="rradio"><span class="rdot" aria-hidden="true"></span><span class="rlab">I found another stay</span></label>
+                <label class="rradio"><span class="rdot" aria-hidden="true"></span><span class="rlab">A family emergency</span></label>
+                <label class="rradio"><span class="rdot" aria-hidden="true"></span><span class="rlab">Something else</span></label>
+              </div>
+
+              <textarea class="taf" placeholder="Anything else you'd like Ayesha or SalamStay to know? (optional)" aria-label="Additional details, optional"></textarea>
+
+              <div class="grow"></div>
+              <button class="btn" type="button">Continue</button>
+              <button class="btn ghost" type="button">Never mind, keep my booking</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Step 2 — Refund review &amp; confirm</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to reason"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Review &amp; confirm</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec-label">You're cancelling</div>
+              <div class="bksum">
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">Stay</dt><dd class="bk-dd"><span class="bk-v">Margalla View Apartment</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Dates</dt><dd class="bk-dd"><span class="bk-v">Fri 14 – Mon 17 Aug 2026</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Paid</dt><dd class="bk-dd"><span class="bk-v num">PKR 42,350</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="policy">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+                <span class="policy-tx">This policy's free-cancellation window closed <b>7 Aug</b>. Cancelling today, <b>10 Aug</b>, the first night is non-refundable — everything else comes back, exactly as below.</span>
+              </div>
+
+              <div class="sec-label">What comes back</div>
+              <div class="refcalc">
+                <div class="rline">
+                  <div class="rline-b"><span class="rline-t">Nights 2 &amp; 3</span><span class="rline-s">2 nights × PKR 12,500 · refunded</span></div>
+                  <span class="rline-v num">PKR 25,000</span>
+                </div>
+                <div class="rline none">
+                  <div class="rline-b"><span class="rline-t">First night</span><span class="rline-s">Held per policy · non-refundable</span></div>
+                  <span class="rline-v num">PKR 12,500</span>
+                </div>
+                <div class="rline none">
+                  <div class="rline-b"><span class="rline-t">Service fee (wakala) &amp; taxes</span><span class="rline-s">Already earned · non-refundable</span></div>
+                  <span class="rline-v num">PKR 4,850</span>
+                </div>
+                <div class="rtotal"><span class="tl">Total refund</span><span class="tv num">PKR 25,000</span></div>
+              </div>
+
+              <div class="destrow">
+                <span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="destrow-b"><span class="destrow-t">Refund goes back to</span><span class="destrow-v num">HBL •••• 8842</span></span>
+              </div>
+
+              <button class="keepbtn" type="button">Keep my booking</button>
+              <button class="cancellink" type="button">Cancel this booking — refund PKR 25,000</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The reason list is <code>role="radiogroup"</code> with plain, non-judgmental options — no wording implies fault. The refund calculation is a real three-line ledger: refunded nights carry the muted <code>success.fg</code> figure, the two non-refundable lines (first night, fees) sit in <b>quiet grey <code>text-tertiary</code></b> — matching <code>GA-034</code>'s no-refund treatment exactly, never red. The computed total and the destination card are both stated before any confirm action exists. <strong>"Keep my booking" is the visually prominent, filled default</strong>; "Cancel this booking" is a plain-text link in the muted error register, naming the exact refund amount so the tap is never a surprise.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — cancelled confirmation state">
+      <div class="panel-tag">Dark — cancelled · hands off to the refund tracker (GA-106)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Cancelled — confirmation state</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Booking cancelled</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2>Booking cancelled</h2>
+                <p class="sp">Margalla View Apartment, 14–17 Aug 2026, is cancelled. Ayesha has been notified.</p>
+              </div>
+
+              <div class="sec-label">Your refund</div>
+              <div class="refcalc">
+                <div class="rtotal" style="margin-top:0;padding-top:0;border-top:none"><span class="tl">Total refund</span><span class="tv num">PKR 25,000</span></div>
+              </div>
+              <div class="destrow">
+                <span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="destrow-b"><span class="destrow-t">Refunding to</span><span class="destrow-v num">HBL •••• 8842</span></span>
+              </div>
+
+              <a class="trackrow" href="/trips/is-f7-2bed-aug2026/refund">
+                <span class="trackrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6l4 2"/><circle cx="12" cy="12" r="9"/></svg></span>
+                <span class="trackrow-b"><span class="trackrow-t">Track your refund</span><span class="trackrow-s">See status, timing, and destination</span></span>
+                <span class="trackrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+              <a class="btn ghost" href="/search" role="button">Find another stay</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The cancelled state repeats the same literal total and destination one last time, calmly — a quiet outline tick, not a celebration (this is a cancellation, not a win). <strong>"Track your refund" hands off directly to <code>GA-106</code></strong>, the only next step named, keeping the no-dead-ends rule intact.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the refund review and confirm step">
+      <div class="panel-tag">RTL · اردو — "جائزہ اور تصدیق", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">جائزہ اور تصدیق — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="وجہ کی طرف واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title ur" id="uH">جائزہ اور تصدیق</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec-label ur">آپ منسوخ کر رہے ہیں</div>
+              <div class="bksum">
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt ur">قیام</dt><dd class="bk-dd"><span class="bk-v ur">مارگلہ ویو اپارٹمنٹ</span></dd></div>
+                  <div class="brow"><dt class="bk-dt ur">تاریخیں</dt><dd class="bk-dd"><span class="bk-v ur">14 – 17 اگست 2026</span></dd></div>
+                  <div class="brow"><dt class="bk-dt ur">ادا شدہ</dt><dd class="bk-dd"><span class="bk-v num">PKR 42,350</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="policy">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+                <span class="policy-tx ur">اس پالیسی کی مفت منسوخی کی مدت <b class="num">7</b> اگست کو ختم ہوئی۔ آج، <b class="num">10</b> اگست کو منسوخ کرنے پر پہلی رات ناقابلِ واپسی ہے — باقی سب نیچے کے مطابق واپس آتا ہے۔</span>
+              </div>
+
+              <div class="sec-label ur">کیا واپس آتا ہے</div>
+              <div class="refcalc">
+                <div class="rline">
+                  <div class="rline-b"><span class="rline-t ur">دوسری اور تیسری رات</span><span class="rline-s ur">2 راتیں × PKR 12,500 · واپس</span></div>
+                  <span class="rline-v num">PKR 25,000</span>
+                </div>
+                <div class="rline none">
+                  <div class="rline-b"><span class="rline-t ur">پہلی رات</span><span class="rline-s ur">پالیسی کے مطابق محفوظ · ناقابلِ واپسی</span></div>
+                  <span class="rline-v num">PKR 12,500</span>
+                </div>
+                <div class="rline none">
+                  <div class="rline-b"><span class="rline-t ur">سروس فیس (وکالہ) اور ٹیکس</span><span class="rline-s ur">پہلے ہی خرچ ہوئی · ناقابلِ واپسی</span></div>
+                  <span class="rline-v num">PKR 4,850</span>
+                </div>
+                <div class="rtotal"><span class="tl ur">کل واپسی</span><span class="tv num">PKR 25,000</span></div>
+              </div>
+
+              <div class="destrow">
+                <span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="destrow-b"><span class="destrow-t ur">رقم واپس جائے گی</span><span class="destrow-v num">HBL •••• 8842</span></span>
+              </div>
+
+              <button class="keepbtn ur" type="button">میری بکنگ برقرار رکھیں</button>
+              <button class="cancellink ur" type="button">یہ بکنگ منسوخ کریں — PKR 25,000 واپسی</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: ledger rows, the destination row and the two action buttons flip to the reading direction; every rupee figure keeps <code>.num</code> LTR isolation (§11). "HBL" stays Latin as a proper noun. "میری بکنگ برقرار رکھیں" (Keep my booking) remains the filled, prominent default exactly as in the English panel — emphasis never shifts between locales.</p>
+    </section>
+
+  </main>
+</body>
+</html>

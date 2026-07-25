@@ -1,0 +1,515 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Emergency (GA-092)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b, .note strong { color:var(--text-secondary); font-weight:600; }
+
+  /* guest phone frame — a sheet over the safety hub; no tab bar, no checkout stepper (§7.6a) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lead,.scap,.st,.shint,.em-t,.em-s,.sh-h,.sh-d,.crow-t,.crow-s,.orow-t,.orow-s,.btn,.foot,.wl,.bnr-h,.bnr-d,.th,.undo,.sub) { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl :is(.lead,.shint,.em-s,.sh-d,.crow-s,.orow-s,.foot,.wl,.bnr-d,.sub) { line-height:1.95; }
+  .phone.rtl :is(.st,.em-t,.sh-h,.crow-t,.orow-t,.tbar-title,.th) { line-height:1.85; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .phone.rtl .schev svg { transform:scaleX(-1); }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .phone.rtl .ib.mirror svg { transform:scaleX(-1); }
+  .tbar-title { flex:1; font-size:16px; font-weight:600; color:var(--text-primary); text-align:center; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 14px 16px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .grow { flex:1; }
+  .lead { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-bottom:14px; }
+
+  /* the hub behind the sheet (GA-087 chrome, at rest) */
+  .em { display:flex; align-items:center; gap:11px; min-height:64px; padding:12px 13px; border:1px solid var(--border-brand); background:var(--int-subtle); border-radius:var(--radius-lg); }
+  .em-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-canvas); color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .em-ic svg { width:20px; height:20px; stroke-width:1.85; }
+  .em-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .em-t { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .em-s { font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .scap { font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 8px; }
+  .grp { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .srow { display:flex; align-items:center; gap:11px; min-height:56px; padding:10px 12px; border-bottom:1px solid var(--border-hairline); }
+  .grp > .srow:last-child { border-bottom:none; }
+  .sic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sic svg { width:17px; height:17px; stroke-width:1.85; }
+  .sbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .st { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .shint { font-size:11px; color:var(--text-secondary); }
+  .schev { flex:none; color:var(--text-tertiary); display:flex; }
+  .schev svg { width:17px; height:17px; stroke-width:2; }
+
+  /* the calm confirm sheet */
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); padding:8px 16px calc(14px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:6px 0 6px; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sh-h { font-size:17px; font-weight:600; color:var(--text-primary); padding:2px 2px 4px; }
+  .sh-d { font-size:12px; color:var(--text-secondary); line-height:1.5; padding:0 2px 12px; border-bottom:1px solid var(--border-hairline); }
+
+  /* the two national lines — muted error tone ONLY here, at the moment of use (§9-G) */
+  .clist { list-style:none; display:flex; flex-direction:column; gap:8px; padding:12px 0 4px; }
+  .crow { display:flex; align-items:center; gap:11px; min-height:60px; padding:10px 12px; border:1px solid var(--error-border); background:var(--error-bg); border-radius:var(--radius-lg); text-decoration:none; }
+  .crow-ic { flex:none; width:32px; height:32px; border-radius:var(--radius-full); background:var(--bg-canvas); color:var(--error-fg); display:flex; align-items:center; justify-content:center; }
+  .crow-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .crow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .crow-t { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .crow-s { font-size:11px; color:var(--text-secondary); }
+  .crow-n { flex:none; display:inline-flex; align-items:center; font-size:13px; font-weight:700; color:var(--error-fg); }
+  .crow-n svg { width:14px; height:14px; stroke-width:2.1; margin-inline-end:5px; }
+
+  /* the two non-call actions — plain rows, brand accents */
+  .olist { list-style:none; display:flex; flex-direction:column; gap:8px; padding:4px 0 2px; }
+  .orow { display:flex; align-items:center; gap:11px; width:100%; min-height:60px; padding:10px 12px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); text-decoration:none; font-family:inherit; cursor:pointer; text-align:start; }
+  .orow-ic { flex:none; width:32px; height:32px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .orow-ic svg { width:17px; height:17px; stroke-width:1.9; }
+  .orow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .orow-t { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .orow-s { font-size:11px; color:var(--text-secondary); line-height:1.45; }
+  .orow-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .orow-chev svg { width:17px; height:17px; stroke-width:2; }
+
+  .foot { font-size:11px; color:var(--text-tertiary); line-height:1.55; padding:10px 2px 4px; }
+  .foot b { color:var(--text-secondary); font-weight:600; }
+
+  .btn { display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.ghost { background:transparent; color:var(--text-secondary); }
+  .btnstack { display:flex; flex-direction:column; gap:6px; padding-top:8px; }
+
+  /* second step — what exactly gets shared */
+  .wlist { list-style:none; display:flex; flex-direction:column; gap:9px; padding:12px 2px 4px; }
+  .wrow { display:flex; align-items:flex-start; gap:9px; }
+  .wrow svg { flex:none; width:15px; height:15px; stroke-width:2.1; color:var(--int-primary); margin-top:2px; }
+  .wrow.no svg { color:var(--text-tertiary); }
+  .wl { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .wl b { color:var(--text-primary); font-weight:600; }
+  .sub { font-size:11.5px; color:var(--text-secondary); line-height:1.55; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:9px 11px; margin-top:10px; }
+  .sub b { color:var(--text-primary); font-weight:600; }
+
+  /* banner + toast */
+  .bnr { display:flex; align-items:flex-start; gap:9px; padding:10px 11px; border-radius:var(--radius-lg); margin-bottom:12px; background:var(--bg-raised); border:1px solid var(--border-default); }
+  .bnr.good { background:var(--success-bg); border-color:var(--success-border); }
+  .bnr-ic { flex:none; display:flex; color:var(--text-secondary); margin-top:1px; }
+  .bnr.good .bnr-ic { color:var(--success-fg); }
+  .bnr-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .bnr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .bnr-h { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .bnr-d { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+  .toast { position:absolute; left:12px; right:12px; bottom:34px; z-index:7; display:flex; align-items:center; gap:10px; background:var(--bg-raised); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:11px 12px; }
+  .ti { flex:none; color:var(--success-fg); display:flex; }
+  .ti svg { width:17px; height:17px; stroke-width:2.1; }
+  .tbd { flex:1; min-width:0; }
+  .th { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .undo { flex:none; background:transparent; border:none; font-family:inherit; font-size:12.5px; font-weight:700; color:var(--int-primary); cursor:pointer; min-height:32px; padding:0 4px; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Emergency (GA-092)</h1>
+    <p>The calm confirm sheet at <strong>/safety/emergency</strong>, opened from the <code>GA-087</code> hub. Four choices, each needing its own explicit tap: <strong>call the police</strong> (<span class="num">15</span>), <strong>call rescue &amp; ambulance</strong> (<span class="num">1122</span>) — the only two lines the corpus ships, lifted from <code>GA-071</code>'s local-help block with its exact labels — <strong>share your trip with your trusted contacts</strong>, and <strong>contact the SalamStay safety team</strong>. <strong>Nothing auto-dials.</strong> The two national lines are the one place the <em>muted</em> <code>semantic.error</code> tone is used — at the moment of use, on the row and its number, never as a giant red panic button (§9-G, §10.8) — while every confirm button stays the calm brand primary, the <code>GA-133</code> precedent. The share step is a second, explicit confirm that states exactly what is sent and — honestly — what it is not: a <strong>one-time</strong> share, not live tracking, and separate from <code>GA-090</code>/<code>GA-091</code> arrival sharing, which only ever says you arrived. The safety-team row carries <code>GA-109</code>'s honesty with <strong>no response-time promise</strong>. Panels: sheet over the hub (light) · share confirm (light) · shared + toast, and no-signal (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Confirm sheet · light</span><span>Share step</span><span>Shared · toast</span><span>No signal</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the emergency sheet and the share confirmation step">
+      <div class="panel-tag">Light — the confirm sheet over the hub · the share step</div>
+      <div class="rowflex">
+
+        <!-- A · THE SHEET -->
+        <div class="pcol">
+          <div class="pcap">A · Four choices, each its own tap</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <p class="lead">Everything here works on any trip — solo, as a couple, or with family.</p>
+              <div class="em">
+                <span class="em-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M12 8v4M12 15h.01"/></svg></span>
+                <span class="em-b"><span class="em-t">Emergency</span><span class="em-s">Call for help, or tell someone where you are</span></span>
+              </div>
+              <div class="scap">Your trip privacy</div>
+              <div class="grp">
+                <div class="srow">
+                  <span class="sic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                  <span class="sbd"><span class="st">Trip safety</span><span class="shint">Privacy defaults that help on any trip</span></span>
+                  <span class="schev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </div>
+              </div>
+              <div class="grow"></div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shH" aria-describedby="shD">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <h2 class="sh-h" id="shH">Get help now</h2>
+              <p class="sh-d" id="shD">Choose what you need. <b>Nothing calls or sends until you tap it.</b></p>
+
+              <ul class="clist">
+                <li>
+                  <a class="crow" href="tel:15">
+                    <span class="crow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                    <span class="crow-b"><span class="crow-t">Police</span><span class="crow-s">Nationwide · dial <span class="num">15</span></span></span>
+                    <span class="crow-n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><span class="num">15</span></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="crow" href="tel:1122">
+                    <span class="crow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    <span class="crow-b"><span class="crow-t">Rescue &amp; ambulance</span><span class="crow-s">Rescue <span class="num">1122</span> · dial <span class="num">1122</span></span></span>
+                    <span class="crow-n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><span class="num">1122</span></span>
+                  </a>
+                </li>
+              </ul>
+
+              <ul class="olist">
+                <li>
+                  <button class="orow" type="button">
+                    <span class="orow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>
+                    <span class="orow-b"><span class="orow-t">Share your trip</span><span class="orow-s">Tell Ali Raza and Sana Malik where you are — one message, not tracking</span></span>
+                    <span class="orow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </button>
+                </li>
+                <li>
+                  <a class="orow" href="/help/contact">
+                    <span class="orow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.5A8 8 0 1 1 20 12z"/></svg></span>
+                    <span class="orow-b"><span class="orow-t">Contact the safety team</span><span class="orow-s">A person reads every ticket — we don't state a reply time we can't keep</span></span>
+                    <span class="orow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <p class="foot">If this is urgent, <b>the two lines above reach help fastest</b> — they dial through your phone and need no internet.</p>
+              <div class="btnstack"><button class="btn ghost" type="button">Close</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SHARE CONFIRM -->
+        <div class="pcol">
+          <div class="pcap">B · Share step — what is sent, and what isn't</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <p class="lead">Everything here works on any trip — solo, as a couple, or with family.</p>
+              <div class="em">
+                <span class="em-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M12 8v4M12 15h.01"/></svg></span>
+                <span class="em-b"><span class="em-t">Emergency</span><span class="em-s">Call for help, or tell someone where you are</span></span>
+              </div>
+              <div class="grow"></div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh2H" aria-describedby="sh2D">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <h2 class="sh-h" id="sh2H">Share your trip with <span class="num">2</span> contacts?</h2>
+              <p class="sh-d" id="sh2D">Ali Raza and Sana Malik will get one message with the details below.</p>
+
+              <ul class="wlist">
+                <li class="wrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="wl">Where you're staying — <b>Margalla View Apartment</b>, F-<span class="num">7</span>, Islamabad, with the full address.</span></li>
+                <li class="wrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="wl">Your dates and your host's first name — <b><span class="num">14 – 17 Aug 2026</span>, Ayesha</b>.</span></li>
+                <li class="wrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="wl"><b>Where you are right now</b>, as one map pin, taken the moment you tap Share.</span></li>
+                <li class="wrow no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="wl">Nothing keeps updating afterwards — <b>no live tracking</b>, and no second pin unless you share again.</span></li>
+              </ul>
+
+              <p class="sub">This is different from <b>arrival sharing</b>, which only ever tells a trusted contact that you arrived. This one carries the address and a single pin, because you chose to send it.</p>
+
+              <div class="btnstack">
+                <button class="btn primary" type="button">Share now</button>
+                <button class="btn ghost" type="button">Not now</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The sheet <em>is</em> the confirm step, and every action inside it needs its own explicit tap — <strong>nothing auto-dials, nothing auto-sends</strong>, and the sheet says so in its own subhead. The two call rows are real <code>tel:</code> anchors on the only lines the corpus ships, with <code>GA-071</code>'s exact labels ("Police · Nationwide · dial <span class="num">15</span>", "Rescue &amp; ambulance · Rescue <span class="num">1122</span>") — no invented hotline, no per-city number, no SalamStay emergency number that does not exist. They carry the <strong>muted <code>semantic.error</code> tint at the moment of use</strong> and nowhere else: the resting hub behind them (<code>GA-087</code>) has no red at all, and the two confirm buttons in <strong>B</strong> are the calm brand primary, never a destructive red — the <code>GA-133</code> precedent that a serious action can be decisive without being frightening. The share step is the honest one: three plain "this is sent" lines, one crossed "this is not" line, and a subpanel that names the difference from <code>GA-090</code>/<code>GA-091</code> arrival sharing rather than blurring the two. <strong>Not now</strong> is a full-width equal-weight escape, so backing out costs nothing.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the shared confirmation and the no-signal state">
+      <div class="panel-tag">Dark — shared (toast) · no signal (calling still works)</div>
+      <div class="rowflex">
+
+        <!-- C · SHARED -->
+        <div class="pcol">
+          <div class="pcap">C · Shared — one message, sent</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="bnr good" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="bnr-b"><span class="bnr-h">Trip shared at <span class="num">3:12 PM</span></span><span class="bnr-d">Ali Raza and Sana Malik have your address and one map pin. Nothing further is being sent.</span></span>
+              </div>
+
+              <div class="em">
+                <span class="em-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M12 8v4M12 15h.01"/></svg></span>
+                <span class="em-b"><span class="em-t">Emergency</span><span class="em-s">Call for help, or share again</span></span>
+              </div>
+
+              <div class="scap">What happens next</div>
+              <div class="grp">
+                <div class="srow">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                  <span class="sbd"><span class="st">They can call you</span><span class="shint">Your number is in the message you just sent</span></span>
+                </div>
+                <div class="srow">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+                  <span class="sbd"><span class="st">Nothing updates on its own</span><span class="shint">Share again if you move — there is no live tracking</span></span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <p class="foot">If you still need help, <b>the national lines are one tap away</b> from the Emergency row above.</p>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <div class="tbd"><span class="th">Shared with <span class="num">2</span> contacts</span></div>
+              <button class="undo" type="button">View</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · NO SIGNAL -->
+        <div class="pcol">
+          <div class="pcap">D · No signal — calling still works</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Safety</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <p class="lead">Everything here works on any trip — solo, as a couple, or with family.</p>
+              <div class="em">
+                <span class="em-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M12 8v4M12 15h.01"/></svg></span>
+                <span class="em-b"><span class="em-t">Emergency</span><span class="em-s">Call for help, or tell someone where you are</span></span>
+              </div>
+              <div class="grow"></div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh3H" aria-describedby="sh3D">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <h2 class="sh-h" id="sh3H">Get help now</h2>
+              <p class="sh-d" id="sh3D">Choose what you need. <b>Nothing calls or sends until you tap it.</b></p>
+
+              <div class="bnr" role="status" style="margin-top:12px">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M5 12.5a11 11 0 0 1 4-2.6M2 8.8a16 16 0 0 1 5-3M9.5 16a5 5 0 0 1 5-.6M12 20h.01M15.5 10.2A11 11 0 0 1 19 12.5M13 5.2a16 16 0 0 1 9 3.6"/></svg></span>
+                <span class="bnr-b"><span class="bnr-h">No signal</span><span class="bnr-d">Calls go through your phone's dialler and still work. A trip share will send itself as soon as you're back online.</span></span>
+              </div>
+
+              <ul class="clist">
+                <li>
+                  <a class="crow" href="tel:15">
+                    <span class="crow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                    <span class="crow-b"><span class="crow-t">Police</span><span class="crow-s">Nationwide · dial <span class="num">15</span></span></span>
+                    <span class="crow-n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><span class="num">15</span></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="crow" href="tel:1122">
+                    <span class="crow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    <span class="crow-b"><span class="crow-t">Rescue &amp; ambulance</span><span class="crow-s">Rescue <span class="num">1122</span> · dial <span class="num">1122</span></span></span>
+                    <span class="crow-n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><span class="num">1122</span></span>
+                  </a>
+                </li>
+              </ul>
+
+              <ul class="olist">
+                <li>
+                  <button class="orow" type="button">
+                    <span class="orow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>
+                    <span class="orow-b"><span class="orow-t">Share your trip</span><span class="orow-s">Queues now, sends the moment there's signal — nothing is lost</span></span>
+                    <span class="orow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </button>
+                </li>
+                <li>
+                  <a class="orow" href="/safety/contacts">
+                    <span class="orow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c1.4-4 5-6 8-6s6.6 2 8 6"/></svg></span>
+                    <span class="orow-b"><span class="orow-t">Call a trusted contact yourself</span><span class="orow-s">Ali Raza · <span class="num">0301 234 5678</span> — saved on this phone</span></span>
+                    <span class="orow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <p class="foot">If this is urgent, <b>the two lines above reach help fastest</b> — they dial through your phone and need no internet.</p>
+              <div class="btnstack"><button class="btn ghost" type="button">Close</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (DESIGN §1.6); the error tint on the two call rows stays <em>muted</em> in both themes — legible, never neon. The shared state (<strong>C</strong>) is factual rather than congratulatory: a <code>semantic.success</code> banner with the exact time, then two plain rows saying what the contacts can do and — the load-bearing one — that <strong>nothing updates on its own</strong>. The toast is <code>role="status"</code>, non-blocking, and offers <em>View</em> rather than <em>Undo</em>, because a message that has already reached someone cannot honestly be recalled. The no-signal state (<strong>D</strong>) degrades exactly as §9-G requires: <strong>calling needs no network</strong> and is unchanged, the share <strong>queues</strong> in <code>GA-088</code>'s "nothing is lost" register, and the sheet swaps the ticket row — useless without data — for the trusted contact's own number, which is already on the phone. Every phone number and short code is Western digits inside <code>.num</code>, LTR-isolated (the <code>GA-056</code> rule).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the emergency sheet">
+      <div class="panel-tag">RTL · اردو — "ابھی مدد حاصل کریں", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">ہنگامی مدد — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib mirror" href="/ur/trips/is-f7-2bed-aug2026" aria-label="اپنے سفر پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="uH">حفاظت</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <p class="lead">یہاں کی ہر چیز ہر سفر میں کام آتی ہے — تنہا ہوں، جوڑے کے ساتھ، یا خاندان کے ساتھ۔</p>
+              <div class="em">
+                <span class="em-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M12 8v4M12 15h.01"/></svg></span>
+                <span class="em-b"><span class="em-t">ہنگامی مدد</span><span class="em-s">مدد کے لیے کال کریں، یا کسی کو بتائیں کہ آپ کہاں ہیں</span></span>
+              </div>
+              <div class="grow"></div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shUH" aria-describedby="shUD">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <h2 class="sh-h" id="shUH">ابھی مدد حاصل کریں</h2>
+              <p class="sh-d" id="shUD">جو چاہیے وہ منتخب کریں۔ <b>آپ کے دبانے تک نہ کوئی کال ہوتی ہے، نہ کچھ بھیجا جاتا ہے۔</b></p>
+
+              <ul class="clist">
+                <li>
+                  <a class="crow" href="tel:15">
+                    <span class="crow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                    <span class="crow-b"><span class="crow-t">پولیس</span><span class="crow-s">ملک بھر میں · <span class="num">15</span> ڈائل کریں</span></span>
+                    <span class="crow-n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><span class="num">15</span></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="crow" href="tel:1122">
+                    <span class="crow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    <span class="crow-b"><span class="crow-t">ریسکیو و ایمبولینس</span><span class="crow-s">ریسکیو <span class="num">1122</span> · <span class="num">1122</span> ڈائل کریں</span></span>
+                    <span class="crow-n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><span class="num">1122</span></span>
+                  </a>
+                </li>
+              </ul>
+
+              <ul class="olist">
+                <li>
+                  <button class="orow" type="button">
+                    <span class="orow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></span>
+                    <span class="orow-b"><span class="orow-t">اپنا سفر شیئر کریں</span><span class="orow-s">علی رضا اور ثناء ملک کو بتائیں کہ آپ کہاں ہیں — ایک پیغام، مسلسل ٹریکنگ نہیں</span></span>
+                    <span class="orow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </button>
+                </li>
+                <li>
+                  <a class="orow" href="/ur/help/contact">
+                    <span class="orow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-11.5 7.2L4 20l.8-4.5A8 8 0 1 1 20 12z"/></svg></span>
+                    <span class="orow-b"><span class="orow-t">سیفٹی ٹیم سے رابطہ کریں</span><span class="orow-s">ہر ٹکٹ ایک شخص پڑھتا ہے — ہم ایسا وقت نہیں بتاتے جو ہم نبھا نہ سکیں</span></span>
+                    <span class="orow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <p class="foot">اگر معاملہ فوری ہے تو <b>اوپر دی گئی دونوں لائنیں سب سے تیز مدد تک پہنچاتی ہیں</b> — یہ آپ کے فون سے ڈائل ہوتی ہیں اور انہیں انٹرنیٹ کی ضرورت نہیں۔</p>
+              <div class="btnstack"><button class="btn ghost" type="button">بند کریں</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and every row chevron flip to the reading-start edge, the call glyph and number swap to the trailing edge, and the sheet's grab handle stays centred (§11). The short codes are the shipped pair in <code>GA-071</code>'s own Urdu — <span dir="rtl" lang="ur">ریسکیو و ایمبولینس · ریسکیو <span class="num">1122</span></span> — and both <span class="num">15</span> and <span class="num">1122</span> stay <strong>Western digits, LTR-isolated inside <code>.num</code></strong>, exactly as a dialled number must appear on a Pakistani handset (the <code>GA-056</code> phone-number rule, Pass #31). The safety-team row repeats <code>GA-109</code>'s shipped Urdu, <span dir="rtl" lang="ur">ہر ٹکٹ ایک شخص پڑھتا ہے</span>, with <strong>no reply-time promise in either script</strong>. Nothing in the Urdu rendering raises the emotional temperature: the same muted tint, the same plain words, and a full-width <span dir="rtl" lang="ur">بند کریں</span> so leaving is as easy as arriving.</p>
+    </section>
+
+  </main>
+</body>
+</html>

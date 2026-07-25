@@ -1,0 +1,454 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Verification status dashboard, host (HA-018)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:302px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage (ga-049/ha-011); standing hub, no hubctx (own destination, not a checklist step) */
+  .phone { width:302px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.vt,.vs,.vstate,.bnr-h,.bnr-d,.bnr-a,.vact,.claimnote,.ctx,.helplink,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5; }
+
+  /* listing-context chip (which property this variant concerns — ga-056 .ctx lineage) */
+  .ctx { display:flex; gap:8px; align-items:center; font-size:11.5px; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; align-self:flex-start; margin-bottom:14px; }
+  .ctx svg { width:14px; height:14px; stroke-width:1.8; color:var(--text-tertiary); flex:none; }
+
+  /* quiet all-verified hero (§10.6 — a quiet tick, never a celebration) */
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--success-bg); color:var(--success-fg); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.6; }
+
+  /* banners (ga-049/ha-011 lineage) */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; border:1px solid transparent; }
+  .bnr.info { background:var(--info-bg); border-color:var(--info-border); }
+  .bnr.warn { background:var(--warning-bg); border-color:var(--warning-border); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:18px; height:18px; stroke-width:2; }
+  .bnr.info .bnr-ic svg { color:var(--info-fg); }
+  .bnr.warn .bnr-ic svg { color:var(--warning-fg); }
+  .bnr .bnr-b { flex:1; min-width:0; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+  .bnr .bnr-a { display:inline-block; margin-top:8px; font-size:12.5px; font-weight:600; color:var(--int-primary); }
+  .bnr .bnr-a:hover { text-decoration:underline; }
+
+  /* verification checklist — the ga-049 grammar, unchanged (§8.3) */
+  .vlist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .vrow { display:flex; gap:11px; align-items:flex-start; min-height:64px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; }
+  .vbubble { width:40px; height:40px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; border:1px solid transparent; }
+  .vbubble svg { width:20px; height:20px; stroke-width:2; }
+  .vbubble.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .vbubble.review { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .vbubble.warn { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+  .vbubble.neutral { background:var(--bg-sunken); border-color:var(--border-hairline); color:var(--text-tertiary); }
+  .vmeta { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .vt { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .vs { font-size:12px; color:var(--text-secondary); }
+  .vstate { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; font-size:11px; font-weight:600; padding:3px 9px; border-radius:var(--radius-full); border:1px solid transparent; white-space:nowrap; }
+  .vstate svg { width:12px; height:12px; stroke-width:2.4; }
+  .vstate.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .vstate.review { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .vstate.warn { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+  .vstate.neutral { background:var(--bg-sunken); border-color:var(--border-hairline); color:var(--text-tertiary); }
+  .vact { display:block; margin-top:8px; font-size:12.5px; font-weight:600; color:var(--int-primary); }
+  .vact:hover { text-decoration:underline; }
+
+  .claimnote { font-size:11.5px; color:var(--text-tertiary); margin-top:4px; line-height:1.55; }
+  .claim { color:var(--text-secondary); font-weight:600; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:14px; font-size:13px; color:var(--int-primary); font-weight:600; }
+  .helplink:hover { text-decoration:underline; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Verification status dashboard, host (HA-018)</h1>
+    <p>The host's single source of truth at <code>/host/verification</code> — <b>ga-049's host sibling</b> (host-verify, ARCH §7.3): every regulatory capture, its status, and its expiry, in one calm list — CNIC, liveness, tourism license, cantonment NOC, NTN, and ATL filer status. Organization is the design: the same <code>.vrow</code>/<code>.vbubble</code>/<code>.vstate</code> grammar shipped on <code>ga-049</code>, unchanged, so a host reads their compliance record the same way a guest reads theirs. Cantonment NOC is <b>conditional</b> — "Not needed for this address" for a non-cantonment listing, or an honest "In review" for one that is. Panels: the primary all-verified view with the quiet closing state ("You're fully set up to host") · a calm amber expiry re-prompt (light) · a needs-attention row that routes to the <code>HA-009</code> pattern (dark) · a second-listing cantonment variant with the NOC pending (dark) · اردو / RTL. Case: host Aqib, Gulberg 2 Residence, Lahore, Punjab (primary) plus a second Rawalpindi Cantonment listing for the conditional-NOC variant.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — all-verified · expiry re-prompt</span><span>Dark — needs attention · cantonment NOC pending</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — ALL-VERIFIED + EXPIRY RE-PROMPT ============================ -->
+    <section class="panel" aria-label="Light theme — the all-verified primary dashboard, and the calm expiry re-prompt variant">
+      <div class="panel-tag">Light — A · Primary, all verified (quiet close) · B · Expiry re-prompt</div>
+      <div class="rowflex">
+
+        <!-- A · PRIMARY — ALL VERIFIED, QUIET CLOSE -->
+        <div class="pcol">
+          <div class="pcap">A · Primary — everything verified</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Verification</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+              <h2 id="aH">You're fully set up to host</h2>
+              <p class="lead">Every document is verified — nothing needs your attention right now. We re-check things before they expire, so your listing never pauses.</p>
+
+              <ul class="vlist" role="list">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC</div><div class="vs">Verified since Feb 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.4"/><path d="M6 20a6 6 0 0 1 12 0"/></svg></span>
+                  <div class="vmeta"><div class="vt">Liveness</div><div class="vs">Verified since Feb 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · renews 14 Nov 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <div class="vmeta"><div class="vt">Cantonment NOC</div><div class="vs">Not needed for this address</div></div>
+                  <span class="vstate neutral">Not applicable</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg></span>
+                  <div class="vmeta"><div class="vt">NTN</div><div class="vs">Verified with FBR</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 6.5c-.8-1.5-2.5-2.5-5-2.5-3 0-5 1.5-5 3.5s2 3 5 3.5 5 1.5 5 3.5-2 3.5-5 3.5c-2.5 0-4.2-1-5-2.5"/></svg></span>
+                  <div class="vmeta"><div class="vt">ATL status</div><div class="vs">Active Taxpayer List — the lower withholding rate applies</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Filer</span>
+                </li>
+              </ul>
+
+              <p class="claimnote">These checks power <span class="claim">CNIC-verified guests and hosts via NADRA Verisys</span> — the same mutual formality your guests see when they book with you.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/host/help/verification">Why we ask</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EXPIRY RE-PROMPT -->
+        <div class="pcol">
+          <div class="pcap">B · Tourism license — calm expiry re-prompt</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Verification</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Your verifications</h2>
+              <p class="lead">Everything in one place. We re-check documents before they expire, so your listing never pauses.</p>
+
+              <div class="bnr warn" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v3"/></svg></span>
+                <div class="bnr-b">
+                  <div class="bnr-h">Renews 14 Nov 2026</div>
+                  <div class="bnr-d">No rush — this is just an early heads-up. Renewing anytime before then keeps your listing live without a pause.</div>
+                  <a class="bnr-a" href="/host/listings/gulberg-2-residence/compliance/renew">Start renewal</a>
+                </div>
+              </div>
+
+              <ul class="vlist" role="list">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC</div><div class="vs">Verified since Feb 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <div class="vmeta">
+                    <div class="vt">Tourism license</div>
+                    <div class="vs">Verified · expires 14 Nov 2026</div>
+                    <a class="vact" href="/host/listings/gulberg-2-residence/compliance/renew">Renew before it expires</a>
+                  </div>
+                  <span class="vstate warn" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Expires soon</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <div class="vmeta"><div class="vt">Cantonment NOC</div><div class="vs">Not needed for this address</div></div>
+                  <span class="vstate neutral">Not applicable</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 6.5c-.8-1.5-2.5-2.5-5-2.5-3 0-5 1.5-5 3.5s2 3 5 3.5 5 1.5 5 3.5-2 3.5-5 3.5c-2.5 0-4.2-1-5-2.5"/></svg></span>
+                  <div class="vmeta"><div class="vt">ATL status</div><div class="vs">Active Taxpayer List — the lower withholding rate applies</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Filer</span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/gulberg-2-residence/compliance/renew">Renew now</a>
+              <a class="helplink" href="/host/help/verification">Not sure why? Learn about expiry checks</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Panel A is the terminal state as well as the primary one: once every row reads <code>Verified</code>/<code>Filer</code>/<code>Not applicable</code>, the hub itself becomes the "all-verified quiet state" — a small tick and one sentence, never a celebratory graphic (§10.6). Panel B shows the same list a season later: only the tourism-license row changes register (<code>ga-049</code>/<code>ha-011</code>'s calm amber grammar, reusing the "renews 14 Nov 2026" date verbatim), everything else stays exactly as verified.</p>
+    </section>
+
+    <!-- ============================ DARK — NEEDS ATTENTION + CANTONMENT VARIANT ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a needs-attention row routing to the HA-009 pattern, and a second listing's cantonment NOC pending">
+      <div class="panel-tag">Dark — C · Needs attention (→ HA-009 pattern) · D · Cantonment-listing variant, NOC in review</div>
+      <div class="rowflex">
+
+        <!-- C · NEEDS ATTENTION -->
+        <div class="pcol">
+          <div class="pcap">C · NTN needs a clearer copy</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Verification</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Your verifications</h2>
+              <p class="lead">Nothing here is a verdict — anything unfinished is one calm step away.</p>
+
+              <div class="bnr info" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M6 20v-6M18 20V6"/></svg></span>
+                <div class="bnr-b">
+                  <div class="bnr-h">Finish your verification — 1 step left</div>
+                  <div class="bnr-d">Your progress is saved. Add a clearer copy of your NTN certificate to finish.</div>
+                  <a class="bnr-a" href="/host/verify/ntn">Pick up where you left off</a>
+                </div>
+              </div>
+
+              <ul class="vlist" role="list">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC</div><div class="vs">Verified since Feb 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · renews 14 Nov 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+                  <div class="vmeta">
+                    <div class="vt">NTN</div>
+                    <div class="vs">Couldn't read your NTN certificate — a clearer copy will do it.</div>
+                    <a class="vact" href="/host/verify/ntn">Add a clearer copy</a>
+                  </div>
+                  <span class="vstate warn" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Needs a clearer copy</span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/verify/ntn">Finish verification</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · CANTONMENT-LISTING VARIANT -->
+        <div class="pcol">
+          <div class="pcap">D · Second listing — cantonment NOC pending</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Verification</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>Cantt View Residence · Rawalpindi Cantonment</span>
+              <h2 id="dH">Your verifications</h2>
+              <p class="lead">This listing's address falls in a cantonment area, so one extra document applies here — everything else on your account still carries over.</p>
+
+              <ul class="vlist" role="list">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC</div><div class="vs">Verified since Feb 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · renews 14 Nov 2026</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble review" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+                  <div class="vmeta"><div class="vt">Cantonment NOC</div><div class="vs">In review — usually within a day. We'll notify you.</div></div>
+                  <span class="vstate review" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>In review</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg></span>
+                  <div class="vmeta"><div class="vt">NTN</div><div class="vs">Verified with FBR</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+              </ul>
+
+              <p class="claimnote">This listing stays unpublished to new guests until the NOC clears — your other listings are unaffected.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/host/help/cantonment-listings">Why cantonment listings need a NOC</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Panel C never says "Rejected" — the NTN row reads "Couldn't read your NTN certificate," a fixable reason with a named next step, routing to the same dignified, non-blaming pattern as <code>HA-009</code> (DESIGN §8.3/§10.6). Panel D proves the NOC row is genuinely conditional: a second listing outside Gulberg 2 Residence, in a real cantonment area, carries the honest "In review" state — the same <code>vbubble.review</code> token used for Nikah Nama review on <code>ga-049</code> — while every other capture on the account still reads as verified, because verification is per-host, not re-litigated per listing.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the all-verified primary dashboard">
+      <div class="panel-tag">RTL · اردو — primary, all verified, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · آپ میزبانی کے لیے تیار ہیں — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="ڈیش بورڈ پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">تصدیق</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+              <h2 id="eH">آپ میزبانی کے لیے مکمل طور پر تیار ہیں</h2>
+              <p class="lead">ہر دستاویز تصدیق شدہ ہے — ابھی آپ کی توجہ کی ضرورت نہیں۔ ہم میعاد ختم ہونے سے پہلے ہر چیز دوبارہ جانچ لیتے ہیں، تاکہ آپ کی لسٹنگ کبھی نہ رکے۔</p>
+
+              <ul class="vlist" role="list">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">شناختی کارڈ</div><div class="vs">فروری 2026 سے تصدیق شدہ</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.4"/><path d="M6 20a6 6 0 0 1 12 0"/></svg></span>
+                  <div class="vmeta"><div class="vt">لائیو سیلفی تصدیق</div><div class="vs">فروری 2026 سے تصدیق شدہ</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <div class="vmeta"><div class="vt">سیاحتی لائسنس</div><div class="vs">تصدیق شدہ · تجدید <span class="num">14</span> نومبر <span class="num">2026</span></div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                  <div class="vmeta"><div class="vt">کنٹونمنٹ NOC</div><div class="vs">اس پتے کے لیے درکار نہیں</div></div>
+                  <span class="vstate neutral">لاگو نہیں</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg></span>
+                  <div class="vmeta"><div class="vt">NTN</div><div class="vs">FBR کے ساتھ تصدیق شدہ</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 6.5c-.8-1.5-2.5-2.5-5-2.5-3 0-5 1.5-5 3.5s2 3 5 3.5 5 1.5 5 3.5-2 3.5-5 3.5c-2.5 0-4.2-1-5-2.5"/></svg></span>
+                  <div class="vmeta"><div class="vt">ATL کی صورتحال</div><div class="vs">فعال ٹیکس دہندگان کی فہرست — کم ودہولڈنگ ریٹ لاگو ہوتا ہے</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>فائلر</span>
+                </li>
+              </ul>
+
+              <p class="claimnote">یہ جانچیں <span class="claim">نادرا ویری سِس کے ذریعے تصدیق شدہ مہمانوں اور میزبانوں</span> کو ممکن بناتی ہیں — وہی باہمی رسمی کارروائی جو آپ کے مہمان بکنگ کے وقت دیکھتے ہیں۔</p>
+
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/ur/host/help/verification">ہم یہ کیوں پوچھتے ہیں؟</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror: the back chevron flips to the leading (right) edge, and every date/number stays LTR-isolated via <code>.num</code> inside the Urdu sentence — "14 نومبر 2026" and "2026 سے" read correctly without reordering digits (§11). "NTN" and "NOC" stay as established Latin acronyms, matching how "IBAN"/"Raast" are kept elsewhere; "کنٹونمنٹ" and "فائلر" are the same transliterations already shipped on <code>ga-084</code> and <code>ha-055</code>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

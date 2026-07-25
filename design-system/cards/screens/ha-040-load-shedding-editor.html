@@ -1,0 +1,593 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Load-shedding schedule editor (HA-040)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-026/ha-038 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — post-publish editor lineage; NO wizard bars (§7 mechanics) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.sh,.per-t,.per-d,.per-chip,.flabel,.field-sub,.stv,.bp-t,.bp-d,.bp-lk,.ta,.honestnote p,.pv-t,.pv-d,.pv-ht,.pv-note,.laststat span,.unsavedbar .tx,.toast-t,.btn,.ebtn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* editor app bar */
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing context chip — identifies which listing this editor edits; links back to the Edit-listing hub (HA-036) */
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:16px 0 9px; }
+  .sh:first-of-type { margin-top:0; }
+
+  /* typical outage-window period rows — morning/afternoon/evening, host-declared approximations */
+  .perlist { display:flex; flex-direction:column; gap:10px; }
+  .perrow { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:12px 13px; }
+  .per-top { display:flex; align-items:center; gap:10px; }
+  .per-tx { flex:1; min-width:0; }
+  .per-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .per-d { font-size:11px; color:var(--text-tertiary); margin-top:1px; }
+  .per-chips { flex:none; display:flex; gap:6px; }
+  .per-chip { min-height:32px; padding:0 12px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:11.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; }
+  .per-chip.sel { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+  .perrow .fld { margin-top:11px; }
+  .flabel { font-size:11.5px; font-weight:600; color:var(--text-primary); margin-bottom:6px; display:block; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+  .select-trig { width:100%; min-height:44px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 12px; display:flex; align-items:center; gap:9px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:16px; height:16px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+
+  /* backup-covers-outages — READ-ONLY summary, one-fact-one-owner: HA-074 owns the backup declaration (ha-025 precedent) */
+  .bplink { display:flex; gap:12px; align-items:center; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-top:4px; }
+  .bplink .ic { width:36px; height:36px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .bplink .ic svg { width:18px; height:18px; color:var(--success-fg); stroke-width:1.9; }
+  .bplink .bx { flex:1; min-width:0; }
+  .bplink .bp-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .bplink .bp-d { font-size:11.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .bplink .bp-lk { flex:none; font-size:11.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  .ta { width:100%; min-height:70px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:10px 12px; font-family:inherit; font-size:13px; color:var(--text-primary); line-height:1.5; resize:none; }
+
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* guest-strip preview — ga-031's .pat/.patc pattern strip, verbatim grammar */
+  .pv { margin-top:6px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .pv-h { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+  .pv-h svg { width:14px; height:14px; color:var(--int-primary); stroke-width:2; flex:none; }
+  .pv-ht { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); }
+  .pv-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .pat { display:flex; gap:7px; margin:10px 0 2px; }
+  .patc { flex:1; display:flex; flex-direction:column; gap:3px; align-items:center; padding:8px 5px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); }
+  .patc .pt { font-size:10px; color:var(--text-tertiary); letter-spacing:.02em; }
+  .patc .pval { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+  .patc.cut { background:var(--warning-bg); border-color:var(--warning-border); }
+  .patc.cut .pval { color:var(--warning-fg); }
+  .patc.cut .pt { color:var(--warning-fg); opacity:.8; }
+  .pv-note { font-size:11.5px; color:var(--text-secondary); margin-top:9px; line-height:1.5; }
+
+  .laststat { display:flex; align-items:center; gap:9px; margin-top:16px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .laststat svg { width:15px; height:15px; color:var(--success-fg); flex:none; stroke-width:2; }
+  .laststat span { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .laststat b { color:var(--text-primary); font-weight:600; }
+
+  .spacer-fill { flex:1; }
+
+  /* unsaved-changes bar — sticky footer, appears only while the form diverges from the saved value */
+  .unsavedbar { flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--warning-bg); border-top:1px solid var(--warning-border); }
+  .unsavedbar .uic { flex:none; width:20px; height:20px; color:var(--warning-fg); }
+  .unsavedbar .tx { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--warning-fg); line-height:1.35; }
+  .ebtnrow { flex:none; display:flex; gap:8px; }
+  .ebtn { min-height:40px; padding:0 14px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .ebtn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .ebtn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Load-shedding schedule editor (HA-040)</h1>
+    <p>Extends <code>ha-026</code>'s single load-shedding <i>declaration</i> ("~1–2 hrs/day") into an editable <b>schedule</b> — three period rows (Morning / Afternoon / Evening), each a plain chip toggle for "typically has cuts" plus an <b>approximate-hours Select</b> once a period is marked, all explicitly host-declared and qualitative — never a platform-invented average. Reached from the Edit-listing hub (<code>HA-036</code>) in the same editor frame as <code>ha-038</code>/<code>ha-039</code>: app bar + listing context chip + save/discard + unsaved-changes bar. "Does backup cover these outages?" is a <b>read-only summary</b> linking back to the backup-power declaration (<code>HA-074</code>) — one fact, one owner, the <code>ha-025</code> precedent — never re-declared here. A seasonal note field carries the "load-shedding varies — update it when it changes" honesty. The guest-strip preview reuses <code>ga-031</code>'s pattern-strip grammar exactly. Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b>. Panels: current (light) · edited (light) · dark · اردو / RTL.</p>
+    <div class="legend">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span>
+      <span>Editor frame — no wizard bars</span><span>Host-declared approximations, not invented stats</span>
+      <span>One-fact-one-owner — backup power is read-only here</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — CURRENT · EDITED ============================ -->
+    <section class="panel" aria-label="Light theme — current saved schedule, and an edited state with the unsaved-changes bar">
+      <div class="panel-tag">Light — A current · B edited (unsaved)</div>
+      <div class="rowflex">
+
+        <!-- A · CURRENT -->
+        <div class="pcol">
+          <div class="pcap">A · Current — nothing unsaved</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Load-shedding schedule</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Load-shedding schedule</h2>
+              <p class="lead">Roughly when guests can expect power cuts — approximate, not a promise.</p>
+
+              <h3 class="sh">Typical outage windows</h3>
+              <div class="perlist">
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Morning</div><div class="per-d">Roughly 6 AM – 12 PM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">No typical cuts</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Afternoon</div><div class="per-d">Roughly 12 PM – 6 PM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">Typically has cuts</button>
+                    </div>
+                  </div>
+                  <div class="fld">
+                    <span class="flabel" id="afh-a">Approximate hours</span>
+                    <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="afh-a"><span class="stv">~1–2 hrs</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Evening</div><div class="per-d">Roughly 6 PM – 12 AM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">No typical cuts</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="sh">Backup power</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="bx">
+                  <div class="bp-t">Covers these outages</div>
+                  <div class="bp-d">UPS + generator, most of the day, fuel included</div>
+                </div>
+                <a class="bp-lk" href="/host/listings/cantt-view-residence/backup-power">Edit →</a>
+              </div>
+              <span class="field-sub">Set once in Backup power — shown here read-only so one fact has one place to edit.</span>
+
+              <h3 class="sh">Seasonal note</h3>
+              <div class="fld" style="margin-top:0;">
+                <label class="flabel" for="sn-a">Anything guests should know about how it varies (optional)</label>
+                <textarea class="ta" id="sn-a">Cuts run longer in summer (May–August) when demand is highest across the grid.</textarea>
+                <span class="field-sub">Load-shedding varies by season and by the day — update this whenever it changes.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t">Electricity &amp; load-shedding</div>
+                <div class="pat" role="img" aria-label="Typical daily pattern: morning on, afternoon a short cut, evening on">
+                  <div class="patc"><span class="pt">Morning</span><span class="pval">On</span></div>
+                  <div class="patc cut"><span class="pt">Afternoon</span><span class="pval">~1–2 hr</span></div>
+                  <div class="patc"><span class="pt">Evening</span><span class="pval">On</span></div>
+                </div>
+                <p class="pv-note">Cuts are usually short and fall in the early afternoon. UPS + generator backup covers most of the day.</p>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>These windows are your best estimate, not a guarantee — grid schedules shift with the season and the day.</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b>18 July 2026</b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EDITED -->
+        <div class="pcol">
+          <div class="pcap">B · Edited — Evening now marked cut, unsaved-changes bar shown</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Load-shedding schedule</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Load-shedding schedule</h2>
+              <p class="lead">Roughly when guests can expect power cuts — approximate, not a promise.</p>
+
+              <h3 class="sh">Typical outage windows</h3>
+              <div class="perlist">
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Morning</div><div class="per-d">Roughly 6 AM – 12 PM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">No typical cuts</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Afternoon</div><div class="per-d">Roughly 12 PM – 6 PM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">Typically has cuts</button>
+                    </div>
+                  </div>
+                  <div class="fld">
+                    <span class="flabel" id="afh-b">Approximate hours</span>
+                    <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="afh-b"><span class="stv">~1–2 hrs</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Evening</div><div class="per-d">Roughly 6 PM – 12 AM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">Typically has cuts</button>
+                    </div>
+                  </div>
+                  <div class="fld">
+                    <span class="flabel" id="evh-b">Approximate hours</span>
+                    <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="evh-b"><span class="stv">~30–60 min</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="sh">Backup power</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="bx">
+                  <div class="bp-t">Covers these outages</div>
+                  <div class="bp-d">UPS + generator, most of the day, fuel included</div>
+                </div>
+                <a class="bp-lk" href="/host/listings/cantt-view-residence/backup-power">Edit →</a>
+              </div>
+              <span class="field-sub">Set once in Backup power — shown here read-only so one fact has one place to edit.</span>
+
+              <h3 class="sh">Seasonal note</h3>
+              <div class="fld" style="margin-top:0;">
+                <label class="flabel" for="sn-b">Anything guests should know about how it varies (optional)</label>
+                <textarea class="ta" id="sn-b">Cuts run longer in summer (May–August) when demand is highest across the grid. A short evening cut has started this month too.</textarea>
+                <span class="field-sub">Load-shedding varies by season and by the day — update this whenever it changes.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t">Electricity &amp; load-shedding</div>
+                <div class="pat" role="img" aria-label="Typical daily pattern: morning on, afternoon a short cut, evening a brief cut">
+                  <div class="patc"><span class="pt">Morning</span><span class="pval">On</span></div>
+                  <div class="patc cut"><span class="pt">Afternoon</span><span class="pval">~1–2 hr</span></div>
+                  <div class="patc cut"><span class="pt">Evening</span><span class="pval">~30–60m</span></div>
+                </div>
+                <p class="pv-note">Cuts are usually short. UPS + generator backup covers most of the day.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="unsavedbar">
+              <svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span class="tx">You have unsaved changes</span>
+              <div class="ebtnrow">
+                <button class="ebtn discard" type="button">Discard</button>
+                <button class="ebtn save" type="button">Save</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every window is a chip toggle + a qualitative Select — "~1–2 hrs," never a platform-computed average (NEVER #3: outage windows are host-declared approximations, stated as such, matching <code>ha-026</code>'s discipline). "Backup power" is deliberately <b>not</b> an editable toggle here: the fact already has an owner (<code>HA-074</code>'s backup-power editor, the <code>ha-025</code> one-fact-one-owner precedent), so this screen only summarizes it read-only with a link back — editing it in two places would let the two drift out of sync. The guest-strip preview reuses <code>ga-031</code>'s <code>.pat</code>/<code>.patc</code> pattern-strip grammar exactly (Morning/Afternoon/Evening chips, the warning-tint "cut" cell), so what the host schedules here is what the guest reads on the infrastructure card.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — current saved schedule">
+      <div class="panel-tag">Dark — C current</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Current — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Load-shedding schedule</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Load-shedding schedule</h2>
+              <p class="lead">Roughly when guests can expect power cuts — approximate, not a promise.</p>
+
+              <h3 class="sh">Typical outage windows</h3>
+              <div class="perlist">
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Morning</div><div class="per-d">Roughly 6 AM – 12 PM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">No typical cuts</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Afternoon</div><div class="per-d">Roughly 12 PM – 6 PM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">Typically has cuts</button>
+                    </div>
+                  </div>
+                  <div class="fld">
+                    <span class="flabel" id="afh-c">Approximate hours</span>
+                    <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="afh-c"><span class="stv">~1–2 hrs</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">Evening</div><div class="per-d">Roughly 6 PM – 12 AM</div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">No typical cuts</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="sh">Backup power</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="bx">
+                  <div class="bp-t">Covers these outages</div>
+                  <div class="bp-d">UPS + generator, most of the day, fuel included</div>
+                </div>
+                <a class="bp-lk" href="/host/listings/cantt-view-residence/backup-power">Edit →</a>
+              </div>
+              <span class="field-sub">Set once in Backup power — shown here read-only so one fact has one place to edit.</span>
+
+              <h3 class="sh">Seasonal note</h3>
+              <div class="fld" style="margin-top:0;">
+                <label class="flabel" for="sn-c">Anything guests should know about how it varies (optional)</label>
+                <textarea class="ta" id="sn-c">Cuts run longer in summer (May–August) when demand is highest across the grid.</textarea>
+                <span class="field-sub">Load-shedding varies by season and by the day — update this whenever it changes.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t">Electricity &amp; load-shedding</div>
+                <div class="pat" role="img" aria-label="Typical daily pattern: morning on, afternoon a short cut, evening on">
+                  <div class="patc"><span class="pt">Morning</span><span class="pval">On</span></div>
+                  <div class="patc cut"><span class="pt">Afternoon</span><span class="pval">~1–2 hr</span></div>
+                  <div class="patc"><span class="pt">Evening</span><span class="pval">On</span></div>
+                </div>
+                <p class="pv-note">Cuts are usually short and fall in the early afternoon. UPS + generator backup covers most of the day.</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b>18 July 2026</b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark theme keeps the "cut" cells on the muted <code>warning</code> tint (§10.3 — a utility fact register, never alarmist), consistent with <code>ga-031</code>'s AA-proven dark pattern strip.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — current saved schedule">
+      <div class="panel-tag">RTL · اردو — لوڈشیڈنگ کا شیڈول</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — لوڈشیڈنگ کا شیڈول</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence/edit" aria-label="لسٹنگ میں ترمیم پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="dH">لوڈشیڈنگ کا شیڈول</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>لوڈشیڈنگ کا شیڈول</h2>
+              <p class="lead">مہمان تقریباً کب بجلی کی بندش کی توقع رکھ سکتے ہیں — اندازہ ہے، وعدہ نہیں۔</p>
+
+              <h3 class="sh">عام بندش کے اوقات</h3>
+              <div class="perlist">
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">صبح</div><div class="per-d">تقریباً <span class="num">6 AM – 12 PM</span></div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">معمول کی بندش نہیں</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">دوپہر</div><div class="per-d">تقریباً <span class="num">12 PM – 6 PM</span></div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">عموماً بندش ہوتی ہے</button>
+                    </div>
+                  </div>
+                  <div class="fld">
+                    <span class="flabel" id="afh-d">تقریبی دورانیہ</span>
+                    <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="afh-d"><span class="stv"><span class="num">~1–2</span> گھنٹے</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                  </div>
+                </div>
+                <div class="perrow">
+                  <div class="per-top">
+                    <div class="per-tx"><div class="per-t">شام</div><div class="per-d">تقریباً <span class="num">6 PM – 12 AM</span></div></div>
+                    <div class="per-chips">
+                      <button class="per-chip sel" type="button" aria-pressed="true">معمول کی بندش نہیں</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="sh">بیک اپ پاور</h3>
+              <div class="bplink">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="bx">
+                  <div class="bp-t">ان بندشوں کا احاطہ کرتا ہے</div>
+                  <div class="bp-d">یو پی ایس + جنریٹر، دن کا بیشتر حصہ، ایندھن شامل</div>
+                </div>
+                <a class="bp-lk" href="/ur/host/listings/cantt-view-residence/backup-power">ترمیم کریں ←</a>
+              </div>
+              <span class="field-sub">بیک اپ پاور میں ایک ہی جگہ طے شدہ — یہاں صرف پڑھنے کے لیے دکھایا گیا ہے تاکہ ہر حقیقت کی ایک ہی جگہ ترمیم ہو۔</span>
+
+              <h3 class="sh">موسمی نوٹ</h3>
+              <div class="fld" style="margin-top:0;">
+                <label class="flabel" for="sn-d">مہمانوں کو کچھ بتانا ہو تو (اختیاری)</label>
+                <textarea class="ta" id="sn-d">گرمیوں میں (مئی–اگست) بندش طویل ہو جاتی ہے جب بجلی کی طلب سب سے زیادہ ہوتی ہے۔</textarea>
+                <span class="field-sub">لوڈشیڈنگ موسم اور دن کے حساب سے بدلتی ہے — جب بھی بدلے، اسے اپ ڈیٹ کریں۔</span>
+              </div>
+
+              <h3 class="sh">پیش منظر — مہمان کیا دیکھیں گے</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">لسٹنگ پیش منظر</span></div>
+                <div class="pv-t">بجلی اور لوڈشیڈنگ</div>
+                <div class="pat" role="img" aria-label="روزانہ کا معمول: صبح بجلی موجود، دوپہر مختصر بندش، شام بجلی موجود">
+                  <div class="patc"><span class="pt">صبح</span><span class="pval">موجود</span></div>
+                  <div class="patc cut"><span class="pt">دوپہر</span><span class="pval num">~1–2 hr</span></div>
+                  <div class="patc"><span class="pt">شام</span><span class="pval">موجود</span></div>
+                </div>
+                <p class="pv-note">بندش عموماً مختصر ہوتی ہے اور دوپہر کے شروع میں ہوتی ہے۔ یو پی ایس + جنریٹر بیک اپ دن کا بیشتر حصہ احاطہ کرتا ہے۔</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>محفوظ شدہ — آخری اپ ڈیٹ <b><span class="num">18</span> جولائی <span class="num">2026</span></b>۔ اس کے بعد کوئی تبدیلی نہیں۔</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): chip rows and the Select chevron flip toward the reading direction, the "Edit →" link's arrow flips to "←", and every hour range/date stays Latin-numeral, LTR-isolated (<code>.num</code>) inside Urdu sentences — matching the <code>ha-026</code>/<code>ga-031</code> RTL convention exactly.</p>
+    </section>
+
+  </main>
+</body>
+</html>

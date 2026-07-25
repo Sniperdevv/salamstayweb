@@ -1,0 +1,432 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Personal info &amp; email management (GA-047)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; }
+  .intro { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin:0 2px 4px; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 8px; }
+
+  /* sensitive-change honesty banner */
+  .honesty { display:flex; gap:9px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:11px 13px; }
+  .honesty svg { flex:none; width:17px; height:17px; stroke-width:1.9; color:var(--info-fg); margin-top:1px; }
+  .honesty p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .honesty b { color:var(--text-primary); font-weight:600; }
+
+  /* field rows */
+  .flist { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .frow { display:flex; align-items:center; gap:11px; width:100%; min-height:62px; padding:11px 12px; background:var(--bg-canvas); border:none; border-bottom:1px solid var(--border-hairline); font-family:inherit; cursor:pointer; text-align:start; }
+  .frow:last-child { border-bottom:none; }
+  .frow:hover { background:var(--bg-raised); }
+  .fbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .fk { font-size:11.5px; font-weight:600; color:var(--text-tertiary); display:block; letter-spacing:.02em; }
+  .fv { font-size:14px; font-weight:500; color:var(--text-primary); display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .fvt { color:var(--text-primary); }
+  .fedit { flex:none; color:var(--text-tertiary); display:flex; align-items:center; }
+  .fedit svg { width:17px; height:17px; stroke-width:2; }
+  .phone.rtl .fedit svg { transform:scaleX(-1); }
+  .vtag { font-size:10px; font-weight:600; border-radius:var(--radius-full); padding:2px 8px; display:inline-flex; align-items:center; gap:4px; }
+  .vtag svg { width:11px; height:11px; stroke-width:2.4; }
+  .vtag.ok { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .vtag.pend { color:var(--warning-fg); background:var(--warning-bg); border:1px solid var(--warning-border); }
+  .privnote { display:flex; gap:8px; align-items:flex-start; margin:8px 2px 0; }
+  .privnote svg { flex:none; width:14px; height:14px; stroke-width:1.9; color:var(--text-tertiary); margin-top:1px; }
+  .privnote p { font-size:11px; color:var(--text-tertiary); line-height:1.45; }
+
+  /* inline edit — Input shell (§8.1) */
+  .editcard { border:1px solid var(--border-brand); border-radius:var(--radius-lg); background:var(--bg-canvas); padding:12px 12px 13px; box-shadow:var(--el-hairline); }
+  .flabel { font-size:11.5px; font-weight:600; color:var(--text-tertiary); display:block; margin-bottom:7px; letter-spacing:.02em; }
+  .fwrap { display:flex; align-items:center; gap:10px; min-height:48px; background:var(--bg-sunken); border:1px solid var(--border-brand); border-radius:var(--radius-md); padding:0 13px; box-shadow:0 0 0 3px var(--sa-stripe); }
+  .fwrap .val { font-size:15px; color:var(--text-primary); }
+  .caret { display:inline-block; width:1.5px; height:20px; background:var(--int-primary); }
+  .editact { display:flex; gap:9px; margin-top:11px; }
+  .btn { flex:1; min-height:44px; border-radius:var(--radius-md); font-size:14px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.ghost { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  /* OTP re-verify (ga-005 grammar) */
+  .verhead { font-size:15px; font-weight:600; color:var(--text-primary); margin:2px 2px 5px; }
+  .versub { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin:0 2px 4px; }
+  .versub b { color:var(--text-primary); font-weight:600; }
+  .chan { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:5px 9px; margin-top:13px; font-size:12px; color:var(--text-secondary); }
+  .waic { display:inline-flex; align-items:center; gap:6px; font-weight:600; color:var(--text-primary); }
+  .waic svg { width:15px; height:15px; color:var(--int-primary); }
+  .chan .sep { color:var(--text-tertiary); }
+  .chan a { color:var(--int-primary); font-weight:700; text-decoration:none; }
+  .otp { display:flex; gap:8px; margin-top:18px; direction:ltr; }
+  .obox { flex:1; height:50px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; font-size:21px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .obox.active { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .obox .ocaret { width:2px; height:24px; background:var(--int-primary); }
+  .resend { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; margin-top:14px; font-size:13px; color:var(--text-secondary); }
+  .resend .count { color:var(--text-tertiary); font-variant-numeric:tabular-nums; font-weight:700; }
+  .resend svg { width:15px; height:15px; color:var(--text-tertiary); stroke-width:2; }
+  .qlink { display:flex; align-items:center; justify-content:center; min-height:44px; font-size:13px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+
+  /* add-email entry */
+  .addbtn { display:flex; align-items:center; gap:11px; width:100%; min-height:52px; margin-top:10px; border:1.5px dashed var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); color:var(--int-primary); font-size:13.5px; font-weight:600; font-family:inherit; cursor:pointer; padding:0 13px; text-align:start; }
+  .addbtn:hover { background:var(--int-subtle); border-color:var(--int-primary); }
+  .addbtn .plus { width:24px; height:24px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; flex:none; }
+  .addbtn .plus svg { width:15px; height:15px; stroke-width:2.2; }
+  .addbtn .atx { flex:1; min-width:0; display:block; }
+
+  /* never-silent-merge banner */
+  .merge { display:flex; gap:9px; align-items:flex-start; background:var(--warning-bg); border:1px solid var(--warning-border); border-radius:var(--radius-lg); padding:11px 13px; margin-top:12px; }
+  .merge svg { flex:none; width:17px; height:17px; stroke-width:1.9; color:var(--warning-fg); margin-top:1px; }
+  .merge p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .merge b { color:var(--text-primary); font-weight:600; }
+
+  /* save confirmation */
+  .saved { display:flex; gap:10px; align-items:flex-start; background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-lg); padding:12px 13px; }
+  .saved svg { flex:none; width:19px; height:19px; stroke-width:2; color:var(--success-fg); margin-top:1px; }
+  .saved .sbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .saved .sh { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .saved .sd { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.45; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Personal info &amp; email management (GA-047)</h1>
+    <p>Edit the identity fields at <strong>/account/settings/personal</strong> — name, date of birth, phone, and email — with honest handling of the sensitive ones. <strong>Changing the phone or email verifies the NEW value first</strong>: the current one keeps working until the new one is confirmed, stated plainly, and phone changes re-run the established <strong>WhatsApp-first OTP</strong> (<code>GA-005/006</code>). A second email can be added but lands in a <strong>verify-pending</strong> state — <strong>never silently merged</strong> (the <code>GA-006/009</code> precedent). Date of birth carries a privacy note: it confirms booking eligibility and verification, and is never shown on your profile. No journey stepper — an account screen (§7.6a). Panels: field list + name in edit (light) · phone change → OTP re-verify (light) · email management + save confirmation (dark) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Fields · name editing · light</span><span>Phone change → OTP</span><span>Email mgmt + saved · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the field list and an inline name edit, plus the phone-change OTP re-verify">
+      <div class="panel-tag">Light — field rows · inline edit · phone-change OTP</div>
+      <div class="rowflex">
+
+        <!-- A · FIELD LIST + NAME EDITING -->
+        <div class="pcol">
+          <div class="pcap">Your details — name in edit</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Personal info</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="intro">Update your details. Some changes ask you to confirm the new value first.</p>
+
+              <div class="scap">Editing name</div>
+              <div class="editcard">
+                <span class="flabel">Full name</span>
+                <div class="fwrap">
+                  <span class="val">Aqib Gulab</span><span class="caret" aria-hidden="true"></span>
+                </div>
+                <div class="editact">
+                  <button class="btn ghost" type="button">Cancel</button>
+                  <button class="btn primary" type="button">Save</button>
+                </div>
+              </div>
+
+              <div class="scap">Details</div>
+              <div class="flist">
+                <button class="frow" type="button" aria-label="Edit date of birth">
+                  <span class="fbd"><span class="fk">Date of birth</span><span class="fv"><span class="fvt"><span class="num">14 March 1994</span></span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="Change phone number">
+                  <span class="fbd"><span class="fk">Phone</span><span class="fv"><span class="fvt num">+92 300 ••• ••67</span><span class="vtag ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="Change email">
+                  <span class="fbd"><span class="fk">Email</span><span class="fv"><span class="fvt num">aqib.gulab@gmail.com</span><span class="vtag ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+              </div>
+              <div class="privnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                <p>Your date of birth confirms you're old enough to book and helps verification — it's <strong>never shown on your profile</strong>.</p>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · PHONE CHANGE → OTP RE-VERIFY -->
+        <div class="pcol">
+          <div class="pcap">Changing phone — verify the new number</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to personal info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Confirm new number</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="honesty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <p><b>Your current number keeps working</b> until the new one is verified. Nothing changes until you confirm.</p>
+              </div>
+
+              <h2 class="verhead">Enter the code</h2>
+              <p class="versub">We sent a 6-digit code to your new number <b class="num">+92 321 ••• ••04</b>.</p>
+
+              <p class="chan">
+                <span class="waic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 10c.4 2.4 2.6 4.6 5 5l1.4-1.6 2 .8v2c-4.4.6-8.6-3.6-8.2-8l2-.2z"/></svg>Sent on WhatsApp</span>
+                <span class="sep" aria-hidden="true">·</span>
+                <a href="/account/settings/personal/verify-phone?channel=sms">Get it by SMS</a>
+              </p>
+
+              <div class="otp" role="group" aria-label="Enter the 6-digit code">
+                <span class="obox" aria-label="digit 1: 5">5</span>
+                <span class="obox" aria-label="digit 2: 0">0</span>
+                <span class="obox" aria-label="digit 3: 3">3</span>
+                <span class="obox active" aria-label="digit 4, empty, active"><span class="ocaret" aria-hidden="true"></span></span>
+                <span class="obox" aria-label="digit 5, empty"></span>
+                <span class="obox" aria-label="digit 6, empty"></span>
+              </div>
+
+              <p class="resend">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+                Resend code in <span class="count">0:24</span>
+              </p>
+              <a class="qlink" href="/account/settings/personal">Use a different number</a>
+
+              <div class="grow"></div>
+              <button class="btn primary" type="button" aria-disabled="true" style="width:100%">Verify &amp; save</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The field list uses real <code>&lt;button&gt;</code> rows (label + value + edit chevron), each a [44pt]+ target. Inline editing swaps a row for the Input shell (§8.1) with a brand border and focus ring; Save/Cancel are real buttons. A sensitive change routes to the <strong>same WhatsApp-first OTP as onboarding</strong> (<code>GA-005</code> grammar — six segmented boxes, "Sent on WhatsApp" + SMS fallback, calm countdown): the honesty banner makes the guarantee load-bearing — <strong>the old number stays live until the new one verifies</strong>, so no one can be locked out by a mistyped change. Verified fields carry a paired icon + label chip, never colour alone (§11).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — email management with a pending secondary email, and the save confirmation">
+      <div class="panel-tag">Dark — email management · verify-pending · saved</div>
+      <div class="rowflex">
+
+        <!-- C · EMAIL MANAGEMENT -->
+        <div class="pcol">
+          <div class="pcap">Emails — add a second, verify pending</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to personal info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Email</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="intro">Your primary email signs you in and gets receipts. Add another to keep in touch — each one is verified on its own.</p>
+
+              <div class="scap">Your emails</div>
+              <div class="flist">
+                <button class="frow" type="button" aria-label="Edit primary email">
+                  <span class="fbd"><span class="fk">Primary</span><span class="fv"><span class="fvt num">aqib.gulab@gmail.com</span><span class="vtag ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="Manage secondary email, verification pending">
+                  <span class="fbd"><span class="fk">Secondary</span><span class="fv"><span class="fvt num">aqib@karachimail.pk</span><span class="vtag pend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Verify pending</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+              </div>
+
+              <div class="merge" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+                <p><b>Verification sent to aqib@karachimail.pk.</b> Confirm from that inbox to finish. We never merge or move an account silently — the address does nothing until you confirm it.</p>
+              </div>
+
+              <button class="addbtn" type="button">
+                <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="atx">Add another email</span>
+              </button>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · SAVE CONFIRMATION -->
+        <div class="pcol">
+          <div class="pcap">Saved — calm confirmation</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="dH">Personal info</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="saved" role="status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 9.5"/></svg>
+                <span class="sbd"><span class="sh">Name updated</span><span class="sd">Your changes are saved. Verified fields kept their status.</span></span>
+              </div>
+
+              <div class="scap">Details</div>
+              <div class="flist">
+                <button class="frow" type="button" aria-label="Edit full name">
+                  <span class="fbd"><span class="fk">Full name</span><span class="fv"><span class="fvt">Aqib Gulab</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="Edit date of birth">
+                  <span class="fbd"><span class="fk">Date of birth</span><span class="fv"><span class="fvt num">14 March 1994</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="Change phone number">
+                  <span class="fbd"><span class="fk">Phone</span><span class="fv"><span class="fvt num">+92 300 ••• ••67</span><span class="vtag ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Adding an email never touches sign-in: the new address sits in a <strong>verify-pending</strong> chip and a warning-tint note repeats the <code>GA-006</code> rule — <strong>we never merge or move an account silently</strong>, the address is inert until confirmed from its own inbox. Save is a quiet <code>role="status"</code> banner, not a celebration, and it states that verified fields kept their status so nothing feels reset. Each email is a distinct row with its own verification state — no shared or implied trust across addresses.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the personal-info fields">
+      <div class="panel-tag">RTL · اردو — "ذاتی معلومات", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Personal info — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="سیٹنگز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">ذاتی معلومات</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="intro">اپنی تفصیلات اپ ڈیٹ کریں۔ کچھ تبدیلیوں کے لیے پہلے نئی قدر کی تصدیق ضروری ہے۔</p>
+
+              <div class="scap">تفصیلات</div>
+              <div class="flist">
+                <button class="frow" type="button" aria-label="نام میں ترمیم کریں">
+                  <span class="fbd"><span class="fk">پورا نام</span><span class="fv"><span class="fvt">عاقب گلاب</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="تاریخِ پیدائش میں ترمیم کریں">
+                  <span class="fbd"><span class="fk">تاریخِ پیدائش</span><span class="fv"><span class="fvt"><span class="num">14 March 1994</span></span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="فون نمبر تبدیل کریں">
+                  <span class="fbd"><span class="fk">فون</span><span class="fv"><span class="fvt num">+92 300 ••• ••67</span><span class="vtag ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+                <button class="frow" type="button" aria-label="ای میل تبدیل کریں">
+                  <span class="fbd"><span class="fk">ای میل</span><span class="fv"><span class="fvt num">aqib.gulab@gmail.com</span><span class="vtag pend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>تصدیق باقی</span></span></span>
+                  <span class="fedit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </button>
+              </div>
+              <div class="privnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                <p>آپ کی تاریخِ پیدائش صرف اہلیت اور تصدیق کے لیے ہے — یہ <strong>آپ کی پروفائل پر کبھی نہیں دکھائی جاتی</strong>۔</p>
+              </div>
+
+              <div class="merge" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>
+                <p><b>نئی ای میل کی تصدیق بھیج دی گئی۔</b> اسی اِن باکس سے تصدیق کریں۔ ہم کبھی خاموشی سے اکاؤنٹ ضم نہیں کرتے — تصدیق تک نیا پتہ غیر فعال رہتا ہے۔</p>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the back chevron and every edit chevron flip to the reading-start edge (§11). The phone number, masked tail and email addresses stay LTR via <code>.num</code> (<code>direction:ltr; unicode-bidi:isolate</code>) so they never reorder in RTL; only the field labels and notes are Nastaliq, with the line-height room the script needs. The never-silent-merge and DOB-privacy truths carry across both scripts, verbatim in meaning.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — FX-lock display (GA-051)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .head .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+  .note { font-size:12px; color:#828A90; margin:22px auto 0; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:#5F676D; background:#F4F5F6; padding:1px 5px; border-radius:4px; }
+  .note b { color:#5F676D; font-weight:600; }
+
+  /* ---- checkout bezel — GA-050 / GA-057 lineage, reused verbatim ---- */
+  .phone { background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+  .appbar { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; }
+  .iconbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .iconbtn:hover { background:var(--bg-raised); }
+  .iconbtn svg { width:22px; height:22px; stroke-width:2; }
+  .appbar .spacer { flex:1; }
+  .appbar .step-of { font-size:12px; font-weight:600; color:var(--text-tertiary); }
+
+  /* ---- named-circles stepper (checkout tier, §7.6a) ---- */
+  .steps { display:flex; align-items:flex-start; padding:2px 24px 14px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:11px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .steps .dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .steps .dot svg { width:13px; height:13px; stroke-width:2.75; }
+  .steps .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:6px; }
+  .steps li.done .dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .dot { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+
+  .screen { flex:1; overflow:hidden; padding:6px 22px 22px; display:flex; flex-direction:column; }
+  .screen h2 { font-size:23px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .screen .lead { font-size:13.5px; color:var(--text-secondary); margin-top:7px; }
+  .screen h3 { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:20px 0 8px; }
+  .grow { flex:1; }
+
+  /* rail-context chip — makes the H8 sequencing legible (rail chosen first) */
+  .railctx { display:inline-flex; align-items:center; gap:8px; margin-top:14px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--text-secondary); }
+  .railctx svg { width:15px; height:15px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+
+  /* FX-lock banner — GA-057 shipped treatment, warn variant on expiry */
+  .fx { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:13px 14px; margin-top:16px; }
+  .fx .lk { color:var(--info-fg); flex:none; margin-top:1px; }
+  .fx .lk svg { width:20px; height:20px; stroke-width:1.9; }
+  .fx .fh { font-size:13px; font-weight:600; color:var(--info-fg); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .fx .fd { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .fx .fd b { color:var(--text-primary); font-weight:600; }
+  .fx.warn { background:var(--warning-bg); border-color:var(--warning-border); }
+  .fx.warn .lk, .fx.warn .fh { color:var(--warning-fg); }
+
+  /* quiet countdown meter — a bar that drains, never a red alarm */
+  .meter { height:4px; border-radius:var(--radius-full); background:var(--bg-sunken); margin-top:10px; overflow:hidden; }
+  .meter > i { display:block; height:100%; border-radius:var(--radius-full); background:var(--info-fg); opacity:.55; }
+  .fx.warn .meter > i { background:var(--warning-fg); }
+
+  /* headline amount pair */
+  .amt { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-xl); padding:16px 16px 14px; margin-top:16px; }
+  .amt .a-lb { font-size:11.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .amt .a-big { font-size:29px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; margin-top:5px; letter-spacing:-0.015em; }
+  .amt .a-sub { font-size:13px; color:var(--text-secondary); margin-top:5px; }
+  .amt .a-sub b { color:var(--text-primary); font-weight:600; }
+
+  /* stated-assumption arithmetic — HA-002 "restate the assumptions" precedent */
+  .assume { margin-top:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); padding:4px 14px; }
+  .assume li { display:flex; gap:10px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--border-hairline); }
+  .assume li:last-child { border-bottom:none; }
+  .assume li > svg { width:16px; height:16px; stroke-width:2; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .assume .as-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .assume .as-d { font-size:12px; color:var(--text-secondary); margin-top:2px; display:block; line-height:1.5; }
+
+  /* honesty note — GA-057 wording, verbatim */
+  .conv { display:flex; gap:10px; align-items:flex-start; margin-top:14px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; }
+  .conv > svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-tertiary); flex:none; margin-top:1px; }
+  .conv span { font-size:12px; color:var(--text-secondary); line-height:1.55; }
+  .conv b { color:var(--text-primary); font-weight:600; }
+  .notmarket { font-size:11.5px; color:var(--text-tertiary); margin-top:10px; line-height:1.55; }
+
+  .ctabar { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(14px + env(safe-area-inset-bottom)); }
+  .cta-total { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .cta-total .l { font-size:12px; color:var(--text-tertiary); }
+  .cta-total .v { font-size:17px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .cta.secondary { background:var(--bg-canvas); color:var(--text-primary); border:1px solid var(--border-default); margin-top:9px; min-height:48px; font-size:14.5px; }
+  .cta-note { font-size:11.5px; color:var(--text-tertiary); margin-top:9px; text-align:center; line-height:1.5; }
+
+  .urdu :is(.screen,.cta,.steps .slab,.fx,.amt,.assume,.conv,.notmarket,.cta-total,.railctx,.cta-note) { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu :is(.screen h2,.fx .fd,.conv span,.assume .as-d,.notmarket,.cta-note) { line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — FX-lock display (GA-051)</h1>
+    <p>The locked-conversion surface for the diaspora rail — reached <strong>after</strong> the guest has chosen the overseas card (Pass #3 checkout ruling H8), and only then; a guest paying by JazzCash, HBL card, EasyPaisa, Raast or cash never sees it. It states the two figures that matter — the <strong>PKR total that is actually being booked</strong> and the <strong>≈ USD estimate</strong> the card will be charged — then <strong>restates every assumption behind that estimate</strong> (the <code>HA-002</code> "restate the assumptions" precedent) rather than printing a market rate. There is <strong>no invented exchange rate anywhere on this card</strong>: the arithmetic is the two shipped amounts from <code>GA-050</code>/<code>GA-057</code>, and the honesty line that a bank may convert differently is <code>GA-057</code>'s verbatim. The countdown is a plain <span class="num">15</span>-minute lock; expiry is a <strong>calm re-quote, never a penalty</strong> — nothing is lost, the rupee price never moves. Panels: rate locked (light) · final minutes, still calm (dark) · expired and re-quoted (light) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Rate locked</span><span>Final minutes · dark</span><span>Expired · re-quoted</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ 1 · RATE LOCKED (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Rate locked — the two figures, and what they assume</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <a class="iconbtn" href="/checkout/is-f7-2bed/payment" aria-label="Back to payment methods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+            <span class="spacer"></span>
+            <span class="step-of">Step 3 of 4</span>
+            <a class="iconbtn" href="/checkout/is-f7-2bed/review" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></a>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="cur" aria-current="step"><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Your rate is locked</h2>
+            <p class="lead">You chose to pay by overseas card, so we've fixed today's conversion for this booking while you finish.</p>
+
+            <span class="railctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Overseas card (Stripe) — chosen in the previous step</span>
+
+            <div class="fx" role="status">
+              <span class="lk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="fh"><span>Rate locked ·</span><span class="num">14:52</span><span>left</span></div>
+                <div class="fd">Your overseas card will be charged <b class="num">≈ USD 152.30</b> for this <b class="num">PKR 42,350</b> booking, at today's locked rate.</div>
+                <div class="meter" aria-hidden="true"><i style="width:99%"></i></div>
+              </div>
+            </div>
+
+            <div class="amt">
+              <div class="a-lb">You'll be charged, about</div>
+              <div class="a-big num">≈ USD 152.30</div>
+              <div class="a-sub">for a booking of <b class="num">PKR 42,350</b> — the rupee total from your price breakdown, unchanged.</div>
+            </div>
+
+            <h3>What this estimate assumes</h3>
+            <ul class="assume">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span><span class="as-t">The rate we locked at <span class="num">9:41 AM</span> today</span><span class="as-d">Held for this booking only, for <span class="num">15</span> minutes.</span></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg>
+                <span><span class="as-t">A booking total of <span class="num">PKR 42,350</span></span><span class="as-d">Nightly, service fee (wakala), processing and tax, exactly as itemised.</span></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+                <span><span class="as-t">No fee from your own bank</span><span class="as-d">Any foreign-transaction fee your issuer adds is not in this figure.</span></span>
+              </li>
+            </ul>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span><b>Your bank may convert differently.</b> The <span class="num">≈ USD</span> figure is today's locked estimate; your card issuer may use a slightly different rate or add a foreign-transaction fee — that's between you and them.</span>
+            </div>
+            <p class="notmarket">This is the rate we're holding for your booking — not a market rate, and not a forecast.</p>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <div class="cta-total"><span class="l">Booked in PKR · charged in USD</span><span class="v num">PKR 42,350</span></div>
+            <a class="cta" href="/checkout/is-f7-2bed/pay/overseas-card" role="button">Continue to card details</a>
+            <a class="cta secondary" href="/checkout/is-f7-2bed/payment" role="button">Choose a different way to pay</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 2 · FINAL MINUTES (dark) ============ -->
+      <div class="device">
+        <p class="devlabel">Final minutes — calm, no alarm (dark)</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span class="num">9:54</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <a class="iconbtn" href="/checkout/is-f7-2bed/payment" aria-label="Back to payment methods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+            <span class="spacer"></span>
+            <span class="step-of">Step 3 of 4</span>
+            <a class="iconbtn" href="/checkout/is-f7-2bed/review" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></a>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="cur" aria-current="step"><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>A couple of minutes left on this rate</h2>
+            <p class="lead">Nothing happens to your booking when the timer ends — we simply refresh the conversion and show you the new figure.</p>
+
+            <span class="railctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Overseas card (Stripe) — chosen in the previous step</span>
+
+            <div class="fx" role="status">
+              <span class="lk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="fh"><span>Rate locked ·</span><span class="num">02:11</span><span>left</span></div>
+                <div class="fd">Your overseas card will be charged <b class="num">≈ USD 152.30</b> for this <b class="num">PKR 42,350</b> booking, at today's locked rate.</div>
+                <div class="meter" aria-hidden="true"><i style="width:15%"></i></div>
+              </div>
+            </div>
+
+            <div class="amt">
+              <div class="a-lb">You'll be charged, about</div>
+              <div class="a-big num">≈ USD 152.30</div>
+              <div class="a-sub">for a booking of <b class="num">PKR 42,350</b> — the rupee total from your price breakdown, unchanged.</div>
+            </div>
+
+            <h3>If the timer runs out</h3>
+            <ul class="assume">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                <span><span class="as-t">Your dates and your price stay held</span><span class="as-d">The rupee total never moves — only the USD estimate is refreshed.</span></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.4 5.7"/><path d="M4 20v-5h5"/></svg>
+                <span><span class="as-t">We re-quote and show you the new figure</span><span class="as-d">You accept it before anything is charged. There is no penalty and no lost step.</span></span>
+              </li>
+            </ul>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span><b>Your bank may convert differently.</b> The <span class="num">≈ USD</span> figure is today's locked estimate; your card issuer may use a slightly different rate or add a foreign-transaction fee — that's between you and them.</span>
+            </div>
+            <p class="notmarket">This is the rate we're holding for your booking — not a market rate, and not a forecast.</p>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <div class="cta-total"><span class="l">Booked in PKR · charged in USD</span><span class="v num">PKR 42,350</span></div>
+            <a class="cta" href="/checkout/is-f7-2bed/pay/overseas-card" role="button">Continue to card details</a>
+            <a class="cta secondary" href="/checkout/is-f7-2bed/payment" role="button">Choose a different way to pay</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 3 · EXPIRED → RE-QUOTED (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Expired — re-quoted, never silent</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span class="num">9:57</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <a class="iconbtn" href="/checkout/is-f7-2bed/payment" aria-label="Back to payment methods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+            <span class="spacer"></span>
+            <span class="step-of">Step 3 of 4</span>
+            <a class="iconbtn" href="/checkout/is-f7-2bed/review" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></a>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="cur" aria-current="step"><span class="dot">3</span><span class="slab">Price</span></li>
+            <li><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>We refreshed the rate</h2>
+            <p class="lead">The lock ran out while you were deciding — that's fine, and it costs you nothing.</p>
+
+            <div class="fx warn" role="status">
+              <span class="lk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 1 2.4 5.7"/><path d="M4 20v-5h5"/></svg></span>
+              <div>
+                <div class="fh">Rate expired — we re-quoted</div>
+                <div class="fd">The <span class="num">15</span>-minute lock ran out, so we refreshed today's rate before you pay. Your <b class="num">PKR 42,350</b> booking is unchanged; the USD estimate below is new. <b>We never change a price silently.</b></div>
+              </div>
+            </div>
+
+            <div class="amt">
+              <div class="a-lb">New locked estimate</div>
+              <div class="a-big num">≈ USD 153.10</div>
+              <div class="a-sub">Booking total unchanged — still <b class="num">PKR 42,350</b>.</div>
+            </div>
+
+            <h3>What changed, and what didn't</h3>
+            <ul class="assume">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.4 5.7"/><path d="M4 20v-5h5"/></svg>
+                <span><span class="as-t">Changed — the USD estimate</span><span class="as-d">From <span class="num">≈ USD 152.30</span> to <span class="num">≈ USD 153.10</span>, because today's rate moved.</span></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                <span><span class="as-t">Unchanged — your booking</span><span class="as-d">Same home, same dates, same <span class="num">PKR 42,350</span>. Nothing has been charged.</span></span>
+              </li>
+            </ul>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span>Only the <span class="num">USD</span> estimate moved with the market — the rupee price you're booking is exactly the same. Confirm to lock this new rate for another <span class="num">15</span> minutes.</span>
+            </div>
+            <p class="notmarket">This is the rate we're holding for your booking — not a market rate, and not a forecast.</p>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <div class="cta-total"><span class="l">Booked in PKR · charged in USD</span><span class="v num">PKR 42,350</span></div>
+            <a class="cta" href="/checkout/is-f7-2bed/pay/overseas-card" role="button">Accept new rate · continue</a>
+            <a class="cta secondary" href="/checkout/is-f7-2bed/payment" role="button">Choose a different way to pay</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4 · URDU / RTL ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — rate locked</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <a class="iconbtn" href="/ur/checkout/is-f7-2bed/payment" aria-label="ادائیگی کے طریقوں پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+            <span class="spacer"></span>
+            <span class="step-of num">3 / 4</span>
+            <a class="iconbtn" href="/ur/checkout/is-f7-2bed/review" aria-label="چیک آؤٹ بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></a>
+          </div>
+
+          <ol class="steps" aria-label="چیک آؤٹ کی پیش رفت">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">پارٹی</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">شناخت</span></li>
+            <li class="cur" aria-current="step"><span class="dot num">3</span><span class="slab">قیمت</span></li>
+            <li><span class="dot num">4</span><span class="slab">تصدیق</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>آپ کا ریٹ محفوظ کر لیا گیا ہے</h2>
+            <p class="lead">آپ نے بیرونِ ملک کارڈ سے ادائیگی کا انتخاب کیا، اس لیے ہم نے آج کی شرحِ تبادلہ اس بکنگ کے لیے روک لی ہے۔</p>
+
+            <span class="railctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>بیرونِ ملک کارڈ — پچھلے مرحلے میں منتخب کیا گیا</span>
+
+            <div class="fx" role="status">
+              <span class="lk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="fh"><span>ریٹ محفوظ ·</span><span class="num">14:52</span><span>باقی</span></div>
+                <div class="fd">آپ کے کارڈ سے تقریباً <b class="num">USD 152.30</b> وصول کیے جائیں گے، اس <b class="num">PKR 42,350</b> کی بکنگ کے لیے، آج کی محفوظ شدہ شرح پر۔</div>
+                <div class="meter" aria-hidden="true"><i style="width:99%"></i></div>
+              </div>
+            </div>
+
+            <div class="amt">
+              <div class="a-lb">تقریباً اتنی رقم وصول ہوگی</div>
+              <div class="a-big num">≈ USD 152.30</div>
+              <div class="a-sub"><b class="num">PKR 42,350</b> کی بکنگ کے لیے — قیمت کی تفصیل والا روپے کا کل، بغیر کسی تبدیلی کے۔</div>
+            </div>
+
+            <h3>یہ تخمینہ کن باتوں پر مبنی ہے</h3>
+            <ul class="assume">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span><span class="as-t">آج <span class="num">9:41 AM</span> پر محفوظ کی گئی شرح</span><span class="as-d">صرف اس بکنگ کے لیے، <span class="num">15</span> منٹ تک۔</span></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg>
+                <span><span class="as-t">کل بکنگ <span class="num">PKR 42,350</span></span><span class="as-d">فی رات کرایہ، خدمت کی فیس (وکالہ)، پروسیسنگ اور ٹیکس — جیسا تفصیل میں درج ہے۔</span></span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+                <span><span class="as-t">آپ کے اپنے بینک کی کوئی فیس شامل نہیں</span><span class="as-d">آپ کا بینک اگر بیرونِ ملک لین دین کی فیس لگائے تو وہ اس رقم میں شامل نہیں۔</span></span>
+              </li>
+            </ul>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span><b>آپ کا بینک شاید مختلف شرح پر تبدیل کرے۔</b> یہ <span class="num">USD</span> رقم آج کا محفوظ شدہ تخمینہ ہے؛ آپ کا کارڈ جاری کرنے والا ادارہ ذرا مختلف شرح استعمال کر سکتا ہے یا بیرونِ ملک لین دین کی فیس لگا سکتا ہے — یہ معاملہ آپ کے اور اُن کے درمیان ہے۔</span>
+            </div>
+            <p class="notmarket">یہ وہ شرح ہے جو ہم آپ کی بکنگ کے لیے روک رہے ہیں — کوئی مارکیٹ ریٹ یا پیش گوئی نہیں۔</p>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <div class="cta-total"><span class="l">بکنگ روپے میں · ادائیگی ڈالر میں</span><span class="v num">PKR 42,350</span></div>
+            <a class="cta" href="/ur/checkout/is-f7-2bed/pay/overseas-card" role="button">کارڈ کی تفصیلات پر جائیں</a>
+            <a class="cta secondary" href="/ur/checkout/is-f7-2bed/payment" role="button">ادائیگی کا کوئی اور طریقہ منتخب کریں</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="note"><b>Sequencing (Pass #3, H8).</b> The rail is chosen first, on <code>GA-052</code>; this screen exists only on the overseas-card branch and says so in a plain context chip, so the guest can always see <em>why</em> a currency screen appeared. It carries the checkout tier's <b>named-circles stepper</b> at <b>Price</b> — the figure being locked is the price, not the payment instrument — with card entry (<code>GA-057</code>) following at Confirm. <b>No exchange rate is printed anywhere on this card.</b> The honest unit of truth is the pair of amounts already shipped in <code>GA-050</code>/<code>GA-057</code> — <span class="num">PKR 42,350</span> and <span class="num">≈ USD 152.30</span> — plus a restated-assumptions list, the same technique <code>HA-002</code> uses for earnings: show the arithmetic's inputs rather than assert a number the product cannot guarantee. The <b>"not a market rate, and not a forecast"</b> line is the FX sibling of the shipped <code>HA-002</code>/<code>HA-031</code> "you set your price — this isn't a suggested market rate" doctrine. <b>Expiry is not a penalty:</b> the warn tint is muted amber (never <code>error</code>), the rupee total is stated as unchanged in the same breath, nothing is charged, and the re-quote figure (<span class="num">≈ USD 153.10</span>) is <code>GA-057</code>'s shipped re-quote amount reused verbatim. Countdown digits sit in <code>.num</code> (LTR-isolated, Western digits) in both scripts, the drain meter is a quiet <code>info</code> bar rather than a red clock, and the aria copy matches the visible digits.</p>
+  </main>
+</body>
+</html>

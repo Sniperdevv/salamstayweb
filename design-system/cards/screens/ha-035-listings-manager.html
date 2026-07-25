@@ -1,0 +1,590 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Listings manager (HA-035)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<!-- ===========================================================================
+     HA-035 · Listings manager — /host/listings
+     ---------------------------------------------------------------------------
+     Host chrome, NO stepper (§7.6a — post-onboarding management surface).
+     CAST + INVENTORY — shipped only:
+       Gulberg 2 Residence (Lahore · Entire place · Live · 4.9 · 128 reviews)
+       F-6 Studio (Islamabad · Private room · Live · New)
+       Cantt View Residence (Rawalpindi Cantonment · Entire place · Snoozed,
+         reopens 1 Aug) — all four rows lifted verbatim from HA-046's shipped
+         listings quick-status strip. Status chips read "Live" (HA-046/HA-076),
+         never "Listed".
+       Cantt View's without-NOC state is HA-014's shipped truth: Pakistani
+         guests stay bookable, international bookings stay off until the
+         cantonment NOC verifies. Stated as a fact of the address, never a
+         fault of the host.
+       Punjab tourism license renews 14 Nov 2026 (HA-010/HA-011/HA-046).
+     PAUSE DOCTRINE (HA-073 + HA-076): a compliance pause is PER-LISTING. The
+       hold panel is forward-dated 15 Nov 2026 for the same reason HA-073 gives
+       — a lapse can only be dramatized after the shipped renewal date — and it
+       carries HA-073's line verbatim: the other two homes are unaffected, and
+       "It comes back the moment your renewal verifies."
+     ONE-FACT-ONE-OWNER: this screen lists and routes. Lifecycle belongs to
+       HA-076 (/status), compliance to /compliance, the section editors to
+       HA-036 (/edit), the calendar to HA-041 (/host/calendar).
+     NO SLA, no invented stats, no host-level score.
+     =========================================================================== -->
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1360px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1000px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1360px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:314px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1100px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host operational lineage (ha-047/ha-052 family); NO stepper */
+  .phone { width:314px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:730px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.lc-t,.lc-sub,.lc-stat,.stchip,.cmeta-t,.cmeta-lk,.bn-t,.bn-d,.bn-lk,.mi-t,.mh,.emp-t,.emp-d,.cta,.newbtn,.toast-t,.foot,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:5px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:13px; line-height:1.5; }
+
+  /* inline compliance banner — muted error register, process not alarm (§10.6) */
+  .bn { display:flex; gap:10px; align-items:flex-start; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; }
+  .bn.hold { background:var(--error-bg); border:1px solid var(--error-border); }
+  .bn.soon { background:var(--warning-bg); border:1px solid var(--warning-border); }
+  .bn .bico { flex:none; margin-top:1px; }
+  .bn .bico svg { width:18px; height:18px; stroke-width:2; }
+  .bn.hold .bico { color:var(--error-fg); }
+  .bn.soon .bico { color:var(--warning-fg); }
+  .bn > .bbody { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .bn-t { font-size:12.5px; font-weight:600; display:block; }
+  .bn.hold .bn-t { color:var(--error-fg); }
+  .bn.soon .bn-t { color:var(--warning-fg); }
+  .bn-d { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .bn-lk { font-size:11.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  /* listing card — thumb + body + ⋯; the ⋯ is a SIBLING of the anchor, never nested (R7) */
+  .llist { display:flex; flex-direction:column; gap:11px; }
+  .lcard { display:flex; align-items:flex-start; gap:2px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 8px 11px 11px; }
+  .lc-main { flex:1; min-width:0; display:flex; gap:11px; align-items:flex-start; text-decoration:none; }
+  .lc-thumb { flex:none; width:52px; height:52px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .lc-thumb svg { width:22px; height:22px; stroke-width:1.5; }
+  .lc-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .lc-body > span { display:block; }
+  .lc-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .lc-sub { font-size:11px; color:var(--text-tertiary); }
+  .lc-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:2px; }
+  .lc-stat { font-size:11px; color:var(--text-secondary); }
+  .lmenu { flex:none; width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .lmenu svg { width:18px; height:18px; }
+
+  .stchip { display:inline-flex; align-items:center; gap:5px; min-height:22px; padding:0 9px; border-radius:var(--radius-full); font-size:10.5px; font-weight:700; }
+  .stchip svg { width:11px; height:11px; stroke-width:2.4; flex:none; }
+  .stchip.live { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .stchip.off { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .stchip.hold { color:var(--error-fg); background:var(--error-bg); border:1px solid var(--error-border); }
+
+  /* per-listing compliance meta strip — states a real, shipped limit honestly */
+  .cmeta { display:flex; align-items:center; gap:8px; margin-top:9px; padding-top:9px; border-top:1px dashed var(--border-hairline); }
+  .cmeta svg { width:13px; height:13px; color:var(--text-tertiary); flex:none; stroke-width:1.9; }
+  .cmeta-t { flex:1; min-width:0; font-size:10.5px; color:var(--text-secondary); line-height:1.4; }
+  .cmeta-lk { flex:none; font-size:10.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  /* ⋯ menu — anchored popover, real routes only */
+  .menuwrap { position:relative; }
+  .menu { position:absolute; top:44px; inset-inline-end:2px; width:214px; background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:6px; z-index:3; }
+  .mh { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); padding:6px 9px 5px; display:block; }
+  .mi { display:flex; align-items:center; gap:10px; min-height:44px; padding:0 9px; border-radius:var(--radius-md); text-decoration:none; }
+  .mi svg { width:16px; height:16px; color:var(--text-secondary); flex:none; stroke-width:1.8; }
+  .mi-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .msep { height:1px; background:var(--border-hairline); margin:5px 4px; }
+
+  /* empty state (§8.5 — oriented and calm, never a broken grid) */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:7px; padding:34px 12px; }
+  .emp-ic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); margin-bottom:5px; }
+  .emp-ic svg { width:26px; height:26px; stroke-width:1.5; }
+  .emp-t { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .emp-d { font-size:12px; color:var(--text-secondary); line-height:1.55; max-width:230px; }
+
+  .spacer-fill { flex:1; min-height:10px; }
+  .cta { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; margin-top:14px; }
+  .cta.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .cta.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .foot { font-size:11px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.45; }
+
+  /* toast (§8.5) — optimistic confirmation with an undo */
+  .toast { position:absolute; inset-inline:14px; bottom:36px; display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-lg); background:var(--text-primary); box-shadow:var(--el-popover); z-index:4; }
+  .toast svg { width:16px; height:16px; color:var(--bg-canvas); flex:none; stroke-width:2.2; }
+  .toast-t { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--bg-canvas); line-height:1.35; }
+  .toast-a { flex:none; font-size:12px; font-weight:700; color:var(--bg-canvas); text-decoration:underline; min-height:44px; display:inline-flex; align-items:center; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:344px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Listings manager (HA-035)</h1>
+    <p>Aqib's three homes in one place at <code>/host/listings</code> — the surface Stage&nbsp;9 (<i>grow</i>) routes to and every editor returns from. Each card carries the shipped status chip (<b>Live</b>, never "Listed"), the listing's own stat line, and a <code>⋯</code> menu with the three actions the registry names — <b>edit</b> (<code>HA-036</code>), <b>calendar</b> (<code>HA-041</code>) and <b>pause</b> (<code>HA-076</code>) — plus preview-as-guest for a live listing. All three rows are lifted verbatim from <code>HA-046</code>'s listings strip, including Cantt View Residence sitting <b>Snoozed until <span class="num">1 Aug</span></b>. Cantt View also carries its cantonment-NOC state honestly, in <code>HA-014</code>'s shipped words: Pakistani guests stay bookable, international bookings stay off until the NOC verifies — a fact about the address, never a fault of the host. Panel&nbsp;C proves the doctrine that matters most: an auto-pause is <b>per-listing</b> — the Punjab license lapse pauses Gulberg&nbsp;<span class="num">2</span> Residence and <b>the other two homes stay bookable</b> (<code>HA-073</code>/<code>HA-076</code>, quoted verbatim, forward-dated for the same reason <code>HA-073</code> gives). Panels: three listings (light) · <code>⋯</code> menu open (light) · compliance hold (light) · dark · no listings yet · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — listings · ⋯ menu · compliance hold</span><span>Dark</span><span>Empty</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — LISTINGS · MENU · HOLD ============================ -->
+    <section class="panel" aria-label="Light theme — the three listings, a row menu open, and a per-listing compliance hold">
+      <div class="panel-tag">Light — A three listings · B ⋯ menu open · C compliance hold, per-listing</div>
+      <div class="rowflex">
+
+        <!-- A · THREE LISTINGS -->
+        <div class="pcol">
+          <div class="pcap">A · Three homes — status, stat, and one menu each</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listings</div>
+              <a class="ib" href="/host/listings/new" aria-label="Create a listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Your listings</h2>
+              <p class="lead">Three homes. Tap one to edit it, or use <span aria-hidden="true">⋯</span><span class="sr-only">the options menu</span> for the calendar and pausing.</p>
+
+              <ul class="llist">
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/gulberg-2-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Gulberg <span class="num">2</span> Residence</span>
+                      <span class="lc-sub">Lahore · Entire place</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat"><span class="num">4.9</span> · <span class="num">128</span> reviews</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Gulberg 2 Residence: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/f6-studio/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">F-<span class="num">6</span> Studio</span>
+                      <span class="lc-sub">Islamabad · Private room</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat">New</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for F-6 Studio: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard" style="flex-wrap:wrap;">
+                  <a class="lc-main" href="/host/listings/cantt-view-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Cantt View Residence</span>
+                      <span class="lc-sub">Rawalpindi Cantonment · Entire place</span>
+                      <span class="lc-row"><span class="stchip off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Snoozed</span><span class="lc-stat">Reopens <span class="num">1 Aug</span></span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Cantt View Residence: edit, calendar, resume"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                  <div class="cmeta" style="width:100%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+                    <span class="cmeta-t">Guests visiting from abroad are off until your cantonment NOC is verified. Pakistani guests can book as usual.</span>
+                    <a class="cmeta-lk" href="/host/listings/cantt-view-residence/compliance">Details</a>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="cta secondary" href="/host/listings/new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Create a listing</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · MENU OPEN -->
+        <div class="pcol">
+          <div class="pcap">B · <span aria-hidden="true">⋯</span> open on Cantt View — edit, calendar, resume</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listings</div>
+              <a class="ib" href="/host/listings/new" aria-label="Create a listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Your listings</h2>
+              <p class="lead">Three homes. Tap one to edit it, or use <span aria-hidden="true">⋯</span><span class="sr-only">the options menu</span> for the calendar and pausing.</p>
+
+              <ul class="llist">
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/gulberg-2-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Gulberg <span class="num">2</span> Residence</span>
+                      <span class="lc-sub">Lahore · Entire place</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat"><span class="num">4.9</span> · <span class="num">128</span> reviews</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Gulberg 2 Residence: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard menuwrap" style="flex-wrap:wrap;">
+                  <a class="lc-main" href="/host/listings/cantt-view-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Cantt View Residence</span>
+                      <span class="lc-sub">Rawalpindi Cantonment · Entire place</span>
+                      <span class="lc-row"><span class="stchip off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Snoozed</span><span class="lc-stat">Reopens <span class="num">1 Aug</span></span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="true" aria-label="Options for Cantt View Residence: edit, calendar, resume"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                  <div class="menu" role="menu" aria-label="Cantt View Residence options">
+                    <span class="mh">Cantt View Residence</span>
+                    <a class="mi" role="menuitem" href="/host/listings/cantt-view-residence/edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span class="mi-t">Edit listing</span></a>
+                    <a class="mi" role="menuitem" href="/host/calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="mi-t">Calendar &amp; prices</span></a>
+                    <div class="msep" role="none"></div>
+                    <a class="mi" role="menuitem" href="/host/listings/cantt-view-residence/status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9z"/></svg><span class="mi-t">Resume now</span></a>
+                    <a class="mi" role="menuitem" href="/host/listings/cantt-view-residence/status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8v8M15 8v8"/></svg><span class="mi-t">Listing status</span></a>
+                    <div class="msep" role="none"></div>
+                    <a class="mi" role="menuitem" href="/host/listings/cantt-view-residence/compliance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg><span class="mi-t">Compliance</span></a>
+                  </div>
+                  <div class="cmeta" style="width:100%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+                    <span class="cmeta-t">Guests visiting from abroad are off until your cantonment NOC is verified. Pakistani guests can book as usual.</span>
+                    <a class="cmeta-lk" href="/host/listings/cantt-view-residence/compliance">Details</a>
+                  </div>
+                </li>
+
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/f6-studio/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">F-<span class="num">6</span> Studio</span>
+                      <span class="lc-sub">Islamabad · Private room</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat">New</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for F-6 Studio: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="toast" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+              <span class="toast-t">F-<span class="num">6</span> Studio paused</span>
+              <button class="toast-a" type="button">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · COMPLIANCE HOLD -->
+        <div class="pcol">
+          <div class="pcap">C · Auto-pause — one listing held, two still bookable</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listings</div>
+              <a class="ib" href="/host/listings/new" aria-label="Create a listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Your listings</h2>
+              <p class="lead">One listing is paused. The other two are unaffected and still bookable.</p>
+
+              <div class="bn hold" role="alert">
+                <span class="bico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg></span>
+                <span class="bbody">
+                  <span class="bn-t">Your Punjab tourism license expired on <span class="num">14</span> November <span class="num">2026</span></span>
+                  <span class="bn-d">That's the only thing that lapsed. Gulberg <span class="num">2</span> Residence paused automatically the day after. <b>It comes back the moment your renewal verifies.</b></span>
+                  <a class="bn-lk" href="/host/listings/gulberg-2-residence/compliance/renew">Upload your renewed license →</a>
+                </span>
+              </div>
+
+              <ul class="llist">
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/gulberg-2-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Gulberg <span class="num">2</span> Residence</span>
+                      <span class="lc-sub">Lahore · Entire place</span>
+                      <span class="lc-row"><span class="stchip hold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Paused</span><span class="lc-stat">License renewal needed</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Gulberg 2 Residence: edit, calendar, listing status"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/f6-studio/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">F-<span class="num">6</span> Studio</span>
+                      <span class="lc-sub">Islamabad · Private room</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat">Still bookable</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for F-6 Studio: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard" style="flex-wrap:wrap;">
+                  <a class="lc-main" href="/host/listings/cantt-view-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Cantt View Residence</span>
+                      <span class="lc-sub">Rawalpindi Cantonment · Entire place</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat">Still bookable</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Cantt View Residence: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                  <div class="cmeta" style="width:100%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+                    <span class="cmeta-t">Guests visiting from abroad are off until your cantonment NOC is verified. Pakistani guests can book as usual.</span>
+                    <a class="cmeta-lk" href="/host/listings/cantt-view-residence/compliance">Details</a>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <p class="foot">Only Gulberg <span class="num">2</span> Residence needs the Punjab license. Payouts you've already earned carry on as scheduled.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every row is <code>HA-046</code>'s shipped listings strip, promoted to a full management surface: same names, same city/room-type lines, same status chips — <b>Live</b>, never "Listed" — and Cantt View still <b>Snoozed, reopening <span class="num">1 Aug</span></b>, because a manager that quietly re-states a listing as live would contradict the dashboard a tap away. The <code>⋯</code> button is a <b>sibling</b> of the card's anchor, never nested inside it, and every menu item is a real route: edit → <code>HA-036</code>, calendar → <code>HA-041</code>, resume/pause → <code>HA-076</code>. Cantt View's NOC strip states a real limit in <code>HA-014</code>'s words and immediately states what still works — Pakistani guests book as usual — so the honest disclosure never reads as a defect. Panel <b>C</b> is the load-bearing one: the auto-pause names <b>one</b> lapsed document (<code>HA-073</code>'s <code>role="alert"</code> discipline), the paused card sits in the muted <code>error</code> register with no X and no saturated red, and the two unaffected homes say "Still bookable" on their own chips — the per-listing doctrine made visible rather than promised in prose. Dated <span class="num">15</span> November <span class="num">2026</span> for the reason <code>HA-073</code> states: the shipped license renews <span class="num">14</span> Nov <span class="num">2026</span>, so a lapse can only be shown after it.</p>
+    </section>
+
+    <!-- ============================ DARK + EMPTY ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the three listings, and the state before a first listing exists">
+      <div class="panel-tag">Dark — D three listings · E no listings yet</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · Three homes — dark</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listings</div>
+              <a class="ib" href="/host/listings/new" aria-label="Create a listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="dH">Your listings</h2>
+              <p class="lead">Three homes. Tap one to edit it, or use <span aria-hidden="true">⋯</span><span class="sr-only">the options menu</span> for the calendar and pausing.</p>
+
+              <ul class="llist">
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/gulberg-2-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Gulberg <span class="num">2</span> Residence</span>
+                      <span class="lc-sub">Lahore · Entire place</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat"><span class="num">4.9</span> · <span class="num">128</span> reviews</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Gulberg 2 Residence: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+                <li class="lcard">
+                  <a class="lc-main" href="/host/listings/f6-studio/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">F-<span class="num">6</span> Studio</span>
+                      <span class="lc-sub">Islamabad · Private room</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span><span class="lc-stat">New</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for F-6 Studio: edit, calendar, pause"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+                <li class="lcard" style="flex-wrap:wrap;">
+                  <a class="lc-main" href="/host/listings/cantt-view-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">Cantt View Residence</span>
+                      <span class="lc-sub">Rawalpindi Cantonment · Entire place</span>
+                      <span class="lc-row"><span class="stchip off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Snoozed</span><span class="lc-stat">Reopens <span class="num">1 Aug</span></span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Options for Cantt View Residence: edit, calendar, resume"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                  <div class="cmeta" style="width:100%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+                    <span class="cmeta-t">Guests visiting from abroad are off until your cantonment NOC is verified. Pakistani guests can book as usual.</span>
+                    <a class="cmeta-lk" href="/host/listings/cantt-view-residence/compliance">Details</a>
+                  </div>
+                </li>
+              </ul>
+              <div class="spacer-fill"></div>
+              <a class="cta secondary" href="/host/listings/new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Create a listing</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">E · No listings yet — oriented, never a dead end</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listings</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="eH">Your listings</h2>
+              <div class="empty">
+                <span class="emp-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg></span>
+                <span class="emp-t">No listings yet</span>
+                <span class="emp-d">Your homes will appear here once you publish one. The listing form saves as you go, so you can stop and come back.</span>
+              </div>
+              <a class="cta primary" href="/host/listings/new">Create your first listing</a>
+              <a class="cta secondary" href="/host/onboarding" style="margin-top:9px;">Back to Host setup</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every status chip on its muted semantic pair — <code>success</code> for Live, a neutral <code>sunken</code> for Snoozed — so the list never becomes a traffic-light. The empty state is oriented, not apologetic (§8.5): it says what will appear, states the one genuinely reassuring fact about the form, and offers two ways forward, so a host who lands here with nothing still has a next action (the no-dead-ends rule).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the three listings">
+      <div class="panel-tag">RTL · اردو — آپ کی لسٹنگز</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">F · اردو — آپ کی لسٹنگز</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="آج پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">لسٹنگز</div>
+              <a class="ib" href="/ur/host/listings/new" aria-label="نئی لسٹنگ بنائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="fH">آپ کی لسٹنگز</h2>
+              <p class="lead">تین گھر۔ ترمیم کے لیے کسی پر ٹیپ کریں، یا کیلنڈر اور وقفے کے لیے <span aria-hidden="true">⋯</span><span class="sr-only">اختیارات کا مینو</span> کھولیں۔</p>
+
+              <ul class="llist">
+                <li class="lcard">
+                  <a class="lc-main" href="/ur/host/listings/gulberg-2-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">گلبرگ <span class="num">2</span> ریزیڈنس</span>
+                      <span class="lc-sub">لاہور · پورا گھر</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>لائیو</span><span class="lc-stat"><span class="num">4.9</span> · <span class="num">128</span> جائزے</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="گلبرگ 2 ریزیڈنس کے اختیارات: ترمیم، کیلنڈر، وقفہ"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard">
+                  <a class="lc-main" href="/ur/host/listings/f6-studio/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">ایف-<span class="num">6</span> اسٹوڈیو</span>
+                      <span class="lc-sub">اسلام آباد · نجی کمرہ</span>
+                      <span class="lc-row"><span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>لائیو</span><span class="lc-stat">نئی</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="ایف-6 اسٹوڈیو کے اختیارات: ترمیم، کیلنڈر، وقفہ"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="lcard" style="flex-wrap:wrap;">
+                  <a class="lc-main" href="/ur/host/listings/cantt-view-residence/edit">
+                    <span class="lc-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                    <span class="lc-body">
+                      <span class="lc-t">کینٹ ویو ریزیڈنس</span>
+                      <span class="lc-sub">راولپنڈی کینٹونمنٹ · پورا گھر</span>
+                      <span class="lc-row"><span class="stchip off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>وقفے پر</span><span class="lc-stat"><span class="num">1</span> اگست کو دوبارہ کھلے گی</span></span>
+                    </span>
+                  </a>
+                  <button class="lmenu" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="کینٹ ویو ریزیڈنس کے اختیارات: ترمیم، کیلنڈر، دوبارہ شروع"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                  <div class="cmeta" style="width:100%;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+                    <span class="cmeta-t">بیرونِ ملک سے آنے والے مہمانوں کی بکنگ آپ کے کینٹونمنٹ NOC کی تصدیق تک بند ہے۔ پاکستانی مہمان معمول کے مطابق بکنگ کر سکتے ہیں۔</span>
+                    <a class="cmeta-lk" href="/ur/host/listings/cantt-view-residence/compliance">تفصیل</a>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="cta secondary" href="/ur/host/listings/new">نئی لسٹنگ بنائیں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): thumbnails, chips and the <code>⋯</code> button swap sides, the back chevron flips to the reading direction, and <b>every digit run stays inside <code>.num</code></b> — <code>direction:ltr; unicode-bidi:isolate</code>, Western numerals — so <span class="num">4.9</span>, <span class="num">128</span> and "<span class="num">1</span> اگست" are never digit-order-mirrored (Pass&nbsp;#31 ruling), and each <code>aria-label</code>'s numerals match the visible ones. "لائیو" is <code>ha-076</code>'s shipped Urdu status word, reused rather than re-coined.</p>
+    </section>
+
+  </main>
+</body>
+</html>

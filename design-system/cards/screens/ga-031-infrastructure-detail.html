@@ -1,0 +1,622 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-031 Home infrastructure detail (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1320px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1320px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; max-width:384px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); display:flex; flex-direction:column; }
+
+  /* status bar (safe-area top) — on canvas, ink text */
+  .sbar { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; flex:none; }
+  .sbar .t { font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .sbar .ic { display:flex; gap:5px; align-items:center; }
+  .sbar .ic svg { width:16px; height:16px; color:var(--text-primary); }
+
+  /* compact + back app bar (§2 nav) */
+  .appbar { display:flex; align-items:center; gap:4px; padding:2px 8px 10px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .icbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); flex:none; padding:0; }
+  .icbtn svg { width:22px; height:22px; stroke-width:2; }
+  .abttl { flex:1; min-width:0; font-size:16px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-inline-start:2px; }
+
+  /* scroll body */
+  .scroll { padding:14px 18px 8px; }
+  .lead { font-size:13.5px; color:var(--text-secondary); line-height:1.5; }
+  .subhome { font-size:12.5px; color:var(--text-tertiary); margin-top:4px; }
+  .subhome b { color:var(--text-secondary); font-weight:600; }
+
+  /* last-verified line */
+  .vbar { display:flex; align-items:center; gap:9px; margin-top:13px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .vbar svg { width:16px; height:16px; color:var(--success-fg); flex:none; }
+  .vbar span { font-size:12.5px; color:var(--text-secondary); line-height:1.35; }
+  .vbar b { color:var(--text-primary); font-weight:600; }
+
+  /* utility block */
+  .ublock { padding:17px 0 4px; border-top:1px solid var(--border-hairline); }
+  .ublock:first-of-type { border-top:none; padding-top:16px; }
+  .uhd { display:flex; gap:12px; align-items:flex-start; }
+  .uic { width:38px; height:38px; flex:none; border-radius:var(--radius-full); background:var(--info-bg); border:1px solid var(--info-border); display:flex; align-items:center; justify-content:center; }
+  .uic svg { width:19px; height:19px; color:var(--info-fg); stroke-width:1.75; }
+  .uht { flex:1; min-width:0; }
+  .uht .uh { font-size:15px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .ustatus { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; margin-top:2px; color:var(--text-secondary); line-height:1.35; }
+  .ustatus.ok { color:var(--success-fg); font-weight:600; }
+  .ustatus.ok svg { width:13px; height:13px; flex:none; }
+  .natag { margin-inline-start:auto; align-self:center; display:inline-flex; align-items:center; height:23px; padding:0 10px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); font-size:11.5px; font-weight:600; color:var(--text-tertiary); flex:none; }
+
+  /* load-shedding qualitative pattern strip */
+  .pat { display:flex; gap:8px; margin:12px 0 2px; }
+  .patc { flex:1; display:flex; flex-direction:column; gap:3px; align-items:center; padding:9px 6px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .patc .pt { font-size:10.5px; color:var(--text-tertiary); letter-spacing:.02em; }
+  .patc .pv { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .patc.cut { background:var(--warning-bg); border-color:var(--warning-border); }
+  .patc.cut .pv { color:var(--warning-fg); }
+  .patc.cut .pt { color:var(--warning-fg); opacity:.8; }
+  .pnote { font-size:12px; color:var(--text-secondary); margin-top:9px; line-height:1.45; }
+
+  /* label:value detail list (explicit flex/gap — never inline flow) */
+  .kv { margin:12px 0 4px; padding:12px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:10px; }
+  .kvr { display:flex; gap:14px; align-items:baseline; }
+  .kvr dt { flex:none; width:118px; font-size:12.5px; color:var(--text-secondary); }
+  .kvr dd { flex:1; min-width:0; font-size:13px; color:var(--text-primary); line-height:1.45; }
+  .kvr dd .hon { color:var(--text-secondary); display:block; margin-top:2px; font-size:12px; }
+  .kvr dd .inc { display:inline-flex; align-items:center; gap:5px; }
+  .kvr dd .inc svg { width:13px; height:13px; color:var(--success-fg); flex:none; }
+  .kvr dd .num { font-variant-numeric:tabular-nums; }
+
+  /* absent (not-available) — quiet strike, NEVER red (§10 / ga-029 precedent) */
+  .ublock.absent .uic { background:var(--bg-sunken); border-color:var(--border-hairline); }
+  .ublock.absent .uic svg { color:var(--text-disabled); }
+  .ublock.absent .uht .uh { color:var(--text-tertiary); text-decoration:line-through; text-decoration-color:var(--text-disabled); }
+  .ublock.absent .ustatus { color:var(--text-tertiary); }
+
+  /* offline banner (cached facts still shown) */
+  .offline { display:flex; gap:10px; align-items:flex-start; margin:14px 0 0; padding:11px 13px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .offline svg { width:17px; height:17px; color:var(--info-fg); flex:none; margin-top:1px; }
+  .offline .t { font-size:12.5px; color:var(--info-fg); line-height:1.4; }
+  .offline .t b { font-weight:600; }
+
+  /* bottom help link */
+  .helprow { margin:14px 0 4px; padding-top:14px; border-top:1px solid var(--border-hairline); }
+  .helplink { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:13.5px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .helplink svg { width:16px; height:16px; }
+
+  /* home indicator (safe-area bottom) */
+  .homebar { display:flex; justify-content:center; padding:8px 0 9px; background:var(--bg-canvas); flex:none; }
+  .homebar i { width:120px; height:5px; border-radius:var(--radius-full); background:var(--text-primary); opacity:.18; }
+
+  /* skeleton */
+  .sk { background:var(--bg-sunken); border-radius:var(--radius-md); position:relative; overflow:hidden; }
+  .sk::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,var(--bg-raised),transparent); transform:translateX(-100%); animation:shim 1.4s ease-in-out infinite; }
+  @keyframes shim { 100% { transform:translateX(100%); } }
+  @media (prefers-reduced-motion: reduce){ .sk::after { animation:none; } }
+  .skrow { display:flex; gap:12px; align-items:flex-start; padding:16px 0; border-top:1px solid var(--border-hairline); }
+  .skrow:first-child { border-top:none; }
+
+  /* RTL / Urdu */
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-031 — Home infrastructure detail (mobile app)</h1>
+    <p>The full PK-practical infrastructure screen — the honest expansion of the GA-027 infra card. Electricity &amp; load-shedding pattern, backup power (UPS + generator hours + fuel-included), water (tank + pressure), gas (Sui + winter honesty), internet (speed + last-tested + provider), and parking — each a semantic list with a muted utility info tint and a "last verified by the host" line. Anything the home lacks is a quiet strike, never an alarm. Real Islamabad F-7 Margalla-view content (same home &amp; host as GA-027). Quiet Modern — facts stated, never sold.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span><span>Utility info tint (§10.3)</span><span>Semantic label:value lists</span><span>City-facts honesty</span><span>Not-available = quiet strike</span><span>States in DOM</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT (primary, full) ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — full screen · all facts present</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abttl">Home infrastructure</span>
+          </div>
+
+          <main class="scroll">
+            <p class="lead">The PK-practical facts this host discloses up front — power, water, gas, internet and parking — so there are no surprises on arrival.</p>
+            <p class="subhome"><b>Bright two-bedroom apartment</b> · F-7, Islamabad</p>
+
+            <div class="vbar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.5-7 8.5-4-1-7-4.1-7-8.5V6z"/><path d="M9 12l2 2 4-4"/></svg>
+              <span>Last verified by the host on <b>18 July 2026</b>. Hosts confirm these facts each season.</span>
+            </div>
+
+            <!-- Electricity + load-shedding pattern -->
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Electricity &amp; load-shedding</div>
+                  <div class="ustatus">Grid: IESCO · usually 1–2 hrs of cuts a day</div>
+                </div>
+              </div>
+              <div class="pat" role="img" aria-label="Typical daily pattern: morning on, early afternoon a short cut, evening on, night on">
+                <div class="patc"><span class="pt">Morning</span><span class="pv">On</span></div>
+                <div class="patc cut"><span class="pt">Afternoon</span><span class="pv">~1–2 hr</span></div>
+                <div class="patc"><span class="pt">Evening</span><span class="pv">On</span></div>
+                <div class="patc"><span class="pt">Night</span><span class="pv">On</span></div>
+              </div>
+              <p class="pnote">Cuts are usually short and fall in the early afternoon. Islamabad's capital sectors see lighter load-shedding than most of the country, and timings shift with the season and the weather.</p>
+            </section>
+
+            <!-- Backup power -->
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Backup power</div>
+                  <div class="ustatus ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>UPS + diesel generator</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>UPS (instant)</dt><dd>Keeps fans, lights, router &amp; phone charging running through routine cuts — no interruption.</dd></div>
+                <div class="kvr"><dt>Generator</dt><dd>Diesel generator for longer outages, up to <span class="num">~6 hrs</span>/day. Runs one bedroom AC alongside the essentials.</dd></div>
+                <div class="kvr"><dt>Fuel</dt><dd><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Included in your stay</span><span class="hon">No extra charge for generator fuel.</span></dd></div>
+              </dl>
+            </section>
+
+            <!-- Water -->
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Water</div>
+                  <div class="ustatus ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>24/7 — mains, tank &amp; bore</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>Storage tank</dt><dd><span class="num">1,000-gallon</span> overhead + underground reserve — covers days without a mains supply.</dd></div>
+                <div class="kvr"><dt>Bore backup</dt><dd>Motorised bore refills the tank automatically.</dd></div>
+                <div class="kvr"><dt>Pressure</dt><dd>Good pressure on both floors; geyser hot water in every bathroom.</dd></div>
+              </dl>
+            </section>
+
+            <!-- Gas -->
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s4 3.5 4 8a4 4 0 0 1-8 0c0-1.6.7-3 1.5-4 .3 1 1 1.6 1.7 1.8C11 7.5 12 5 12 3z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Gas (Sui)</div>
+                  <div class="ustatus">Piped Sui gas to kitchen &amp; heaters</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>Winter honesty</dt><dd>Pressure drops on cold winter mornings, like most of the city.<span class="hon">An electric backup heater and a gas geyser are provided so hot water is never a problem.</span></dd></div>
+                <div class="kvr"><dt>Cooking</dt><dd>Full gas hob in the kitchen; utensils and basics stocked.</dd></div>
+              </dl>
+            </section>
+
+            <!-- Internet -->
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Internet &amp; Wi-Fi</div>
+                  <div class="ustatus ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Fibre — whole home</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>Provider</dt><dd>StormFiber — fibre-to-the-home (not a mobile hotspot).</dd></div>
+                <div class="kvr"><dt>Speed</dt><dd><span class="num">~30 Mbps</span> down / <span class="num">15 Mbps</span> up — steady for video calls and streaming.</dd></div>
+                <div class="kvr"><dt>Last tested</dt><dd><span class="num">18 July 2026</span><span class="hon">Speed is re-tested each season, not promised from the plan.</span></dd></div>
+              </dl>
+            </section>
+
+            <!-- Parking -->
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 17V8h4a2.5 2.5 0 0 1 0 5H9"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Parking</div>
+                  <div class="ustatus">1 covered spot, gated building</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>On-site</dt><dd>One reserved covered spot inside the gated building.</dd></div>
+                <div class="kvr"><dt>Street</dt><dd>Free street parking on the lane; quiet and residential.</dd></div>
+              </dl>
+            </section>
+
+            <div class="offline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+              <span class="t"><b>Offline?</b> These details are cached on your device, so you can check the home's power and water any time — even on the road.</span>
+            </div>
+
+            <div class="helprow">
+              <a class="helplink" href="/help/verified-home-facts">How hosts verify these facts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+            </div>
+          </main>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK (full) ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — full screen · same facts</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abttl">Home infrastructure</span>
+          </div>
+
+          <main class="scroll">
+            <p class="lead">The PK-practical facts this host discloses up front — power, water, gas, internet and parking.</p>
+            <p class="subhome"><b>Bright two-bedroom apartment</b> · F-7, Islamabad</p>
+
+            <div class="vbar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.5-7 8.5-4-1-7-4.1-7-8.5V6z"/><path d="M9 12l2 2 4-4"/></svg>
+              <span>Last verified by the host on <b>18 July 2026</b>.</span>
+            </div>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Electricity &amp; load-shedding</div>
+                  <div class="ustatus">Grid: IESCO · usually 1–2 hrs of cuts a day</div>
+                </div>
+              </div>
+              <div class="pat" role="img" aria-label="Typical daily pattern: morning on, early afternoon a short cut, evening on, night on">
+                <div class="patc"><span class="pt">Morning</span><span class="pv">On</span></div>
+                <div class="patc cut"><span class="pt">Afternoon</span><span class="pv">~1–2 hr</span></div>
+                <div class="patc"><span class="pt">Evening</span><span class="pv">On</span></div>
+                <div class="patc"><span class="pt">Night</span><span class="pv">On</span></div>
+              </div>
+              <p class="pnote">Cuts are short and usually early afternoon; capital sectors see lighter load-shedding than most of the country.</p>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Backup power</div>
+                  <div class="ustatus ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>UPS + diesel generator</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>UPS (instant)</dt><dd>Fans, lights, router &amp; charging through routine cuts — no interruption.</dd></div>
+                <div class="kvr"><dt>Generator</dt><dd>Diesel for longer outages, up to <span class="num">~6 hrs</span>/day; runs one AC too.</dd></div>
+                <div class="kvr"><dt>Fuel</dt><dd><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Included in your stay</span></dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Water</div>
+                  <div class="ustatus ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>24/7 — mains, tank &amp; bore</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>Storage tank</dt><dd><span class="num">1,000-gallon</span> overhead + underground reserve.</dd></div>
+                <div class="kvr"><dt>Pressure</dt><dd>Good on both floors; geyser hot water in every bathroom.</dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s4 3.5 4 8a4 4 0 0 1-8 0c0-1.6.7-3 1.5-4 .3 1 1 1.6 1.7 1.8C11 7.5 12 5 12 3z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Gas (Sui)</div>
+                  <div class="ustatus">Piped Sui gas to kitchen &amp; heaters</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>Winter honesty</dt><dd>Pressure drops on cold winter mornings.<span class="hon">Electric backup heater + gas geyser provided.</span></dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Internet &amp; Wi-Fi</div>
+                  <div class="ustatus ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Fibre — whole home</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>Provider</dt><dd>StormFiber — fibre-to-the-home.</dd></div>
+                <div class="kvr"><dt>Speed</dt><dd><span class="num">~30 Mbps</span> down / <span class="num">15 Mbps</span> up.</dd></div>
+                <div class="kvr"><dt>Last tested</dt><dd><span class="num">18 July 2026</span></dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 17V8h4a2.5 2.5 0 0 1 0 5H9"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Parking</div>
+                  <div class="ustatus">1 covered spot, gated building</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt>On-site</dt><dd>One reserved covered spot inside the gated building.</dd></div>
+                <div class="kvr"><dt>Street</dt><dd>Free street parking on a quiet residential lane.</dd></div>
+              </dl>
+            </section>
+
+            <div class="helprow">
+              <a class="helplink" href="/help/verified-home-facts">How hosts verify these facts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+            </div>
+          </main>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · mirrored (digits &amp; speeds never mirror)</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="sbar">
+            <span class="t num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="icbtn" aria-label="فہرست پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="abttl ur">گھر کا انفراسٹرکچر</span>
+          </div>
+
+          <section class="scroll" aria-label="گھر کا انفراسٹرکچر">
+            <p class="lead ur">میزبان کی پیشگی معلومات — بجلی، پانی، گیس، انٹرنیٹ اور پارکنگ — تاکہ پہنچنے پر کوئی حیرت نہ ہو۔</p>
+            <p class="subhome ur"><b>دو کمروں کا روشن اپارٹمنٹ</b> · ایف-۷، اسلام آباد</p>
+
+            <div class="vbar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.5-7 8.5-4-1-7-4.1-7-8.5V6z"/><path d="M9 12l2 2 4-4"/></svg>
+              <span class="ur">میزبان نے آخری بار <b>۱۸ جولائی ۲۰۲۶</b> کو تصدیق کی۔</span>
+            </div>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg></span>
+                <div class="uht">
+                  <div class="uh ur">بجلی اور لوڈشیڈنگ</div>
+                  <div class="ustatus ur">گرڈ: آئیسکو · عموماً روزانہ ۱–۲ گھنٹے کٹوتی</div>
+                </div>
+              </div>
+              <div class="pat" role="img" aria-label="عام دن کا معمول">
+                <div class="patc"><span class="pt ur">صبح</span><span class="pv ur">بحال</span></div>
+                <div class="patc cut"><span class="pt ur">دوپہر</span><span class="pv num">~1–2 hr</span></div>
+                <div class="patc"><span class="pt ur">شام</span><span class="pv ur">بحال</span></div>
+                <div class="patc"><span class="pt ur">رات</span><span class="pv ur">بحال</span></div>
+              </div>
+              <p class="pnote ur">کٹوتی مختصر اور عموماً دوپہر کو ہوتی ہے۔ دارالحکومت کے سیکٹرز میں لوڈشیڈنگ ملک کے بیشتر حصوں سے کم ہے۔</p>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span>
+                <div class="uht">
+                  <div class="uh ur">بیک اپ پاور</div>
+                  <div class="ustatus ok ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>یو پی ایس + ڈیزل جنریٹر</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt class="ur">یو پی ایس</dt><dd class="ur">پنکھے، لائٹس، راؤٹر اور چارجنگ معمول کی کٹوتی میں بلا تعطل چلتے ہیں۔</dd></div>
+                <div class="kvr"><dt class="ur">جنریٹر</dt><dd class="ur">طویل کٹوتی کے لیے ڈیزل جنریٹر، روزانہ <span class="num">~6 hrs</span> تک؛ ایک اے سی بھی چلتا ہے۔</dd></div>
+                <div class="kvr"><dt class="ur">ایندھن</dt><dd class="ur"><span class="inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>آپ کے قیام میں شامل</span><span class="hon ur">جنریٹر کے ایندھن کا کوئی اضافی چارج نہیں۔</span></dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9 6 14a6 6 0 0 0 12 0c0-5-6-11.3-6-11.3z"/></svg></span>
+                <div class="uht">
+                  <div class="uh ur">پانی</div>
+                  <div class="ustatus ok ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>۲۴/۷ — مین لائن، ٹینک اور بور</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt class="ur">اسٹوریج ٹینک</dt><dd class="ur"><span class="num">1,000</span> گیلن اوور ہیڈ + زیرِ زمین ذخیرہ۔</dd></div>
+                <div class="kvr"><dt class="ur">پریشر</dt><dd class="ur">دونوں منزلوں پر اچھا پریشر؛ ہر باتھ میں گیزر گرم پانی۔</dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s4 3.5 4 8a4 4 0 0 1-8 0c0-1.6.7-3 1.5-4 .3 1 1 1.6 1.7 1.8C11 7.5 12 5 12 3z"/></svg></span>
+                <div class="uht">
+                  <div class="uh ur">گیس (سوئی)</div>
+                  <div class="ustatus ur">کچن اور ہیٹر تک پائپ گیس</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt class="ur">سردی کی سچائی</dt><dd class="ur">سردیوں کی صبح پریشر کم ہو جاتا ہے۔<span class="hon ur">الیکٹرک بیک اپ ہیٹر اور گیس گیزر فراہم ہیں۔</span></dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></span>
+                <div class="uht">
+                  <div class="uh ur">انٹرنیٹ اور وائی فائی</div>
+                  <div class="ustatus ok ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>فائبر — پورا گھر</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt class="ur">فراہم کنندہ</dt><dd class="ur">اسٹارم فائبر — فائبر ٹو دی ہوم۔</dd></div>
+                <div class="kvr"><dt class="ur">رفتار</dt><dd class="ur"><span class="num">~30 Mbps</span> ڈاؤن / <span class="num">15 Mbps</span> اپ۔</dd></div>
+                <div class="kvr"><dt class="ur">آخری جانچ</dt><dd class="ur"><span class="num">18 July 2026</span></dd></div>
+              </dl>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 17V8h4a2.5 2.5 0 0 1 0 5H9"/></svg></span>
+                <div class="uht">
+                  <div class="uh ur">پارکنگ</div>
+                  <div class="ustatus ur">۱ کورڈ اسپاٹ، گیٹڈ عمارت</div>
+                </div>
+              </div>
+              <dl class="kv">
+                <div class="kvr"><dt class="ur">عمارت میں</dt><dd class="ur">گیٹڈ عمارت کے اندر ایک مخصوص کورڈ اسپاٹ۔</dd></div>
+                <div class="kvr"><dt class="ur">گلی</dt><dd class="ur">پرسکون رہائشی گلی میں مفت اسٹریٹ پارکنگ۔</dd></div>
+              </dl>
+            </section>
+          </section>
+
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATES ============================================================= -->
+    <div class="col">
+      <div class="cap">States — not-available (quiet strike) · loading skeleton</div>
+
+      <!-- Not-available example: a different, honest home with mains-only power -->
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="appbar">
+            <button class="icbtn" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="abttl">Home infrastructure</span>
+          </div>
+          <div class="scroll">
+            <p class="subhome" style="margin-top:0"><b>Budget room in Saddar</b> · Rawalpindi — honest about what it lacks</p>
+
+            <section class="ublock absent">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 10v4"/><path d="M9 9l-2 3h3l-2 3"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Backup power</div>
+                  <div class="ustatus">Mains only — no UPS or generator</div>
+                </div>
+                <span class="natag">Not available</span>
+              </div>
+              <p class="pnote">During load-shedding this room has no power. Bring a power bank if you rely on a charged phone through the afternoon cut.</p>
+            </section>
+
+            <section class="ublock">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Electricity &amp; load-shedding</div>
+                  <div class="ustatus">Grid: IESCO · ~3–4 hrs of cuts a day</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="ublock absent">
+              <div class="uhd">
+                <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg></span>
+                <div class="uht">
+                  <div class="uh">Wi-Fi</div>
+                  <div class="ustatus">Mobile data only — no fixed line</div>
+                </div>
+                <span class="natag">Not available</span>
+              </div>
+            </section>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+
+      <div class="cap" style="margin-top:6px">Loading — geometry-matched skeleton (no spinner)</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="appbar">
+            <span class="icbtn"></span>
+            <span class="abttl"><span class="sk" style="display:block;width:150px;height:16px"></span></span>
+          </div>
+          <div class="scroll" aria-busy="true" aria-label="Loading home infrastructure">
+            <span class="sk" style="display:block;width:100%;height:44px;border-radius:8px;margin:8px 0 4px"></span>
+            <div class="skrow"><span class="sk" style="width:38px;height:38px;border-radius:9999px;flex:none"></span><span class="sk" style="flex:1;height:56px"></span></div>
+            <div class="skrow"><span class="sk" style="width:38px;height:38px;border-radius:9999px;flex:none"></span><span class="sk" style="flex:1;height:72px"></span></div>
+            <div class="skrow"><span class="sk" style="width:38px;height:38px;border-radius:9999px;flex:none"></span><span class="sk" style="flex:1;height:56px"></span></div>
+          </div>
+          <div class="homebar"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

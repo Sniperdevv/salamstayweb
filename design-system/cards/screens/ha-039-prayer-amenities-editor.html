@@ -1,0 +1,544 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Prayer amenities editor (HA-039)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-024/ha-038 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — post-publish editor lineage; NO wizard bars (§7 mechanics) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.sh,.step-t,.step-d,.flabel,.field-sub,.mrow .n,.mrow .m,.togrow .tog-tt,.togrow .tog-d,.honestnote p,.pv-t,.pv-d,.pv-ht,.laststat span,.unsavedbar .tx,.toast-t,.btn,.ebtn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* editor app bar */
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing context chip — identifies which listing this editor edits; links back to the Edit-listing hub (HA-036) */
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:16px 0 9px; }
+  .sh:first-of-type { margin-top:0; }
+
+  /* prayer-mat stepper — ha-024 lineage */
+  .steprow { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-hairline); }
+  .steprow:last-child { border-bottom:none; }
+  .step-ic { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; }
+  .step-ic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.7; }
+  .step-b { flex:1; min-width:0; }
+  .step-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .step-d { font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+  .stepper { display:flex; align-items:center; gap:10px; flex:none; }
+  .stepbtn { width:32px; height:32px; border-radius:50%; border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); font-size:16px; font-weight:600; display:flex; align-items:center; justify-content:center; cursor:pointer; font-family:inherit; }
+  .stepval { font-size:14px; font-weight:600; color:var(--text-primary); min-width:14px; text-align:center; }
+
+  /* wudu-area carried-over row (read-only, HA-037 owns the fact) + note field owned here */
+  .togrow { display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--border-hairline); }
+  .tog-ic { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px; }
+  .tog-ic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.6; }
+  .tog-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; padding-top:2px; }
+  .tog-tt { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .tog-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .swbtn { flex:none; width:44px; height:44px; margin:-10px -10px -10px 0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; padding:0; cursor:pointer; }
+  .carry { flex:none; display:inline-flex; align-items:center; font-size:12px; font-weight:600; color:var(--int-primary); text-decoration:none; white-space:nowrap; padding:7px 11px; border:1px solid var(--border-default); border-radius:var(--radius-full); }
+  .sw { position:relative; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); display:block; }
+  .sw i { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(16,25,27,.28); display:block; }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { transform:translateX(16px); }
+  .phone.rtl .sw i { left:auto; right:2px; }
+  .phone.rtl .sw.on i { transform:translateX(-16px); }
+
+  .fld { margin-top:12px; width:100%; text-align:start; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+  .txtinput { width:100%; min-height:46px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 13px; font-family:inherit; font-size:13.5px; font-weight:500; color:var(--text-primary); }
+
+  /* nearest masjid — read-only computed distance + editable optional name */
+  .mrow { display:flex; gap:12px; align-items:center; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-top:4px; }
+  .mrow .ic { width:36px; height:36px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .mrow .ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.75; }
+  .mrow .mx { flex:1; min-width:0; }
+  .mrow .n { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .mrow .m { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* guest-preview block — ga-030's .arow amenity-row grammar, verbatim phrasing */
+  .pv { margin-top:6px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .pv-h { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+  .pv-h svg { width:14px; height:14px; color:var(--int-primary); stroke-width:2; flex:none; }
+  .pv-ht { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); }
+  .pv-t { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:2px; }
+  .pv-d { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .pv-row { display:flex; gap:8px; align-items:flex-start; padding:6px 0; }
+  .pv-row svg { width:14px; height:14px; color:var(--text-secondary); flex:none; margin-top:1.5px; stroke-width:1.8; }
+  .pv-row-tx { display:flex; flex-direction:column; gap:1px; }
+  .pv-row-t { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .pv-row-d { font-size:11px; color:var(--text-secondary); }
+
+  .laststat { display:flex; align-items:center; gap:9px; margin-top:16px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .laststat svg { width:15px; height:15px; color:var(--success-fg); flex:none; stroke-width:2; }
+  .laststat span { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .laststat b { color:var(--text-primary); font-weight:600; }
+
+  .spacer-fill { flex:1; }
+
+  /* unsaved-changes bar — sticky footer, appears only while the form diverges from the saved value */
+  .unsavedbar { flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--warning-bg); border-top:1px solid var(--warning-border); }
+  .unsavedbar .uic { flex:none; width:20px; height:20px; color:var(--warning-fg); }
+  .unsavedbar .tx { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--warning-fg); line-height:1.35; }
+  .ebtnrow { flex:none; display:flex; gap:8px; }
+  .ebtn { min-height:40px; padding:0 14px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .ebtn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .ebtn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Prayer amenities editor (HA-039)</h1>
+    <p>The standalone, post-publish sibling of <code>ha-024</code>'s prayer-amenities half — reached from the <b>Edit-listing hub (<code>HA-036</code>)</b> with the same editor frame as <code>ha-038</code>: app bar + listing context chip + save/discard + unsaved-changes bar, no wizard progress. Three facts, each with a single owner: a <b>prayer-mat count</b> stepper, a <b>wudu-friendly bathroom</b> summary carried over read-only from Cultural attributes (<code>HA-037</code> owns that fact — edited there, per the ha-025/ha-040 one-fact-one-owner canon) with a location note owned here, and the <b>nearest masjid</b> — its walking distance is read-only (computed from the map pin, same as <code>ha-038</code>'s bearing), with only the masjid's name left for the host to add. The preview mirrors <code>ga-030</code>'s guest-facing amenity rows verbatim. Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b> — same masjid as <code>ha-024</code> (Bilal Masjid, Cantt Bazaar, ~<span class="num">300</span> m). Panels: current (light) · edited + unsaved bar (light) · dark · اردو / RTL.</p>
+    <div class="legend">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span>
+      <span>Editor frame — no wizard bars</span><span>Travel-info framing, not religiosity</span>
+      <span>Masjid distance is read-only (map-pin derived)</span><span>No invented stats</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — CURRENT · EDITED + UNSAVED BAR ============================ -->
+    <section class="panel" aria-label="Light theme — current saved amenities, and an edited state with the unsaved-changes bar">
+      <div class="panel-tag">Light — A current · B edited (unsaved)</div>
+      <div class="rowflex">
+
+        <!-- A · CURRENT -->
+        <div class="pcol">
+          <div class="pcap">A · Current — nothing unsaved</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Prayer amenities</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Prayer amenities</h2>
+              <p class="lead">What guests find ready in the home for prayer, and how far the nearest masjid is.</p>
+
+              <h3 class="sh">Prayer mats</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">Prayer mats</div><div class="step-d">How many are kept ready in the home</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="Decrease prayer mat count">−</button>
+                  <span class="stepval num" aria-live="polite">2</span>
+                  <button class="stepbtn" type="button" aria-label="Increase prayer mat count">+</button>
+                </div>
+              </div>
+
+              <h3 class="sh">Wudu area</h3>
+              <div class="togrow">
+                <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg></span>
+                <div class="tog-b">
+                  <div class="tog-tt">Wudu-friendly bathroom</div>
+                  <div class="tog-d">A bathroom set up for wudu — hand-held bidet shower or similar.</div>
+                </div>
+                <a class="carry" href="/host/listings/cantt-view-residence/cultural-attributes">On · Edit in Cultural attributes</a>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="wa-a">Location note (optional)</label>
+                <input class="txtinput" id="wa-a" type="text" value="Attached to the main bedroom bathroom" />
+                <span class="field-sub">Tells guests where — shown with the wudu-friendly attribute from Cultural attributes.</span>
+              </div>
+
+              <h3 class="sh">Nearest masjid</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">About a <span class="num">4</span>-minute walk</div>
+                  <div class="m">Computed from your map pin — <span class="num">~300</span> m · read-only</div>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="mn-a">Masjid name (optional)</label>
+                <input class="txtinput" id="mn-a" type="text" value="Bilal Masjid, Cantt Bazaar" />
+                <span class="field-sub">Optional — leave it blank and guests still see the walking distance.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg><span class="pv-row-tx"><span class="pv-row-t">Prayer mat provided</span><span class="pv-row-d">2 kept ready in the home</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg><span class="pv-row-tx"><span class="pv-row-t">Wudu-friendly bathroom</span><span class="pv-row-d">Attached to the main bedroom bathroom</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="pv-row-tx"><span class="pv-row-t">Bilal Masjid, Cantt Bazaar</span><span class="pv-row-d">About a <span class="num">4</span>-minute walk · <span class="num">~300</span> m</span></span></div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Only declare what's genuinely available — guests plan their prayers around these details.</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b>18 July 2026</b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EDITED + UNSAVED BAR -->
+        <div class="pcol">
+          <div class="pcap">B · Edited — mat count raised to 3, unsaved-changes bar shown</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Prayer amenities</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Prayer amenities</h2>
+              <p class="lead">What guests find ready in the home for prayer, and how far the nearest masjid is.</p>
+
+              <h3 class="sh">Prayer mats</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">Prayer mats</div><div class="step-d">How many are kept ready in the home</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="Decrease prayer mat count">−</button>
+                  <span class="stepval num" aria-live="polite">3</span>
+                  <button class="stepbtn" type="button" aria-label="Increase prayer mat count">+</button>
+                </div>
+              </div>
+
+              <h3 class="sh">Wudu area</h3>
+              <div class="togrow">
+                <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg></span>
+                <div class="tog-b">
+                  <div class="tog-tt">Wudu-friendly bathroom</div>
+                  <div class="tog-d">A bathroom set up for wudu — hand-held bidet shower or similar.</div>
+                </div>
+                <a class="carry" href="/host/listings/cantt-view-residence/cultural-attributes">On · Edit in Cultural attributes</a>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="wa-b">Location note (optional)</label>
+                <input class="txtinput" id="wa-b" type="text" value="Attached to the main bedroom bathroom" />
+                <span class="field-sub">Tells guests where — shown with the wudu-friendly attribute from Cultural attributes.</span>
+              </div>
+
+              <h3 class="sh">Nearest masjid</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">About a <span class="num">4</span>-minute walk</div>
+                  <div class="m">Computed from your map pin — <span class="num">~300</span> m · read-only</div>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="mn-b">Masjid name (optional)</label>
+                <input class="txtinput" id="mn-b" type="text" value="Bilal Masjid, Cantt Bazaar" />
+                <span class="field-sub">Optional — leave it blank and guests still see the walking distance.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg><span class="pv-row-tx"><span class="pv-row-t">Prayer mat provided</span><span class="pv-row-d"><span class="num">3</span> kept ready in the home</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg><span class="pv-row-tx"><span class="pv-row-t">Wudu-friendly bathroom</span><span class="pv-row-d">Attached to the main bedroom bathroom</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="pv-row-tx"><span class="pv-row-t">Bilal Masjid, Cantt Bazaar</span><span class="pv-row-d">About a <span class="num">4</span>-minute walk · <span class="num">~300</span> m</span></span></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="unsavedbar">
+              <svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span class="tx">You have unsaved changes</span>
+              <div class="ebtnrow">
+                <button class="ebtn discard" type="button">Discard</button>
+                <button class="ebtn save" type="button">Save</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Prayer-mat count and the wudu location note are each edited exactly once, here — the masjid <b>distance</b> stays read-only and map-pin-derived (the same one-fact-one-owner discipline as <code>ha-038</code>'s re-detect affordance), leaving only its optional <b>name</b> free-text. The guest-preview block reuses <code>ga-030</code>'s <code>.arow</code> amenity-row grammar and phrasing verbatim ("Prayer mat provided," "Wudu-friendly bathroom") so what the host edits here is literally what the guest reads later. Save/Discard and the unsaved-changes bar appear only once a field diverges from its saved value (state B); state A shows the quiet <code>.laststat</code> line instead.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — current saved amenities">
+      <div class="panel-tag">Dark — C current</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Current — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Prayer amenities</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>Prayer amenities</h2>
+              <p class="lead">What guests find ready in the home for prayer, and how far the nearest masjid is.</p>
+
+              <h3 class="sh">Prayer mats</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">Prayer mats</div><div class="step-d">How many are kept ready in the home</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="Decrease prayer mat count">−</button>
+                  <span class="stepval num" aria-live="polite">2</span>
+                  <button class="stepbtn" type="button" aria-label="Increase prayer mat count">+</button>
+                </div>
+              </div>
+
+              <h3 class="sh">Wudu area</h3>
+              <div class="togrow">
+                <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg></span>
+                <div class="tog-b">
+                  <div class="tog-tt">Wudu-friendly bathroom</div>
+                  <div class="tog-d">A bathroom set up for wudu — hand-held bidet shower or similar.</div>
+                </div>
+                <a class="carry" href="/host/listings/cantt-view-residence/cultural-attributes">On · Edit in Cultural attributes</a>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="wa-c">Location note (optional)</label>
+                <input class="txtinput" id="wa-c" type="text" value="Attached to the main bedroom bathroom" />
+                <span class="field-sub">Tells guests where — shown with the wudu-friendly attribute from Cultural attributes.</span>
+              </div>
+
+              <h3 class="sh">Nearest masjid</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">About a <span class="num">4</span>-minute walk</div>
+                  <div class="m">Computed from your map pin — <span class="num">~300</span> m · read-only</div>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="mn-c">Masjid name (optional)</label>
+                <input class="txtinput" id="mn-c" type="text" value="Bilal Masjid, Cantt Bazaar" />
+                <span class="field-sub">Optional — leave it blank and guests still see the walking distance.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg><span class="pv-row-tx"><span class="pv-row-t">Prayer mat provided</span><span class="pv-row-d">2 kept ready in the home</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg><span class="pv-row-tx"><span class="pv-row-t">Wudu-friendly bathroom</span><span class="pv-row-d">Attached to the main bedroom bathroom</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="pv-row-tx"><span class="pv-row-t">Bilal Masjid, Cantt Bazaar</span><span class="pv-row-d">About a <span class="num">4</span>-minute walk · <span class="num">~300</span> m</span></span></div>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b>18 July 2026</b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the same neutral amenity-row treatment at the exact visual weight of any other utility fact (§10.1) — nothing about prayer mats, wudu, or the masjid row reads as decorated or ornamental in either theme.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — current saved amenities">
+      <div class="panel-tag">RTL · اردو — نماز کی سہولیات</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — نماز کی سہولیات</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence/edit" aria-label="لسٹنگ میں ترمیم پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="dH">نماز کی سہولیات</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2>نماز کی سہولیات</h2>
+              <p class="lead">مہمانوں کو نماز کے لیے گھر میں کیا تیار ملتا ہے، اور قریب ترین مسجد کتنی دور ہے۔</p>
+
+              <h3 class="sh">جائے نماز</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">جائے نماز</div><div class="step-d">گھر میں کتنی تیار رکھی گئی ہیں</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="جائے نماز کی تعداد کم کریں">−</button>
+                  <span class="stepval num" aria-live="polite">2</span>
+                  <button class="stepbtn" type="button" aria-label="جائے نماز کی تعداد بڑھائیں">+</button>
+                </div>
+              </div>
+
+              <h3 class="sh">وضو کی جگہ</h3>
+              <div class="togrow">
+                <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg></span>
+                <div class="tog-b">
+                  <div class="tog-tt">وضو کے لیے موزوں باتھ روم</div>
+                  <div class="tog-d">وضو کے لیے تیار باتھ روم — ہینڈ ہیلڈ بڈے شاور یا اسی طرح کی سہولت۔</div>
+                </div>
+                <a class="carry" href="/host/listings/cantt-view-residence/cultural-attributes">آن · ثقافتی خصوصیات میں ترمیم</a>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="wa-d">مقام کا نوٹ (اختیاری)</label>
+                <input class="txtinput" id="wa-d" type="text" value="مرکزی بیڈروم کے باتھ روم سے ملحق" />
+                <span class="field-sub">مہمان کو جگہ بتاتا ہے — ثقافتی خصوصیات میں «وضو کے لیے موزوں باتھ روم» کے ساتھ دکھایا جاتا ہے۔</span>
+              </div>
+
+              <h3 class="sh">قریب ترین مسجد</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">تقریباً <span class="num">4</span> منٹ پیدل</div>
+                  <div class="m">آپ کے میپ پن سے شمار کیا گیا — <span class="num">~300</span> میٹر · صرف پڑھنے کے لیے</div>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="mn-d">مسجد کا نام (اختیاری)</label>
+                <input class="txtinput" id="mn-d" type="text" value="بلال مسجد، کینٹ بازار" />
+                <span class="field-sub">اختیاری — خالی چھوڑ دیں تو بھی مہمان پیدل فاصلہ دیکھیں گے۔</span>
+              </div>
+
+              <h3 class="sh">پیش منظر — مہمان کیا دیکھیں گے</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">لسٹنگ پیش منظر</span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg><span class="pv-row-tx"><span class="pv-row-t">جائے نماز موجود</span><span class="pv-row-d"><span class="num">2</span> گھر میں تیار</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 1 3 3v3M9 12h12M15 12v3a3 3 0 0 1-6 0"/><path d="M6 12S4 15 4 17a2 2 0 0 0 4 0c0-2-2-5-2-5z"/></svg><span class="pv-row-tx"><span class="pv-row-t">وضو کے لیے موزوں باتھ روم</span><span class="pv-row-d">مرکزی بیڈروم کے باتھ روم سے ملحق</span></span></div>
+                <div class="pv-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span class="pv-row-tx"><span class="pv-row-t">بلال مسجد، کینٹ بازار</span><span class="pv-row-d">تقریباً <span class="num">4</span> منٹ پیدل · <span class="num">~300</span> میٹر</span></span></div>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>محفوظ شدہ — آخری اپ ڈیٹ <b>۱۸ جولائی ۲۰۲۶</b>۔ اس کے بعد کوئی تبدیلی نہیں۔</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the switch thumb travels toward the reading-start "on" side, the listing-chip chevron and back chevron flip to the leading edge, and every count/distance stays Latin-numeral, LTR-isolated (<code>.num</code>) inside Urdu sentences — matching the <code>ha-024</code>/<code>ga-030</code> RTL convention exactly.</p>
+    </section>
+
+  </main>
+</body>
+</html>

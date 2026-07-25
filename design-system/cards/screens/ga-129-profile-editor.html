@@ -1,0 +1,520 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Profile editor (GA-129)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .tbar-title, .phone.rtl .pslot-h, .phone.rtl .pslot-none, .phone.rtl .pslot-btn, .phone.rtl .pslot-rm, .phone.rtl .field-label, .phone.rtl .field-val, .phone.rtl .field-sub, .phone.rtl .ta, .phone.rtl .ta-count, .phone.rtl .chip, .phone.rtl .dob-val, .phone.rtl .vis-lb, .phone.rtl .sm-city, .phone.rtl .sm-date, .phone.rtl .sec-lb, .phone.rtl .savebtn, .phone.rtl .toast-t, .phone.rtl .ib.save { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .ib.save { width:auto; padding:0 12px; font-size:14px; font-weight:600; color:var(--int-primary); }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 16px; overflow:hidden; }
+  .sec-lb { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:6px 2px 10px; }
+
+  /* photo slot — optional-for-guests, equal weight */
+  .pslot { display:flex; gap:13px; align-items:center; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:14px; margin-bottom:18px; }
+  .pslot-av { flex:none; width:64px; height:64px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700; }
+  .pslot-av.photo { background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); position:relative; overflow:hidden; }
+  .pslot-av.photo::after { content:""; position:absolute; width:38px; height:38px; border-radius:var(--radius-full); background:var(--border-default); opacity:.6; top:11px; left:13px; }
+  .pslot-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .pslot-h { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .pslot-none { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.45; }
+  .pslot-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:3px; }
+  .pslot-btn { display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 12px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:12.5px; font-weight:600; color:var(--text-primary); text-decoration:none; cursor:pointer; font-family:inherit; }
+  .pslot-btn svg { width:15px; height:15px; stroke-width:1.9; }
+  .pslot-rm { display:inline-flex; align-items:center; min-height:36px; padding:0 10px; border-radius:var(--radius-md); background:transparent; border:none; font-size:12.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; font-family:inherit; }
+
+  /* field block with per-item visibility switch */
+  .field { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); padding:12px 13px; margin-bottom:11px; }
+  .field-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .field-label { flex:1; min-width:0; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .field-val { font-size:13px; color:var(--text-secondary); display:block; line-height:1.5; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); display:block; margin-top:7px; line-height:1.45; }
+
+  /* visibility Switch (§8.1 Switch) */
+  .vis { display:inline-flex; align-items:center; gap:8px; flex:none; background:transparent; border:none; cursor:pointer; font-family:inherit; padding:2px; min-height:44px; }
+  .vis-lb { font-size:11px; font-weight:600; color:var(--text-tertiary); white-space:nowrap; }
+  .vis.on .vis-lb { color:var(--int-primary); }
+  .sw-track { position:relative; width:42px; height:24px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1.5px solid var(--border-default); flex:none; }
+  .vis.on .sw-track { background:var(--int-primary); border-color:var(--int-primary); }
+  .sw-thumb { position:absolute; top:2px; inset-inline-start:2px; width:17px; height:17px; border-radius:var(--radius-full); background:var(--text-on-inverse); box-shadow:var(--el-hairline); }
+  .vis.on .sw-thumb { inset-inline-start:21px; }
+
+  /* expanded intro textarea (edit state) */
+  .ta { width:100%; min-height:92px; border:1.5px solid var(--int-primary); border-radius:var(--radius-md); background:var(--bg-canvas); padding:10px 12px; font-family:inherit; font-size:13.5px; color:var(--text-primary); line-height:1.55; box-shadow:0 0 0 3px var(--int-subtle); }
+  .ta-count { font-size:11px; color:var(--text-tertiary); text-align:end; display:block; margin-top:5px; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-full); padding:6px 12px; }
+  .chip .x { color:var(--text-tertiary); display:inline-flex; }
+  .chip .x svg { width:13px; height:13px; stroke-width:2.2; }
+  .chip.add { border-style:dashed; color:var(--int-primary); background:transparent; cursor:pointer; font-family:inherit; }
+  .chip.add svg { width:14px; height:14px; stroke-width:2.2; }
+
+  /* decade-born select-look value (value locked, visibility toggleable) */
+  .dob-val { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:46px; border:1px solid var(--border-default); border-radius:var(--radius-md); padding:0 12px; background:var(--bg-canvas); font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .dob-val .lock { color:var(--text-tertiary); display:inline-flex; }
+  .dob-val .lock svg { width:16px; height:16px; stroke-width:1.8; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* travel-stamp visibility manager */
+  .smgr { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:6px; }
+  .smrow { display:flex; align-items:center; gap:12px; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:9px 12px; }
+  .smrow.hidden { background:var(--bg-raised); }
+  .sm-pin { flex:none; width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .sm-pin svg { width:17px; height:17px; stroke-width:1.7; }
+  .sm-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .sm-city { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:7px; }
+  .smrow.hidden .sm-city { color:var(--text-secondary); }
+  .sm-eyeoff { color:var(--text-tertiary); display:inline-flex; }
+  .sm-eyeoff svg { width:14px; height:14px; stroke-width:1.9; }
+  .sm-date { font-size:11.5px; color:var(--text-secondary); display:block; }
+
+  /* save bar + toast */
+  .savebar { flex:none; border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .savebtn { width:100%; min-height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
+  .toast { position:absolute; inset-inline:16px; bottom:calc(84px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:12px 14px; }
+  .toast-ic { flex:none; color:var(--success-fg); display:inline-flex; }
+  .toast-ic svg { width:20px; height:20px; stroke-width:2.2; }
+  .toast-t { flex:1; font-size:13px; font-weight:600; color:var(--text-primary); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Profile editor (GA-129)</h1>
+    <p>The editor for the guest profile (DESIGN §9-J). A single scrollable field list where <strong>every about-prompt carries its own per-item visibility Switch</strong> ("Shown on profile" / "Only you"), <strong>privacy-first</strong>: intro shows the expanded Textarea edit state; decade-born ships <strong>visibility off by default</strong> (value locked once set, only the decade ever shown). A photo slot frames the photo as <strong>optional for guests</strong> — "Add a photo" and "you don't need a photo" carry equal weight (§9-J/§10.7), routing to the guided capture <code>GA-130</code>. Below, a travel-stamp manager toggles each stamp on/off. Panels: full editor (light) · photo set + save toast · dark (decade off) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Full editor · light</span><span>Photo set · save toast</span><span>Dark · decade off</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — FULL EDITOR ============================ -->
+    <section class="panel" aria-label="Light theme — the full editor with per-item visibility switches">
+      <div class="panel-tag">Light — field list · per-item visibility · stamp manager</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">A · Editor — fields &amp; switches</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="aH">Edit profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="pslot">
+                <span class="pslot-av" aria-hidden="true">F</span>
+                <div class="pslot-b">
+                  <span class="pslot-h">Your photo</span>
+                  <span class="pslot-none">You don't need a photo — your initials are a complete profile.</span>
+                  <div class="pslot-actions">
+                    <a class="pslot-btn" href="/account/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Add a photo</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sec-lb">About you</div>
+
+              <!-- INTRO — expanded Textarea edit state, shown -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi1">Intro</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-labelledby="fi1" aria-label="Intro — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <textarea class="ta" aria-labelledby="fi1">Assalam-o-alaikum. I travel with my family and look for calm, clean homes close to good food and a place to pray. I keep things tidy and always let hosts know our plans.</textarea>
+                <span class="ta-count"><span class="num">168</span> / 300</span>
+              </div>
+
+              <!-- INTERESTS — chips, shown -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi2">Interests</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Interests — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <div class="chips" aria-labelledby="fi2">
+                  <span class="chip">Home cooking<span class="x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></span>
+                  <span class="chip">Urdu literature<span class="x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span></span>
+                  <button class="chip add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add</button>
+                </div>
+              </div>
+
+              <!-- LIVES IN — shown -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi3">Lives in</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Lives in — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fi3">Lahore</span>
+              </div>
+
+              <!-- LANGUAGES — shown -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi4">Languages</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Languages — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fi4">Urdu, English, Punjabi</span>
+              </div>
+
+              <!-- WORK — shown -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi5">Work</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Work — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fi5">Schoolteacher</span>
+              </div>
+
+              <!-- SCHOOL — shown -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi6">School</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="School — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fi6">University of the Punjab</span>
+              </div>
+
+              <!-- DECADE BORN — OFF by default -->
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fi7">Decade born</span>
+                  <button class="vis" type="button" role="switch" aria-checked="false" aria-label="Decade born — hidden, only you">
+                    <span class="vis-lb">Only you</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <div class="dob-val" aria-labelledby="fi7"><span class="num">1990s</span><span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+                <span class="field-sub">Set once, then locked. Only the decade is ever shown — never your full date of birth. Off by default.</span>
+              </div>
+
+              <div class="sec-lb">Travel stamps</div>
+              <ul class="smgr">
+                <li class="smrow">
+                  <span class="sm-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sm-b"><span class="sm-city">Islamabad</span><span class="sm-date">March 2026</span></span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Islamabad, March 2026 — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </li>
+                <li class="smrow">
+                  <span class="sm-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sm-b"><span class="sm-city">Lahore</span><span class="sm-date">May 2026</span></span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Lahore, May 2026 — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </li>
+                <li class="smrow hidden">
+                  <span class="sm-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sm-b"><span class="sm-city">Islamabad<span class="sm-eyeoff" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.8 2.8"/><path d="M9.4 5.2A9 9 0 0 1 12 5c5 0 9 5 9 7a12 12 0 0 1-2.2 2.9M6.2 6.2A12 12 0 0 0 3 12c0 2 4 7 9 7a9 9 0 0 0 3-.5"/></svg></span></span><span class="sm-date">June 2026 · hidden</span></span>
+                  <button class="vis" type="button" role="switch" aria-checked="false" aria-label="Islamabad, June 2026 — hidden, only you">
+                    <span class="vis-lb">Only you</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every row pairs its input with a §8.1 <b>visibility Switch</b> — on = "Shown", off = "Only you" — and each switch announces state <b>and effect</b> ("Work, shown on your profile") for AT (§9-J A11y). Intro is the expanded Textarea edit state with a live count. <b>Decade born ships off</b> (value locked once set; only the decade ever shown) — the privacy-first default that keeps the profile safe by design (§10). The stamp manager toggles each stay: the third stamp is <b>Only you</b>, so it is dimmed with an eye-off marker here and simply <b>absent</b> in the public view (§8.3) — which is exactly why "3 trips" can show two public stamps.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL — PHOTO SET + SAVE TOAST ============================ -->
+    <section class="panel" aria-label="Light theme — the photo-set state and the save confirmation toast">
+      <div class="panel-tag">Light — photo set (change / remove) · save confirmation</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">B · Photo set · saved</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="bH">Edit profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="pslot">
+                <span class="pslot-av photo" aria-hidden="true"></span>
+                <div class="pslot-b">
+                  <span class="pslot-h">Your photo</span>
+                  <span class="pslot-none">A photo can help hosts recognise you. You can remove it any time.</span>
+                  <div class="pslot-actions">
+                    <a class="pslot-btn" href="/account/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Change photo</a>
+                    <button class="pslot-rm" type="button">Remove</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sec-lb">About you</div>
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fb1">Lives in</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Lives in — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fb1">Lahore</span>
+              </div>
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fb2">Work</span>
+                  <button class="vis" type="button" role="switch" aria-checked="false" aria-label="Work — hidden, only you">
+                    <span class="vis-lb">Only you</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fb2">Schoolteacher</span>
+              </div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="toast-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="toast-t">Changes saved</span>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The photo slot in its <b>set</b> state offers Change (→ <code>GA-130</code>) and a quiet <b>Remove</b> — removing is never punished, since the initials avatar is a complete profile (§9-J). Saving a change confirms with a low-stakes toast (§8.5), <code>aria-live="polite"</code>, that never steals focus. Here "Work" has been flipped to <b>Only you</b> — the same field, still editable, simply not shown to hosts.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the editor emphasising the privacy-first decade-born default">
+      <div class="panel-tag">Dark — decade off by default · stamp manager</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Dark — privacy defaults</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Close editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="cH">Edit profile</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec-lb">About you</div>
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fc1">Languages</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Languages — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <span class="field-val" aria-labelledby="fc1">Urdu, English, Punjabi</span>
+              </div>
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fc2">Decade born</span>
+                  <button class="vis" type="button" role="switch" aria-checked="false" aria-label="Decade born — hidden, only you">
+                    <span class="vis-lb">Only you</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <div class="dob-val" aria-labelledby="fc2"><span class="num">1990s</span><span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+                <span class="field-sub">Off by default. Only the decade is ever shown — never your full date of birth.</span>
+              </div>
+
+              <div class="sec-lb">Travel stamps</div>
+              <ul class="smgr">
+                <li class="smrow">
+                  <span class="sm-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sm-b"><span class="sm-city">Lahore</span><span class="sm-date">May 2026</span></span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="Lahore, May 2026 — shown on your profile">
+                    <span class="vis-lb">Shown</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </li>
+                <li class="smrow hidden">
+                  <span class="sm-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sm-b"><span class="sm-city">Islamabad<span class="sm-eyeoff" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.8 2.8"/><path d="M9.4 5.2A9 9 0 0 1 12 5c5 0 9 5 9 7a12 12 0 0 1-2.2 2.9M6.2 6.2A12 12 0 0 0 3 12c0 2 4 7 9 7a9 9 0 0 0 3-.5"/></svg></span></span><span class="sm-date">June 2026 · hidden</span></span>
+                  <button class="vis" type="button" role="switch" aria-checked="false" aria-label="Islamabad, June 2026 — hidden, only you">
+                    <span class="vis-lb">Only you</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">Save changes</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The off-state switch is unmistakable in dark (neutral sunken track, 1.5px border) versus the brand-green on-state (§8.1), so "hidden" never hides in low light. Dark is fully AA-proven (§11).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the editor">
+      <div class="panel-tag">RTL · اردو — "پروفائل میں ترمیم", mirrored switches</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/account/profile" aria-label="ایڈیٹر بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+              <div class="tbar-title" id="uH">پروفائل میں ترمیم</div>
+              <span class="ib" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="pslot">
+                <span class="pslot-av" aria-hidden="true">ف</span>
+                <div class="pslot-b">
+                  <span class="pslot-h">آپ کی تصویر</span>
+                  <span class="pslot-none">تصویر ضروری نہیں — آپ کے ابتدائی حروف مکمل پروفائل ہیں۔</span>
+                  <div class="pslot-actions">
+                    <a class="pslot-btn" href="/ur/account/profile/photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>تصویر شامل کریں</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sec-lb">آپ کے بارے میں</div>
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fu1">تعارف</span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="تعارف — پروفائل پر دکھایا گیا">
+                    <span class="vis-lb">دکھایا گیا</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <textarea class="ta" aria-labelledby="fu1" lang="ur">السلام علیکم۔ میں اپنے خاندان کے ساتھ سفر کرتی ہوں اور صاف ستھرے، پُرسکون گھر تلاش کرتی ہوں۔</textarea>
+                <span class="ta-count"><span class="num">300</span> / <span class="num">96</span></span>
+              </div>
+              <div class="field">
+                <div class="field-top">
+                  <span class="field-label" id="fu2">پیدائش کی دہائی</span>
+                  <button class="vis" type="button" role="switch" aria-checked="false" aria-label="پیدائش کی دہائی — پوشیدہ، صرف آپ">
+                    <span class="vis-lb">صرف آپ</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </div>
+                <div class="dob-val" aria-labelledby="fu2"><span class="num">1990s</span><span class="lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+                <span class="field-sub">پہلے سے بند۔ صرف دہائی دکھائی جاتی ہے — کبھی مکمل تاریخِ پیدائش نہیں۔</span>
+              </div>
+
+              <div class="sec-lb">سفری مہریں</div>
+              <ul class="smgr">
+                <li class="smrow">
+                  <span class="sm-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                  <span class="sm-b"><span class="sm-city">لاہور</span><span class="sm-date"><span class="num">2026</span> مئی</span></span>
+                  <button class="vis on" type="button" role="switch" aria-checked="true" aria-label="لاہور، مئی 2026 — دکھایا گیا">
+                    <span class="vis-lb">دکھایا گیا</span>
+                    <span class="sw-track" aria-hidden="true"><span class="sw-thumb"></span></span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div class="savebar"><button class="savebtn" type="button">تبدیلیاں محفوظ کریں</button></div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The Switch mirrors (§8.1/§11): its "on" thumb travels toward the reading-trailing edge via <code>inset-inline-start</code>, so "on" stays "forward" for Urdu; state labels ("دکھایا گیا" / "صرف آپ") and effects localise. The photo-optional line and the decade-off default read identically in Urdu — privacy-first is not an English-only promise.</p>
+    </section>
+
+  </main>
+</body>
+</html>

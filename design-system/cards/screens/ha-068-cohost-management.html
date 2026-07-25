@@ -1,0 +1,658 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Co-host management (HA-068)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     HA-068 · CO-HOST MANAGEMENT · app view (noindex) · routes under /host/…
+       list "/host/co-hosts" · invite "/host/co-hosts/invite"
+       per-person "/host/co-hosts/{slug}" · messaging "/host/messages"
+     host chrome, NO stepper (§7.6a — post-onboarding surface)
+     ---------------------------------------------------------------------------
+     CAST + INVENTORY — shipped only:
+       co-hosts Ali Raza, Sana Malik, Bilal Khan (GA-110 / HA-062 / HA-066);
+       listings Gulberg 2 Residence (Lahore), F-6 Studio (Islamabad),
+       Cantt View Residence (Rawalpindi Cantonment) (HA-046 / HA-062 / HA-066);
+       owner Aqib (AK, HA-046). Initials avatars only — no faces on fictional
+       identities (GA-090 / GA-110).
+     PERMISSIONS ARE A MATRIX, NOT PROSE: a real <table> with <caption>,
+       <th scope="col"> and <th scope="row"> so it is machine- and
+       screen-reader-parsable (the GW-007 document-matrix precedent, SEO §3.9).
+     OWNER-ONLY ROWS ARE STATED AS ACCOUNT SECURITY, NEVER AS DISTRUST:
+       payouts / bank details and CNIC + legal identity can never be delegated,
+       because they are bound to the verified account holder. The copy says
+       that as a fact about the account, with no language implying the co-host
+       is untrusted.
+     INVITES BY PHONE — the PK-norm identity, +92 prefix slot per GA-004, the
+       number LTR-isolated tabular inside .num so it never digit-order-mirrors.
+     DESTRUCTIVE TOKEN used exactly once per surface ("Remove co-host").
+     NO response-time or SLA promise anywhere. No invented stats.
+     PARKED (founder): the registry row notes that mahram / women-only listings
+       may scope co-host access, and that KYB ties in. Aqib hosts no women-only
+       listing in the shipped corpus and no KYB rule is shipped, so this card
+       ships per-LISTING scoping only (real, checkable) and does not invent a
+       gender-scoping rule.
+============================================================================ -->
+
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1060px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ha-066 host lineage */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:860px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:21px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .lead { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-top:6px; }
+  .sec-h { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 9px; }
+
+  /* co-host rows */
+  .clist { list-style:none; display:flex; flex-direction:column; gap:9px; }
+  .chost { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); padding:11px 12px; display:flex; flex-direction:column; gap:9px; }
+  .ch-top { display:flex; align-items:center; gap:10px; }
+  .av { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; font-family:'Inter',sans-serif; }
+  .av.pend { background:var(--bg-sunken); color:var(--text-tertiary); border:1px dashed var(--border-default); }
+  .ch-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ch-n { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .ch-s { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.5; }
+  .ch-pill { flex:none; font-size:10.5px; font-weight:700; border-radius:var(--radius-full); padding:4px 9px; white-space:nowrap; background:var(--bg-sunken); color:var(--text-secondary); border:1px solid var(--border-hairline); }
+  .ch-pill.live { background:var(--success-bg); color:var(--success-fg); border-color:var(--success-border); }
+  .ch-pill.wait { background:var(--warning-bg); color:var(--warning-fg); border-color:var(--warning-border); }
+
+  /* permission chips inside a co-host row — what is switched on for this person */
+  .perms { display:flex; flex-wrap:wrap; gap:6px; }
+  .perm { display:inline-flex; align-items:center; gap:5px; height:25px; padding:0 9px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:11px; font-weight:500; color:var(--text-primary); }
+  .perm svg { width:12px; height:12px; color:var(--int-primary); stroke-width:2.2; flex:none; }
+  .perm.off { background:var(--bg-canvas); border-style:dashed; color:var(--text-tertiary); }
+  .perm.off svg { color:var(--text-tertiary); }
+
+  .ch-acts { display:flex; gap:8px; flex-wrap:wrap; }
+  .lnk { display:inline-flex; align-items:center; gap:5px; min-height:44px; font-size:12px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .lnk svg { width:13px; height:13px; flex:none; stroke-width:2.2; }
+  .lnk.danger { color:var(--error-fg); }
+
+  /* the scope line — which homes this person covers */
+  .scope { display:flex; gap:8px; align-items:flex-start; padding:8px 10px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .scope svg { width:14px; height:14px; color:var(--text-tertiary); flex:none; margin-top:2px; stroke-width:1.9; }
+  .scope > span { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+
+  /* owner-only security box — factual, never accusatory */
+  .secbox { display:flex; gap:9px; align-items:flex-start; margin-top:12px; padding:12px 13px; border-radius:var(--radius-lg); border:1px solid var(--info-border); background:var(--info-bg); }
+  .secbox .sb-ic { flex:none; margin-top:1px; }
+  .secbox .sb-ic svg { width:17px; height:17px; stroke-width:1.9; color:var(--info-fg); }
+  .secbox .sb-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .secbox .sb-h { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .secbox .sb-d { font-size:11.5px; color:var(--text-secondary); line-height:1.55; display:block; }
+
+  /* permissions matrix — a real, parsable table */
+  .tblwrap { overflow-x:auto; padding-bottom:4px; margin-top:9px; }
+  .tbl { width:100%; border-collapse:collapse; }
+  .tbl caption { text-align:start; font-size:11px; color:var(--text-tertiary); padding:0 0 8px; line-height:1.5; }
+  .tbl th, .tbl td { text-align:start; padding:7px 8px; font-size:11.5px; border-top:1px solid var(--border-hairline); color:var(--text-primary); vertical-align:top; }
+  .tbl thead th { background:var(--bg-sunken); color:var(--text-secondary); font-weight:600; font-size:10px; border-top:none; text-transform:uppercase; letter-spacing:.03em; }
+  .tbl tbody th { font-weight:600; color:var(--text-primary); }
+  .tbl td.mark { text-align:center; white-space:nowrap; }
+  .yes { color:var(--int-primary); font-weight:700; }
+  .no { color:var(--text-tertiary); font-weight:700; }
+  .always { color:var(--text-primary); font-weight:700; }
+  .tbl tr.ownerrow th, .tbl tr.ownerrow td { background:var(--bg-raised); }
+
+  /* invite sheet */
+  .sheetwrap { position:absolute; inset:0; z-index:14; display:flex; flex-direction:column; justify-content:flex-end; }
+  .sheetscrim { position:absolute; inset:0; background:var(--scrim); }
+  .sheet { position:relative; background:var(--bg-canvas); border-top-left-radius:var(--radius-2xl); border-top-right-radius:var(--radius-2xl); padding:8px 16px 16px; box-shadow:var(--el-popover); display:flex; flex-direction:column; max-height:88%; overflow-y:auto; }
+  .grab { width:38px; height:4px; border-radius:var(--radius-full); background:var(--border-default); margin:0 auto 12px; flex:none; }
+  .sh-h { font-size:16px; font-weight:600; color:var(--text-primary); display:block; }
+  .sh-d { font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.5; display:block; }
+  .flabel { font-size:12px; font-weight:600; color:var(--text-secondary); margin-top:14px; display:block; }
+  .phonefield { display:flex; align-items:stretch; margin-top:7px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); }
+  .pf-pre { display:flex; align-items:center; padding:0 11px; font-size:14px; color:var(--text-secondary); background:var(--bg-sunken); border-inline-end:1px solid var(--border-default); font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+  .pf-val { flex:1; min-width:0; display:flex; align-items:center; min-height:46px; padding:0 12px; font-size:15px; color:var(--text-primary); font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .pf-hint { font-size:11px; color:var(--text-tertiary); margin-top:6px; display:block; }
+
+  /* choice rows — listings scope + permission switches */
+  .choices { list-style:none; display:flex; flex-direction:column; gap:7px; margin-top:8px; }
+  .choice { display:flex; align-items:center; gap:10px; min-height:52px; padding:9px 11px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); }
+  .box { flex:none; width:20px; height:20px; border-radius:var(--radius-sm); border:1.5px solid var(--border-default); display:flex; align-items:center; justify-content:center; background:var(--bg-canvas); }
+  .box.on { background:var(--int-primary); border-color:var(--int-primary); }
+  .box svg { width:13px; height:13px; color:var(--text-on-brand); stroke-width:3; }
+  .ch-c { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .cc-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .cc-s { font-size:11px; color:var(--text-secondary); display:block; }
+  .sw { flex:none; width:42px; height:24px; border-radius:var(--radius-full); background:var(--border-default); position:relative; }
+  .sw.on { background:var(--int-primary); }
+  .sw i { position:absolute; top:2px; inset-inline-start:2px; width:20px; height:20px; border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-hairline); }
+  .sw.on i { inset-inline-start:20px; }
+  .sw.locked { background:var(--bg-sunken); border:1px dashed var(--border-default); }
+  .sw.locked i { background:var(--border-default); box-shadow:none; }
+
+  .btn { min-height:48px; padding:0 22px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); width:100%; margin-top:14px; }
+  .btn.ghost { background:transparent; color:var(--text-primary); border-color:var(--border-default); }
+
+  /* empty state */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 22px 40px; }
+  .empty-icn { width:62px; height:62px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; color:var(--int-primary); margin-bottom:16px; }
+  .empty-icn svg { width:28px; height:28px; stroke-width:1.7; }
+  .empty-h { font-size:18px; font-weight:600; color:var(--text-primary); }
+  .empty-p { font-size:12.5px; color:var(--text-secondary); margin-top:8px; max-width:250px; line-height:1.55; }
+  .empty .btn.primary { width:auto; margin-top:20px; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Co-host management (HA-068)</h1>
+    <p>Who else can act on Aqib's three homes, at <code>/host/co-hosts</code>. Each co-host row states <strong>which homes they cover</strong> and <strong>exactly which permissions are switched on</strong> — calendar, guest messages and nightly pricing are the three a host can delegate. Underneath sits the load-bearing piece: a real, parsable <strong>permissions matrix</strong> (<code>&lt;table&gt;</code> with <code>&lt;caption&gt;</code>, <code>th scope="col"</code> and <code>th scope="row"</code>) whose last two rows are <strong>owner-only</strong> — payouts and bank details, and CNIC and legal identity. Those are stated as <strong>a fact about how the account is secured</strong>, tied to the verified account holder; nothing on this screen implies a co-host is untrusted. Invites go to a <strong>Pakistani mobile number</strong> (<code>GA-004</code>'s <span class="num">+92</span> prefix slot, LTR-isolated), and a co-host is only live once they accept. Host chrome, no stepper (§7.6a). Panels: co-hosts + matrix (light) · invite with scope and permissions (light) · pending + first-co-host empty (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Co-hosts + matrix · light</span><span>Invite · scope + permissions</span><span>Pending · empty · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — A · LIST + MATRIX · B · INVITE ============================ -->
+    <section class="panel" aria-label="Light theme — the co-host list with its permissions matrix, and the invite sheet">
+      <div class="panel-tag">Light — co-hosts · per-listing scope · permissions matrix</div>
+      <div class="rowflex">
+
+        <!-- A -->
+        <div class="pcol">
+          <div class="pcap">A · Two co-hosts, one invitation out</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Co-hosts</div>
+              <a class="ib" href="/host/co-hosts/invite" aria-label="Invite a co-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Co-hosts</h2>
+              <p class="lead">People you trust to help run your homes. You choose which homes each person covers and what they can do — and you can change or end it at any time.</p>
+
+              <div class="sec-h">On your homes</div>
+              <ul class="clist">
+
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av" aria-hidden="true">AR</span>
+                    <span class="ch-b">
+                      <span class="ch-n">Ali Raza</span>
+                      <span class="ch-s">Co-host since <span class="num">March 2026</span></span>
+                    </span>
+                    <span class="ch-pill live">Active</span>
+                  </div>
+                  <div class="scope">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
+                    <span>Covers <b>Gulberg <span class="num">2</span> Residence</b> and <b>Cantt View Residence</b> — not F-<span class="num">6</span> Studio.</span>
+                  </div>
+                  <div class="perms">
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Calendar</span>
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Guest messages</span>
+                    <span class="perm off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Pricing</span>
+                  </div>
+                  <div class="ch-acts">
+                    <a class="lnk" href="/host/co-hosts/ali-raza">Change what he can do<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                    <a class="lnk" href="/host/messages">Message<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                  </div>
+                </li>
+
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av" aria-hidden="true">SM</span>
+                    <span class="ch-b">
+                      <span class="ch-n">Sana Malik</span>
+                      <span class="ch-s">Co-host since <span class="num">June 2026</span></span>
+                    </span>
+                    <span class="ch-pill live">Active</span>
+                  </div>
+                  <div class="scope">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
+                    <span>Covers <b>F-<span class="num">6</span> Studio</b> only.</span>
+                  </div>
+                  <div class="perms">
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Calendar</span>
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Guest messages</span>
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Pricing</span>
+                  </div>
+                  <div class="ch-acts">
+                    <a class="lnk" href="/host/co-hosts/sana-malik">Change what she can do<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                    <button class="lnk danger" type="button">Remove co-host</button>
+                  </div>
+                </li>
+
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av pend" aria-hidden="true">BK</span>
+                    <span class="ch-b">
+                      <span class="ch-n">Bilal Khan</span>
+                      <span class="ch-s">Invited <span class="num">2</span> days ago · nothing is shared until he accepts</span>
+                    </span>
+                    <span class="ch-pill wait">Waiting</span>
+                  </div>
+                  <div class="ch-acts">
+                    <button class="lnk" type="button">Send the invitation again</button>
+                  </div>
+                </li>
+
+              </ul>
+
+              <div class="secbox" role="note">
+                <span class="sb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></span>
+                <div class="sb-b">
+                  <span class="sb-h">Money and identity stay with you</span>
+                  <span class="sb-d">Payouts, bank details and your CNIC are bound to the verified account holder, so they can't be handed to anyone else — including a co-host you trust completely. That's how the account is secured, not a judgement about the person.</span>
+                </div>
+              </div>
+
+              <div class="sec-h">What a co-host can do</div>
+              <div class="tblwrap">
+                <table class="tbl">
+                  <caption>Every permission on a SalamStay listing, and who can use it. A co-host only gets a row marked "If you switch it on" when you actually switch it on, per home.</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Permission</th>
+                      <th scope="col" class="mark">Co-host</th>
+                      <th scope="col" class="mark">You</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Calendar &amp; availability</th>
+                      <td class="mark"><span class="yes">If you switch it on</span></td>
+                      <td class="mark"><span class="always">Always</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Guest messages</th>
+                      <td class="mark"><span class="yes">If you switch it on</span></td>
+                      <td class="mark"><span class="always">Always</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Nightly pricing</th>
+                      <td class="mark"><span class="yes">If you switch it on</span></td>
+                      <td class="mark"><span class="always">Always</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Photos &amp; description</th>
+                      <td class="mark"><span class="no">Never</span></td>
+                      <td class="mark"><span class="always">Always</span></td>
+                    </tr>
+                    <tr class="ownerrow">
+                      <th scope="row">Payouts &amp; bank details</th>
+                      <td class="mark"><span class="no">Never</span></td>
+                      <td class="mark"><span class="always">Only you</span></td>
+                    </tr>
+                    <tr class="ownerrow">
+                      <th scope="row">CNIC &amp; legal identity</th>
+                      <td class="mark"><span class="no">Never</span></td>
+                      <td class="mark"><span class="always">Only you</span></td>
+                    </tr>
+                    <tr class="ownerrow">
+                      <th scope="row">Adding or removing a co-host</th>
+                      <td class="mark"><span class="no">Never</span></td>
+                      <td class="mark"><span class="always">Only you</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B -->
+        <div class="pcol">
+          <div class="pcap">B · Invite — number, homes, permissions</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/co-hosts" aria-label="Back to co-hosts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Co-hosts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="sr-only">Co-hosts</h2>
+              <p class="lead" style="margin-top:0">People you trust to help run your homes.</p>
+              <div class="spacer-fill"></div>
+            </div>
+
+            <div class="sheetwrap">
+              <div class="sheetscrim" aria-hidden="true"></div>
+              <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shH">
+                <span class="grab" aria-hidden="true"></span>
+                <span class="sh-h" id="shH">Invite a co-host</span>
+                <span class="sh-d">They'll get a message asking to help with your homes. Nothing is shared with them until they accept.</span>
+
+                <span class="flabel" id="phL">Their mobile number</span>
+                <div class="phonefield">
+                  <span class="pf-pre">+92</span>
+                  <span class="pf-val" role="textbox" aria-readonly="true" aria-labelledby="phL">321 5560914</span>
+                </div>
+                <span class="pf-hint">A Pakistani mobile number — <span class="num">10</span> digits after <span class="num">+92</span>.</span>
+
+                <span class="flabel">Which homes</span>
+                <ul class="choices">
+                  <li class="choice">
+                    <span class="box on" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="ch-c"><span class="cc-t">Gulberg <span class="num">2</span> Residence</span><span class="cc-s">Lahore · entire place</span></span>
+                  </li>
+                  <li class="choice">
+                    <span class="box" aria-hidden="true"></span>
+                    <span class="ch-c"><span class="cc-t">F-<span class="num">6</span> Studio</span><span class="cc-s">Islamabad · private room</span></span>
+                  </li>
+                  <li class="choice">
+                    <span class="box on" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="ch-c"><span class="cc-t">Cantt View Residence</span><span class="cc-s">Rawalpindi Cantonment · entire place</span></span>
+                  </li>
+                </ul>
+
+                <span class="flabel">What they can do</span>
+                <ul class="choices">
+                  <li class="choice">
+                    <span class="ch-c"><span class="cc-t">Calendar &amp; availability</span><span class="cc-s">Block dates, open dates, set minimum stays</span></span>
+                    <span class="sw on" role="switch" aria-checked="true" aria-label="Calendar and availability — on"><i></i></span>
+                  </li>
+                  <li class="choice">
+                    <span class="ch-c"><span class="cc-t">Guest messages</span><span class="cc-s">Read and reply in your inbox at <span class="num">/host/messages</span></span></span>
+                    <span class="sw on" role="switch" aria-checked="true" aria-label="Guest messages — on"><i></i></span>
+                  </li>
+                  <li class="choice">
+                    <span class="ch-c"><span class="cc-t">Nightly pricing</span><span class="cc-s">Change your nightly rate and seasonal rates</span></span>
+                    <span class="sw" role="switch" aria-checked="false" aria-label="Nightly pricing — off"><i></i></span>
+                  </li>
+                  <li class="choice">
+                    <span class="ch-c"><span class="cc-t">Payouts &amp; bank details</span><span class="cc-s">Bound to the verified account holder — not delegable</span></span>
+                    <span class="sw locked" role="switch" aria-checked="false" aria-disabled="true" aria-label="Payouts and bank details — only the account holder"><i></i></span>
+                  </li>
+                  <li class="choice">
+                    <span class="ch-c"><span class="cc-t">CNIC &amp; legal identity</span><span class="cc-s">Bound to the verified account holder — not delegable</span></span>
+                    <span class="sw locked" role="switch" aria-checked="false" aria-disabled="true" aria-label="CNIC and legal identity — only the account holder"><i></i></span>
+                  </li>
+                </ul>
+
+                <button class="btn primary" type="button">Send invitation</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The matrix is a <b>real <code>&lt;table&gt;</code></b> — <code>&lt;caption&gt;</code>, <code>th scope="col"</code>, <code>th scope="row"</code> — so a screen-reader user hears "Payouts and bank details · Co-host · Never" as one coherent cell, and the Next.js build binds row-for-row. Three permissions are delegable (<b>calendar, guest messages, nightly pricing</b>) and are shown twice: as switches at invite time, and as chips on the person's row so the current state is legible without opening anything. The two owner-only rows carry the <b>same visual weight as every other row</b> — no red, no warning tint — and their explanation is a statement about the account ("bound to the verified account holder"), never about the co-host. In the invite sheet they appear as <b>visible, dashed, locked switches</b> rather than being hidden: the host can see the boundary exists and why, which is the <code>GA-075</code> informative-disabled convention. Access is scoped <b>per home</b>: Ali covers two of Aqib's three, Sana covers one. A pending invite shares nothing until it is accepted, and "Remove co-host" is the single destructive-token use on the surface.</p>
+    </section>
+
+    <!-- ============================ DARK — PENDING + EMPTY ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the pending invitation state and the first-co-host empty state">
+      <div class="panel-tag">Dark — invitation sent · no co-hosts yet</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Invitation sent — nothing shared yet</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Co-hosts</div>
+              <a class="ib" href="/host/co-hosts/invite" aria-label="Invite a co-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 class="sr-only">Co-hosts</h2>
+              <p class="lead" style="margin-top:0">People you trust to help run your homes. You choose which homes each person covers and what they can do.</p>
+
+              <div class="sec-h">On your homes</div>
+              <ul class="clist">
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av" aria-hidden="true">AR</span>
+                    <span class="ch-b"><span class="ch-n">Ali Raza</span><span class="ch-s">Co-host since <span class="num">March 2026</span></span></span>
+                    <span class="ch-pill live">Active</span>
+                  </div>
+                  <div class="scope">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
+                    <span>Covers <b>Gulberg <span class="num">2</span> Residence</b> and <b>Cantt View Residence</b>.</span>
+                  </div>
+                  <div class="perms">
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Calendar</span>
+                    <span class="perm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Guest messages</span>
+                    <span class="perm off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Pricing</span>
+                  </div>
+                </li>
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av pend" aria-hidden="true">BK</span>
+                    <span class="ch-b"><span class="ch-n">Bilal Khan</span><span class="ch-s">Invited <span class="num">2</span> days ago · nothing is shared until he accepts</span></span>
+                    <span class="ch-pill wait">Waiting</span>
+                  </div>
+                  <div class="scope">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+                    <span>He will cover <b>Cantt View Residence</b> with the calendar and guest messages switched on. You can change this before or after he accepts.</span>
+                  </div>
+                  <div class="ch-acts">
+                    <button class="lnk" type="button">Send the invitation again</button>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="secbox" role="note">
+                <span class="sb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></span>
+                <div class="sb-b">
+                  <span class="sb-h">Money and identity stay with you</span>
+                  <span class="sb-d">Payouts, bank details and your CNIC are bound to the verified account holder, so they can't be handed to anyone else. That's how the account is secured.</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">D · No co-hosts yet</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Co-hosts</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="empty">
+                <span class="empty-icn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M18 8v6M15 11h6"/></svg></span>
+                <span class="empty-h">No co-hosts yet</span>
+                <span class="empty-p">If someone helps you run a home — family, a neighbour, a property manager — you can give them the calendar, the guest messages, or the pricing for that home. Payouts and your CNIC always stay with you.</span>
+                <a class="btn primary" href="/host/co-hosts/invite">Invite a co-host</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">A pending invite is <b>fully explained before it lands</b>: the row states which home the person will cover and which switches are on, and says plainly that nothing is shared until they accept — so the host is never guessing what an outstanding invitation exposes. Resending is a plain text action, not a nag. The empty state (D) names the real Pakistani cases — family, a neighbour, a property manager — and closes with the same boundary the matrix states, so a first-time host learns the rule before they use the feature rather than after. No dead end: the one action leads straight to the invite sheet.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of co-host management">
+      <div class="panel-tag">RTL · اردو — co-hosts, scope, matrix</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">شریک میزبان</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="واپس آج پر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur">شریک میزبان</div>
+              <a class="ib" href="/ur/host/co-hosts/invite" aria-label="شریک میزبان کو مدعو کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></a>
+            </div>
+            <div class="screen">
+              <h2 id="uH" class="ur">شریک میزبان</h2>
+              <p class="lead ur">وہ لوگ جن پر آپ اپنے گھروں کے انتظام کے لیے بھروسا کرتے ہیں۔ آپ طے کرتے ہیں کہ کون سا گھر کس کے پاس ہے اور وہ کیا کر سکتا ہے — اور آپ یہ کبھی بھی بدل یا ختم کر سکتے ہیں۔</p>
+
+              <div class="sec-h ur">آپ کے گھروں پر</div>
+              <ul class="clist">
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av" aria-hidden="true">عل</span>
+                    <span class="ch-b"><span class="ch-n ur">علی رضا</span><span class="ch-s ur"><span class="num">March 2026</span> سے شریک میزبان</span></span>
+                    <span class="ch-pill live ur">فعال</span>
+                  </div>
+                  <div class="scope">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>
+                    <span class="ur"><b>گلبرگ <span class="num">2</span> ریزیڈنس</b> اور <b>کینٹ ویو ریزیڈنس</b> — ایف-<span class="num">6</span> اسٹوڈیو نہیں۔</span>
+                  </div>
+                  <div class="perms">
+                    <span class="perm ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>کیلنڈر</span>
+                    <span class="perm ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>مہمانوں کے پیغامات</span>
+                    <span class="perm off ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>قیمت</span>
+                  </div>
+                  <div class="ch-acts">
+                    <a class="lnk ur" href="/ur/host/co-hosts/ali-raza">اختیارات بدلیں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:scaleX(-1)"><path d="M9 6l6 6-6 6"/></svg></a>
+                    <a class="lnk ur" href="/ur/host/messages">پیغام<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform:scaleX(-1)"><path d="M9 6l6 6-6 6"/></svg></a>
+                  </div>
+                </li>
+                <li class="chost">
+                  <div class="ch-top">
+                    <span class="av pend" aria-hidden="true">بل</span>
+                    <span class="ch-b"><span class="ch-n ur">بلال خان</span><span class="ch-s ur"><span class="num">2</span> دن پہلے مدعو کیا · قبول کرنے تک کچھ شیئر نہیں ہوتا</span></span>
+                    <span class="ch-pill wait ur">انتظار</span>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="secbox" role="note">
+                <span class="sb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg></span>
+                <div class="sb-b">
+                  <span class="sb-h ur">رقم اور شناخت آپ ہی کے پاس رہتی ہے</span>
+                  <span class="sb-d ur">ادائیگیاں، بینک تفصیلات اور آپ کا شناختی کارڈ تصدیق شدہ اکاؤنٹ ہولڈر سے بندھے ہیں، اس لیے وہ کسی اور کو نہیں دیے جا سکتے — چاہے آپ اُس پر مکمل بھروسا کرتے ہوں۔ یہ اکاؤنٹ کی حفاظت کا طریقہ ہے، کسی پر شک نہیں۔</span>
+                </div>
+              </div>
+
+              <div class="sec-h ur">شریک میزبان کیا کر سکتا ہے</div>
+              <div class="tblwrap">
+                <table class="tbl">
+                  <caption class="ur">سلام اسٹے کی قیام گاہ پر ہر اختیار، اور وہ کس کے پاس ہے۔</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" class="ur">اختیار</th>
+                      <th scope="col" class="mark ur">شریک میزبان</th>
+                      <th scope="col" class="mark ur">آپ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="ur">کیلنڈر اور دستیابی</th>
+                      <td class="mark"><span class="yes ur">اگر آپ اجازت دیں</span></td>
+                      <td class="mark"><span class="always ur">ہمیشہ</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="ur">مہمانوں کے پیغامات</th>
+                      <td class="mark"><span class="yes ur">اگر آپ اجازت دیں</span></td>
+                      <td class="mark"><span class="always ur">ہمیشہ</span></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="ur">فی رات قیمت</th>
+                      <td class="mark"><span class="yes ur">اگر آپ اجازت دیں</span></td>
+                      <td class="mark"><span class="always ur">ہمیشہ</span></td>
+                    </tr>
+                    <tr class="ownerrow">
+                      <th scope="row" class="ur">ادائیگیاں اور بینک تفصیلات</th>
+                      <td class="mark"><span class="no ur">کبھی نہیں</span></td>
+                      <td class="mark"><span class="always ur">صرف آپ</span></td>
+                    </tr>
+                    <tr class="ownerrow">
+                      <th scope="row" class="ur">شناختی کارڈ اور قانونی شناخت</th>
+                      <td class="mark"><span class="no ur">کبھی نہیں</span></td>
+                      <td class="mark"><span class="always ur">صرف آپ</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored end to end — the back and row chevrons flip, the table's <code>text-align:start</code> carries every heading and cell to the reading edge without a second stylesheet, and the permission chips unstack from the right. Names use the two-letter monogram convention (<code>GA-096</code>): علی → <b>عل</b>, بلال → <b>بل</b>. Dates and counts are <b>Western digits inside <code>.num</code></b>, LTR-isolated, with Urdu prose around them, and the Urdu lexicon holds — <b>شناخت</b> is identity/verify, never تصدیق (Pass #<span class="num">31</span> ruling). The Urdu security note repeats the English one word for word in intent: a fact about the account, ending with "<span class="ur">کسی پر شک نہیں</span>" — no suspicion of anyone.</p>
+    </section>
+
+  </main>
+</body>
+</html>

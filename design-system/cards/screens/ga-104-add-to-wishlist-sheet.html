@@ -1,0 +1,336 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Add to wishlist (GA-104)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --brand-tint:rgba(46,125,106,.28);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --brand-tint:rgba(87,157,139,.32);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:620px; position:relative; }
+  .phone.rtl { direction:rtl; font-family:'Noto Nastaliq Urdu', serif; line-height:1.95; }
+  .phone.rtl .num, .phone.rtl .latin { font-family:'Inter', sans-serif; line-height:1.5; direction:ltr; unicode-bidi:isolate; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+  .tbar { display:flex; align-items:center; min-height:48px; padding:2px 12px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .stagewrap { position:relative; flex:1; overflow:hidden; }
+
+  /* listing context (the stay being saved) */
+  .ctx { position:absolute; inset:0; display:flex; flex-direction:column; }
+  .hero { position:relative; height:224px; flex:none; background:var(--bg-sunken); overflow:hidden; }
+  .hero img { width:100%; height:100%; object-fit:cover; display:block; }
+  .heartwrap { position:absolute; top:12px; inset-inline-end:12px; width:44px; height:44px; }
+  .radial { position:absolute; top:50%; left:50%; width:104px; height:104px; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, var(--brand-tint) 0%, transparent 66%); pointer-events:none; z-index:1; }
+  .heart { position:absolute; inset:0; width:44px; height:44px; border-radius:var(--radius-full); background:var(--scrim); display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; z-index:2; }
+  .heart svg { width:22px; height:22px; }
+  .frametag { position:absolute; top:64px; inset-inline-end:10px; z-index:3; font-size:9.5px; font-weight:600; letter-spacing:.02em; color:var(--text-primary); background:var(--bg-canvas); border:1px dashed var(--text-tertiary); border-radius:var(--radius-sm); padding:3px 7px; box-shadow:var(--el-hairline); }
+  .herobody { padding:12px 16px; display:flex; flex-direction:column; gap:3px; }
+  .h-title { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .h-loc { font-size:12.5px; color:var(--text-secondary); }
+  .h-price { font-size:15px; margin-top:2px; }
+  .h-price b { font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .h-price .unit { color:var(--text-secondary); font-size:13px; }
+  .reservebar { margin:auto 16px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .rb-price { font-size:14px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .rb-btn { min-height:44px; padding:0 20px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); border:none; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+
+  .scrim { position:absolute; inset:0; background:linear-gradient(to bottom, transparent 24%, var(--scrim) 62%); z-index:5; }
+
+  /* add sheet */
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); padding:8px 12px 14px; display:flex; flex-direction:column; }
+  .grabber { width:38px; height:4px; border-radius:var(--radius-full); background:var(--border-default); margin:2px auto 8px; }
+  .sheet-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 4px; margin-bottom:8px; }
+  .sheet-title { font-size:17px; font-weight:700; color:var(--text-primary); }
+  .ib { width:36px; height:36px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:var(--bg-sunken); border:none; cursor:pointer; color:var(--text-primary); }
+  .ib svg { width:18px; height:18px; stroke-width:2; }
+
+  .wrows { list-style:none; display:flex; flex-direction:column; }
+  .wrow { display:flex; align-items:center; gap:12px; width:100%; min-height:64px; padding:8px 6px; background:transparent; border:none; border-top:1px solid var(--border-hairline); cursor:pointer; font-family:inherit; text-align:start; }
+  .wrows li:first-child .wrow { border-top:none; }
+  .wrow-thumb { width:48px; height:48px; flex:none; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-hairline); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; }
+  .wrow-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .wrow-thumb.neu { color:var(--int-primary); background:var(--int-subtle); border-style:dashed; border-color:var(--border-brand); }
+  .wrow-thumb.neu svg { width:22px; height:22px; stroke-width:2; }
+  .wrow-meta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .wrow-name { font-size:14.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wrow-count { font-size:12px; color:var(--text-secondary); }
+  .wrow-check { width:26px; height:26px; flex:none; border-radius:var(--radius-full); border:1.5px solid var(--border-default); display:flex; align-items:center; justify-content:center; color:transparent; }
+  .wrow-check svg { width:14px; height:14px; stroke-width:2.4; }
+  .wrow-check.on { background:var(--error-fg); border-color:var(--error-fg); color:#fff; }
+  .wrow.added .wrow-name { color:var(--text-primary); }
+
+  /* toasts */
+  .toast { position:absolute; left:12px; right:12px; bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:var(--radius-md); background:var(--text-primary); color:var(--bg-canvas); box-shadow:var(--el-popover); z-index:20; }
+  .toast-lead { display:flex; align-items:center; gap:9px; min-width:0; }
+  .toast-icn { flex:none; display:flex; }
+  .toast-icn svg { width:17px; height:17px; }
+  .toast-msg { font-size:13px; font-weight:500; }
+  .toast-act { background:transparent; border:none; color:var(--bg-canvas); font-family:inherit; font-size:13px; font-weight:700; text-decoration:underline; cursor:pointer; flex:none; min-height:32px; padding:0 4px; }
+
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Add to wishlist (GA-104)</h1>
+    <p>Tapping the heart on a stay opens this <strong>bottom sheet</strong> over the listing. The heart is <strong>optimistic</strong>: it fills to saved (muted terracotta) the instant it's tapped and a <strong>brand-tint radial</strong> expands once behind it — drawn here as a single captured frame, annotated; <strong>no confetti, no particles</strong> (§8.2). The sheet lists existing wishlists (cover thumb · name · count) that check on tap, plus a <strong>New wishlist</strong> row. A <strong>Saved to Islamabad — August</strong> toast confirms with a <strong>View</strong> link; tapping the filled heart again un-saves. Panels: sheet + captured radial (light) · Saved toast + View, and the un-save state (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Sheet + captured radial · light</span><span>Saved toast + View · dark</span><span>Un-saved · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — SHEET + RADIAL ============================ -->
+    <section class="panel" aria-label="Light theme — add-to-wishlist sheet with the captured optimistic-heart radial">
+      <div class="panel-tag">Light — optimistic heart (captured frame) · list rows · New wishlist</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Save to a wishlist</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar"><div class="tbar-title" id="aH">Cedar Lodge, F-7 Markaz</div></div>
+            <div class="stagewrap">
+              <div class="ctx">
+                <div class="hero">
+                  <img src="../../assets/photos/is-f7-living.jpg" alt="Sunlit living room of Cedar Lodge, F-7 Markaz" loading="eager" data-prod-loading="lazy" />
+                  <div class="heartwrap">
+                    <span class="radial" aria-hidden="true"></span>
+                    <button class="heart" aria-pressed="true" aria-label="Saved. Tap to remove from wishlist."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  </div>
+                  <span class="frametag">captured frame · 1 pulse, no confetti</span>
+                </div>
+              </div>
+              <div class="scrim" aria-hidden="true"></div>
+              <div class="sheet" role="dialog" aria-label="Save to a wishlist" aria-modal="true">
+                <div class="grabber" aria-hidden="true"></div>
+                <div class="sheet-head">
+                  <span class="sheet-title">Save to a wishlist</span>
+                  <button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                </div>
+                <ul class="wrows">
+                  <li>
+                    <button class="wrow added" aria-pressed="true">
+                      <span class="wrow-thumb"><img src="../../assets/photos/is-f7-view.jpg" alt="Green Margalla Hills view — cover of the Islamabad — August list" loading="eager" data-prod-loading="lazy" /></span>
+                      <span class="wrow-meta"><span class="wrow-name">Islamabad — August</span><span class="wrow-count">4 saved · just added</span></span>
+                      <span class="wrow-check on" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="wrow" aria-pressed="false">
+                      <span class="wrow-thumb"><img src="../../assets/photos/is-f7-dining.jpg" alt="Bright Scandinavian-style dining area — cover of the Family trip ideas list" loading="eager" data-prod-loading="lazy" /></span>
+                      <span class="wrow-meta"><span class="wrow-name">Family trip ideas</span><span class="wrow-count">5 saved</span></span>
+                      <span class="wrow-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="wrow">
+                      <span class="wrow-thumb neu" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="wrow-meta"><span class="wrow-name">New wishlist</span><span class="wrow-count">Create a list for this stay</span></span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">The heart is drawn at the <strong>captured moment</strong>: fill already flipped to saved, the single <code>--brand-tint</code> radial mid-expansion behind it — this is the one flourish §8.2 permits, opacity-only, and reduced-motion collapses it to a plain cross-fade. The default target list (<strong>Islamabad — August</strong>) shows a filled terracotta check and its count is already <strong>+1</strong> (optimistic), addable rows show an empty ring, and <strong>New wishlist</strong> routes to the create sheet (GA-103). Rows are 64pt, heart 44pt.</p>
+    </section>
+
+    <!-- ============================ DARK — TOAST + UN-SAVE ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the Saved confirmation toast and the un-saved state">
+      <div class="panel-tag">Dark — Saved toast + View · un-saved (heart outline)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Saved — toast with View</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar"><div class="tbar-title" id="bH">Cedar Lodge, F-7 Markaz</div></div>
+            <div class="stagewrap">
+              <div class="ctx">
+                <div class="hero">
+                  <img src="../../assets/photos/is-f7-living.jpg" alt="Sunlit living room of Cedar Lodge, F-7 Markaz" loading="eager" data-prod-loading="lazy" />
+                  <div class="heartwrap">
+                    <button class="heart" aria-pressed="true" aria-label="Saved. Tap to remove from wishlist."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  </div>
+                </div>
+                <div class="herobody">
+                  <span class="h-title">Cedar Lodge, F-7 Markaz</span>
+                  <span class="h-loc">F-7 · entire home · 6 guests</span>
+                  <span class="h-price"><b class="num">PKR 14,200</b> <span class="unit">/ night</span></span>
+                </div>
+                <div class="reservebar">
+                  <span class="rb-price">PKR 14,200</span>
+                  <button class="rb-btn">Reserve</button>
+                </div>
+              </div>
+              <div class="toast" role="status">
+                <span class="toast-lead"><span class="toast-icn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span><span class="toast-msg">Saved to Islamabad — August</span></span>
+                <a class="toast-act" href="/wishlists/islamabad-august">View</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Un-saved — heart toggled off</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar"><div class="tbar-title" id="cH">Cedar Lodge, F-7 Markaz</div></div>
+            <div class="stagewrap">
+              <div class="ctx">
+                <div class="hero">
+                  <img src="../../assets/photos/is-f7-living.jpg" alt="Sunlit living room of Cedar Lodge, F-7 Markaz" loading="eager" data-prod-loading="lazy" />
+                  <div class="heartwrap">
+                    <button class="heart" aria-pressed="false" aria-label="Save to a wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  </div>
+                </div>
+                <div class="herobody">
+                  <span class="h-title">Cedar Lodge, F-7 Markaz</span>
+                  <span class="h-loc">F-7 · entire home · 6 guests</span>
+                  <span class="h-price"><b class="num">PKR 14,200</b> <span class="unit">/ night</span></span>
+                </div>
+                <div class="reservebar">
+                  <span class="rb-price">PKR 14,200</span>
+                  <button class="rb-btn">Reserve</button>
+                </div>
+              </div>
+              <div class="toast" role="status">
+                <span class="toast-lead"><span class="toast-msg">Removed from Islamabad — August</span></span>
+                <button class="toast-act">Undo</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">On save the sheet dismisses and a <strong>Saved to Islamabad — August</strong> toast carries a <strong>View</strong> link straight to that list (a real <code>/wishlists/{slug}</code> href, never a dead end). Tapping the now-filled heart again <strong>un-saves</strong> optimistically — the glyph returns to a white outline over the scrim bubble (exactly the unsaved treatment from the listing card) and a <strong>Removed … Undo</strong> snackbar makes it reversible. The heart never turns brand-green in any state (§1.7 / §8.2).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the add-to-wishlist sheet">
+      <div class="panel-tag">RTL · اردو — mirrored sheet + captured radial</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">پسندیدہ میں محفوظ کریں</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar"><div class="tbar-title" id="uH">سیڈر لاج، ایف-۷ مرکز</div></div>
+            <div class="stagewrap">
+              <div class="ctx">
+                <div class="hero">
+                  <img src="../../assets/photos/is-f7-living.jpg" alt="سیڈر لاج، ایف-۷ مرکز کا روشن کمرہ" loading="eager" data-prod-loading="lazy" />
+                  <div class="heartwrap">
+                    <span class="radial" aria-hidden="true"></span>
+                    <button class="heart" aria-pressed="true" aria-label="محفوظ۔ پسندیدہ سے ہٹانے کے لیے دبائیں۔"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  </div>
+                  <span class="frametag">محفوظ شدہ فریم · ایک پلس، کوئی چمکار نہیں</span>
+                </div>
+              </div>
+              <div class="scrim" aria-hidden="true"></div>
+              <div class="sheet" role="dialog" aria-label="پسندیدہ میں محفوظ کریں" aria-modal="true">
+                <div class="grabber" aria-hidden="true"></div>
+                <div class="sheet-head">
+                  <span class="sheet-title">پسندیدہ میں محفوظ کریں</span>
+                  <button class="ib" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                </div>
+                <ul class="wrows">
+                  <li>
+                    <button class="wrow added" aria-pressed="true">
+                      <span class="wrow-thumb"><img src="../../assets/photos/is-f7-view.jpg" alt="مارگلہ کی سبز پہاڑیاں — اسلام آباد — اگست فہرست کا سرورق" loading="eager" data-prod-loading="lazy" /></span>
+                      <span class="wrow-meta"><span class="wrow-name">اسلام آباد — اگست</span><span class="wrow-count">۴ محفوظ · ابھی شامل</span></span>
+                      <span class="wrow-check on" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="wrow" aria-pressed="false">
+                      <span class="wrow-thumb"><img src="../../assets/photos/is-f7-dining.jpg" alt="کھانے کی روشن جگہ — فیملی سفر کے خیالات فہرست کا سرورق" loading="eager" data-prod-loading="lazy" /></span>
+                      <span class="wrow-meta"><span class="wrow-name">فیملی سفر کے خیالات</span><span class="wrow-count">۵ محفوظ</span></span>
+                      <span class="wrow-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="wrow">
+                      <span class="wrow-thumb neu" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="wrow-meta"><span class="wrow-name">نئی پسندیدہ فہرست</span><span class="wrow-count">اس قیام کے لیے فہرست بنائیں</span></span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored: the heart stays top-trailing (top-left in RTL) and never mirrors — the radial is symmetric. The close ✕ and the row checks move to the leading edge; the sheet rows scroll naturally. Counts use Urdu numerals (۴ محفوظ) while the layout, controls and 44pt targets are unchanged. One <code>.rtl</code> switch, same tokens.</p>
+    </section>
+
+  </main>
+</body>
+</html>

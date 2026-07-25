@@ -1,0 +1,442 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Saved payment methods (GA-062)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:14px 2px 8px; }
+  .scap:first-child { margin-top:2px; }
+
+  /* tokenised-storage trust line — ga-053 precedent, no invented claim */
+  .sec { display:flex; gap:10px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:11px 13px; }
+  .sec .sk { color:var(--success-fg); flex:none; margin-top:1px; }
+  .sec .sk svg { width:18px; height:18px; stroke-width:2; }
+  .sec p { font-size:12.5px; color:var(--text-secondary); line-height:1.5; }
+  .sec b { color:var(--text-primary); font-weight:600; }
+
+  /* saved-method rows */
+  .mlist { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .method { display:flex; align-items:center; gap:11px; min-height:66px; padding:11px 12px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .method:last-child { border-bottom:none; }
+  .method .brand { width:42px; height:30px; border-radius:var(--radius-sm); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .method .brand svg { width:22px; height:22px; stroke-width:1.7; }
+  .method .mbd { min-width:0; display:flex; flex-direction:column; gap:3px; flex:1; }
+  .method .mn { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .method .mnum { font-size:12px; color:var(--text-secondary); display:block; }
+  .defbadge { font-size:10px; font-weight:600; letter-spacing:.02em; color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-brand); border-radius:var(--radius-full); padding:2px 8px; }
+  .expbadge { font-size:10px; font-weight:600; color:var(--warning-fg); background:var(--warning-bg); border:1px solid var(--warning-border); border-radius:var(--radius-full); padding:2px 8px; }
+  .kebab { width:44px; height:44px; flex:none; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; margin-inline-end:-6px; }
+  .kebab:hover { background:var(--bg-raised); color:var(--text-secondary); }
+  .kebab svg { width:20px; height:20px; }
+
+  /* add-method entry — routes to GA-052 rail manager */
+  .addbtn { display:flex; align-items:center; gap:11px; width:100%; min-height:56px; margin-top:12px; border:1.5px dashed var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); color:var(--int-primary); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; padding:0 14px; text-decoration:none; }
+  .addbtn:hover { background:var(--int-subtle); border-color:var(--int-primary); }
+  .addbtn .plus { width:26px; height:26px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; flex:none; }
+  .addbtn .plus svg { width:16px; height:16px; stroke-width:2.2; }
+  .addbtn .abd { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .addbtn .at { display:block; }
+  .addbtn .as { display:block; font-size:11.5px; font-weight:400; color:var(--text-tertiary); }
+  .addbtn .chev { color:var(--text-tertiary); flex:none; }
+  .addbtn .chev svg { width:18px; height:18px; stroke-width:2; }
+
+  /* row-action menu (set default / remove) */
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); padding:8px 16px calc(16px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:6px 0 4px; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sheet .sh-row { display:flex; align-items:center; gap:11px; padding:8px 4px 12px; border-bottom:1px solid var(--border-hairline); }
+  .sheet .sh-row .brand { width:38px; height:27px; border-radius:var(--radius-sm); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .sheet .sh-row .brand svg { width:20px; height:20px; stroke-width:1.7; }
+  .sheet .sh-row .shb { min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sheet .sh-row .mn { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .sheet .sh-row .mnum { font-size:12px; color:var(--text-secondary); display:block; }
+  .menu { list-style:none; display:flex; flex-direction:column; padding-top:6px; }
+  .menu li { display:block; }
+  .mact { display:flex; align-items:center; gap:12px; width:100%; min-height:52px; background:transparent; border:none; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--text-primary); cursor:pointer; padding:0 4px; text-align:start; }
+  .mact:hover { color:var(--int-primary); }
+  .mact .mi { width:24px; height:24px; flex:none; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .mact .mi svg { width:20px; height:20px; stroke-width:1.85; }
+  .mact.danger { color:var(--error-fg); }
+  .mact.danger .mi { color:var(--error-fg); }
+  .mact.cancel { color:var(--text-secondary); justify-content:center; border-top:1px solid var(--border-hairline); margin-top:4px; }
+
+  /* undo toast (remove) */
+  .toast { position:absolute; inset-inline:14px; bottom:calc(30px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-raised); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:11px 12px; }
+  .toast .ti { color:var(--text-secondary); flex:none; }
+  .toast .ti svg { width:20px; height:20px; stroke-width:1.9; }
+  .toast .tbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .toast .th { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .toast .td { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .toast .undo { flex:none; background:transparent; border:none; font-family:inherit; font-size:13px; font-weight:700; color:var(--int-primary); cursor:pointer; padding:6px 8px; }
+
+  /* empty state */
+  .empty { display:flex; flex-direction:column; align-items:center; text-align:center; padding:34px 20px 12px; }
+  .empty .art { width:74px; height:74px; border-radius:var(--radius-2xl); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .empty .art svg { width:34px; height:34px; stroke-width:1.5; }
+  .empty h2 { font-size:17px; font-weight:600; color:var(--text-primary); margin-top:16px; }
+  .empty p { font-size:13px; color:var(--text-secondary); margin-top:7px; line-height:1.55; max-width:250px; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Saved payment methods (GA-062)</h1>
+    <p>The account-settings wallet at <strong>/account/settings/payment</strong> — the saved cards, wallets and bank accounts a guest keeps for faster checkout. Each row shows only the masked tail (the tokenised-storage truth stated plainly, <code>ga-053</code> precedent), one is marked <strong>Default</strong>, and a per-row menu sets a new default or removes a method — removal resolving to a calm <strong>Undo toast</strong>, never a scary confirm. <strong>"Add a payment method" routes to the GA-052 rail manager</strong> (card via HBL · JazzCash · EasyPaisa · Raast). Panels: saved list + row-action menu (light) · saved list + remove Undo toast (dark) · empty state · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Saved list · row menu · light</span><span>Dark · remove → Undo toast</span><span>Empty</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — saved payment methods and the per-row action menu">
+      <div class="panel-tag">Light — saved methods · set-default / remove menu</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Saved methods — HBL is the default</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Payment methods</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec">
+                <span class="sk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <p><b>Your details are tokenised.</b> SalamStay never sees your full card or account number — only the last few digits, so you can tell them apart.</p>
+              </div>
+
+              <div class="scap">Saved methods</div>
+              <div class="mlist">
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn"><span>HBL debit card</span> <span class="defbadge">Default</span></span>
+                    <span class="mnum">Visa · <span class="num">•••• 8842</span> · exp <span class="num">09/28</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for HBL debit card, ending 8842"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/><rect x="7" y="8" width="5" height="3" rx="1"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn">EasyPaisa wallet</span>
+                    <span class="mnum"><span class="num">0345 ••• 1190</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for EasyPaisa wallet, ending 1190"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 10h16M5 10l7-6 7 6M6 10v11M18 10v11M10 10v11M14 10v11"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn">Bank account · Raast</span>
+                    <span class="mnum">Meezan Bank · <span class="num">•••• 5567</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for Raast bank account, ending 5567"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+              </div>
+
+              <a class="addbtn" href="/account/settings/payment/add">
+                <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="abd"><span class="at">Add a payment method</span><span class="as">Card, wallet or bank — pick a rail</span></span>
+                <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Row menu — set default / remove</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Payment methods</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <div class="scap">Saved methods</div>
+              <div class="mlist">
+                <div class="method">
+                  <span class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="mbd"><span class="mn"><span>HBL debit card</span> <span class="defbadge">Default</span></span><span class="mnum">Visa · <span class="num">•••• 8842</span></span></span>
+                </div>
+                <div class="method">
+                  <span class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/><rect x="7" y="8" width="5" height="3" rx="1"/></svg></span>
+                  <span class="mbd"><span class="mn">EasyPaisa wallet</span><span class="mnum"><span class="num">0345 ••• 1190</span></span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="menu-row">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <div class="sh-row" id="menu-row">
+                <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/><rect x="7" y="8" width="5" height="3" rx="1"/></svg></span>
+                <span class="shb"><span class="mn">EasyPaisa wallet</span><span class="mnum"><span class="num">0345 ••• 1190</span></span></span>
+              </div>
+              <ul class="menu">
+                <li>
+                  <button class="mact" type="button">
+                    <span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></span>
+                    Set as default
+                  </button>
+                </li>
+                <li>
+                  <button class="mact danger" type="button">
+                    <span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/><path d="M10 11v6M14 11v6"/></svg></span>
+                    Remove this method
+                  </button>
+                </li>
+                <li>
+                  <button class="mact cancel" type="button">Cancel</button>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every row states only the masked tail — the <strong>tokenised-storage</strong> truth carried verbatim from checkout (<code>ga-053</code>): "SalamStay never sees your full card or account number." Exactly one method holds the <code>Default</code> chip; the per-row <code>⋯</code> menu is the <strong>set-default affordance</strong> and the removal entry. <strong>Add a payment method is a real <code>&lt;a href&gt;</code> that routes to the <code>GA-052</code> rail manager</strong> — it does not add a rail inline, so the choice of card / JazzCash / EasyPaisa / Raast happens in one canonical place. Rows are non-interactive containers with a single nested <code>&lt;button&gt;</code> menu trigger — no button inside an anchor.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a removed method resolving to an Undo toast">
+      <div class="panel-tag">Dark — remove resolves to a calm Undo toast</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Removed — Undo toast, no confirm modal</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Payment methods</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec">
+                <span class="sk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <p><b>Your details are tokenised.</b> SalamStay never sees your full card or account number — only the last few digits.</p>
+              </div>
+
+              <div class="scap">Saved methods</div>
+              <div class="mlist">
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn"><span>HBL debit card</span> <span class="defbadge">Default</span></span>
+                    <span class="mnum">Visa · <span class="num">•••• 8842</span> · exp <span class="num">09/28</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for HBL debit card, ending 8842"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 10h16M5 10l7-6 7 6M6 10v11M18 10v11M10 10v11M14 10v11"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn">Bank account · Raast</span>
+                    <span class="mnum">Meezan Bank · <span class="num">•••• 5567</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Options for Raast bank account, ending 5567"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+              </div>
+
+              <a class="addbtn" href="/account/settings/payment/add">
+                <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="abd"><span class="at">Add a payment method</span><span class="as">Card, wallet or bank — pick a rail</span></span>
+                <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/></svg></span>
+              <span class="tbd"><span class="th">EasyPaisa wallet removed</span><span class="td">You can add it again anytime</span></span>
+              <button class="undo" type="button">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Empty — no methods saved yet</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="eH">Payment methods</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="empty">
+                <span class="art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2.5"/><path d="M2 10h20M6 15h5"/></svg></span>
+                <h2>No saved methods yet</h2>
+                <p>Add a card, wallet or bank account to check out faster next time. You can also add one during checkout.</p>
+              </div>
+              <div class="sec">
+                <span class="sk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <p>Whatever you add is <b>tokenised</b> — SalamStay never sees your full number.</p>
+              </div>
+              <a class="addbtn" href="/account/settings/payment/add">
+                <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="abd"><span class="at">Add a payment method</span><span class="as">Card, wallet or bank — pick a rail</span></span>
+                <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Removal is <strong>reversible and calm</strong> — no confirm modal, just a <code>role="status"</code> Undo toast (the <code>GA-090</code> pattern), so a mistap costs one tap to reverse. The empty state orients and offers exactly one next step, re-stating the tokenised-storage line so a first-time guest reads the trust boundary before adding anything.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the saved payment methods">
+      <div class="panel-tag">RTL · اردو — "ادائیگی کے طریقے", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Saved methods — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="سیٹنگز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">ادائیگی کے طریقے</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec">
+                <span class="sk" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <p><b>آپ کی تفصیلات ٹوکنائزڈ ہیں۔</b> سلام اسٹے آپ کا مکمل کارڈ یا اکاؤنٹ نمبر کبھی نہیں دیکھتا — صرف آخری چند ہندسے، پہچان کے لیے۔</p>
+              </div>
+
+              <div class="scap">محفوظ طریقے</div>
+              <div class="mlist">
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn"><span>HBL ڈیبٹ کارڈ</span> <span class="defbadge">ڈیفالٹ</span></span>
+                    <span class="mnum">Visa · <span class="num">•••• 8842</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="HBL ڈیبٹ کارڈ کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15h4M16 9h.01"/><rect x="7" y="8" width="5" height="3" rx="1"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn">EasyPaisa والٹ</span>
+                    <span class="mnum"><span class="num">0345 ••• 1190</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="EasyPaisa والٹ کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+                <div class="method">
+                  <span class="brand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 10h16M5 10l7-6 7 6M6 10v11M18 10v11M10 10v11M14 10v11"/></svg></span>
+                  <span class="mbd">
+                    <span class="mn">بینک اکاؤنٹ · Raast</span>
+                    <span class="mnum">میزان بینک · <span class="num">•••• 5567</span></span>
+                  </span>
+                  <button class="kebab" type="button" aria-label="Raast بینک اکاؤنٹ کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </div>
+              </div>
+
+              <a class="addbtn" href="/account/settings/payment/add">
+                <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="abd"><span class="at">ادائیگی کا طریقہ شامل کریں</span><span class="as">کارڈ، والٹ یا بینک — ریل منتخب کریں</span></span>
+                <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the back chevron and the add-method chevron flip to the reading direction, rows align to the trailing edge, and every masked tail keeps LTR tabular figures via <code>.num { direction:ltr; unicode-bidi:isolate }</code> (prices/numbers are never digit-order-mirrored, §11). Brand names (HBL, Visa, EasyPaisa, Raast) stay in Latin as proper nouns; everything else is real Urdu, and no wallet keeps its brand colour — emphasis is on-palette only.</p>
+    </section>
+
+  </main>
+</body>
+</html>

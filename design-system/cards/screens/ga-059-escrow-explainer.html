@@ -1,0 +1,452 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-059 Escrow (amanah) explainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:860px; }
+  .head .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+
+  .phone { position:relative; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+
+  /* dimmed checkout context behind the sheet */
+  .bg-ctx { flex:1; padding:16px 22px; opacity:.5; }
+  .bg-ctx .bh { font-size:21px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .bg-ctx .bline { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-hairline); font-size:14px; color:var(--text-secondary); }
+  .bg-ctx .bline .v { color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .bg-ctx .held { display:inline-flex; align-items:center; gap:7px; margin-top:14px; font-size:12.5px; font-weight:600; color:var(--int-primary); }
+  .bg-ctx .held svg { width:15px; height:15px; stroke-width:2; }
+
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+
+  /* the amanah explainer bottom sheet */
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); display:flex; flex-direction:column; max-height:90%; }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; flex:none; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sh-top { display:flex; align-items:flex-start; gap:10px; padding:6px 20px 0; flex:none; }
+  .sh-top h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); flex:1; }
+  .sh-top .closeb { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-primary); padding:0; }
+  .sh-top .closeb svg { width:18px; height:18px; stroke-width:2; }
+  .sh-body { overflow-y:auto; padding:12px 20px 4px; }
+
+  /* lede — plain-language definition */
+  .lede { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .lede b { color:var(--text-primary); font-weight:600; }
+  .lede .term { font-style:italic; color:var(--text-primary); font-weight:600; }
+
+  .seclabel { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:20px 0 10px; }
+
+  /* the flow diagram — pay → held → check-in → paid */
+  .eflow { display:flex; flex-direction:column; }
+  .estep { display:flex; gap:13px; align-items:flex-start; padding-bottom:16px; position:relative; }
+  .estep:not(:last-child)::before { content:""; position:absolute; inset-inline-start:15px; top:32px; bottom:0; width:2px; background:var(--border-hairline); }
+  .estep .en { width:32px; height:32px; border-radius:var(--radius-full); background:var(--int-subtle); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--int-primary); z-index:1; }
+  .estep .en svg { width:17px; height:17px; stroke-width:1.9; }
+  .estep .et { font-size:14.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .estep .ed { font-size:13px; color:var(--text-secondary); margin-top:2px; line-height:1.5; display:block; }
+  .estep.hold .en { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+
+  /* why-Meezan card */
+  .why { display:flex; gap:12px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:14px 15px; margin-top:6px; }
+  .why .wi { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .why .wi svg { width:20px; height:20px; stroke-width:1.7; }
+  .why .wh { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .why p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.55; }
+  .why b { color:var(--text-primary); font-weight:600; }
+
+  /* cancellation note */
+  .cancel { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:13px 14px; margin-top:14px; }
+  .cancel .ci { color:var(--info-fg); flex:none; margin-top:1px; }
+  .cancel .ci svg { width:19px; height:19px; stroke-width:1.9; }
+  .cancel .ch { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .cancel p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .cancel a { color:var(--info-fg); font-weight:600; text-decoration:underline; }
+
+  /* FAQ — real, genuinely useful (SEO §7) */
+  .faq { margin-top:8px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .qa { border-bottom:1px solid var(--border-hairline); }
+  .qa:last-child { border-bottom:none; }
+  .qa summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px; min-height:52px; padding:11px 14px; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .qa summary::-webkit-details-marker { display:none; }
+  .qa summary .chev { margin-inline-start:auto; color:var(--text-tertiary); flex:none; transition:transform .15s ease; }
+  .qa summary .chev svg { width:18px; height:18px; stroke-width:2; }
+  .qa[open] summary .chev { transform:rotate(180deg); }
+  .qa .ans { padding:0 14px 14px; font-size:12.5px; color:var(--text-secondary); line-height:1.6; }
+  .qa .ans b { color:var(--text-primary); font-weight:600; }
+  @media (prefers-reduced-motion: reduce) { .qa summary .chev { transition:none; } }
+
+  .sh-foot { flex:none; border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(16px + env(safe-area-inset-bottom)); }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .helplink { display:block; text-align:center; margin-top:11px; font-size:12.5px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL / Urdu */
+  .urdu .sh-top h2, .urdu .lede, .urdu .seclabel, .urdu .eflow, .urdu .why, .urdu .cancel, .urdu .faq, .urdu .cta, .urdu .helplink, .urdu .bg-ctx { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu .sh-top h2 { line-height:1.7; }
+  .urdu .lede, .urdu .estep .ed, .urdu .why p, .urdu .cancel p, .urdu .qa .ans { line-height:1.95; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Escrow (amanah) explainer (GA-059)</h1>
+    <p>The plain-language sheet that answers "where does my money go?" — opened from the price step. Your payment is held in <strong>amanah</strong> (a trust) with Meezan Bank and released to the host only after check-in; while it waits it isn't lent out or used to earn interest. Education, not decoration — no crescents, no green religious framing, just a calm four-step flow, an honest why-Meezan note, what happens on cancellation, and a short, real FAQ (DESIGN §10.2 / §10.7). Panels: the sheet (light + dark), an FAQ-open reading, and Urdu / RTL.</p>
+    <div class="toggle"><span class="on">Sheet · light</span><span>Sheet · dark</span><span>FAQ open</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ 1 · SHEET (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Light — how your money is held</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+
+          <div class="bg-ctx" aria-hidden="true">
+            <div class="bh">Price breakdown</div>
+            <div class="bline"><span>3 nights · Margalla View</span><span class="v num">PKR 37,500</span></div>
+            <div class="bline"><span>Service fee (wakala)</span><span class="v num">PKR 2,250</span></div>
+            <div class="bline"><span>Total (PKR)</span><span class="v num">PKR 42,350</span></div>
+            <span class="held"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Held safely until check-in · how?</span>
+          </div>
+
+          <div class="scrim" aria-hidden="true"></div>
+
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="es-h">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="sh-top">
+              <h2 id="es-h">How your money is held</h2>
+              <button class="closeb" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="sh-body">
+              <p class="lede">When you pay, your money doesn't go straight to the host. We hold it in <span class="term">amanah</span> — a trust — and release it <b>only after you've checked in</b>. It protects both sides: you know the host is paid once you've arrived, and the host knows the money is really there.</p>
+
+              <div class="seclabel">Step by step</div>
+              <div class="eflow">
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2.5"/><path d="M2 10h20M6 15h4"/></svg></span>
+                  <span><span class="et">You pay</span><span class="ed">Your payment leaves your card or wallet in Pakistani Rupees.</span></span>
+                </div>
+                <div class="estep hold">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span><span class="et">Held in amanah</span><span class="ed">It sits in a custody account at Meezan Bank — not spent, not lent out, no interest earned on it.</span></span>
+                </div>
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                  <span><span class="et">You check in</span><span class="ed">Once your stay begins and check-in is confirmed, the hold is released.</span></span>
+                </div>
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                  <span><span class="et">The host is paid</span><span class="ed">The stay amount is sent to the host. You get your receipt in the app.</span></span>
+                </div>
+              </div>
+
+              <div class="seclabel">Why Meezan Bank</div>
+              <div class="why">
+                <span class="wi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 10h16M5 10l7-6 7 6M6 10v11M18 10v11M10 10v11M14 10v11"/></svg></span>
+                <div>
+                  <div class="wh">Custody without interest (riba-free)</div>
+                  <p>Meezan is an Islamic bank, so your money is held in a <b>custody arrangement, not a lending one</b> — it isn't put to work to earn interest while it waits. It's simply kept until it's due.</p>
+                </div>
+              </div>
+
+              <div class="cancel">
+                <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                <div>
+                  <div class="ch">If you cancel</div>
+                  <p>Because the money is still held, your refund comes straight back from that hold — no waiting on the host — for whatever the stay's <a href="/help/cancellation">cancellation policy</a> allows.</p>
+                </div>
+              </div>
+
+              <div class="seclabel">Common questions</div>
+              <div class="faq">
+                <details class="qa">
+                  <summary>Does SalamStay use my money while it's held?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">No. It sits in the custody account untouched. We don't spend it, lend it, or earn interest on it — it's yours until it's released to the host or refunded to you.</p>
+                </details>
+                <details class="qa">
+                  <summary>When exactly is the host paid?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">After you've checked in. The hold releases once your check-in is confirmed, so the host is paid for a stay that has actually started — not before.</p>
+                </details>
+                <details class="qa">
+                  <summary>Is a receipt issued for the held amount?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">Yes. You get a confirmation the moment you pay, and a full receipt once the stay amount is released to the host. Both live in <b>Your trips</b>.</p>
+                </details>
+              </div>
+            </div>
+            <div class="sh-foot">
+              <button class="cta" type="button">Got it</button>
+              <a class="helplink" href="/help/payments/how-money-is-held">Read more about how payments work</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 2 · SHEET (dark) ============ -->
+      <div class="device">
+        <p class="devlabel">Dark — how your money is held</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+
+          <div class="bg-ctx" aria-hidden="true">
+            <div class="bh">Price breakdown</div>
+            <div class="bline"><span>3 nights · Margalla View</span><span class="v num">PKR 37,500</span></div>
+            <div class="bline"><span>Service fee (wakala)</span><span class="v num">PKR 2,250</span></div>
+            <div class="bline"><span>Total (PKR)</span><span class="v num">PKR 42,350</span></div>
+            <span class="held"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Held safely until check-in · how?</span>
+          </div>
+
+          <div class="scrim" aria-hidden="true"></div>
+
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="es-h2">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="sh-top">
+              <h2 id="es-h2">How your money is held</h2>
+              <button class="closeb" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="sh-body">
+              <p class="lede">When you pay, your money doesn't go straight to the host. We hold it in <span class="term">amanah</span> — a trust — and release it <b>only after you've checked in</b>. It protects both sides: you know the host is paid once you've arrived, and the host knows the money is really there.</p>
+
+              <div class="seclabel">Step by step</div>
+              <div class="eflow">
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2.5"/><path d="M2 10h20M6 15h4"/></svg></span>
+                  <span><span class="et">You pay</span><span class="ed">Your payment leaves your card or wallet in Pakistani Rupees.</span></span>
+                </div>
+                <div class="estep hold">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span><span class="et">Held in amanah</span><span class="ed">It sits in a custody account at Meezan Bank — not spent, not lent out, no interest earned on it.</span></span>
+                </div>
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                  <span><span class="et">You check in</span><span class="ed">Once your stay begins and check-in is confirmed, the hold is released.</span></span>
+                </div>
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                  <span><span class="et">The host is paid</span><span class="ed">The stay amount is sent to the host. You get your receipt in the app.</span></span>
+                </div>
+              </div>
+
+              <div class="seclabel">Why Meezan Bank</div>
+              <div class="why">
+                <span class="wi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 10h16M5 10l7-6 7 6M6 10v11M18 10v11M10 10v11M14 10v11"/></svg></span>
+                <div>
+                  <div class="wh">Custody without interest (riba-free)</div>
+                  <p>Meezan is an Islamic bank, so your money is held in a <b>custody arrangement, not a lending one</b> — it isn't put to work to earn interest while it waits. It's simply kept until it's due.</p>
+                </div>
+              </div>
+
+              <div class="cancel">
+                <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                <div>
+                  <div class="ch">If you cancel</div>
+                  <p>Because the money is still held, your refund comes straight back from that hold — no waiting on the host — for whatever the stay's <a href="/help/cancellation">cancellation policy</a> allows.</p>
+                </div>
+              </div>
+            </div>
+            <div class="sh-foot">
+              <button class="cta" type="button">Got it</button>
+              <a class="helplink" href="/help/payments/how-money-is-held">Read more about how payments work</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 3 · FAQ OPEN (light) ============ -->
+      <div class="device">
+        <p class="devlabel">FAQ open — reading a question</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+
+          <div class="scrim" aria-hidden="true"></div>
+
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="es-h3">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="sh-top">
+              <h2 id="es-h3">Common questions</h2>
+              <button class="closeb" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="sh-body">
+              <p class="lede">Everything you might want to know about the <span class="term">amanah</span> hold, in plain terms.</p>
+              <div class="seclabel">Common questions</div>
+              <div class="faq">
+                <details class="qa" open>
+                  <summary>Does SalamStay use my money while it's held?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">No. It sits in the custody account untouched. We don't spend it, lend it, or earn interest on it — it's yours until it's released to the host or refunded to you.</p>
+                </details>
+                <details class="qa" open>
+                  <summary>When exactly is the host paid?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">After you've checked in. The hold releases once your check-in is confirmed, so the host is paid for a stay that has actually started — not before.</p>
+                </details>
+                <details class="qa">
+                  <summary>Is a receipt issued for the held amount?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">Yes. You get a confirmation the moment you pay, and a full receipt once the stay amount is released to the host. Both live in <b>Your trips</b>.</p>
+                </details>
+              </div>
+
+              <div class="cancel">
+                <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                <div>
+                  <div class="ch">If you cancel</div>
+                  <p>Because the money is still held, your refund comes straight back from that hold — for whatever the stay's <a href="/help/cancellation">cancellation policy</a> allows.</p>
+                </div>
+              </div>
+            </div>
+            <div class="sh-foot">
+              <button class="cta" type="button">Got it</button>
+              <a class="helplink" href="/help/payments/how-money-is-held">Read more about how payments work</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4 · URDU / RTL ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — how your money is held</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+
+          <div class="scrim" aria-hidden="true"></div>
+
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="es-h4">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="sh-top">
+              <h2 id="es-h4">آپ کی رقم کیسے رکھی جاتی ہے</h2>
+              <button class="closeb" type="button" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="sh-body">
+              <p class="lede">جب آپ ادائیگی کرتے ہیں تو رقم سیدھی میزبان کو نہیں جاتی۔ ہم اسے <span class="term">امانت</span> کے طور پر رکھتے ہیں اور <b>صرف چیک اِن کے بعد</b> جاری کرتے ہیں۔ یہ دونوں کے لیے تحفظ ہے۔</p>
+
+              <div class="seclabel">مرحلہ وار</div>
+              <div class="eflow">
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2.5"/><path d="M2 10h20M6 15h4"/></svg></span>
+                  <span><span class="et">آپ ادائیگی کرتے ہیں</span><span class="ed">آپ کی رقم کارڈ یا والٹ سے پاکستانی روپے میں جاتی ہے۔</span></span>
+                </div>
+                <div class="estep hold">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span><span class="et">امانت میں محفوظ</span><span class="ed">یہ میزان بینک کے کسٹڈی اکاؤنٹ میں رہتی ہے — نہ خرچ، نہ قرض، نہ سود۔</span></span>
+                </div>
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                  <span><span class="et">آپ چیک اِن کرتے ہیں</span><span class="ed">قیام شروع ہوتے ہی اور چیک اِن کی تصدیق پر رقم جاری ہو جاتی ہے۔</span></span>
+                </div>
+                <div class="estep">
+                  <span class="en" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                  <span><span class="et">میزبان کو ادائیگی</span><span class="ed">قیام کی رقم میزبان کو بھیج دی جاتی ہے۔ رسید ایپ میں مل جاتی ہے۔</span></span>
+                </div>
+              </div>
+
+              <div class="seclabel">میزان بینک ہی کیوں</div>
+              <div class="why">
+                <span class="wi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 10h16M5 10l7-6 7 6M6 10v11M18 10v11M10 10v11M14 10v11"/></svg></span>
+                <div>
+                  <div class="wh">سود کے بغیر امانت (ریبا سے پاک)</div>
+                  <p>میزان ایک اسلامی بینک ہے، اس لیے آپ کی رقم <b>امانت کے طور پر رکھی جاتی ہے، قرض کے طور پر نہیں</b> — انتظار کے دوران اس پر کوئی سود نہیں کمایا جاتا۔</p>
+                </div>
+              </div>
+
+              <div class="cancel">
+                <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                <div>
+                  <div class="ch">اگر آپ منسوخ کریں</div>
+                  <p>چونکہ رقم ابھی محفوظ ہے، آپ کی واپسی اسی ہولڈ سے سیدھی ہوتی ہے — <a href="/help/cancellation">منسوخی کی پالیسی</a> کے مطابق۔</p>
+                </div>
+              </div>
+            </div>
+            <div class="sh-foot">
+              <button class="cta" type="button">سمجھ گیا</button>
+              <a class="helplink" href="/help/payments/how-money-is-held">ادائیگی کے بارے میں مزید پڑھیں</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

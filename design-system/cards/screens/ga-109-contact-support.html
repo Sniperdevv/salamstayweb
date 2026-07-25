@@ -1,0 +1,471 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Contact support / ticket (GA-109)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage; NO journey stepper (support family, §7.6a) */
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 15px 16px; overflow-y:auto; position:relative; }
+  .screen h2 { font-size:18px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:5px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:14px; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 9px; }
+  .sec-label:first-child { margin-top:0; }
+
+  /* Select — trigger reuses the Input shell exactly (§8.1 inputs) */
+  .fld { margin-bottom:14px; }
+  .flabel { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .select-trig { width:100%; min-height:48px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 13px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:18px; height:18px; stroke-width:2; color:var(--text-secondary); flex:none; }
+  .select-trig:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); }
+
+  /* optional related-booking context chip */
+  .ctx { display:flex; align-items:center; gap:11px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 12px; margin-bottom:14px; }
+  .ctx-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .ctx-ic svg { width:17px; height:17px; stroke-width:1.7; }
+  .ctx-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .ctx-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .ctx-s { font-size:11.5px; color:var(--text-secondary); }
+  .ctx-x { flex:none; width:32px; height:32px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .ctx-x svg { width:15px; height:15px; stroke-width:2; }
+
+  /* Textarea (§8.1 inputs) */
+  .ta { width:100%; min-height:96px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:11px 13px; font-family:inherit; font-size:13.5px; color:var(--text-primary); line-height:1.5; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); background:var(--bg-canvas); }
+  .count { font-size:11.5px; color:var(--text-tertiary); text-align:end; margin-top:5px; }
+
+  /* attachment rows — CSS placeholder tiles */
+  .att-h { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:3px; display:flex; align-items:baseline; gap:6px; }
+  .att-h .opt { font-size:12px; font-weight:400; color:var(--text-tertiary); }
+  .att-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:9px; }
+  .att-row { display:flex; align-items:center; gap:11px; min-height:54px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:8px 10px; }
+  .att-thumb { flex:none; width:38px; height:38px; border-radius:var(--radius-md); background:linear-gradient(158deg,var(--int-subtle),var(--bg-sunken)); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .att-thumb svg { width:17px; height:17px; stroke-width:1.7; }
+  .att-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .att-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .att-meta { font-size:11px; color:var(--text-secondary); }
+  .att-x { flex:none; width:40px; height:40px; border-radius:var(--radius-full); background:transparent; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .att-x svg { width:17px; height:17px; stroke-width:2; }
+  .addatt { width:100%; min-height:46px; border-radius:var(--radius-md); border:1.5px dashed var(--border-default); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; color:var(--text-secondary); font-family:inherit; font-size:13px; font-weight:600; margin-bottom:14px; }
+  .addatt svg { width:17px; height:17px; stroke-width:2; }
+
+  /* reviewed-by-a-person honesty note (reused pattern) */
+  .byperson { display:flex; gap:10px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:6px; }
+  .byperson svg { width:18px; height:18px; stroke-width:1.85; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .byperson span { font-size:12px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .byperson b { color:var(--text-primary); font-weight:600; }
+
+  /* select panel — mobile bottom-sheet variant of Select past ~7 items */
+  .selsheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); display:flex; flex-direction:column; max-height:86%; border-top:1px solid var(--border-hairline); }
+  .selscrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; flex:none; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .selsheet h3 { font-size:16px; font-weight:600; color:var(--text-primary); padding:4px 18px 12px; }
+  .sel-list { list-style:none; overflow-y:auto; padding:0 10px 14px; }
+  .sel-opt { width:100%; display:flex; align-items:flex-start; gap:11px; padding:11px 10px; border-radius:var(--radius-md); background:none; border:none; cursor:pointer; font-family:inherit; text-align:start; }
+  .sel-opt:hover, .sel-opt.on { background:var(--int-subtle); }
+  .sel-check { width:20px; height:20px; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .sel-opt.on .sel-check { border-color:var(--int-primary); background:var(--int-primary); color:var(--text-on-brand); }
+  .sel-check svg { width:12px; height:12px; stroke-width:3; }
+  .sel-tx { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .sel-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .sel-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+
+  /* ticket timeline — submitted → with our team → replied (§8.7 nav) */
+  .track { list-style:none; display:flex; flex-direction:column; margin-top:2px; }
+  .trk { display:flex; gap:12px; padding-bottom:18px; position:relative; }
+  .trk:last-child { padding-bottom:2px; }
+  .trk:not(:last-child)::before { content:""; position:absolute; inset-inline-start:11px; top:26px; bottom:0; width:2px; background:var(--border-default); }
+  .trk-dot { width:24px; height:24px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .trk.done .trk-dot { background:var(--success-fg); color:var(--text-on-brand); }
+  .trk.done .trk-dot svg { width:14px; height:14px; stroke-width:2.6; }
+  .trk.current .trk-dot { background:var(--bg-canvas); border:2px solid var(--info-fg); box-shadow:0 0 0 4px var(--info-bg); }
+  .trk.current .trk-dot i { width:8px; height:8px; border-radius:50%; background:var(--info-fg); }
+  .trk.upcoming .trk-dot { background:var(--bg-canvas); border:2px solid var(--border-default); }
+  .trk-body { display:flex; flex-direction:column; gap:1px; padding-top:2px; }
+  .trk-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .trk.upcoming .trk-t { color:var(--text-secondary); }
+  .trk-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* ticket ref chip */
+  .refchip { display:inline-block; font-size:12px; color:var(--text-tertiary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:5px 12px; margin:4px 0 16px; }
+
+  /* message bubble — support reply (§8.8 nav) */
+  .bubble-row { display:flex; gap:9px; align-items:flex-end; margin-bottom:4px; }
+  .bubble-av { flex:none; width:30px; height:30px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+  .bubble-col { display:flex; flex-direction:column; gap:4px; max-width:78%; }
+  .bubble-name { font-size:11px; font-weight:600; color:var(--text-secondary); padding:0 2px; }
+  .bubble { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:10px 13px; font-size:13px; color:var(--text-primary); line-height:1.5; }
+  .bubble-time { font-size:10.5px; color:var(--text-tertiary); padding:0 2px; }
+
+  .grow { flex:1; min-height:8px; }
+  .foot { padding-top:12px; border-top:1px solid var(--border-hairline); margin-top:8px; flex:none; }
+  .foot.noborder { border-top:none; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* bilingual support line */
+  .bilang { display:flex; align-items:center; gap:9px; margin-top:14px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .bilang svg { width:16px; height:16px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .bilang span { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+
+  /* result seal (submitted state) */
+  .result-hd { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:16px; }
+  .result-hd .seal { width:58px; height:58px; border-radius:var(--radius-full); background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); display:flex; align-items:center; justify-content:center; }
+  .result-hd .seal svg { width:28px; height:28px; stroke-width:2; }
+  .result-hd h2 { font-size:18px; margin-top:12px; }
+  .result-hd .sp { font-size:12.5px; color:var(--text-secondary); margin-top:5px; max-width:250px; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Contact support / ticket (GA-109)</h1>
+    <p>The <code>/help/contact</code> ticket flow reached from the GA-108 empty-search hand-off or the help hub directly. Six categories — booking issue, payment issue, verification help, <strong>safety concern</strong>, <strong>report a person</strong>, something else — with safety concern routed calmly ("we prioritise it," never alarmist) and report-a-person kept distinct from the accusatory tone GA-132 already avoids. A message Textarea, optional attachment placeholder tiles, and a <strong>ticket timeline</strong> (submitted → with our team → replied) carry the same honest framing as GA-113's appeal: <strong>"a person reads every ticket," with no response-time promise</strong> — none is offered (SEO-RULES §5). A replied state shows a real support message bubble. No journey stepper (§7.6a). Panels: compose + category select open (light) · submitted + replied (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Compose · light</span><span>Category select open</span><span>Submitted · replied · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the ticket compose form, and the category select open as a bottom sheet">
+      <div class="rowflex">
+
+        <!-- A · COMPOSE -->
+        <div class="pcol">
+          <div class="pcap">A · Compose a ticket — category chosen</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to help center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Contact support</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Tell us what's going on</h2>
+              <p class="lead">A person reads every ticket. Share as much detail as helps.</p>
+
+              <div class="fld">
+                <label class="flabel" id="cat-lbl">Category</label>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cat-lbl"><span class="stv">Verification help</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+
+              <div class="ctx">
+                <span class="ctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5"/></svg></span>
+                <span class="ctx-b"><span class="ctx-t">About: Margalla View Apartment</span><span class="ctx-s">Booking <span class="num">SS-7F3K9Q</span> · optional</span></span>
+                <button class="ctx-x" type="button" aria-label="Remove related booking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="msg-a">What happened?</label>
+                <textarea class="ta" id="msg-a" placeholder="Describe it in your own words.">My Nikah Nama document was rejected but I'm not sure what to fix. Can someone take another look?</textarea>
+                <div class="count">96 / 1500</div>
+              </div>
+
+              <div class="att-h">Add attachments <span class="opt">Optional</span></div>
+              <ul class="att-list">
+                <li class="att-row">
+                  <span class="att-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></svg></span>
+                  <span class="att-b"><span class="att-name">nikah-nama-scan.jpg</span><span class="att-meta">Added just now</span></span>
+                  <button class="att-x" type="button" aria-label="Remove nikah-nama-scan.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                </li>
+              </ul>
+              <button class="addatt" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add an attachment</button>
+
+              <div class="byperson">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.8-6 8-6s6.5 2 8 6"/></svg>
+                <span>A <b>person on our support team</b> reads every ticket and replies in the app. You can keep browsing help while you wait.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot"><button class="btn primary" type="submit">Send ticket</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · CATEGORY SELECT OPEN -->
+        <div class="pcol">
+          <div class="pcap">B · Category select — open, all six options</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to help center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Contact support</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Tell us what's going on</h2>
+              <p class="lead">A person reads every ticket. Share as much detail as helps.</p>
+              <div class="fld">
+                <label class="flabel">Category</label>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="true"><span class="stv">Choose a category</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+
+              <div class="selscrim" aria-hidden="true"></div>
+              <div class="selsheet" role="dialog" aria-modal="true" aria-labelledby="sel-h">
+                <div class="grab" aria-hidden="true"><i></i></div>
+                <h3 id="sel-h">Choose a category</h3>
+                <ul class="sel-list" role="listbox" aria-label="Ticket category">
+                  <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Booking issue</span><span class="sel-d">Something about a reservation or stay.</span></span></button></li>
+                  <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Payment issue</span><span class="sel-d">A charge, refund, or receipt question.</span></span></button></li>
+                  <li><button class="sel-opt on" type="button" role="option" aria-selected="true"><span class="sel-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="sel-tx"><span class="sel-t">Verification help</span><span class="sel-d">Trouble with CNIC, Nikah Nama, FRC, or other documents.</span></span></button></li>
+                  <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Safety concern</span><span class="sel-d">Routed to our safety team with priority — we take these seriously.</span></span></button></li>
+                  <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Report a person</span><span class="sel-d">Concerned about a guest or host's behaviour.</span></span></button></li>
+                  <li><button class="sel-opt" type="button" role="option" aria-selected="false"><span class="sel-check" aria-hidden="true"></span><span class="sel-tx"><span class="sel-t">Something else</span><span class="sel-d">Anything not covered above.</span></span></button></li>
+                </ul>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The Select trigger reuses the Input shell exactly (§8.1 inputs); past six items it promotes to a bottom sheet (§8.1/§8.4). <strong>Safety concern</strong> states its priority routing calmly, as a fact rather than an alarm — no fear language, no time promise. <strong>Report a person</strong> is offered as a first-class category, distinct from and consistent with the non-accusatory tone of <code>GA-132</code>.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the ticket submitted state with the timeline, and the replied state with a support message">
+      <div class="rowflex">
+
+        <!-- C · SUBMITTED -->
+        <div class="pcol">
+          <div class="pcap">C · Submitted — with our team, no time promise</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="cH">Your ticket</div>
+              <button class="ib" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="result-hd">
+                <span class="seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v11H8l-4 4z"/><path d="M8 11h8M8 14h5"/></svg></span>
+                <h2>Ticket sent</h2>
+                <p class="sp">Thanks — this is with our support team now.</p>
+              </div>
+              <div class="refchip"><span class="num">TKT-2026-0721-3312</span></div>
+
+              <div class="sec-label">Status</div>
+              <ol class="track" aria-label="Ticket progress: submitted, done; with our team, current; replied, upcoming">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Submitted</span><span class="trk-s">21 Jul 2026</span></span>
+                </li>
+                <li class="trk current" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><i></i></span>
+                  <span class="trk-body"><span class="trk-t">With our team</span><span class="trk-s">A person is reading it now</span></span>
+                </li>
+                <li class="trk upcoming">
+                  <span class="trk-dot" aria-hidden="true"></span>
+                  <span class="trk-body"><span class="trk-t">Replied</span><span class="trk-s">You'll see it here and in-app</span></span>
+                </li>
+              </ol>
+
+              <div class="byperson">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.8-6 8-6s6.5 2 8 6"/></svg>
+                <span>A <b>person reads every ticket</b> — nothing else is needed from you right now.</span>
+              </div>
+
+              <div class="bilang">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>
+                <span>Support is reachable 24/7, in Urdu or English.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot noborder"><button class="btn secondary" type="button">Back to your trips</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · REPLIED -->
+        <div class="pcol">
+          <div class="pcap">D · Replied — support message + your reply</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to your tickets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="dH">Ticket <span class="num">TKT-2026-0721-3312</span></div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <ol class="track" aria-label="Ticket progress: submitted, done; with our team, done; replied, current">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Submitted</span><span class="trk-s">21 Jul 2026</span></span>
+                </li>
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">With our team</span><span class="trk-s">22 Jul 2026</span></span>
+                </li>
+                <li class="trk done" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Replied</span><span class="trk-s">23 Jul 2026</span></span>
+                </li>
+              </ol>
+
+              <div class="sec-label">Conversation</div>
+              <div class="bubble-row">
+                <span class="bubble-av" aria-hidden="true">AS</span>
+                <div class="bubble-col">
+                  <span class="bubble-name">Aisha · SalamStay Support</span>
+                  <div class="bubble">Thanks for the details — I've reviewed your Nikah Nama upload and page 2 came through blurry. Please re-upload a clearer scan and we'll take another look right away.</div>
+                  <span class="bubble-time">Today, 3:12 PM</span>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="fld">
+                <label class="flabel sr-only" for="reply-d">Reply to this ticket</label>
+                <textarea class="ta" id="reply-d" placeholder="Write a reply…" style="min-height:64px;"></textarea>
+              </div>
+              <div class="foot noborder"><button class="btn primary" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Send reply</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The submitted state is deliberately factual — <b>"with our support team," no "within X hours" promise</b>, because none is offered (SEO-RULES §5; §7.7 copy governance) — the same discipline <code>GA-113</code>/<code>GA-132</code> already ship. "Support is reachable 24/7, in Urdu or English" restates claim #8 verbatim in spirit without promising a reply speed. The replied state reuses the Message-bubble component (§8.8 nav): support align to the reading-start edge, initials avatar, translated-caption slot omitted here since both sides are writing in English.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the ticket compose form">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">سپورٹ سے رابطہ — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="مدد کے مرکز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title ur" id="uH">سپورٹ سے رابطہ</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="ur">بتائیں کیا مسئلہ ہے</h2>
+              <p class="lead ur">ہر ٹکٹ ایک شخص پڑھتا ہے۔ جتنی تفصیل مدد کرے، بتائیں۔</p>
+
+              <div class="fld">
+                <label class="flabel ur">قسم</label>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv ur">تصدیق میں مدد</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+
+              <div class="ctx">
+                <span class="ctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5"/></svg></span>
+                <span class="ctx-b"><span class="ctx-t ur">متعلق: مارگلہ ویو اپارٹمنٹ</span><span class="ctx-s ur">بکنگ <span class="num">SS-7F3K9Q</span> · اختیاری</span></span>
+                <button class="ctx-x" type="button" aria-label="بکنگ ہٹائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel ur" for="msg-u">کیا ہوا؟</label>
+                <textarea class="ta ur" id="msg-u" placeholder="اپنے الفاظ میں بتائیں۔">میرا نکاح نامہ مسترد ہو گیا لیکن مجھے سمجھ نہیں آ رہی کیا درست کرنا ہے۔ کیا کوئی دوبارہ دیکھ سکتا ہے؟</textarea>
+              </div>
+
+              <div class="att-h ur">اٹیچمنٹ شامل کریں <span class="opt ur">اختیاری</span></div>
+              <button class="addatt" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span class="ur">اٹیچمنٹ شامل کریں</span></button>
+
+              <div class="byperson">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.8-6 8-6s6.5 2 8 6"/></svg>
+                <span class="ur">ہماری سپورٹ ٹیم کا ایک شخص ہر ٹکٹ پڑھتا ہے اور ایپ میں جواب دیتا ہے۔</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot"><button class="btn primary ur" type="submit">ٹکٹ بھیجیں</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored (§11): the back control moves to the reading-start edge, the chevron on the select trigger and context-chip remove button flip, and the booking reference keeps LTR tabular figures via <code>.num</code>. The honesty framing — "a person reads every ticket" — carries verbatim in tone, never softened into a time promise.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-009 Profile completion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.h-title,.h-sub,.flabel,.fhint,.choice-btn,.lang-opt,.lang-native,.primary,.secondary-btn,.ghost-btn,.banner,.steplabel,.ava-cap,.altline,.brandmark) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .skip-top { min-height:44px; display:inline-flex; align-items:center; padding:0 10px; font-size:13.5px; font-weight:600; color:var(--int-link); background:transparent; border:none; cursor:pointer; font-family:inherit; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:6px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:25px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:12px; }
+  .h-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; line-height:1.55; }
+  .h-sub b { color:var(--text-primary); font-weight:600; }
+
+  /* Step indicator */
+  .steps { display:flex; align-items:center; gap:12px; padding:2px 2px 0; }
+  .stepdots { display:flex; gap:6px; flex:1; }
+  .stepdot { height:5px; border-radius:var(--radius-full); background:var(--border-hairline); flex:1; }
+  .stepdot.on { background:var(--int-primary); }
+  .steplabel { font-size:12px; font-weight:700; color:var(--text-secondary); flex:none; font-variant-numeric:tabular-nums; }
+
+  .field { margin-top:18px; }
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:8px; }
+  .fwrap { display:flex; align-items:center; gap:11px; height:52px; padding:0 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); }
+  .fwrap.focus { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .fwrap .lead { flex:none; display:flex; }
+  .fwrap .lead svg { width:19px; height:19px; color:var(--text-secondary); stroke-width:1.9; }
+  .fval { font-size:16px; color:var(--text-primary); letter-spacing:.01em; }
+  .fval.ph { color:var(--text-tertiary); }
+  .caret { display:inline-block; width:1.5px; height:22px; background:var(--int-primary); vertical-align:-4px; margin-left:1px; }
+  .fhint { font-size:12px; color:var(--text-secondary); margin-top:8px; line-height:1.45; }
+
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:12px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .banner.info b { color:var(--info-fg); font-weight:700; }
+
+  /* Optional-photo step */
+  .ava-wrap { display:flex; flex-direction:column; align-items:center; margin-top:20px; }
+  .avatar-lg { width:108px; height:108px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:700; letter-spacing:.02em; flex:none; }
+  .ava-cap { font-size:12.5px; color:var(--text-secondary); margin-top:14px; text-align:center; max-width:266px; line-height:1.55; }
+  .ava-cap b { color:var(--text-primary); font-weight:600; }
+  .choice { display:flex; flex-direction:column; gap:10px; margin-top:22px; }
+  .choice-btn { display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:15px; font-weight:600; color:var(--text-primary); font-family:inherit; cursor:pointer; }
+  .choice-btn:hover { background:var(--bg-raised); }
+  .choice-btn svg { width:19px; height:19px; color:var(--text-primary); stroke-width:1.9; }
+
+  /* Language step */
+  .lang { display:flex; flex-direction:column; gap:10px; margin-top:22px; }
+  .lang-opt { display:flex; align-items:center; gap:6px; min-height:58px; padding:0 16px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:15px; font-weight:600; color:var(--text-primary); font-family:inherit; cursor:pointer; width:100%; text-align:start; }
+  .lang-opt[aria-checked="true"] { border-color:var(--int-primary); background:var(--int-subtle); box-shadow:0 0 0 2px var(--sa-stripe); }
+  .lang-native { color:var(--text-secondary); font-weight:500; }
+  .lang-radio { margin-inline-start:auto; width:22px; height:22px; border-radius:var(--radius-full); border:2px solid var(--border-default); display:flex; align-items:center; justify-content:center; flex:none; }
+  .lang-opt[aria-checked="true"] .lang-radio { border-color:var(--int-primary); }
+  .lang-opt[aria-checked="true"] .lang-radio::after { content:""; width:11px; height:11px; border-radius:var(--radius-full); background:var(--int-primary); }
+
+  /* Hero mark (success) */
+  .hero-ic { width:72px; height:72px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; margin:8px auto 0; }
+  .hero-ic.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .hero-ic.ok svg { width:34px; height:34px; color:var(--success-fg); stroke-width:2; }
+  .center { text-align:center; }
+  .center .h-title, .center .h-sub { margin-left:auto; margin-right:auto; }
+  .center .h-sub { max-width:280px; }
+
+  .primary { width:100%; min-height:52px; margin-top:22px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-tertiary); cursor:default; }
+
+  .secondary-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; width:100%; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); color:var(--int-primary); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:10px; }
+  .secondary-btn:hover { background:var(--bg-raised); }
+  .ghost-btn { display:flex; align-items:center; justify-content:center; min-height:48px; width:100%; background:transparent; border:none; color:var(--text-secondary); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:6px; }
+
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:15px 20px calc(4px + env(safe-area-inset-bottom)); font-size:13px; color:var(--text-tertiary); flex:none; line-height:1.5; }
+  .altline a { color:var(--text-secondary); font-weight:600; text-decoration:underline; }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-009 — Profile completion (mobile app)</h1>
+    <p>The three light steps after first auth (post <code>GA-005</code>/<code>GA-006</code>): name (as-on-CNIC, dignified), date of birth (age gate + a decade-born privacy promise per DESIGN §9-J), an OPTIONAL photo step where the initials avatar is a first-class equal choice (pardah-respectful), and a language preference (EN / اردو) → home. Everything is skip-safe and editable later in <code>GA-129</code>. Quiet Modern: no ornament, registry-only copy, the initials fallback is never a deficiency.</p>
+    <div class="legend">
+      <span>Light · name + date of birth</span>
+      <span>Dark · optional photo (initials first-class)</span>
+      <span>Language · EN / اردو</span>
+      <span>Success · into home</span>
+      <span>RTL · اردو</span>
+      <span>Skip-safe · ≥44pt · safe-area</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · NAME + DOB ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — step 1 · about you</div>
+      <section class="phone" aria-label="Profile completion — name and date of birth">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <span class="ib-spacer" aria-hidden="true"></span>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <a class="skip-top" href="/home">Skip for now</a>
+        </header>
+
+        <div class="auth">
+          <div class="steps">
+            <div class="stepdots" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3" aria-label="Step 1 of 3">
+              <span class="stepdot on"></span><span class="stepdot"></span><span class="stepdot"></span>
+            </div>
+            <span class="steplabel">Step 1 of 3</span>
+          </div>
+
+          <h2 class="h-title">What should we call you?</h2>
+          <p class="h-sub">Your first name is what hosts see. We'll keep the rest private unless you choose to share it.</p>
+
+          <div class="field" role="group" aria-labelledby="p-nm-l p-nm-h">
+            <span class="flabel" id="p-nm-l">Full name</span>
+            <div class="fwrap focus">
+              <span class="lead" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span>
+              <span class="fval" dir="ltr">Aqib Gulab</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="fhint" id="p-nm-h">Please enter it as printed on your CNIC — it makes verification smoother later. Only your first name is ever shown.</p>
+          </div>
+
+          <div class="field" role="group" aria-labelledby="p-dob-l p-dob-h">
+            <span class="flabel" id="p-dob-l">Date of birth</span>
+            <div class="fwrap">
+              <span class="lead" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span>
+              <span class="fval" dir="ltr">14 March 1994</span>
+            </div>
+            <p class="fhint" id="p-dob-h">You must be 18 or older to book.</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>
+            <span>Only your <b>decade of birth</b> is ever shown on your profile — "Born in the 1990s" — never your full date.</span>
+          </div>
+
+          <button class="primary" type="button">Continue</button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The CNIC note is guidance, not a wall — it explains <em>why</em> the spelling matters (smoother verification) without demanding the card now. DOB drives the 18+ age gate, but the profile only ever exposes the <b>decade</b> (DESIGN §9-J), stated as a promise right under the field. "Skip for now" → <code>/home</code>.</p>
+    </div>
+
+    <!-- ============================== DARK · OPTIONAL PHOTO (INITIALS FIRST-CLASS) ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — step 2 · photo is optional</div>
+      <section class="phone dark" aria-label="Profile completion — optional photo">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/onboarding/profile/about" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <a class="skip-top" href="/home">Skip for now</a>
+        </header>
+
+        <div class="auth">
+          <div class="steps">
+            <div class="stepdots" role="progressbar" aria-valuenow="2" aria-valuemin="1" aria-valuemax="3" aria-label="Step 2 of 3">
+              <span class="stepdot on"></span><span class="stepdot on"></span><span class="stepdot"></span>
+            </div>
+            <span class="steplabel">Step 2 of 3</span>
+          </div>
+
+          <h2 class="h-title">Add a photo, or keep your initials</h2>
+          <p class="h-sub">Both are welcome here. A photo can help hosts recognise you — and initials keep things private. It's entirely your choice.</p>
+
+          <div class="ava-wrap">
+            <span class="avatar-lg" aria-label="Your initials avatar, A G">AG</span>
+            <p class="ava-cap"><b>This is your profile right now.</b> A clean initials avatar — a complete, dignified profile on its own.</p>
+          </div>
+
+          <div class="choice">
+            <a class="choice-btn" href="/account/profile/photo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+              Add a photo
+            </a>
+            <a class="choice-btn" href="/onboarding/profile/language">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+              Continue with initials
+            </a>
+          </div>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The pardah-respectful heart of the flow: <b>"Add a photo" and "Continue with initials" carry equal visual weight</b> (neither is the loud brand button), so declining a photo never reads as a lesser choice (DESIGN §9-J / §10.7). "Add a photo" launches the guided capture/crop at <code>GA-130</code>; initials continue straight on.</p>
+    </div>
+
+    <!-- ============================== LIGHT · LANGUAGE PREFERENCE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — step 3 · language</div>
+      <section class="phone" aria-label="Profile completion — language preference">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/onboarding/profile/photo-step" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <a class="skip-top" href="/home">Skip for now</a>
+        </header>
+
+        <div class="auth">
+          <div class="steps">
+            <div class="stepdots" role="progressbar" aria-valuenow="3" aria-valuemin="1" aria-valuemax="3" aria-label="Step 3 of 3">
+              <span class="stepdot on"></span><span class="stepdot on"></span><span class="stepdot on"></span>
+            </div>
+            <span class="steplabel">Step 3 of 3</span>
+          </div>
+
+          <h2 class="h-title">Which language do you prefer?</h2>
+          <p class="h-sub">We'll show SalamStay in your choice. You can switch anytime in Settings.</p>
+
+          <div class="lang" role="radiogroup" aria-label="Preferred language">
+            <button class="lang-opt" type="button" role="radio" aria-checked="true">
+              English
+              <span class="lang-radio" aria-hidden="true"></span>
+            </button>
+            <button class="lang-opt" type="button" role="radio" aria-checked="false">
+              <span lang="ur">اردو</span> <span class="lang-native">Urdu</span>
+              <span class="lang-radio" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <button class="primary" type="button">Finish</button>
+        </div>
+
+        <div class="altline">More languages are on the way. <a href="/account/settings/accessibility">Language settings</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">EN / اردو at launch (DESIGN §11; the اردو label is set in Nastaliq with <code>lang="ur"</code>). A real <code>radiogroup</code> of <code>&lt;button role="radio"&gt;</code>s — selection is border + fill + a filled dot, never colour alone. "Finish" completes the flow into <code>/home</code>; the switcher lives on at <code>GA-068</code>.</p>
+    </div>
+
+    <!-- ============================== LIGHT · SUCCESS ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — success · into home</div>
+      <section class="phone" aria-label="Profile completion — all set">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <span class="ib-spacer" aria-hidden="true"></span>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth center">
+          <span class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 9.5"/></svg></span>
+          <h2 class="h-title">You're all set, Aqib</h2>
+          <p class="h-sub">Welcome to SalamStay. Your account is ready — start finding verified stays across Pakistan.</p>
+
+          <a class="primary" href="/home">Start exploring</a>
+          <a class="secondary-btn" href="/account/profile/edit">Finish your profile later</a>
+        </div>
+
+        <div class="altline">You can edit everything anytime in <a href="/account/profile/edit">your profile</a>.</div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Success routes forward into <code>/home</code> (<code>GA-016</code>), never back into onboarding. Because every step was optional, "Finish your profile later" is offered as an equal, calm path to the editor <code>GA-129</code> — nothing was forced, nothing is a dead end.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو (PHOTO STEP) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — step 2 · optional photo</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="Profile completion — Urdu, optional photo">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/onboarding/profile/about" aria-label="واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <a class="skip-top" href="/home">ابھی چھوڑ دیں</a>
+        </header>
+
+        <div class="auth">
+          <div class="steps">
+            <div class="stepdots" role="progressbar" aria-valuenow="2" aria-valuemin="1" aria-valuemax="3" aria-label="3 میں سے مرحلہ 2">
+              <span class="stepdot on"></span><span class="stepdot on"></span><span class="stepdot"></span>
+            </div>
+            <span class="steplabel">مرحلہ 2 / 3</span>
+          </div>
+
+          <h2 class="h-title">تصویر لگائیں، یا اپنے حروف رکھیں</h2>
+          <p class="h-sub">دونوں یہاں خوش آئند ہیں۔ تصویر سے میزبان آپ کو پہچان سکتے ہیں — اور حروف رازداری رکھتے ہیں۔ یہ مکمل طور پر آپ کی مرضی ہے۔</p>
+
+          <div class="ava-wrap">
+            <span class="avatar-lg" aria-label="آپ کے ابتدائی حروف کا اوتار، A G">AG</span>
+            <p class="ava-cap"><b>ابھی آپ کا پروفائل یہی ہے۔</b> ایک صاف ستھرا حروفی اوتار — بذاتِ خود ایک مکمل، باوقار پروفائل۔</p>
+          </div>
+
+          <div class="choice">
+            <a class="choice-btn" href="/account/profile/photo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+              تصویر لگائیں
+            </a>
+            <a class="choice-btn" href="/onboarding/profile/language">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+              حروف کے ساتھ جاری رکھیں
+            </a>
+          </div>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Mirrored: step dots, skip affordance and back chevron move to the reading-start edge; the two equal-weight choices stay equal. The initials avatar (non-directional) does not mirror; "A G" stays LTR as a Latin monogram. Urdu is Nastaliq — full EN/UR parity.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, cultural law &amp; S1 gate compliance · web-variant note</div>
+      <ul>
+        <li><b>Photo is optional, initials are first-class.</b> The two choices carry <b>equal visual weight</b> — declining a photo (a pardah-respectful choice) is never rendered as a deficiency, and the fallback is a dignified initials avatar on <code>bg.sunken</code>, never a generic "missing" silhouette (DESIGN §9-J / §10.7).</li>
+        <li><b>Decade-born privacy promise.</b> DOB is captured for the 18+ age gate, but the profile only ever exposes the <b>decade</b> ("Born in the 1990s"); the promise is stated inline under the field, per §9-J.</li>
+        <li><b>Name framed with dignity.</b> "As on your CNIC" is guidance that explains the benefit (smoother verification), not a demand for the card — and only the first name is ever public.</li>
+        <li><b>Skip-safe, everywhere.</b> Every step carries "Skip for now" → <code>/home</code> and never blocks the guest from booking; the flow is progressive and fully reversible. Everything set here is editable later in <code>GA-129</code>.</li>
+        <li><b>Language at launch: EN / اردو.</b> A real <code>radiogroup</code>; the اردو option is Nastaliq with <code>lang="ur"</code>; the ongoing switcher lives at <code>GA-068</code> (DESIGN §11).</li>
+        <li><b>Real anchors, real controls.</b> Photo capture <code>/account/profile/photo</code> (<code>GA-130</code>), editor <code>/account/profile/edit</code> (<code>GA-129</code>), settings <code>/account/settings/accessibility</code>, home <code>/home</code>. Steppers, radios and CTAs are real <code>&lt;button&gt;</code>s / anchors; no <code>href="#"</code>, no button-in-anchor. [44pt] throughout.</li>
+        <li><b>On-palette, dignified, bilingual.</b> Every colour is a <code>var()</code> token; no ornament; the initials avatar uses <code>interactive.subtle</code>, never a green "endorsement" fill; copy is plain descriptive with no invented stats.</li>
+        <li><b>Web variant (<code>/onboarding/profile</code>, SPA).</b> The same three steps in a centred ~440px card with a top progress bar; the photo step opens a file-picker + crop modal instead of the native camera; "Skip for now" and the decade-born promise are identical.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-009 (onboard, app+web) · components <code>Input §2</code> · <code>Avatar §12</code> · <code>Button §1</code> · <code>banner §17</code> · profile system <code>DESIGN §9-J</code> · a11y <code>DESIGN §11</code>. Inbound from <code>GA-005</code>/<code>GA-006</code> → PECA consent <code>GA-076</code> → outbound to home <code>GA-016</code>; editable later at <code>GA-129</code>, photo capture shared with <code>GA-130</code>. <b>Judgment calls:</b> (1) the photo step's two options are deliberately equal-weight (no green primary) so the initials path reads as a genuine equal — a direct application of the §9-J pardah-respectful rule over the usual "one primary button" pattern. (2) DOB is shown as a single resolved date for the age gate while the profile-facing value is the decade only; the day/month are never surfaced publicly.</p>
+    </div>
+  </main>
+</body>
+</html>

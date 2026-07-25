@@ -1,0 +1,665 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-063 Review &amp; confirm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:760px; }
+  .head .toggle { display:inline-flex; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+
+  .phone { background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+  .appbar { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; }
+  .iconbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .iconbtn:hover { background:var(--bg-raised); }
+  .iconbtn svg { width:22px; height:22px; stroke-width:2; }
+  .appbar .spacer { flex:1; }
+  .appbar .step-of { font-size:12px; font-weight:600; color:var(--text-tertiary); }
+
+  .steps { display:flex; align-items:flex-start; list-style:none; padding:2px 24px 14px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:11px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .steps .dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .steps .dot svg { width:13px; height:13px; stroke-width:2.75; }
+  .steps .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:6px; }
+  .steps li.done .dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .dot { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+
+  .screen { flex:1; overflow-y:auto; padding:6px 22px 22px; }
+  .screen h2 { font-size:23px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .screen h3 { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 0 8px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* stay summary */
+  .stay { display:flex; gap:12px; align-items:center; padding:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); margin-top:10px; }
+  .stay .th { width:58px; height:58px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .stay .th svg { width:27px; height:27px; stroke-width:1.5; }
+  .stay .sn { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .stay .sm { font-size:12.5px; color:var(--text-secondary); margin-top:2px; }
+  .stay .sp { font-size:12.5px; color:var(--text-secondary); margin-top:3px; display:inline-flex; align-items:center; gap:6px; }
+  .stay .sp svg { width:14px; height:14px; stroke-width:1.8; color:var(--text-tertiary); }
+
+  /* list rows */
+  .rows { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; margin-top:10px; }
+  .lrow { display:flex; align-items:center; gap:12px; min-height:60px; padding:12px 14px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .lrow:last-child { border-bottom:none; }
+  .lrow .ic { width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .lrow .ic svg { width:19px; height:19px; stroke-width:1.75; }
+  .lrow.vchk .ic { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .lrow .bd { min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .lrow .lb { font-size:11.5px; color:var(--text-tertiary); }
+  .lrow .vl { font-size:14px; font-weight:600; color:var(--text-primary); margin-top:1px; }
+  .lrow .vl .num { font-weight:600; }
+  .lrow .act { margin-inline-start:auto; }
+  .lrow .link, .lrow .actbtn { font-size:13px; font-weight:600; color:var(--int-primary); text-decoration:none; background:none; border:none; cursor:pointer; min-height:44px; display:inline-flex; align-items:center; padding:0 4px; font-family:inherit; }
+  .lrow .link { text-decoration:underline; }
+  .vpill { margin-inline-start:auto; display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:5px 10px; white-space:nowrap; }
+  .vpill svg { width:13px; height:13px; stroke-width:2.6; }
+  .lrow.total .vl { font-size:17px; font-weight:700; }
+
+  /* outcome notes */
+  .note { display:flex; gap:10px; align-items:flex-start; border-radius:var(--radius-lg); padding:12px 14px; margin-top:14px; }
+  .note.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .note.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .note .ni { flex:none; margin-top:1px; }
+  .note .ni svg { width:19px; height:19px; stroke-width:1.9; }
+  .note.ok .ni { color:var(--success-fg); }
+  .note.info .ni { color:var(--info-fg); }
+  .note .nh { font-size:13px; font-weight:600; }
+  .note.ok .nh { color:var(--success-fg); }
+  .note.info .nh { color:var(--info-fg); }
+  .note p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+
+  /* payment-failed banner (composed from tokens; no error-bg token exists) */
+  .errbanner { border:1px solid var(--error-fg); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-top:8px; display:flex; gap:11px; align-items:flex-start; }
+  .errbanner .ei { color:var(--error-fg); flex:none; margin-top:1px; }
+  .errbanner .ei svg { width:20px; height:20px; stroke-width:1.9; }
+  .errbanner .eh { font-size:14px; font-weight:600; color:var(--error-fg); }
+  .errbanner .ed { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .errbanner .ed b { color:var(--text-primary); font-weight:600; }
+
+  /* CTA bar */
+  .ctabar { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(14px + env(safe-area-inset-bottom)); }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .cta svg { width:18px; height:18px; stroke-width:2; }
+  .cta.secondary { background:var(--bg-canvas); color:var(--int-primary); border:1px solid var(--border-default); margin-top:10px; }
+  .cta.secondary:hover { background:var(--bg-raised); }
+  .cta-legal { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.5; }
+  .cta-legal a { color:var(--text-secondary); text-decoration:underline; }
+
+  /* offline banner — neutral semantic.info, calm recovery (§8.5 banner) */
+  .offbanner { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-top:2px; }
+  .offbanner .oi { color:var(--info-fg); flex:none; margin-top:1px; }
+  .offbanner .oi svg { width:19px; height:19px; stroke-width:1.9; }
+  .offbanner .oh { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .offbanner p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+
+  /* ===== payment-in-flight processing overlay (§9-C-add — the pattern reference) ===== */
+  /* The in-flight moment is a STATE layered over the Review step, never a route.  */
+  .procwrap { position:relative; flex:1; display:flex; flex-direction:column; min-height:0; }
+  .procwrap > .screen { flex:1; }
+  .procscrim { position:absolute; inset:0; background:var(--scrim); z-index:1; }
+  .appbar .iconbtn.locked { opacity:.4; cursor:not-allowed; }
+  /* back-confirm annotation — the confirm-before-leave guard + no-double-charge (§8.5 Dialog) */
+  .proc-note { position:absolute; z-index:2; left:18px; right:18px; top:50%; transform:translateY(-50%); display:flex; gap:11px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:14px 15px; box-shadow:var(--el-popover); }
+  .proc-note .pi { color:var(--info-fg); flex:none; margin-top:1px; }
+  .proc-note .pi svg { width:20px; height:20px; stroke-width:1.9; }
+  .proc-note .ph { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .proc-note p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  /* CTA disabled (offline) vs busy (in-flight): busy keeps the brand fill + spinner, width locked */
+  .cta[aria-disabled="true"] { background:var(--bg-sunken); color:var(--text-tertiary); border:1px solid var(--border-default); cursor:not-allowed; }
+  .cta[aria-busy="true"] { background:var(--int-primary); color:var(--text-on-brand); border:none; cursor:progress; }
+  .cta .spin { width:20px; height:20px; border-radius:var(--radius-full); border:2.5px solid color-mix(in srgb, var(--text-on-brand) 38%, transparent); border-top-color:var(--text-on-brand); animation:procrot .8s linear infinite; }
+  @keyframes procrot { to { transform:rotate(360deg); } }
+  /* quiet indeterminate progress — never a full-screen spinner-of-anxiety (§10.8) */
+  .proc-progress { height:3px; border-radius:var(--radius-full); background:var(--bg-sunken); overflow:hidden; margin-bottom:12px; }
+  .proc-progress span { display:block; height:100%; width:36%; border-radius:var(--radius-full); background:var(--int-primary); transform:translateX(-120%); animation:procbar 1.6s ease-in-out infinite; }
+  @keyframes procbar { 0% { transform:translateX(-120%); } 60% { transform:translateX(320%); } 100% { transform:translateX(320%); } }
+  .proc-line { font-size:12.5px; color:var(--text-secondary); text-align:center; margin-top:10px; line-height:1.5; }
+  .proc-line b { color:var(--text-primary); font-weight:600; }
+  .proc-rm { display:flex; align-items:flex-start; gap:7px; margin-top:9px; font-size:11px; font-weight:600; color:var(--text-tertiary); border:1px dashed var(--border-default); border-radius:var(--radius-md); padding:7px 9px; line-height:1.45; }
+  .proc-rm svg { width:13px; height:13px; stroke-width:1.9; flex:none; margin-top:1px; }
+  /* reduced-motion: shimmer becomes a static progress label; spinner + bar stop (§6.3) */
+  @media (prefers-reduced-motion: reduce) {
+    .cta .spin { animation:none; }
+    .proc-progress span { animation:none; width:100%; transform:none; opacity:.5; }
+  }
+
+  .urdu .screen, .urdu .cta, .urdu .steps .slab, .urdu .stay, .urdu .lrow, .urdu .note, .urdu .errbanner, .urdu .cta-legal, .urdu .vpill { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu .screen h2 { line-height:1.9; }
+  .urdu .note p, .urdu .errbanner .ed { line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Review &amp; confirm (GA-063)</h1>
+    <p>Checkout step 4: the last look before money moves — stay summary, the verified-document checklist (Verification-status), the selected JazzCash method, the itemised total, and the cancellation policy, then <strong>Confirm &amp; pay</strong>. The instant-book vs request-to-book branch resolves here (→ GA-064 / GA-065). Panels: instant-book, request-to-book, the payment-failed recovery state (GA-117), Urdu / RTL, then the two deferred states — the <strong>payment-in-flight processing overlay</strong> (§9-C-add: the in-flight moment is a state layered over this step, never a route; the pattern reference for the whole app) and an offline state that holds the booking as a draft.</p>
+    <div class="toggle"><span class="on">Light · instant book</span><span>Dark · request to book</span><span>Payment failed</span><span>اردو · RTL</span><span>Payment in flight</span><span>Offline</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ LIGHT · INSTANT-BOOK ============ -->
+      <div class="device">
+        <p class="devlabel">Light — Instant Book (→ GA-064 success)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Review &amp; confirm</h2>
+
+            <div class="stay">
+              <span class="th"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span>
+                <span class="sn" style="display:block">Margalla View Apartment · F-7</span>
+                <span class="sm">Islamabad · Fri 14 – Mon 17 Aug 2026 · 3 nights</span>
+                <span class="sp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0M11.5 20v-1a4.5 4.5 0 0 1 9 0"/></svg>Couple · 2 guests</span>
+              </span>
+            </div>
+
+            <h3>Documents verified</h3>
+            <div class="rows">
+              <div class="lrow vchk">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg></span>
+                <span class="bd"><span class="lb">Identity</span><span class="vl">CNIC</span></span>
+                <span class="vpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+              <div class="lrow vchk">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                <span class="bd"><span class="lb">Couple booking</span><span class="vl">Nikah Nama</span></span>
+                <span class="vpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+            </div>
+
+            <h3>Payment &amp; price</h3>
+            <div class="rows">
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="bd"><span class="lb">Paying with</span><span class="vl">JazzCash · <span class="num">0300 ••• 4021</span></span></span>
+                <span class="act"><button class="actbtn" type="button" aria-label="Change payment method">Change</button></span>
+              </div>
+              <div class="lrow total">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                <span class="bd"><span class="lb">Total · all fees &amp; tax</span><span class="vl num">PKR 42,350</span></span>
+                <span class="act"><button class="actbtn" type="button">View breakdown</button></span>
+              </div>
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+                <span class="bd"><span class="lb">Cancellation</span><span class="vl">Free until Wed 12 Aug</span></span>
+                <span class="act"><a class="link" href="/legal/guest-refund-policy">Policy</a></span>
+              </div>
+            </div>
+
+            <div class="note ok" role="status">
+              <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
+              <div><div class="nh">Instant Book</div><p>This home confirms automatically — your stay is booked the moment your payment goes through.</p></div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Confirm &amp; pay · <span class="num">PKR 42,350</span></button>
+            <p class="cta-legal">By confirming you agree to the <a href="/legal/terms">Terms</a> and <a href="/legal/guest-refund-policy">refund policy</a>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ DARK · REQUEST-TO-BOOK ============ -->
+      <div class="device">
+        <p class="devlabel">Dark — Request to book (→ GA-065 pending)</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Review &amp; confirm</h2>
+
+            <div class="stay">
+              <span class="th"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span>
+                <span class="sn" style="display:block">Margalla View Apartment · F-7</span>
+                <span class="sm">Islamabad · Fri 14 – Mon 17 Aug 2026 · 3 nights</span>
+                <span class="sp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0M11.5 20v-1a4.5 4.5 0 0 1 9 0"/></svg>Couple · 2 guests</span>
+              </span>
+            </div>
+
+            <h3>Documents verified</h3>
+            <div class="rows">
+              <div class="lrow vchk">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg></span>
+                <span class="bd"><span class="lb">Identity</span><span class="vl">CNIC</span></span>
+                <span class="vpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+              <div class="lrow vchk">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                <span class="bd"><span class="lb">Couple booking</span><span class="vl">Nikah Nama</span></span>
+                <span class="vpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+              </div>
+            </div>
+
+            <h3>Payment &amp; price</h3>
+            <div class="rows">
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="bd"><span class="lb">Paying with</span><span class="vl">JazzCash · <span class="num">0300 ••• 4021</span></span></span>
+                <span class="act"><button class="actbtn" type="button" aria-label="Change payment method">Change</button></span>
+              </div>
+              <div class="lrow total">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                <span class="bd"><span class="lb">Total · all fees &amp; tax</span><span class="vl num">PKR 42,350</span></span>
+                <span class="act"><button class="actbtn" type="button">View breakdown</button></span>
+              </div>
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+                <span class="bd"><span class="lb">Cancellation</span><span class="vl">Free until Wed 12 Aug</span></span>
+                <span class="act"><a class="link" href="/legal/guest-refund-policy">Policy</a></span>
+              </div>
+            </div>
+
+            <div class="note info" role="status">
+              <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+              <div><div class="nh">The host reviews this request</div><p>You won't be charged until the host accepts — usually within 24 hours. We'll hold your price and let you know either way.</p></div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>Request to book</button>
+            <p class="cta-legal">No charge now. By requesting you agree to the <a href="/legal/terms">Terms</a> and <a href="/legal/guest-refund-policy">refund policy</a>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ LIGHT · PAYMENT-FAILED (GA-117 recovery) ============ -->
+      <div class="device">
+        <p class="devlabel">Payment failed — retry + alternate rail (GA-117)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Review &amp; confirm</h2>
+
+            <!-- payment-failed banner: names the next action (no dead end) -->
+            <div class="errbanner" role="alert">
+              <span class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+              <div>
+                <div class="eh">Payment couldn't go through</div>
+                <div class="ed">JazzCash didn't confirm the charge. <b>Nothing has been deducted</b> from your wallet. You can try again, or pay a different way — your price and dates are still held.</div>
+              </div>
+            </div>
+
+            <div class="stay">
+              <span class="th"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span>
+                <span class="sn" style="display:block">Margalla View Apartment · F-7</span>
+                <span class="sm">Islamabad · Fri 14 – Mon 17 Aug 2026 · 3 nights</span>
+                <span class="sp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0M11.5 20v-1a4.5 4.5 0 0 1 9 0"/></svg>Couple · 2 guests</span>
+              </span>
+            </div>
+
+            <h3>Payment &amp; price</h3>
+            <div class="rows">
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="bd"><span class="lb">Tried with</span><span class="vl">JazzCash · <span class="num">0300 ••• 4021</span></span></span>
+                <span class="act"><button class="actbtn" type="button" aria-label="Change payment method">Change</button></span>
+              </div>
+              <div class="lrow total">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                <span class="bd"><span class="lb">Total · all fees &amp; tax</span><span class="vl num">PKR 42,350</span></span>
+                <span class="act"><button class="actbtn" type="button">View breakdown</button></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg>Try JazzCash again</button>
+            <button class="cta secondary" type="button">Pay another way</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ URDU / RTL · INSTANT-BOOK ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — Instant Book</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of num">4 / 4</span>
+            <button class="iconbtn" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="چیک آؤٹ کی پیش رفت">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">پارٹی</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">شناخت</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">قیمت</span></li>
+            <li class="cur" aria-current="step"><span class="dot num">4</span><span class="slab">تصدیق</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>جائزہ اور تصدیق</h2>
+
+            <div class="stay">
+              <span class="th"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span>
+                <span class="sn" style="display:block">مارگلہ ویو اپارٹمنٹ · <span class="num">F-7</span></span>
+                <span class="sm">اسلام آباد · <span class="num">14 – 17 Aug 2026</span> · <span class="num">3</span> راتیں</span>
+                <span class="sp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0M11.5 20v-1a4.5 4.5 0 0 1 9 0"/></svg>میاں بیوی · <span class="num">2</span> مہمان</span>
+              </span>
+            </div>
+
+            <h3>تصدیق شدہ دستاویزات</h3>
+            <div class="rows">
+              <div class="lrow vchk">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg></span>
+                <span class="bd"><span class="lb">شناخت</span><span class="vl">شناختی کارڈ</span></span>
+                <span class="vpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+              </div>
+              <div class="lrow vchk">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                <span class="bd"><span class="lb">میاں بیوی بکنگ</span><span class="vl">نکاح نامہ</span></span>
+                <span class="vpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+              </div>
+            </div>
+
+            <h3>ادائیگی اور قیمت</h3>
+            <div class="rows">
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="bd"><span class="lb">ادائیگی بذریعہ</span><span class="vl">JazzCash · <span class="num">0300 ••• 4021</span></span></span>
+                <span class="act"><button class="actbtn" type="button">تبدیل کریں</button></span>
+              </div>
+              <div class="lrow total">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                <span class="bd"><span class="lb">کل · تمام فیس و ٹیکس</span><span class="vl num">PKR 42,350</span></span>
+                <span class="act"><button class="actbtn" type="button">تفصیل دیکھیں</button></span>
+              </div>
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+                <span class="bd"><span class="lb">منسوخی</span><span class="vl"><span class="num">12 Aug</span> تک مفت</span></span>
+                <span class="act"><a class="link" href="/legal/guest-refund-policy">پالیسی</a></span>
+              </div>
+            </div>
+
+            <div class="note ok" role="status">
+              <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
+              <div><div class="nh">فوری بکنگ</div><p>یہ گھر خودکار طور پر تصدیق کرتا ہے — ادائیگی مکمل ہوتے ہی آپ کا قیام بک ہو جائے گا۔</p></div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>تصدیق کریں اور ادا کریں · <span class="num">PKR 42,350</span></button>
+            <p class="cta-legal">تصدیق کر کے آپ <a href="/legal/terms">شرائط</a> اور <a href="/legal/guest-refund-policy">ریفنڈ پالیسی</a> سے اتفاق کرتے ہیں۔</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PAYMENT IN FLIGHT · PROCESSING OVERLAY (§9-C-add) ============ -->
+      <!-- The in-flight moment is a STATE over this same step, never a bookmarkable route:
+           no in-flight URL means double-submit / double-charge are structurally impossible. -->
+      <div class="device">
+        <p class="devlabel">Payment in flight — processing overlay (locked step · the pattern reference)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <!-- every control is locked: the back + close chrome are inert during the charge -->
+          <div class="appbar">
+            <button class="iconbtn locked" aria-label="Go back" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn locked" aria-label="Close checkout" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="procwrap">
+            <!-- the Review & confirm step, dimmed + inert beneath the scrim -->
+            <div class="screen" aria-hidden="true" inert>
+              <h2>Review &amp; confirm</h2>
+              <div class="stay">
+                <span class="th"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                <span>
+                  <span class="sn" style="display:block">Margalla View Apartment · F-7</span>
+                  <span class="sm">Islamabad · Fri 14 – Mon 17 Aug 2026 · 3 nights</span>
+                  <span class="sp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0M11.5 20v-1a4.5 4.5 0 0 1 9 0"/></svg>Couple · 2 guests</span>
+                </span>
+              </div>
+              <h3>Payment &amp; price</h3>
+              <div class="rows">
+                <div class="lrow">
+                  <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span class="bd"><span class="lb">Paying with</span><span class="vl">JazzCash · <span class="num">0300 ••• 4021</span></span></span>
+                </div>
+                <div class="lrow total">
+                  <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                  <span class="bd"><span class="lb">Total · all fees &amp; tax</span><span class="vl num">PKR 42,350</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="procscrim" aria-hidden="true"></div>
+            <!-- back / leave intent is guarded (Dialog, §8.5); the draft persists — no second charge -->
+            <div class="proc-note" role="note">
+              <span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="ph">Leaving is guarded</div>
+                <p>Back or swipe-away asks "Leave payment? Your booking isn't confirmed yet." Your details are saved as a draft — returning won't charge you twice.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <div class="proc-progress" aria-hidden="true"><span></span></div>
+            <button class="cta" aria-busy="true" aria-disabled="true" aria-label="Confirming payment with your bank"><span class="spin" aria-hidden="true"></span></button>
+            <p class="proc-line" role="status">Confirming with your bank — <b>please don't close this screen</b>.</p>
+            <p class="proc-rm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg><span>Reduced motion: the bar holds still and this reads a static "Confirming payment…" — the spinner stops, feedback is dampened, never removed.</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ OFFLINE · BOOKING HELD AS DRAFT (dark) ============ -->
+      <div class="device">
+        <p class="devlabel">Offline — booking saved as a draft (dark · pay disabled)</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 3l20 18M5 12.5a12 12 0 0 1 4.5-2.7M2 9.5a15 15 0 0 1 5.5-3.2M16.5 10.6a12 12 0 0 1 2.6 1.9M12 20h.01"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <h2>Review &amp; confirm</h2>
+
+            <div class="offbanner" role="status">
+              <span class="oi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3l20 18M5 12.5a12 12 0 0 1 4.5-2.7M2 9.5a15 15 0 0 1 5.5-3.2M16.5 10.6a12 12 0 0 1 2.6 1.9M12 20h.01"/></svg></span>
+              <div><div class="oh">You're offline</div><p>We've saved this booking as a draft. Reconnect to confirm and pay — nothing is charged while you're offline.</p></div>
+            </div>
+
+            <div class="stay">
+              <span class="th"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span>
+                <span class="sn" style="display:block">Margalla View Apartment · F-7</span>
+                <span class="sm">Islamabad · Fri 14 – Mon 17 Aug 2026 · 3 nights</span>
+                <span class="sp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="2.4"/><circle cx="16" cy="8" r="2.4"/><path d="M3.5 20v-1a4.5 4.5 0 0 1 9 0M11.5 20v-1a4.5 4.5 0 0 1 9 0"/></svg>Couple · 2 guests</span>
+              </span>
+            </div>
+
+            <h3>Payment &amp; price</h3>
+            <div class="rows">
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="bd"><span class="lb">Paying with</span><span class="vl">JazzCash · <span class="num">0300 ••• 4021</span></span></span>
+              </div>
+              <div class="lrow total">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                <span class="bd"><span class="lb">Total · all fees &amp; tax</span><span class="vl num">PKR 42,350</span></span>
+              </div>
+              <div class="lrow">
+                <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+                <span class="bd"><span class="lb">Cancellation</span><span class="vl">Free until Wed 12 Aug</span></span>
+                <span class="act"><a class="link" href="/legal/guest-refund-policy">Policy</a></span>
+              </div>
+            </div>
+
+            <div class="note info" role="status">
+              <span class="ni"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>
+              <div><div class="nh">Saved to finish later</div><p>Your dates, documents and payment choice are held. When you're back online, tap Confirm &amp; pay to complete — no need to start over.</p></div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Reconnect to confirm &amp; pay</button>
+            <p class="cta-legal">Draft saved on this device. By confirming you'll agree to the <a href="/legal/terms">Terms</a> and <a href="/legal/guest-refund-policy">refund policy</a>.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

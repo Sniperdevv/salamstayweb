@@ -1,0 +1,510 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Booking modification (GA-067)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.55; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064 lineage; NO journey stepper (post-book screen, §7.6a) */
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; overflow-y:auto; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 10px; }
+  .sec-label:first-child { margin-top:2px; }
+
+  /* current-booking summary — dl grammar, ga-071 lineage */
+  .bksum { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:12px 13px; }
+  .bk { display:flex; flex-direction:column; gap:9px; }
+  .brow { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .bk-dt { font-size:12px; color:var(--text-secondary); flex:none; padding-top:1px; }
+  .bk-dd { display:flex; flex-direction:column; gap:2px; text-align:end; align-items:flex-end; }
+  .bk-v { font-size:12.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .bk-hijri { font-size:10.5px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+
+  /* calendar — Gregorian primary + Hijri quiet-secondary (§10.5), availability shown */
+  .cal { margin-top:2px; }
+  .cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .cal-head .m { font-size:14.5px; font-weight:600; color:var(--text-primary); text-align:center; }
+  .cal-head .hj-sub { font-size:11px; color:var(--text-secondary); text-align:center; margin-top:1px; }
+  .nav { width:34px; height:34px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .nav[disabled] { opacity:.4; cursor:default; }
+  .nav svg { width:16px; height:16px; color:var(--text-primary); }
+  .wk { display:grid; grid-template-columns:repeat(7,1fr); margin-top:2px; }
+  .wk span { text-align:center; font-size:9.5px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; color:var(--text-tertiary); padding-bottom:4px; }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); }
+  .day { position:relative; height:42px; display:flex; align-items:center; justify-content:center; border:none; background:transparent; cursor:pointer; padding:0; }
+  .inner { width:36px; height:36px; border-radius:var(--radius-full); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .g { font-size:13.5px; color:var(--text-primary); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .hj { font-size:9px; color:var(--text-secondary); line-height:1.1; font-variant-numeric:tabular-nums; }
+  .day.in-range { background:var(--int-subtle); }
+  .day.range-start { background:linear-gradient(to right, transparent 50%, var(--int-subtle) 50%); }
+  .day.range-end { background:linear-gradient(to left, transparent 50%, var(--int-subtle) 50%); }
+  .day.range-start .inner, .day.range-end .inner { background:var(--int-primary); }
+  .day.range-start .g, .day.range-end .g { color:var(--text-on-brand); }
+  .day.range-start .hj, .day.range-end .hj { color:var(--text-on-brand); opacity:.85; }
+  .day.was .inner { border:1.5px dashed var(--border-strong); }
+  .day.disabled { cursor:default; }
+  .day.disabled .g { color:var(--text-disabled); text-decoration:line-through; }
+  .day.disabled .hj { color:var(--text-disabled); }
+  .cal-foot { font-size:11px; color:var(--text-tertiary); margin-top:8px; line-height:1.5; }
+  .cal-foot b { color:var(--text-secondary); font-weight:600; }
+  .cal-legend { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:8px; }
+  .cal-legend span { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; color:var(--text-secondary); }
+  .cal-legend i { width:9px; height:9px; border-radius:50%; flex:none; }
+  .cal-legend i.was { border:1.5px dashed var(--border-strong); background:transparent; }
+  .cal-legend i.unavail { background:var(--bg-sunken); border:1px solid var(--border-default); }
+
+  /* guest-count stepper — ga-023 lineage */
+  .srow { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-hairline); }
+  .srow:last-of-type { border-bottom:none; }
+  .lab { display:flex; flex-direction:column; gap:1px; }
+  .lab b { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .lab span { font-size:11.5px; color:var(--text-secondary); }
+  .ctrl { display:flex; align-items:center; gap:12px; flex:none; }
+  .step { width:34px; height:34px; border-radius:var(--radius-full); border:1.5px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .step svg { width:15px; height:15px; stroke-width:2.2; }
+  .step[disabled] { opacity:.4; cursor:default; }
+  .ctrl .n { min-width:18px; text-align:center; font-size:14px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+
+  /* calm, non-judgmental hint block — §1.3 / §10.7 */
+  .hint { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-top:12px; }
+  .hint svg { width:17px; height:17px; stroke-width:1.9; color:var(--info-fg); flex:none; margin-top:1px; }
+  .hint-tx { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .hint-tx b { color:var(--text-primary); font-weight:600; }
+
+  /* price delta — literal, both directions, never vague */
+  .delta { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:13px 14px; margin-top:14px; }
+  .delta-row { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .delta-row + .delta-row { margin-top:8px; padding-top:8px; border-top:1px solid var(--border-hairline); }
+  .delta-lab { font-size:12px; color:var(--text-secondary); }
+  .delta-val { font-size:13.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .delta-val.old { color:var(--text-tertiary); text-decoration:line-through; font-weight:500; }
+  .delta-diff { display:flex; align-items:center; justify-content:space-between; margin-top:11px; padding-top:11px; border-top:1px dashed var(--border-default); }
+  .delta-diff .dl { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .delta-diff .dv { font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .delta-diff .dv.more { color:var(--text-primary); }
+  .delta-diff .dv.less { color:var(--success-fg); }
+  .delta-note { font-size:12px; color:var(--text-secondary); margin-top:10px; line-height:1.5; }
+  .delta-note b { color:var(--text-primary); font-weight:600; }
+
+  /* host-approval honesty block — info register */
+  .approval { display:flex; gap:11px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-top:12px; }
+  .approval svg { width:18px; height:18px; stroke-width:1.9; color:var(--info-fg); flex:none; margin-top:1px; }
+  .approval-tx { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .approval-tx b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:14.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; margin-top:16px; }
+  .btn.ghost { background:var(--bg-canvas); color:var(--text-secondary); border:1px solid var(--border-default); margin-top:10px; }
+
+  /* submitted / pending state */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin:8px 0 18px; }
+  .success .tick { width:60px; height:60px; border-radius:var(--radius-full); background:var(--info-bg); border:1px solid var(--info-border); display:flex; align-items:center; justify-content:center; color:var(--info-fg); }
+  .success .tick svg { width:30px; height:30px; stroke-width:2.1; }
+  .success h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:13px; }
+  .success .sp { font-size:13px; color:var(--text-secondary); margin-top:6px; max-width:260px; }
+  .pendbadge { display:inline-flex; align-items:center; gap:6px; margin-top:12px; font-size:11.5px; font-weight:600; color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-full); padding:5px 12px; }
+  .pendbadge svg { width:13px; height:13px; stroke-width:2.2; }
+
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Booking modification (GA-067)</h1>
+    <p>Changing an existing, confirmed booking — dates or guest count — for <strong>Margalla View Apartment · F-7, Islamabad</strong>. The current booking is a real <code>&lt;dl&gt;</code> up top; the date-range calendar shows Gregorian primary with a <strong>quiet Hijri secondary line</strong> (§10.5) and marks unavailable nights honestly (dimmed + struck, never hidden); the guest-count stepper states — calmly, never as a warning — that adding a guest may need extra documents (§1.3/§10.7); and the <strong>price delta is always literal</strong>: old total → new total → the exact difference, worded as "you'll pay more" or "returns to your card," never vague. Nothing is final until the host approves — that promise is stated plainly. No journey stepper (§7.6a — this is a post-book management screen). Panels: extend stay · price increases · submitted (light) · shorten stay · price decreases (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Extend stay · submitted · light</span><span>Shorten stay · refund direction · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — extend the stay, price increases, and the submitted state">
+      <div class="panel-tag">Light — extend to 4 nights · pay more · request submitted</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Change dates &amp; guests</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Change booking</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec-label">Current booking</div>
+              <div class="bksum">
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">Stay</dt><dd class="bk-dd"><span class="bk-v">Margalla View Apartment</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Dates</dt><dd class="bk-dd"><span class="bk-v">Fri 14 – Mon 17 Aug 2026 · 3 nights</span><span class="bk-hijri">2 – 5 Rabi ul-Awwal 1448 AH</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Guests</dt><dd class="bk-dd"><span class="bk-v">2 guests · Couple</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Paid</dt><dd class="bk-dd"><span class="bk-v num">PKR 42,350</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="sec-label">New checkout date</div>
+              <div class="cal">
+                <div class="cal-head">
+                  <button class="nav" type="button" aria-label="Previous week" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <div><div class="m">August 2026</div><div class="hj-sub">Safar – Rabi ul-Awwal 1448 AH</div></div>
+                  <button class="nav" type="button" aria-label="Next week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                </div>
+                <div class="wk"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+                <div class="days" role="grid" aria-label="August 2026, check-in Friday 14th, new checkout Tuesday 18th selected">
+                  <button class="day" role="gridcell" aria-label="10 August"><span class="inner"><span class="g">10</span><span class="hj">27</span></span></button>
+                  <button class="day" role="gridcell" aria-label="11 August"><span class="inner"><span class="g">11</span><span class="hj">28</span></span></button>
+                  <button class="day" role="gridcell" aria-label="12 August"><span class="inner"><span class="g">12</span><span class="hj">29</span></span></button>
+                  <button class="day" role="gridcell" aria-label="13 August"><span class="inner"><span class="g">13</span><span class="hj">1</span></span></button>
+                  <button class="day range-start" role="gridcell" aria-label="14 August, check-in — unchanged"><span class="inner"><span class="g">14</span><span class="hj">2</span></span></button>
+                  <button class="day in-range" role="gridcell" aria-label="15 August"><span class="inner"><span class="g">15</span><span class="hj">3</span></span></button>
+                  <button class="day in-range" role="gridcell" aria-label="16 August"><span class="inner"><span class="g">16</span><span class="hj">4</span></span></button>
+                  <button class="day in-range was" role="gridcell" aria-label="17 August, your original checkout"><span class="inner"><span class="g">17</span><span class="hj">5</span></span></button>
+                  <button class="day range-end" role="gridcell" aria-label="18 August, new checkout — selected"><span class="inner"><span class="g">18</span><span class="hj">6</span></span></button>
+                  <button class="day disabled" role="gridcell" aria-disabled="true" aria-label="19 August, unavailable — already booked"><span class="inner"><span class="g">19</span><span class="hj">7</span></span></button>
+                  <button class="day" role="gridcell" aria-label="20 August"><span class="inner"><span class="g">20</span><span class="hj">8</span></span></button>
+                  <button class="day" role="gridcell" aria-label="21 August"><span class="inner"><span class="g">21</span><span class="hj">9</span></span></button>
+                  <button class="day" role="gridcell" aria-label="22 August"><span class="inner"><span class="g">22</span><span class="hj">10</span></span></button>
+                  <button class="day" role="gridcell" aria-label="23 August"><span class="inner"><span class="g">23</span><span class="hj">11</span></span></button>
+                </div>
+                <div class="cal-legend">
+                  <span><i class="was" aria-hidden="true"></i>Original checkout (17 Aug)</span>
+                  <span><i class="unavail" aria-hidden="true"></i>Unavailable</span>
+                </div>
+                <p class="cal-foot">New: <b>Fri 14 – Tue 18 Aug 2026 · 4 nights</b>. Hijri dates are approximate and may vary by moon sighting. 19 Aug is already booked by another guest, so 18 Aug is the latest checkout this week.</p>
+              </div>
+
+              <div class="sec-label">Guests</div>
+              <div class="srow">
+                <div class="lab"><b>Guests</b><span>Couple · currently 2</span></div>
+                <div class="ctrl">
+                  <button class="step" type="button" aria-label="Remove one guest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+                  <span class="n" role="status" aria-label="3 guests">3</span>
+                  <button class="step" type="button" aria-label="Add one guest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                </div>
+              </div>
+              <div class="hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span class="hint-tx"><b>Adding a guest may change your party type.</b> If it does, Ayesha may ask for an extra document, like a Family Registration Certificate, once she reviews the request — nothing is needed from you right now.</span>
+              </div>
+
+              <div class="delta">
+                <div class="delta-row"><span class="delta-lab">Current total</span><span class="delta-val old num">PKR 42,350</span></div>
+                <div class="delta-row"><span class="delta-lab">New total · 4 nights</span><span class="delta-val num">PKR 54,850</span></div>
+                <div class="delta-diff"><span class="dl">Difference</span><span class="dv more num">+ PKR 12,500</span></div>
+                <p class="delta-note">You'll pay <b>PKR 12,500 more</b> — charged to your <b class="num">HBL •••• 8842</b> — only after Ayesha confirms the change.</p>
+              </div>
+
+              <div class="approval">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <span class="approval-tx"><b>Ayesha confirms the new dates first</b> — nothing changes, and nothing is charged, until she does. Your current booking stays exactly as it is until then.</span>
+              </div>
+
+              <button class="btn" type="button">Send request to Ayesha</button>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Submitted — waiting for Ayesha</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Change booking</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <h2>Request sent to Ayesha</h2>
+                <p class="sp">She'll review your new dates and guest count. You'll get a notification as soon as she responds.</p>
+                <span class="pendbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Pending host approval</span>
+              </div>
+
+              <div class="sec-label">What you asked for</div>
+              <div class="bksum">
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">New dates</dt><dd class="bk-dd"><span class="bk-v">Fri 14 – Tue 18 Aug 2026 · 4 nights</span><span class="bk-hijri">2 – 6 Rabi ul-Awwal 1448 AH</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">New guests</dt><dd class="bk-dd"><span class="bk-v">3 guests · Couple</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">New total</dt><dd class="bk-dd"><span class="bk-v num">PKR 54,850</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="approval">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+                <span class="approval-tx">Your original dates (14–17 Aug) stay fully booked and confirmed until Ayesha responds. Nothing has been charged.</span>
+              </div>
+
+              <div class="grow"></div>
+              <button class="btn ghost" type="button">Cancel this request</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The calendar carries the same grammar as <code>GA-022</code>: Gregorian day leads, a smaller <code>.hj</code> Hijri numeral sits quietly beneath it (§10.5, never the pinned primary), and the honesty footnote about moon sighting is always present. Unavailable nights are <b>dimmed and struck, never hidden</b> — 19 Aug shows exactly why 18 Aug is the limit. The price delta is a literal three-line block: old total, new total, and the signed difference, followed by a sentence that names the direction ("you'll pay more") and the exact card. The host-approval line is repeated on both the form and the submitted state so the promise is never in doubt.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — shorten the stay, price decreases, refund direction">
+      <div class="panel-tag">Dark — shorten to 2 nights · money returns to card</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Change dates — shorten stay</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Change booking</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec-label">Current booking</div>
+              <div class="bksum">
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt">Stay</dt><dd class="bk-dd"><span class="bk-v">Margalla View Apartment</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Dates</dt><dd class="bk-dd"><span class="bk-v">Fri 14 – Mon 17 Aug 2026 · 3 nights</span><span class="bk-hijri">2 – 5 Rabi ul-Awwal 1448 AH</span></dd></div>
+                  <div class="brow"><dt class="bk-dt">Guests</dt><dd class="bk-dd"><span class="bk-v">2 guests · Couple</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="sec-label">New checkout date</div>
+              <div class="cal">
+                <div class="cal-head">
+                  <button class="nav" type="button" aria-label="Previous week" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                  <div><div class="m">August 2026</div><div class="hj-sub">Safar – Rabi ul-Awwal 1448 AH</div></div>
+                  <button class="nav" type="button" aria-label="Next week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                </div>
+                <div class="wk"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+                <div class="days" role="grid" aria-label="August 2026, check-in Friday 14th, new checkout Sunday 16th selected">
+                  <button class="day" role="gridcell" aria-label="10 August"><span class="inner"><span class="g">10</span><span class="hj">27</span></span></button>
+                  <button class="day" role="gridcell" aria-label="11 August"><span class="inner"><span class="g">11</span><span class="hj">28</span></span></button>
+                  <button class="day" role="gridcell" aria-label="12 August"><span class="inner"><span class="g">12</span><span class="hj">29</span></span></button>
+                  <button class="day" role="gridcell" aria-label="13 August"><span class="inner"><span class="g">13</span><span class="hj">1</span></span></button>
+                  <button class="day range-start" role="gridcell" aria-label="14 August, check-in — unchanged"><span class="inner"><span class="g">14</span><span class="hj">2</span></span></button>
+                  <button class="day in-range" role="gridcell" aria-label="15 August"><span class="inner"><span class="g">15</span><span class="hj">3</span></span></button>
+                  <button class="day range-end" role="gridcell" aria-label="16 August, new checkout — selected"><span class="inner"><span class="g">16</span><span class="hj">4</span></span></button>
+                  <button class="day was" role="gridcell" aria-label="17 August, your original checkout"><span class="inner"><span class="g">17</span><span class="hj">5</span></span></button>
+                  <button class="day" role="gridcell" aria-label="18 August"><span class="inner"><span class="g">18</span><span class="hj">6</span></span></button>
+                  <button class="day disabled" role="gridcell" aria-disabled="true" aria-label="19 August, unavailable — already booked"><span class="inner"><span class="g">19</span><span class="hj">7</span></span></button>
+                  <button class="day" role="gridcell" aria-label="20 August"><span class="inner"><span class="g">20</span><span class="hj">8</span></span></button>
+                  <button class="day" role="gridcell" aria-label="21 August"><span class="inner"><span class="g">21</span><span class="hj">9</span></span></button>
+                  <button class="day" role="gridcell" aria-label="22 August"><span class="inner"><span class="g">22</span><span class="hj">10</span></span></button>
+                  <button class="day" role="gridcell" aria-label="23 August"><span class="inner"><span class="g">23</span><span class="hj">11</span></span></button>
+                </div>
+                <div class="cal-legend">
+                  <span><i class="was" aria-hidden="true"></i>Original checkout (17 Aug)</span>
+                  <span><i class="unavail" aria-hidden="true"></i>Unavailable</span>
+                </div>
+                <p class="cal-foot">New: <b>Fri 14 – Sun 16 Aug 2026 · 2 nights</b>. Hijri dates are approximate and may vary by moon sighting.</p>
+              </div>
+
+              <div class="sec-label">Guests</div>
+              <div class="srow">
+                <div class="lab"><b>Guests</b><span>Couple · unchanged</span></div>
+                <div class="ctrl">
+                  <button class="step" type="button" aria-label="Remove one guest" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+                  <span class="n" role="status" aria-label="2 guests">2</span>
+                  <button class="step" type="button" aria-label="Add one guest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                </div>
+              </div>
+
+              <div class="delta">
+                <div class="delta-row"><span class="delta-lab">Current total</span><span class="delta-val old num">PKR 42,350</span></div>
+                <div class="delta-row"><span class="delta-lab">New total · 2 nights</span><span class="delta-val num">PKR 29,850</span></div>
+                <div class="delta-diff"><span class="dl">Difference</span><span class="dv less num">− PKR 12,500</span></div>
+                <p class="delta-note"><b>PKR 12,500 returns to your HBL •••• 8842</b> — only once Ayesha confirms the shorter stay.</p>
+              </div>
+
+              <div class="approval">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <span class="approval-tx"><b>Ayesha confirms the new dates first</b> — nothing changes until she does.</span>
+              </div>
+
+              <button class="btn" type="button">Send request to Ayesha</button>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The reverse direction of the same delta component: when the new total is lower, the difference is shown with a minus sign in the muted <code>success.fg</code> register and the sentence names the destination card explicitly — money returning is stated exactly as concretely as money owed. The guest stepper's decrement is disabled at the floor (2, the verified Couple minimum) rather than silently doing nothing.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the booking modification form">
+      <div class="panel-tag">RTL · اردو — "بکنگ تبدیل کریں", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">بکنگ تبدیل کریں — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="سفر پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title ur" id="uH">بکنگ تبدیل کریں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="sec-label ur">موجودہ بکنگ</div>
+              <div class="bksum">
+                <dl class="bk">
+                  <div class="brow"><dt class="bk-dt ur">قیام</dt><dd class="bk-dd"><span class="bk-v ur">مارگلہ ویو اپارٹمنٹ</span></dd></div>
+                  <div class="brow"><dt class="bk-dt ur">تاریخیں</dt><dd class="bk-dd"><span class="bk-v ur"><span class="num">14 – 17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span><span class="bk-hijri ur"><span class="num">2 – 5</span> ربیع الاول <span class="num">1448</span>ھ</span></dd></div>
+                  <div class="brow"><dt class="bk-dt ur">مہمان</dt><dd class="bk-dd"><span class="bk-v ur"><span class="num">2</span> مہمان · جوڑا</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="sec-label ur">نئی تاریخِ روانگی</div>
+              <div class="cal">
+                <div class="cal-head">
+                  <button class="nav" type="button" aria-label="پچھلا ہفتہ" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+                  <div><div class="m ur">اگست <span class="num">2026</span></div><div class="hj-sub ur">صفر – ربیع الاول <span class="num">1448</span>ھ</div></div>
+                  <button class="nav" type="button" aria-label="اگلا ہفتہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                </div>
+                <div class="wk"><span class="ur">پیر</span><span class="ur">منگل</span><span class="ur">بدھ</span><span class="ur">جمعرات</span><span class="ur">جمعہ</span><span class="ur">ہفتہ</span><span class="ur">اتوار</span></div>
+                <div class="days" role="grid" aria-label="اگست 2026، چیک اِن جمعہ 14، نئی روانگی منگل 18 منتخب">
+                  <button class="day" role="gridcell" aria-label="10 اگست"><span class="inner"><span class="g num">10</span><span class="hj num">27</span></span></button>
+                  <button class="day" role="gridcell" aria-label="11 اگست"><span class="inner"><span class="g num">11</span><span class="hj num">28</span></span></button>
+                  <button class="day" role="gridcell" aria-label="12 اگست"><span class="inner"><span class="g num">12</span><span class="hj num">29</span></span></button>
+                  <button class="day" role="gridcell" aria-label="13 اگست"><span class="inner"><span class="g num">13</span><span class="hj num">1</span></span></button>
+                  <button class="day range-start" role="gridcell" aria-label="14 اگست، چیک اِن — برقرار"><span class="inner"><span class="g num">14</span><span class="hj num">2</span></span></button>
+                  <button class="day in-range" role="gridcell" aria-label="15 اگست"><span class="inner"><span class="g num">15</span><span class="hj num">3</span></span></button>
+                  <button class="day in-range" role="gridcell" aria-label="16 اگست"><span class="inner"><span class="g num">16</span><span class="hj num">4</span></span></button>
+                  <button class="day in-range was" role="gridcell" aria-label="17 اگست، آپ کی اصل روانگی"><span class="inner"><span class="g num">17</span><span class="hj num">5</span></span></button>
+                  <button class="day range-end" role="gridcell" aria-label="18 اگست، نئی روانگی — منتخب"><span class="inner"><span class="g num">18</span><span class="hj num">6</span></span></button>
+                  <button class="day disabled" role="gridcell" aria-disabled="true" aria-label="19 اگست، دستیاب نہیں — پہلے سے بک"><span class="inner"><span class="g num">19</span><span class="hj num">7</span></span></button>
+                  <button class="day" role="gridcell" aria-label="20 اگست"><span class="inner"><span class="g num">20</span><span class="hj num">8</span></span></button>
+                  <button class="day" role="gridcell" aria-label="21 اگست"><span class="inner"><span class="g num">21</span><span class="hj num">9</span></span></button>
+                  <button class="day" role="gridcell" aria-label="22 اگست"><span class="inner"><span class="g num">22</span><span class="hj num">10</span></span></button>
+                  <button class="day" role="gridcell" aria-label="23 اگست"><span class="inner"><span class="g num">23</span><span class="hj num">11</span></span></button>
+                </div>
+                <div class="cal-legend">
+                  <span class="ur"><i class="was" aria-hidden="true"></i>اصل روانگی (<span class="num">17</span> اگست)</span>
+                  <span class="ur"><i class="unavail" aria-hidden="true"></i>دستیاب نہیں</span>
+                </div>
+                <p class="cal-foot ur">نئی: <b><span class="num">14 – 18</span> اگست <span class="num">2026</span> · <span class="num">4</span> راتیں</b>۔ ہجری تاریخیں تخمینی ہیں اور رؤیتِ ہلال سے بدل سکتی ہیں۔</p>
+              </div>
+
+              <div class="sec-label ur">مہمان</div>
+              <div class="srow">
+                <div class="lab"><b class="ur">مہمان</b><span class="ur">جوڑا · فی الحال <span class="num">2</span></span></div>
+                <div class="ctrl">
+                  <button class="step" type="button" aria-label="ایک مہمان کم کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></button>
+                  <span class="n num" role="status" aria-label="3 مہمان">3</span>
+                  <button class="step" type="button" aria-label="ایک مہمان شامل کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+                </div>
+              </div>
+              <div class="hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span class="hint-tx ur"><b>مہمان بڑھانے سے پارٹی کی قسم بدل سکتی ہے۔</b> اگر ایسا ہوا تو عائشہ جائزے کے بعد ایک اضافی دستاویز، جیسے فیملی رجسٹریشن سرٹیفکیٹ، مانگ سکتی ہیں — ابھی آپ کو کچھ نہیں کرنا۔</span>
+              </div>
+
+              <div class="delta">
+                <div class="delta-row"><span class="delta-lab ur">موجودہ رقم</span><span class="delta-val old num">PKR 42,350</span></div>
+                <div class="delta-row"><span class="delta-lab ur">نئی رقم · <span class="num">4</span> راتیں</span><span class="delta-val num">PKR 54,850</span></div>
+                <div class="delta-diff"><span class="dl ur">فرق</span><span class="dv more num">+ PKR 12,500</span></div>
+                <p class="delta-note ur">آپ <b class="num">PKR 12,500</b> زیادہ ادا کریں گے — آپ کے <b class="num">HBL •••• 8842</b> سے — لیکن صرف عائشہ کی تصدیق کے بعد۔</p>
+              </div>
+
+              <div class="approval">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <span class="approval-tx ur"><b>عائشہ پہلے نئی تاریخوں کی تصدیق کریں گی</b> — جب تک وہ نہ کریں کچھ تبدیل نہیں ہوگا، اور کوئی رقم نہیں کٹے گی۔</span>
+              </div>
+
+              <button class="btn ur" type="button">عائشہ کو درخواست بھیجیں</button>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the calendar's weekday header, in-range fill, and range-start/range-end gradients flip to the reading direction; every date numeral and every rupee figure keeps <code>.num</code> LTR isolation so digits never reverse (§11). "HBL" stays Latin as a proper noun; the hint, delta note, and approval line are real Urdu with the same calm, non-judgmental register as the English copy — no line editorializes about the guest's party type.</p>
+    </section>
+
+  </main>
+</body>
+</html>

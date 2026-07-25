@@ -1,0 +1,492 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Host signup / role-switch (HA-003)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:920px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone frame — ga-004 onboarding auth-frame lineage */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.h-title,.h-sub,.flabel,.fhint,.banner,.tab,.idname,.idchip,.need-t,.need-d,.need-state,.needcap,.primary,.legal,.altline,.brandmark,.confirm-h,.saveline,.mn,.md,.footlink) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark .dot { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:6px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:22px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:6px; }
+  .h-sub { font-size:13.5px; color:var(--text-secondary); margin-top:7px; line-height:1.5; }
+
+  /* role-switch tab strip */
+  .tabstrip { display:flex; gap:4px; background:var(--bg-sunken); border-radius:var(--radius-full); padding:4px; margin-top:18px; }
+  .tab { flex:1; min-height:40px; border:none; border-radius:var(--radius-full); background:transparent; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0 8px; text-align:center; }
+  .tab[aria-selected="true"] { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-hairline); }
+
+  /* identity summary card — role-switch path */
+  .idcard { display:flex; align-items:center; gap:12px; margin-top:18px; padding:13px 14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .idav { width:44px; height:44px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex:none; }
+  .idbd { display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .idname { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .idchips { display:flex; gap:6px; flex-wrap:wrap; }
+  .idchip { font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:var(--radius-full); }
+  .idchip.neutral { background:var(--bg-sunken); color:var(--text-secondary); }
+  .idchip.ok { background:var(--success-bg); color:var(--success-fg); border:1px solid var(--success-border); }
+
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:14px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .banner.info span { color:var(--text-secondary); display:block; }
+  .claim { color:var(--text-primary); font-weight:600; }
+
+  /* what you'll need preview rows */
+  .needcap { font-size:11.5px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; color:var(--text-tertiary); margin-top:18px; margin-bottom:8px; padding:0 2px; }
+  .needlist { display:flex; flex-direction:column; gap:8px; }
+  .needrow { display:flex; align-items:flex-start; gap:11px; min-height:52px; padding:10px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); }
+  .need-ic { width:32px; height:32px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; }
+  .need-ic svg { width:16px; height:16px; stroke-width:2; }
+  .need-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .need-ic.neutral { background:var(--bg-sunken); color:var(--text-secondary); }
+  .need-bd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .need-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .need-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .need-state { font-size:10px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--text-tertiary); white-space:nowrap; flex:none; margin-top:3px; }
+  .need-state.ok { color:var(--success-fg); }
+
+  /* fields — reused +92 prefix input pattern */
+  .field { margin-top:16px; }
+  .flabel { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; }
+  .fwrap { display:flex; align-items:center; gap:11px; height:50px; padding:0 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); }
+  .fwrap.focus { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .prefix { font-size:15px; font-weight:600; color:var(--text-secondary); padding-right:11px; border-right:1px solid var(--border-default); }
+  .phone.rtl .prefix { padding-right:0; padding-left:11px; border-right:none; border-left:1px solid var(--border-default); }
+  .fval { font-size:15.5px; color:var(--text-primary); letter-spacing:.01em; }
+  .fval.ph { color:var(--text-tertiary); }
+  .fval.num { font-variant-numeric:tabular-nums; }
+  .caret { display:inline-block; width:1.5px; height:20px; background:var(--int-primary); vertical-align:-4px; margin-left:1px; }
+  .fhint { font-size:11.5px; color:var(--text-secondary); margin-top:7px; line-height:1.45; }
+
+  .primary { width:100%; min-height:50px; margin-top:18px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; text-decoration:none; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .legal { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:13px; line-height:1.5; }
+  .legal a { color:var(--text-secondary); text-decoration:underline; }
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:13px 20px calc(4px + env(safe-area-inset-bottom)); font-size:12.5px; color:var(--text-secondary); flex:none; }
+  .altline a { color:var(--int-link); font-weight:700; }
+
+  /* switch-confirmation state */
+  .confirm-wrap { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; padding:34px 18px 0; }
+  .confirm-seal { width:60px; height:60px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); display:flex; align-items:center; justify-content:center; }
+  .confirm-seal svg { width:28px; height:28px; stroke-width:2; }
+  .confirm-h { font-size:19px; font-weight:600; color:var(--text-primary); margin-top:16px; letter-spacing:-0.01em; }
+  .saveline { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:8px; max-width:270px; }
+  .summary-card { margin-top:20px; width:100%; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); overflow:hidden; text-align:start; }
+  .mrow { display:flex; align-items:center; gap:10px; min-height:48px; padding:10px 13px; border-top:1px solid var(--border-hairline); }
+  .mrow:first-child { border-top:none; }
+  .mrow-ic { flex:none; width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; background:var(--success-bg); color:var(--success-fg); }
+  .mrow-ic svg { width:14px; height:14px; stroke-width:2.2; }
+  .mbd { display:flex; flex-direction:column; gap:1px; }
+  .mn { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .md { font-size:11px; color:var(--text-secondary); }
+  .grow { flex:1; min-height:8px; }
+  .foot { padding:0 20px 10px; }
+  .footlink { text-align:center; margin-top:11px; font-size:11.5px; color:var(--text-secondary); }
+  .footlink a { color:var(--int-primary); font-weight:600; }
+  .footlink a:hover { text-decoration:underline; }
+
+  /* Notes panel */
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Host signup / role-switch (HA-003)</h1>
+    <p>Entry into hosting from <code>HA-002</code> (earnings estimator) or the header/profile "Become a host" row. Two paths share one screen via a tab strip: <b>Switch my account</b> (primary/default) — for a signed-in guest, whose SalamStay account "works for both"; their CNIC verification carries over automatically, honestly stated, no re-verification — and <b>Create new account</b> (secondary) — reusing <code>GA-004</code>'s phone-first signup grammar with a CNIC-first identity note (hosts verify earlier than guests, since trust runs the other direction) and a name field that accepts Urdu Nastaliq input directly. Both paths preview the same three requirements (CNIC, property details, payout account) before committing. Switching lands on a quiet confirmation state that forwards to the checklist hub <code>HA-004</code>. No checkout stepper — this is onboarding-lineage, journey gap #6 folded in (SCREENS §1.2 Stage 1–2).</p>
+    <div class="legend">
+      <span>Light · switch-my-account (primary path)</span>
+      <span>Dark · create-new-account (secondary path)</span>
+      <span>Confirmation · switch complete → HA-004</span>
+      <span>RTL · اردو — create-new-account, Nastaliq name input</span>
+      <span>≥44pt targets · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== A · LIGHT — SWITCH MY ACCOUNT (PRIMARY) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — Switch my account (primary path)</div>
+      <section class="phone" aria-label="Start hosting — switch your existing SalamStay account">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/account" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title" id="aT">Start hosting on SalamStay</h2>
+          <p class="h-sub">Your SalamStay account works for both — your guest verification carries over.</p>
+
+          <div class="tabstrip" role="tablist" aria-label="How would you like to start hosting?">
+            <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="aPanel">Switch my account</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="bPanel">Create new account</button>
+          </div>
+
+          <div id="aPanel">
+            <div class="idcard">
+              <span class="idav" aria-hidden="true">AK</span>
+              <div class="idbd">
+                <span class="idname">Aqib K.</span>
+                <span class="idchips">
+                  <span class="idchip neutral">Guest since 2026</span>
+                  <span class="idchip ok">CNIC verified</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="banner info" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+              <span>Your CNIC is already verified as a guest — SalamStay runs on <span class="claim">CNIC-verified guests and hosts via NADRA Verisys</span>, so it carries straight over. No need to verify again.</span>
+            </div>
+
+            <div class="needcap">What you'll need to start hosting</div>
+            <ul class="needlist" role="list">
+              <li class="needrow">
+                <span class="need-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="need-bd"><span class="need-t">CNIC</span><span class="need-d">Carried over from your guest account</span></span>
+                <span class="need-state ok">Already done</span>
+              </li>
+              <li class="needrow">
+                <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+                <span class="need-bd"><span class="need-t">Property details</span><span class="need-d">Location, type, and photos of your place</span></span>
+                <span class="need-state">Next</span>
+              </li>
+              <li class="needrow">
+                <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h3M3 9h18"/></svg></span>
+                <span class="need-bd"><span class="need-t">Payout account</span><span class="need-d">Bank, JazzCash, or EasyPaisa</span></span>
+                <span class="need-state">Next</span>
+              </li>
+            </ul>
+
+            <button class="primary" type="button">Switch to hosting</button>
+            <p class="legal">You can switch back to guest mode anytime from <a href="/account">Account settings</a>.</p>
+          </div>
+        </div>
+
+        <div class="altline">Not ready? <a href="/become-a-host">Learn what hosting involves</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Order: <code>title → tabs → identity card → carry-over banner → what-you'll-need preview → Switch to hosting</code>. The identity card is a real fact (name + two chips), never a form field — this path has nothing to type.</p>
+    </div>
+
+    <!-- ============================== B · DARK — CREATE NEW ACCOUNT (SECONDARY) ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — Create new account (secondary path)</div>
+      <section class="phone dark" aria-label="Create a new host account">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/become-a-host" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title" id="bT">Start hosting on SalamStay</h2>
+          <p class="h-sub">Your SalamStay account works for both — your guest verification carries over.</p>
+
+          <div class="tabstrip" role="tablist" aria-label="How would you like to start hosting?">
+            <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="aPanel2">Switch my account</button>
+            <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="bPanel2">Create new account</button>
+          </div>
+
+          <div id="bPanel2">
+            <h3 class="sr-only">Create a host account</h3>
+
+            <div class="field" role="group" aria-labelledby="b-nm-l b-nm-h">
+              <span class="flabel" id="b-nm-l">Full name (as on your CNIC)</span>
+              <div class="fwrap focus">
+                <span class="fval">Aqib Khan</span><span class="caret" aria-hidden="true"></span>
+              </div>
+              <p class="fhint" id="b-nm-h">Type this in English or Urdu — it should match your CNIC exactly.</p>
+            </div>
+
+            <div class="field" role="group" aria-labelledby="b-ph-l b-ph-h">
+              <span class="flabel" id="b-ph-l">Mobile number</span>
+              <div class="fwrap">
+                <span class="prefix" dir="ltr">+92</span>
+                <span class="fval ph num" dir="ltr">3XX XXX XXXX</span>
+              </div>
+              <p class="fhint" id="b-ph-h">We'll send a one-time code to confirm it.</p>
+            </div>
+
+            <div class="banner info" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+              <span>You'll verify your CNIC as one of your first steps — hosts are verified early, so guests can trust who they're welcoming them. SalamStay runs on <span class="claim">CNIC-verified guests and hosts via NADRA Verisys</span>.</span>
+            </div>
+
+            <div class="needcap">What you'll need to start hosting</div>
+            <ul class="needlist" role="list">
+              <li class="needrow">
+                <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                <span class="need-bd"><span class="need-t">CNIC</span><span class="need-d">Verified via NADRA Verisys</span></span>
+                <span class="need-state">Step 1</span>
+              </li>
+              <li class="needrow">
+                <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+                <span class="need-bd"><span class="need-t">Property details</span><span class="need-d">Location, type, and photos of your place</span></span>
+                <span class="need-state">Step 2</span>
+              </li>
+              <li class="needrow">
+                <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h3M3 9h18"/></svg></span>
+                <span class="need-bd"><span class="need-t">Payout account</span><span class="need-d">Bank, JazzCash, or EasyPaisa</span></span>
+                <span class="need-state">Step 3</span>
+              </li>
+            </ul>
+
+            <button class="primary" type="button">Continue</button>
+            <p class="legal">By continuing, you agree to our <a href="/legal/host-terms">Host Terms</a> and <a href="/legal/privacy">Privacy Policy</a>.</p>
+          </div>
+        </div>
+
+        <div class="altline">Already have a SalamStay account? Use the <b>Switch my account</b> tab above.</div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Reuses <code>GA-004</code>'s phone-first grammar, with a legal-name field added <em>ahead</em> of the phone number — the CNIC-first identity note (§brief) — because a host's name and CNIC anchor trust for guests earlier than a guest's own CNIC does. The name field accepts either script; no Nastaliq-only lock.</p>
+    </div>
+
+    <!-- ============================== C · LIGHT — SWITCH-CONFIRMATION STATE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Confirmation</b> — switch complete, forwards to <code>HA-004</code></div>
+      <section class="phone" aria-label="You're now a host account">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+        <header class="authbar">
+          <span class="ib-spacer" aria-hidden="true"></span>
+          <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+        <div class="auth">
+          <div class="confirm-wrap">
+            <div class="confirm-seal" aria-hidden="true" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+            </div>
+            <h2 class="confirm-h" id="cT">You're now a host account</h2>
+            <p class="saveline">Welcome to hosting, Aqib. Your guest verification carries over — you're already CNIC-verified.</p>
+
+            <div class="summary-card" role="list" aria-label="What carried over">
+              <div class="mrow" role="listitem">
+                <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="mbd"><span class="mn">CNIC verification</span><span class="md">Carried over — no re-verification needed</span></span>
+              </div>
+              <div class="mrow" role="listitem">
+                <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="mbd"><span class="mn">Your guest profile</span><span class="md">Kept exactly as it was</span></span>
+              </div>
+              <div class="mrow" role="listitem">
+                <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="mbd"><span class="mn">Host checklist</span><span class="md">Ready — 2 quick steps left</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="grow"></div>
+          <div class="foot">
+            <a class="primary" href="/host/onboarding">Continue to host setup</a>
+            <p class="footlink">Switch back to guest mode anytime in <a href="/account">Account settings</a>.</p>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">A quiet, unremarkable state — no confetti, no oversell (§10.6). It states plainly what carried over and what's left, then forwards to the checklist hub <code>/host/onboarding</code> (<code>HA-004</code>).</p>
+    </div>
+
+    <!-- ============================== D · RTL · اردو — CREATE NEW ACCOUNT ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — Create new account, Nastaliq name input</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="نیا میزبان اکاؤنٹ بنائیں">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+        <header class="authbar">
+          <a class="icon-btn" href="/ur/become-a-host" aria-label="واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+        <div class="auth">
+          <h2 class="h-title" id="dT">سلام اسٹے پر میزبانی شروع کریں</h2>
+          <p class="h-sub">آپ کا سلام اسٹے اکاؤنٹ دونوں کے لیے کام کرتا ہے — بطور مہمان آپ کی تصدیق خودبخود منتقل ہو جاتی ہے۔</p>
+
+          <div class="tabstrip" role="tablist" aria-label="آپ میزبانی کیسے شروع کرنا چاہیں گے؟">
+            <button class="tab" type="button" role="tab" aria-selected="false">میرا اکاؤنٹ تبدیل کریں</button>
+            <button class="tab" type="button" role="tab" aria-selected="true">نیا اکاؤنٹ بنائیں</button>
+          </div>
+
+          <div class="field" role="group" aria-labelledby="d-nm-l d-nm-h">
+            <span class="flabel" id="d-nm-l">پورا نام (شناختی کارڈ کے مطابق)</span>
+            <div class="fwrap focus">
+              <span class="fval">احمد رضا</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="fhint" id="d-nm-h">یہ انگریزی یا اردو میں لکھ سکتے ہیں — یہ آپ کے شناختی کارڈ سے بالکل مماثل ہونا چاہیے۔</p>
+          </div>
+
+          <div class="field" role="group" aria-labelledby="d-ph-l d-ph-h">
+            <span class="flabel" id="d-ph-l">موبائل نمبر</span>
+            <div class="fwrap">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval ph num" dir="ltr">3XX XXX XXXX</span>
+            </div>
+            <p class="fhint" id="d-ph-h">تصدیق کے لیے ہم ایک بار کا کوڈ بھیجیں گے۔</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span>آپ اپنے ابتدائی مراحل میں شناختی کارڈ کی تصدیق کریں گے — میزبانوں کی تصدیق پہلے کی جاتی ہے، تاکہ مہمان اعتماد کے ساتھ آ سکیں۔ سلام اسٹے <span class="claim">نادرا ویری سِس کے ذریعے تصدیق شدہ مہمانوں اور میزبانوں</span> پر چلتا ہے۔</span>
+          </div>
+
+          <div class="needcap">میزبانی شروع کرنے کے لیے آپ کو کیا درکار ہے</div>
+          <ul class="needlist" role="list">
+            <li class="needrow">
+              <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+              <span class="need-bd"><span class="need-t">شناختی کارڈ (CNIC)</span><span class="need-d">نادرا ویری سِس کے ذریعے تصدیق</span></span>
+              <span class="need-state">مرحلہ ۱</span>
+            </li>
+            <li class="needrow">
+              <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+              <span class="need-bd"><span class="need-t">پراپرٹی کی تفصیلات</span><span class="need-d">آپ کی جگہ کا مقام، قسم اور تصاویر</span></span>
+              <span class="need-state">مرحلہ ۲</span>
+            </li>
+            <li class="needrow">
+              <span class="need-ic neutral" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h3M3 9h18"/></svg></span>
+              <span class="need-bd"><span class="need-t">ادائیگی کا اکاؤنٹ</span><span class="need-d">بینک، جاز کیش، یا ایزی پیسہ</span></span>
+              <span class="need-state">مرحلہ ۳</span>
+            </li>
+          </ul>
+
+          <button class="primary" type="button">جاری رکھیں</button>
+          <p class="legal">جاری رکھ کر، آپ ہماری <a href="/ur/legal/host-terms">میزبان شرائط</a> اور <a href="/ur/legal/privacy">رازداری پالیسی</a> سے اتفاق کرتے ہیں۔</p>
+        </div>
+        <div class="altline">پہلے سے سلام اسٹے اکاؤنٹ ہے؟ اوپر <b>میرا اکاؤنٹ تبدیل کریں</b> والا ٹیب استعمال کریں۔</div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Full mirror: tabs, field labels, prefix slot, and action stack flow right-to-left; the <b>+92 number stays LTR</b> (bidi-isolated, <code>.num</code>) because a phone number follows the content locale, not the UI. The Urdu name field literally demonstrates Nastaliq input — the field itself is script-agnostic (English or Urdu both accepted).</p>
+    </div>
+
+    <!-- ============================== NOTES ============================== -->
+    <div class="panel notes" style="align-self:start">
+      <div class="panel-tag">Rules, states &amp; rationale</div>
+      <ul>
+        <li><b>Role-switch is primary, honestly framed.</b> "Your SalamStay account works for both; your guest verification carries over" is stated plainly and proven by the identity card's real "CNIC verified" chip — never a vague promise (journey gap #6 folded in, SCREENS §1.2 Stage 1).</li>
+        <li><b>Fresh signup is secondary but equal-weight.</b> The tab strip gives both paths the same visual weight; nothing is hidden behind a "power user" link. CNIC-first identity: a legal-name field precedes the phone number, framed with the claim registry line, not an invented regulatory specific.</li>
+        <li><b>No verification is re-run.</b> The role-switch path never re-asks for CNIC — the carry-over claim would be dishonest if it did. This is why the confirmation state (C) forwards straight to <code>HA-004</code> with Identity already marked done, instead of routing through <code>HA-005</code>/<code>HA-007</code> again.</li>
+        <li><b>Urdu Nastaliq input, demonstrated not just claimed.</b> Panel D's name field shows a real Nastaliq-set name ("احمد رضا") to prove the field accepts Urdu input directly, not just that the UI translates.</li>
+        <li><b>Real routes only.</b> <code>/account</code>, <code>/become-a-host</code>, <code>/host/onboarding</code>, <code>/legal/host-terms</code>, <code>/legal/privacy</code> (+ <code>/ur/</code> counterparts). No <code>href="#"</code>, no clickable divs.</li>
+        <li><b>No dead ends.</b> Both paths' primary buttons are always active affordances (no invalid-until-filled state modeled here — OTP/validation states are <code>GA-004</code>/<code>GA-005</code>'s job, reused not redesigned); the confirmation state's only forward action is real and working.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> HA-003 (onboard, app+web) · reuses <code>GA-004</code> auth-frame + phone field · components: Input, Button, tab strip (host switch) · a11y <code>DESIGN §11</code>. <b>Judgment call:</b> the host persona ("Aqib K.") reuses the identity already shipped in <code>HA-046</code>/<code>HA-055</code> for continuity across the host app rather than inventing a new name.</p>
+    </div>
+  </main>
+</body>
+</html>

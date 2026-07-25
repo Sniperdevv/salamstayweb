@@ -1,0 +1,469 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Profile tab shell (GA-122)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:640px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .lbar-title, .phone.rtl .id-name, .phone.rtl .id-sub, .phone.rtl .nrow-t, .phone.rtl .nrow-s, .phone.rtl .grp-lb, .phone.rtl .vchip, .phone.rtl .id-stat, .phone.rtl .seg-opt, .phone.rtl .signout, .phone.rtl .tab-lb, .phone.rtl .lang-t { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* large-title bar (tab destination — no back, no journey stepper) */
+  .lbar { display:flex; align-items:center; justify-content:space-between; min-height:52px; padding:10px 8px 4px 16px; flex:none; }
+  .lbar-title { font-size:22px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:8px 14px 14px; overflow:hidden; }
+
+  /* identity header card — routes to public profile (GA-128) */
+  .id-card { display:flex; align-items:center; gap:13px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-xl); padding:14px 14px; box-shadow:var(--el-hairline); text-decoration:none; margin-bottom:8px; }
+  .id-av { flex:none; width:56px; height:56px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; }
+  .id-av.photo { background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); position:relative; overflow:hidden; }
+  .id-av.photo::after { content:""; position:absolute; width:34px; height:34px; border-radius:var(--radius-full); background:var(--border-default); opacity:.6; top:9px; left:11px; }
+  .id-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .id-name { font-size:17px; font-weight:700; color:var(--text-primary); display:block; }
+  .id-sub { font-size:12.5px; color:var(--int-primary); font-weight:600; display:block; }
+  .vchip { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; font-size:11px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:2px 9px 2px 7px; }
+  .vchip svg { width:12px; height:12px; stroke-width:2.6; }
+  .id-chev { flex:none; color:var(--text-tertiary); display:flex; align-items:center; }
+  .id-chev svg { width:20px; height:20px; stroke-width:2; }
+  .phone.rtl .id-chev svg { transform:scaleX(-1); }
+
+  .id-stats { display:flex; gap:8px; margin:0 2px 16px; }
+  .id-stat { flex:1; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 11px; display:flex; flex-direction:column; gap:2px; }
+  .id-stat .sv { font-size:15px; font-weight:700; color:var(--text-primary); display:block; }
+  .id-stat .sl { font-size:11px; color:var(--text-secondary); display:block; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* nav rows */
+  .grp-lb { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:8px 4px 8px; }
+  .nrows { list-style:none; display:flex; flex-direction:column; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-canvas); margin-bottom:6px; }
+  .nrow { display:flex; align-items:center; gap:13px; min-height:52px; padding:9px 13px; text-decoration:none; border-top:1px solid var(--border-hairline); background:transparent; border-left:none; border-right:none; border-bottom:none; width:100%; cursor:pointer; font-family:inherit; text-align:start; }
+  .nrows .nrow:first-child { border-top:none; }
+  .nrow-ic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .nrow-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .nrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .nrow-t { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .nrow-s { font-size:11.5px; color:var(--text-tertiary); display:block; }
+  .nrow-chev { flex:none; color:var(--text-tertiary); display:flex; align-items:center; }
+  .nrow-chev svg { width:19px; height:19px; stroke-width:2; }
+  .phone.rtl .nrow-chev svg { transform:scaleX(-1); }
+
+  /* language preference segmented row */
+  .lang-row { display:flex; align-items:center; gap:12px; min-height:56px; padding:9px 13px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); margin-bottom:14px; }
+  .lang-ic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .lang-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .lang-t { flex:1; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .seg { display:inline-flex; background:var(--bg-sunken); border-radius:var(--radius-md); padding:3px; gap:2px; flex:none; }
+  .seg-opt { font-size:12px; font-weight:600; color:var(--text-secondary); padding:5px 11px; border-radius:6px; border:none; background:transparent; cursor:pointer; font-family:inherit; min-height:32px; }
+  .seg-opt.on { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-hairline); }
+
+  .spacer-fill { flex:1; }
+  .signout { display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; width:100%; border-radius:var(--radius-md); background:transparent; border:1px solid var(--border-default); color:var(--text-secondary); font-size:14.5px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .signout svg { width:17px; height:17px; stroke-width:1.9; }
+
+  /* bottom tab bar — Profile active */
+  .tabbar { display:flex; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); box-shadow:var(--el-hairline); flex:none; }
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:56px; padding:8px 0; position:relative; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .tab svg { width:23px; height:23px; color:var(--text-secondary); stroke-width:1.75; }
+  .tab-lb { font-size:11px; color:var(--text-secondary); font-weight:400; }
+  .tab.active svg { color:var(--int-primary); }
+  .tab.active .tab-lb { color:var(--int-primary); font-weight:600; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Profile tab shell (GA-122)</h1>
+    <p>The Profile tab landing at <code>/account/profile</code> — a calm, sparse routing shell (DESIGN §9-J, §7.6a: an account screen, so <strong>no journey stepper</strong>). The identity header (initials-first avatar, first name only, a quiet verified chip) is itself the route into the rich public profile <code>GA-128</code>; plain list rows route to the editor <code>GA-129</code> and the settings hub <code>GA-123</code>, with quick rows for Trips, Reviews and an EN / اردو language preference, and a quiet Sign out. Profile is the active bottom tab. Panels: hub — initials &amp; photo-set (light) · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Hub · initials avatar (light)</span><span>Photo set · light</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the profile hub with the initials-first avatar, and the photo-set variant">
+      <div class="panel-tag">Light — profile hub · initials-first &amp; photo-set</div>
+      <div class="rowflex">
+
+        <!-- A · HUB, INITIALS AVATAR -->
+        <div class="pcol">
+          <div class="pcap">A · Profile hub — initials first-class</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="lbar">
+              <span class="lbar-title" id="aH">Profile</span>
+              <a class="ib" href="/account/settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V23a2 2 0 0 1-4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15H4.4a2 2 0 0 1 0-4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1A2 2 0 1 1 8.5 5.2l.1.1A1.7 1.7 0 0 0 11.5 4.6V4.4a2 2 0 0 1 4 0v.2A1.7 1.7 0 0 0 18.4 6l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a2 2 0 0 1 0 4h-.2a1.7 1.7 0 0 0-1.6 1.3z"/></svg></a>
+            </div>
+            <div class="screen">
+              <a class="id-card" href="/account/profile/view" aria-label="Aqib Gulab, verified. View your profile — see what hosts see">
+                <span class="id-av" aria-hidden="true">AG</span>
+                <span class="id-b">
+                  <span class="id-name">Aqib Gulab</span>
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  <span class="id-sub">View your profile</span>
+                </span>
+                <span class="id-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="id-stats" role="group" aria-label="Your activity">
+                <span class="id-stat"><span class="sv">Since <span class="num">2026</span></span><span class="sl">On SalamStay</span></span>
+                <span class="id-stat"><span class="sv"><span class="num">3</span> trips</span><span class="sl">Completed</span></span>
+              </div>
+
+              <div class="grp-lb">Your profile</div>
+              <ul class="nrows">
+                <li><a class="nrow" href="/account/profile/view">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">View your profile</span><span class="nrow-s">See exactly what hosts see</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/profile/edit">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Edit profile</span><span class="nrow-s">About you, photo, what's shared</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/settings">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Settings</span><span class="nrow-s">Account, payments, notifications</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+              </ul>
+
+              <div class="grp-lb">Your activity</div>
+              <ul class="nrows">
+                <li><a class="nrow" href="/trips">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Trips</span><span class="nrow-s"><span class="num">3</span> completed</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/profile/reviews">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Reviews</span><span class="nrow-s">About you and written by you</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+              </ul>
+
+              <div class="lang-row">
+                <span class="lang-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                <span class="lang-t">Language</span>
+                <span class="seg" role="radiogroup" aria-label="App language">
+                  <button class="seg-opt on" type="button" role="radio" aria-checked="true">English</button>
+                  <button class="seg-opt" type="button" role="radio" aria-checked="false" lang="ur">اردو</button>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="signout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Sign out</button>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab" href="/messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab active" href="/account/profile" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · HUB, PHOTO SET (neutral abstract placeholder — never a face) -->
+        <div class="pcol">
+          <div class="pcap">B · Photo set — abstract placeholder, no face</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="lbar">
+              <span class="lbar-title" id="bH">Profile</span>
+              <a class="ib" href="/account/settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></a>
+            </div>
+            <div class="screen">
+              <a class="id-card" href="/account/profile/view" aria-label="Aqib Gulab, verified. View your profile">
+                <span class="id-av photo" aria-hidden="true"></span>
+                <span class="id-b">
+                  <span class="id-name">Aqib Gulab</span>
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  <span class="id-sub">View your profile</span>
+                </span>
+                <span class="id-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="id-stats" role="group" aria-label="Your activity">
+                <span class="id-stat"><span class="sv">Since <span class="num">2026</span></span><span class="sl">On SalamStay</span></span>
+                <span class="id-stat"><span class="sv"><span class="num">3</span> trips</span><span class="sl">Completed</span></span>
+              </div>
+
+              <div class="grp-lb">Your profile</div>
+              <ul class="nrows">
+                <li><a class="nrow" href="/account/profile/view">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">View your profile</span><span class="nrow-s">See exactly what hosts see</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/profile/edit">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Edit profile</span><span class="nrow-s">Change or remove your photo</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/settings">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Settings</span><span class="nrow-s">Account, payments, notifications</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+              </ul>
+
+              <div class="lang-row">
+                <span class="lang-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                <span class="lang-t">Language</span>
+                <span class="seg" role="radiogroup" aria-label="App language">
+                  <button class="seg-opt on" type="button" role="radio" aria-checked="true">English</button>
+                  <button class="seg-opt" type="button" role="radio" aria-checked="false" lang="ur">اردو</button>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="signout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Sign out</button>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab" href="/messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab active" href="/account/profile" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The header card <b>is</b> the route into the rich public view (<code>GA-128</code>): tapping it, or the first "View your profile" row, opens exactly what a host sees (§9-J "Review what others see" — one tap). The initials avatar (A) and a set photo (B) are the <b>same first-class treatment</b> — declining a photo is never a lesser state (§9-J, §10.7); the set-photo tile is a neutral abstract placeholder, never a face, for this fictional identity. The two stats read as calm reliability, not a scoreboard: "Since 2026" (member year, honest for a 2026 joiner) and "3 trips" — plain facts of this profile, never platform-wide numbers (SEO §5 / §6). No journey stepper (§7.6a).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the profile hub">
+      <div class="panel-tag">Dark — profile hub</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">C · Hub — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="lbar">
+              <span class="lbar-title" id="cH">Profile</span>
+              <a class="ib" href="/account/settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></a>
+            </div>
+            <div class="screen">
+              <a class="id-card" href="/account/profile/view" aria-label="Aqib Gulab, verified. View your profile — see what hosts see">
+                <span class="id-av" aria-hidden="true">AG</span>
+                <span class="id-b">
+                  <span class="id-name">Aqib Gulab</span>
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                  <span class="id-sub">View your profile</span>
+                </span>
+                <span class="id-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="id-stats" role="group" aria-label="Your activity">
+                <span class="id-stat"><span class="sv">Since <span class="num">2026</span></span><span class="sl">On SalamStay</span></span>
+                <span class="id-stat"><span class="sv"><span class="num">3</span> trips</span><span class="sl">Completed</span></span>
+              </div>
+
+              <div class="grp-lb">Your profile</div>
+              <ul class="nrows">
+                <li><a class="nrow" href="/account/profile/view">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">View your profile</span><span class="nrow-s">See exactly what hosts see</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/profile/edit">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Edit profile</span><span class="nrow-s">About you, photo, what's shared</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/settings">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Settings</span><span class="nrow-s">Account, payments, notifications</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+              </ul>
+
+              <div class="grp-lb">Your activity</div>
+              <ul class="nrows">
+                <li><a class="nrow" href="/trips">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Trips</span><span class="nrow-s"><span class="num">3</span> completed</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/account/profile/reviews">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">Reviews</span><span class="nrow-s">About you and written by you</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+              </ul>
+
+              <div class="lang-row">
+                <span class="lang-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                <span class="lang-t">Language</span>
+                <span class="seg" role="radiogroup" aria-label="App language">
+                  <button class="seg-opt on" type="button" role="radio" aria-checked="true">English</button>
+                  <button class="seg-opt" type="button" role="radio" aria-checked="false" lang="ur">اردو</button>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="signout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Sign out</button>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab" href="/messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab active" href="/account/profile" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Dark is first-class — a green-tinted charcoal, every role AA-proven (§11); the shell reads identically, calm and routing-only.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the profile hub">
+      <div class="panel-tag">RTL · اردو — "پروفائل", mirrored · اردو زبان منتخب</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">D · Hub — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="lbar">
+              <span class="lbar-title" id="uH">پروفائل</span>
+              <a class="ib" href="/ur/account/settings" aria-label="ترتیبات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></a>
+            </div>
+            <div class="screen">
+              <a class="id-card" href="/ur/account/profile/view" aria-label="عاقب گلاب، تصدیق شدہ۔ اپنا پروفائل دیکھیں">
+                <span class="id-av" aria-hidden="true">ع</span>
+                <span class="id-b">
+                  <span class="id-name">عاقب گلاب</span>
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                  <span class="id-sub">اپنا پروفائل دیکھیں</span>
+                </span>
+                <span class="id-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="id-stats" role="group" aria-label="آپ کی سرگرمی">
+                <span class="id-stat"><span class="sv"><span class="num">2026</span> سے</span><span class="sl">سلام سٹے پر</span></span>
+                <span class="id-stat"><span class="sv"><span class="num">3</span> سفر</span><span class="sl">مکمل</span></span>
+              </div>
+
+              <div class="grp-lb">آپ کا پروفائل</div>
+              <ul class="nrows">
+                <li><a class="nrow" href="/ur/account/profile/view">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">اپنا پروفائل دیکھیں</span><span class="nrow-s">وہی جو میزبان دیکھتے ہیں</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/ur/account/profile/edit">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">پروفائل میں تبدیلی</span><span class="nrow-s">اپنے بارے میں، تصویر، کیا شیئر ہو</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+                <li><a class="nrow" href="/ur/account/settings">
+                  <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M20 12a8 8 0 0 0-.2-1.8l2-1.5-2-3.4-2.3 1a8 8 0 0 0-3-1.8L16 2H8l-.5 2.7a8 8 0 0 0-3 1.8l-2.3-1-2 3.4 2 1.5A8 8 0 0 0 2 12a8 8 0 0 0 .2 1.8l-2 1.5 2 3.4 2.3-1a8 8 0 0 0 3 1.8L8 22h8l.5-2.7a8 8 0 0 0 3-1.8l2.3 1 2-3.4-2-1.5A8 8 0 0 0 20 12z"/></svg></span>
+                  <span class="nrow-b"><span class="nrow-t">ترتیبات</span><span class="nrow-s">اکاؤنٹ، ادائیگیاں، اطلاعات</span></span>
+                  <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a></li>
+              </ul>
+
+              <div class="lang-row">
+                <span class="lang-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                <span class="lang-t">زبان</span>
+                <span class="seg" role="radiogroup" aria-label="ایپ کی زبان">
+                  <button class="seg-opt on" type="button" role="radio" aria-checked="true" lang="ur">اردو</button>
+                  <button class="seg-opt" type="button" role="radio" aria-checked="false">English</button>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="signout" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>سائن آؤٹ</button>
+            </div>
+            <nav class="tabbar" aria-label="بنیادی">
+              <a class="tab" href="/ur/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">دریافت</span></a>
+              <a class="tab" href="/ur/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">پسندیدہ</span></a>
+              <a class="tab" href="/ur/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">سفر</span></a>
+              <a class="tab" href="/ur/messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">پیغامات</span></a>
+              <a class="tab active" href="/ur/account/profile" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">پروفائل</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored end to end (§11): the settings gear and row chevrons swap to the reading-trailing edge, the language segmented shows اردو selected, and the avatar renders the Urdu initial <b>ع</b> from عاقب گلاب — the initials-from-own-name convention set in GA-027 / GA-090, never a transliterated Latin letter. Numbers keep <code>direction:ltr</code> isolation so "2026" and "3" never reorder.</p>
+    </section>
+
+  </main>
+</body>
+</html>

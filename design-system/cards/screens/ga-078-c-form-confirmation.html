@@ -1,0 +1,343 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — C-Form confirmation (GA-078)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1200px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:840px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1200px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:960px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title, .phone.rtl h2, .phone.rtl p, .phone.rtl .dl-t, .phone.rtl .dl-d, .phone.rtl .bnr-h, .phone.rtl .bnr-d, .phone.rtl .tk-t, .phone.rtl .tk-d, .phone.rtl .tk-when, .phone.rtl .btn, .phone.rtl a { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.9; }
+
+  /* description-list rows */
+  .dl-rows { display:flex; flex-direction:column; gap:9px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .dl-row { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .dl-t { font-size:12.5px; color:var(--text-secondary); flex:none; display:block; }
+  .dl-d { font-size:12.5px; font-weight:600; color:var(--text-primary); text-align:end; font-variant-numeric:tabular-nums; display:block; }
+  .dl-d.code { letter-spacing:.05em; }
+
+  /* status track — Filed -> Acknowledged (compact 2-node timeline) */
+  .track { list-style:none; margin:2px 0 16px; display:flex; flex-direction:column; }
+  .track li { display:flex; gap:12px; align-items:stretch; }
+  .tk-rail { display:flex; flex-direction:column; align-items:center; flex:none; width:26px; }
+  .tk-dot { width:26px; height:26px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; border:2px solid var(--border-default); background:var(--bg-canvas); color:var(--text-tertiary); }
+  .tk-dot svg { width:14px; height:14px; stroke-width:2.4; }
+  .tk-line { display:block; width:2px; flex:1; background:var(--border-hairline); min-height:16px; margin:3px 0; }
+  .track li:last-child .tk-line { display:none; }
+  .track li.done .tk-dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .track li.done .tk-line { background:var(--int-primary); }
+  .track li.now .tk-dot { border-color:var(--int-primary); color:var(--int-primary); box-shadow:0 0 0 3px var(--int-subtle); }
+  .tk-body { flex:1; padding-bottom:14px; display:flex; flex-direction:column; gap:2px; }
+  .tk-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .track li.upcoming .tk-t { color:var(--text-tertiary); }
+  .tk-d { font-size:12px; color:var(--text-secondary); display:block; }
+  .tk-when { font-size:11px; color:var(--text-tertiary); display:block; }
+
+  /* banners — practical note */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; border:1px solid transparent; }
+  .bnr.mute { background:var(--bg-raised); border-color:var(--border-hairline); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:19px; height:19px; stroke-width:1.85; }
+  .bnr.mute .bnr-ic svg { color:var(--text-secondary); }
+  .bnr .bnr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); display:block; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+
+  /* trip-detail entry-point row (dark panel) */
+  .home { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; }
+  .erow { display:flex; gap:11px; align-items:center; min-height:60px; border:1px solid var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-lg); padding:11px 13px; margin-bottom:10px; text-decoration:none; }
+  .erow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-primary); color:var(--text-on-brand); }
+  .erow-ic svg { width:19px; height:19px; stroke-width:2; }
+  .erow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .erow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .erow-s { font-size:12px; color:var(--text-secondary); display:block; }
+  .erow-chev { flex:none; color:var(--int-primary); }
+  .erow-chev svg { width:19px; height:19px; stroke-width:2; }
+  .erow-plain { display:flex; gap:11px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 13px; margin-bottom:10px; }
+  .erow-plain .erow-ic { background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); }
+  .sub-h { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:4px 2px 10px; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — C-Form confirmation (GA-078)</h1>
+    <p>The foreign-guest counterpart to GA-077 for the same Margalla View Apartment stay — the FRRO C-Form filing reference, confirmed calmly (DESIGN §9-D, consistent with the GA-048/GA-064 FRRO framing). No journey stepper — a post-book, pre-stay confirmation. States: <em>Filed</em> (just submitted, a short honest track), <em>Acknowledged</em> (FRRO has it, with a plain practical travel note), the trip-detail entry point, and Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Filed · light</span><span>Acknowledged · dark</span><span>Trip-detail entry</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the C-Form filed confirmation">
+      <div class="panel-tag">Light — filed · track in progress</div>
+      <div class="rowflex">
+
+        <!-- A · FILED -->
+        <div class="pcol">
+          <div class="pcap">A · Filed — just submitted</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">C-Form</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 14h6M9 17h4"/></svg></div>
+              <h2 id="aH">Your C-Form is filed</h2>
+              <p class="lead">The C-Form is the standard registration form for foreign guests staying in Pakistan. We file it for you — there's nothing you need to do.</p>
+
+              <div class="dl-rows">
+                <div class="dl-row"><span class="dl-t">Filing reference</span><span class="dl-d code">CF-FRRO-2026-6K2P9L</span></div>
+                <div class="dl-row"><span class="dl-t">Filed</span><span class="dl-d">Fri 14 Aug 2026 · 9:04 AM</span></div>
+                <div class="dl-row"><span class="dl-t">Property</span><span class="dl-d">Margalla View Apartment, Islamabad</span></div>
+                <div class="dl-row"><span class="dl-t">Stay</span><span class="dl-d">Fri 14 – Mon 17 Aug 2026</span></div>
+              </div>
+
+              <ol class="track">
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><span class="tk-t">Filed</span><span class="tk-d">Submitted to FRRO on your host's behalf.</span><span class="tk-when">Today, 9:04 AM</span></div>
+                </li>
+                <li class="now" aria-current="step">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div>
+                  <div class="tk-body"><span class="tk-t">Acknowledged</span><span class="tk-d">FRRO confirms receipt — usually within a few hours.</span></div>
+                </li>
+              </ol>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/is-f7-2bed-aug2026">Back to your trip</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The what-it-is one-liner sits directly under the heading, plain and factual — never alarmist, consistent with GA-048's FRRO framing. The reference block is a real fact list; the 2-node track (<code>&lt;ol&gt;</code>, <code>aria-current="step"</code>) mirrors GA-048's honest manual-process pattern without over-scoping a full verification timeline.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — acknowledged state and the trip-detail entry point">
+      <div class="panel-tag">Dark — acknowledged · trip-detail entry</div>
+      <div class="rowflex">
+
+        <!-- B · ACKNOWLEDGED -->
+        <div class="pcol">
+          <div class="pcap">B · Acknowledged — FRRO has it</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/trips/is-f7-2bed-aug2026" aria-label="Back to your trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">C-Form</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="bH">FRRO has acknowledged your C-Form</h2>
+              <p class="lead">The standard registration for foreign guests is complete for this stay — nothing more is needed from you.</p>
+
+              <div class="dl-rows">
+                <div class="dl-row"><span class="dl-t">Filing reference</span><span class="dl-d code">CF-FRRO-2026-6K2P9L</span></div>
+                <div class="dl-row"><span class="dl-t">Acknowledged</span><span class="dl-d">Fri 14 Aug 2026 · 1:40 PM</span></div>
+              </div>
+
+              <ol class="track">
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><span class="tk-t">Filed</span><span class="tk-d">Submitted to FRRO on your host's behalf.</span><span class="tk-when">Today, 9:04 AM</span></div>
+                </li>
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></div>
+                  <div class="tk-body"><span class="tk-t">Acknowledged</span><span class="tk-d">FRRO confirmed receipt.</span><span class="tk-when">Today, 1:40 PM</span></div>
+                </li>
+              </ol>
+
+              <div class="bnr mute" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">Good to know</span>
+                  <span class="bnr-d">Keep your passport with you when travelling in Pakistan — it may be checked at checkpoints or when you leave the country.</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/is-f7-2bed-aug2026">Back to your trip</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · TRIP DETAIL — ENTRY POINT -->
+        <div class="pcol">
+          <div class="pcap">C · Trip detail — where this is reached from</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/trips" aria-label="Back to trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Your trip</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="home">
+              <div class="sub-h">Compliance &amp; safety</div>
+              <a class="erow" href="/trips/is-f7-2bed-aug2026/c-form">
+                <span class="erow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></span>
+                <span class="erow-b"><span class="erow-t">C-Form</span><span class="erow-s">Acknowledged · CF-FRRO-2026-6K2P9L</span></span>
+                <span class="erow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+              <div class="erow-plain">
+                <span class="erow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span class="erow-b"><span class="erow-t">Check-in instructions</span><span class="erow-s">Access details &amp; host contact</span></span>
+              </div>
+              <div class="erow-plain">
+                <span class="erow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+                <span class="erow-b"><span class="erow-t">Safety</span><span class="erow-s">Emergency, trusted contacts, arrival share</span></span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Acknowledged restates the track with both nodes done (glyph + text, never colour alone) and adds the one practical travel line — factual, never scary, matching the "keep your passport with you" register rather than a warning banner. The trip-detail entry sits beside GA-077's registration row under the same "Compliance &amp; safety" heading (dark theme, AA-proven tokens).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the C-Form filed confirmation">
+      <div class="panel-tag">RTL · اردو — "آپ کا سی-فارم جمع ہو گیا", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Filed — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/trips/is-f7-2bed-aug2026" aria-label="اپنے سفر پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">سی-فارم</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9 14h6M9 17h4"/></svg></div>
+              <h2 id="uH">آپ کا سی-فارم جمع ہو گیا</h2>
+              <p class="lead">سی-فارم پاکستان میں غیر ملکی مہمانوں کی معیاری رجسٹریشن فارم ہے۔ ہم اسے آپ کی جانب سے جمع کرواتے ہیں — آپ کو کچھ کرنے کی ضرورت نہیں۔</p>
+
+              <div class="dl-rows">
+                <div class="dl-row"><span class="dl-t">حوالہ نمبر</span><span class="dl-d code">CF-FRRO-2026-6K2P9L</span></div>
+                <div class="dl-row"><span class="dl-t">جمع کرایا گیا</span><span class="dl-d"><span class="num">14</span> اگست <span class="num">2026</span> · <span class="num">9:04 AM</span></span></div>
+                <div class="dl-row"><span class="dl-t">پراپرٹی</span><span class="dl-d">مارگلہ ویو اپارٹمنٹ، اسلام آباد</span></div>
+                <div class="dl-row"><span class="dl-t">قیام</span><span class="dl-d"><span class="num">14 – 17</span> اگست <span class="num">2026</span></span></div>
+              </div>
+
+              <ol class="track">
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><span class="tk-t">جمع کرایا گیا</span><span class="tk-d">آپ کے میزبان کی جانب سے FRRO میں جمع کروایا گیا۔</span><span class="tk-when">آج، <span class="num">9:04 AM</span></span></div>
+                </li>
+                <li class="now" aria-current="step">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div>
+                  <div class="tk-body"><span class="tk-t">موصولی کی تصدیق</span><span class="tk-d">FRRO عموماً چند گھنٹوں میں موصولی کی تصدیق کرتا ہے۔</span></div>
+                </li>
+              </ol>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/trips/is-f7-2bed-aug2026">اپنے سفر پر واپس</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and track rail flip to the reading-start edge, the reference code and dates keep tabular non-mirrored digits (§11). The C-Form is described identically calm in Urdu — a routine filing, never a warning.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-003 Permissions primer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone frame */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.sheet h2,.sheet .why,.reason .rtx,.reason .rtx span,.qnote p,.os-note,.btn) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .sheet h2 { line-height:1.9; }
+
+  /* Safe-area annotation bands */
+  .sa-top, .sa-bottom { height:24px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; position:relative; z-index:3; }
+  .sa-bottom { border-top:1px dashed var(--border-default); background-color:var(--bg-canvas); }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+
+  /* Sheet-over-app scaffold */
+  .scr { min-height:600px; position:relative; display:flex; flex-direction:column; justify-content:flex-end; background:var(--bg-sunken); overflow:hidden; }
+  .behind { position:absolute; inset:0; padding:16px 16px 0; opacity:.45; }
+  .behind .bbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .behind .btitle { font-size:26px; font-weight:700; color:var(--text-primary); }
+  .behind .bround { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); }
+  .behind .bpill { height:52px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-bottom:16px; }
+  .behind .brow { display:flex; gap:12px; }
+  .behind .btile { flex:1; height:96px; border-radius:var(--radius-lg); }
+  .scrim-layer { position:absolute; inset:0; background:var(--scrim); z-index:1; }
+
+  .sheet { position:relative; z-index:2; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; padding:8px 20px 16px; box-shadow:var(--el-popover); }
+  .grab { width:36px; height:5px; border-radius:var(--radius-full); background:var(--border-default); margin:6px auto 16px; }
+  .sheet-ic { width:52px; height:52px; border-radius:var(--radius-lg); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .sheet-ic svg { width:26px; height:26px; color:var(--int-primary); stroke-width:1.75; }
+  .sheet-ic.muted { background:var(--bg-raised); }
+  .sheet-ic.muted svg { color:var(--text-secondary); }
+  .sheet h2 { font-size:19px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .sheet .why { font-size:14px; color:var(--text-secondary); line-height:1.5; margin-top:8px; }
+
+  .reasons { margin-top:16px; display:flex; flex-direction:column; gap:13px; }
+  .reason { display:flex; gap:11px; align-items:flex-start; }
+  .reason .ric { flex:none; width:28px; height:28px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .reason .ric svg { width:15px; height:15px; color:var(--text-secondary); stroke-width:1.75; }
+  .reason .rtx { font-size:13.5px; color:var(--text-primary); font-weight:500; line-height:1.35; }
+  .reason .rtx span { display:block; color:var(--text-secondary); font-size:12.5px; font-weight:400; margin-top:1px; }
+
+  /* Prayer quiet-hours — neutral, not endorsement (bg.raised, §10.3) */
+  .qnote { display:flex; gap:10px; align-items:flex-start; margin-top:15px; padding:11px 12px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .qnote svg { flex:none; width:18px; height:18px; color:var(--text-secondary); stroke-width:1.75; margin-top:1px; }
+  .qnote p { font-size:12.5px; color:var(--text-secondary); line-height:1.45; }
+  .qnote p b { color:var(--text-primary); font-weight:600; }
+
+  .os-note { display:flex; gap:7px; align-items:center; justify-content:center; margin-top:14px; font-size:11.5px; color:var(--text-tertiary); line-height:1.4; text-align:center; }
+  .os-note svg { flex:none; width:13px; height:13px; stroke-width:2; }
+
+  .sheet-actions { margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+
+  /* Buttons — Allow and Not now are equal weight (same size), differ only by fill */
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; padding:0 20px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; border:1px solid transparent; letter-spacing:-0.01em; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn-secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  /* Notes */
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:14px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-003 — Permissions primer (mobile app)</h1>
+    <p>A calm rationale sheet shown <b>before</b> the OS permission dialog — so the guest understands why we ask, and the one-shot native prompt isn't wasted. One bottom sheet per permission (location, notifications, camera): plain specific reasons, <b>"Not now" always at equal weight</b>, an honest "the system will ask next" note, and a no-nagging denied-state path back to Settings. Never an intrusive interstitial over content — it's requested in context (location only on "Stays near me").</p>
+    <div class="legend">
+      <span>Location primer</span>
+      <span>Notifications primer (+ prayer quiet-hours)</span>
+      <span>Dark · Camera primer</span>
+      <span>Denied state · path to Settings</span>
+      <span>RTL · اردو (notifications)</span>
+      <span>Equal-weight actions · ≥44pt · OS-prompt-follows</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LOCATION PRIMER ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Location</b> — requested on "Stays near me"</div>
+      <section class="phone" aria-label="Use your location — permission primer">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Explore</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile g-a" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="loc-t" aria-describedby="loc-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            </div>
+            <h2 id="loc-t">Use your location?</h2>
+            <p class="why" id="loc-w">Turn on location to see stays near you and sort by distance. We only use it when you tap "Stays near me" — never in the background.</p>
+            <div class="reasons">
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2"/></svg></span>
+                <span class="rtx">Find stays around you<span>Sorted by distance from where you are</span></span>
+              </div>
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></span>
+                <span class="rtx">Better distances and travel time<span>To the airport, a masjid, or the city centre</span></span>
+              </div>
+            </div>
+            <div class="os-note" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>Next, your phone will ask for permission.</span>
+            </div>
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary">Allow location</button>
+              <button type="button" class="btn btn-secondary">Not now</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Shown only when the guest chooses "Stays near me" — never a cold-launch grab. The reasons are plain and specific; <b>Not now</b> is the same size as Allow (equal weight, §10.7). The primer explains; the OS dialog decides.</p>
+    </div>
+
+    <!-- ============================== NOTIFICATIONS PRIMER ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Notifications</b> — with prayer quiet-hours</div>
+      <section class="phone" aria-label="Turn on notifications — permission primer">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Trips</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-900),var(--slate-600))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-800),var(--slate-500))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="nt-t" aria-describedby="nt-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            </div>
+            <h2 id="nt-t">Turn on notifications?</h2>
+            <p class="why" id="nt-w">So you don't miss anything that matters to your trip — the important updates only, on your schedule.</p>
+            <div class="reasons">
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l2 2 6-6"/><path d="M20 6L9 17l-2-2"/></svg></span>
+                <span class="rtx">Booking confirmations and updates<span>When a host accepts, or a plan changes</span></span>
+              </div>
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                <span class="rtx">Messages from your host<span>Directions, check-in details, questions</span></span>
+              </div>
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="rtx">Check-in reminders<span>A nudge the day you arrive and leave</span></span>
+              </div>
+            </div>
+            <div class="qnote">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <p><b>Prayer-time quiet hours.</b> We hold non-urgent notifications during your prayer times, so your phone stays quiet when it should.</p>
+            </div>
+            <div class="os-note" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>Next, your phone will ask for permission.</span>
+            </div>
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary">Turn on notifications</button>
+              <button type="button" class="btn btn-secondary">Not now</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Prayer-window quiet hours are framed as a plain <b>benefit</b> — a scheduling courtesy, rendered on the neutral <code>bg.raised</code> surface with a functional clock, never a brand-green "endorsement" or a religious widget (§10.1/§10.3). Reminders and messages are the honest reasons.</p>
+    </div>
+
+    <!-- ============================== DARK · CAMERA PRIMER ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — Camera · CNIC photo + listing photos</div>
+      <section class="phone dark" aria-label="Allow camera access — permission primer">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Verify</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-600))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-500))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cm-t" aria-describedby="cm-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2.5l1.4-2h6.2L18.5 6H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>
+            </div>
+            <h2 id="cm-t">Allow camera access?</h2>
+            <p class="why" id="cm-w">To take your identity photo for CNIC verification and to add photos to a listing. You can upload from your gallery instead if you prefer.</p>
+            <div class="reasons">
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M13 9h5M13 13h5M5 16h8"/></svg></span>
+                <span class="rtx">CNIC identity photo<span>Part of NADRA Verisys verification</span></span>
+              </div>
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M3 16l5-4 4 3 3-2 6 5"/></svg></span>
+                <span class="rtx">Add photos to a listing<span>Hosts photograph the home they're listing</span></span>
+              </div>
+            </div>
+            <div class="os-note" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>Next, your phone will ask for permission.</span>
+            </div>
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary">Allow camera</button>
+              <button type="button" class="btn btn-secondary">Not now</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Camera is asked <b>in context</b> — at CNIC verification or when adding a listing photo, not at launch. The <b>gallery-upload fallback</b> is named up front, so declining the camera is never a dead end (§13-inputs non-camera fallback).</p>
+    </div>
+
+    <!-- ============================== DENIED STATE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Denied state</b> — calm guidance, path to Settings, no nagging</div>
+      <section class="phone" aria-label="Location is off — denied-state guidance">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Explore</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dn-t" aria-describedby="dn-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic muted" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 1.3-4"/><path d="M8.6 4.3A7 7 0 0 1 19 10c0 2-1.3 4.3-2.9 6.4"/><path d="M4 4l16 16"/></svg>
+            </div>
+            <h2 id="dn-t">Location is turned off</h2>
+            <p class="why" id="dn-w">No problem — you can still search by typing a city or area. To use "Stays near me" later, turn on location for SalamStay in your phone Settings.</p>
+            <div class="sheet-actions">
+              <a class="btn btn-primary" href="/search">Search by city instead</a>
+              <button type="button" class="btn btn-secondary">Open Settings</button>
+            </div>
+            <div class="os-note" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>Settings › SalamStay › Location › While Using the App.</span>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap"><b>No dead end, no nagging:</b> denial keeps the guest moving — <b>Search by city</b> is the primary path; <b>Open Settings</b> is the quiet secondary with an exact route. We ask once and respect the answer; we never re-prompt on a loop.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو (notifications) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — Notifications, mirrored</div>
+      <section class="phone rtl" lang="ur" dir="rtl" aria-label="اطلاعات آن کریں — اجازت کی وضاحت">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">سفر</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-900),var(--slate-600))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-800),var(--slate-500))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ur-t" aria-describedby="ur-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            </div>
+            <h2 id="ur-t">اطلاعات آن کریں؟</h2>
+            <p class="why" id="ur-w">تاکہ آپ کے سفر سے متعلق ضروری اپ ڈیٹس آپ تک بروقت پہنچیں — صرف اہم اطلاعات، آپ کے وقت پر۔</p>
+            <div class="reasons">
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l2 2 6-6"/><path d="M20 6L9 17l-2-2"/></svg></span>
+                <span class="rtx">بُکنگ کی تصدیق اور اپ ڈیٹس<span>جب میزبان قبول کرے یا کوئی تبدیلی ہو</span></span>
+              </div>
+              <div class="reason">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                <span class="rtx">میزبان کے پیغامات<span>راستہ، چیک اِن کی تفصیل، سوالات</span></span>
+              </div>
+            </div>
+            <div class="qnote">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <p><b>نماز کے اوقات میں خاموشی۔</b> نماز کے دوران ہم غیر ضروری اطلاعات روک کر رکھتے ہیں، تاکہ آپ کا فون بروقت خاموش رہے۔</p>
+            </div>
+            <div class="os-note" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>اس کے بعد، آپ کا فون اجازت مانگے گا۔</span>
+            </div>
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary">اطلاعات آن کریں</button>
+              <button type="button" class="btn btn-secondary">ابھی نہیں</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">RTL mirrors the sheet, reason rows (icon → trailing), and action stack; non-directional glyphs (bell, check, clock) do not flip. Real Urdu (Nastaliq); the prayer quiet-hours benefit reads faithfully, still neutral and calm.</p>
+    </div>
+
+    <!-- ============================== NOTES ============================== -->
+    <div class="panel notes" style="align-self:start">
+      <div class="panel-tag">Rules, states &amp; rationale</div>
+      <ul>
+        <li><b>Primer before prompt.</b> The rationale sheet always precedes the one-shot OS dialog, so the native prompt isn't spent on a confused user; every sheet ends with "the system will ask next."</li>
+        <li><b>In context, ask-late.</b> Location is requested only on "Stays near me," camera only at CNIC verify / add-a-photo, notifications after first meaningful action — never a cold-launch grab, never an intrusive interstitial over content (SEO §6).</li>
+        <li><b>"Not now" equal weight.</b> The decline is the same size and prominence as Allow — no dimmed micro-link, no dark pattern (§10.7, §10.9 optionality is explicit).</li>
+        <li><b>Prayer quiet-hours.</b> Framed as a plain notification benefit on the neutral <code>bg.raised</code> surface — a courtesy, never a brand-green endorsement or a religious widget (§10.1/§10.3).</li>
+        <li><b>Denied state guidance.</b> A calm path to Settings with the exact route <b>plus</b> a keep-moving primary ("Search by city") — no nagging, no re-prompt loop, no dead end.</li>
+        <li><b>Fallbacks named.</b> Camera denial → gallery upload; location denial → type a city. Declining any permission never blocks browsing or booking.</li>
+        <li><b>Motion / a11y.</b> Sheet rises from the bottom edge and dismisses the same way (spatial, reversible); reduced-motion → cross-fade. Each sheet is a focus-trapped <code>role="dialog"</code>; every control ≥44pt with a localized Urdu name.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-003 · rationale-before-prompt pattern · cultural law <code>DESIGN §10</code> · a11y <code>§11</code> · gate <code>ss C2</code>. States in-DOM: location · notifications (+ quiet-hours) · camera (dark) · denied · RTL/Urdu.</p>
+    </div>
+  </main>
+</body>
+</html>

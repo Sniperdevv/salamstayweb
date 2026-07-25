@@ -1,0 +1,381 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-035 House rules detail (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --map-land:#EEF0F1; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+    --map-land:#141918; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1320px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1320px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); display:flex; flex-direction:column; }
+
+  /* peek of the listing behind the sheet */
+  .peek { position:relative; height:92px; background:linear-gradient(158deg,var(--bg-raised),var(--bg-sunken)); flex:none; overflow:hidden; }
+  .peek img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .peek .dim { position:absolute; inset:0; background:var(--scrim); }
+  .statusbar { position:absolute; top:0; left:0; right:0; height:44px; z-index:6; display:flex; align-items:center; justify-content:space-between; padding:0 22px; pointer-events:none; }
+  .statusbar .t { font-size:13px; font-weight:600; color:#fff; font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:flex; gap:5px; align-items:center; }
+  .statusbar .ic svg { width:16px; height:16px; color:#fff; }
+
+  /* ============ Bottom sheet ============ */
+  .sheet { position:relative; z-index:2; margin-top:-20px; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; display:flex; flex-direction:column; flex:1; }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; flex:none; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .shead { display:flex; align-items:center; gap:12px; padding:8px 18px 12px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .shead .st { flex:1; min-width:0; }
+  .shead .st h2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em; }
+  .shead .st p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; }
+  .closeb { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; color:var(--text-primary); }
+  .closeb svg { width:18px; height:18px; stroke-width:2; }
+
+  .sbody { padding:6px 18px 12px; }
+
+  /* group */
+  .grp { padding-top:15px; }
+  .gsub { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:2px; }
+  .gnote { font-size:12px; color:var(--text-secondary); margin-bottom:2px; line-height:1.45; }
+
+  /* rule row — same grammar as any amenity (§10.1); cultural asks sit at identical weight */
+  .arow { display:flex; gap:13px; align-items:flex-start; padding:11px 0; border-top:1px solid var(--border-hairline); }
+  .grp .arow:first-of-type { border-top:none; }
+  .arow .ic { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .arow .ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.75; }
+  .arow .tx { flex:1; min-width:0; }
+  .arow .tx .t { font-size:14px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .arow .tx .d { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+
+  /* host's free-text note — plausible sample content, styling demo */
+  .hostnote { margin-top:16px; padding:14px 15px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .hostnote .hn-h { display:flex; align-items:center; gap:11px; }
+  .hostnote .av { width:38px; height:38px; flex:none; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text-secondary); position:relative; }
+  .hostnote .av .tick { position:absolute; bottom:-2px; right:-2px; width:17px; height:17px; border-radius:var(--radius-full); background:var(--success-bg); border:2px solid var(--bg-raised); display:flex; align-items:center; justify-content:center; }
+  .hostnote .av .tick svg { width:9px; height:9px; color:var(--success-fg); stroke-width:2.6; }
+  .hostnote .hn-name { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .hostnote .hn-role { font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+  .hostnote .hn-body { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:10px; }
+
+  .microcopy { font-size:12px; color:var(--text-tertiary); line-height:1.5; margin-top:14px; display:flex; gap:8px; align-items:flex-start; }
+  .microcopy svg { width:14px; height:14px; flex:none; margin-top:1px; }
+
+  /* ============ Acknowledgement footer — checkbox gate that ties into booking review (GA-038) ============ */
+  .ack { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); flex:none; padding:14px 18px calc(14px + 6px); }
+  .ackbadge { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; letter-spacing:.02em; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:4px 9px; margin-bottom:11px; }
+  .ackbadge svg { width:12px; height:12px; }
+  .checkrow { display:flex; gap:12px; align-items:flex-start; cursor:pointer; }
+  .box { width:22px; height:22px; flex:none; border-radius:var(--radius-sm); border:1.5px solid var(--border-strong); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .box svg { width:14px; height:14px; color:var(--text-on-brand); stroke-width:2.6; opacity:0; }
+  .checkrow.on .box { background:var(--int-primary); border-color:var(--int-primary); }
+  .checkrow.on .box svg { opacity:1; }
+  .checkrow .cl { font-size:13.5px; color:var(--text-primary); line-height:1.45; }
+  .checkrow .cl b { font-weight:600; }
+  .checkrow .cl a { color:var(--int-primary); text-decoration:underline; text-underline-offset:2px; font-weight:600; }
+  .btn { width:100%; height:48px; margin-top:13px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
+  .btn[disabled] { background:var(--bg-sunken); color:var(--text-disabled); border:1px solid var(--border-default); cursor:not-allowed; }
+  .helper { font-size:12px; color:var(--text-secondary); text-align:center; margin-top:9px; }
+
+  /* plain close footer (reading variant) */
+  .foot { padding:12px 18px calc(12px + 6px); border-top:1px solid var(--border-hairline); background:var(--bg-canvas); flex:none; }
+
+  a:focus-visible, button:focus-visible, .checkrow:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL — Urdu */
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.75; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+  .phone.rtl .hostnote .av .tick { right:auto; left:-2px; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-035 — House rules detail (mobile app)</h1>
+    <p>The full house rules a guest reads before booking — check-in/out, guests &amp; visitors, quiet hours, smoking, and the host's own cultural asks, every group at one calm visual weight. The host's preferences are stated as plain facts, never as a lecture (§10.7): "no alcohol on the premises" reads exactly like "check-out before 11 AM". A host free-text note adds their voice. The acknowledgement variant shows the "I agree to the house rules" checkbox that gates the booking-review step (GA-038) — the continue button stays disabled until it's ticked, and the reason why is stated plainly.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>Reading + acknowledgement states</span><span>Cultural asks = neutral weight (§10.7)</span><span>Host note free-text</span><span>Checkbox gate → GA-038</span><span>Disabled state explains why</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT — READING (full) ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — reading · full rules</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="peek">
+            <img src="../../assets/photos/is-f7-living.jpg" alt="" aria-hidden="true" />
+            <div class="dim"></div>
+            <div class="statusbar">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>House rules</h2>
+                <p>Margalla View Apartment · F-7, Islamabad</p>
+              </div>
+              <button class="closeb" aria-label="Close house rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+
+            <div class="sbody">
+
+              <!-- Checking in & out -->
+              <section class="grp" aria-label="Checking in and out">
+                <div class="gsub">Checking in &amp; out</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t">Check-in 2:00 PM – 8:00 PM</div><div class="d">Self check-in with a lockbox; message the host if you'll arrive later.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></span><div class="tx"><div class="t">Check-out before 11:00 AM</div><div class="d">Leave the keys in the lockbox on your way out.</div></div></div>
+              </section>
+
+              <!-- Guests & visitors -->
+              <section class="grp" aria-label="Guests and visitors">
+                <div class="gsub">Guests &amp; visitors</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><path d="M3 19v-1.5a3.5 3.5 0 0 1 7 0V19M14 19v-1.5a3.5 3.5 0 0 1 7 0V19"/></svg></span><div class="tx"><div class="t">Up to 6 guests</div><div class="d">Suitable for families and children.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="8" r="3.5"/><path d="M19 8v6M22 11h-6"/></svg></span><div class="tx"><div class="t">Daytime visitors welcome</div><div class="d">Please let the host know if guests will stay overnight.</div></div></div>
+              </section>
+
+              <!-- Quiet hours -->
+              <section class="grp" aria-label="Quiet hours">
+                <div class="gsub">Quiet &amp; the neighbours</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t">Quiet hours 10:00 PM – 6:00 AM</div><div class="d">It's a family building — keep music and gatherings low at night.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No parties or events</div><div class="d">The building doesn't allow large gatherings.</div></div></div>
+              </section>
+
+              <!-- Smoking & the home -->
+              <section class="grp" aria-label="Smoking and the home">
+                <div class="gsub">Smoking &amp; the home</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No smoking inside</div><div class="d">You're welcome to smoke on the balcony.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><path d="M6 21l3-8 4 3 2 5M9 13l-2-3 4-2 3 3 3-1"/></svg></span><div class="tx"><div class="t">No pets</div><div class="d">The host keeps the home pet-free for allergies.</div></div></div>
+              </section>
+
+              <!-- What the host asks — cultural preferences, stated as facts (§10.7) -->
+              <section class="grp" aria-label="What the host asks">
+                <div class="gsub">What the host asks</div>
+                <p class="gnote">Ayesha's preferences for the home. Please read them the same way as the rest.</p>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t">No alcohol on the premises</div><div class="d">This is a no-alcohol home.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span><div class="tx"><div class="t">Shoes off inside, please</div><div class="d">There's a rack by the front door.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span><div class="tx"><div class="t">Kitchen is kept halal</div><div class="d">Please don't bring pork into the home.</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="9" rx="1.5"/><path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8"/></svg></span><div class="tx"><div class="t">Prayer mat &amp; marked Qibla</div><div class="d">In the main bedroom, there if you'd like them.</div></div></div>
+              </section>
+
+              <!-- Host free-text note -->
+              <div class="hostnote">
+                <div class="hn-h">
+                  <span class="av" aria-hidden="true">IA<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                  <div><div class="hn-name">A note from Ayesha</div><div class="hn-role">Verified host · F-7, Islamabad</div></div>
+                </div>
+                <p class="hn-body">"Welcome — please treat the flat as your own. The geyser takes about ten minutes to warm up, and the trash goes out by 9 AM. If anything's unclear, message me any time; I usually reply within the hour."</p>
+              </div>
+
+              <p class="microcopy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>You'll agree to these rules once, at booking review, before you pay.</p>
+            </div>
+
+            <div class="foot"><button class="btn">Close</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK — ACKNOWLEDGEMENT (unchecked → gated) ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — acknowledgement · not yet ticked (gated)</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="peek">
+            <img src="../../assets/photos/is-f7-bedroom.jpg" alt="" aria-hidden="true" />
+            <div class="dim"></div>
+            <div class="statusbar">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>Agree to the house rules</h2>
+                <p>Booking review · Margalla View Apartment</p>
+              </div>
+              <button class="closeb" aria-label="Back to booking review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            </div>
+
+            <div class="sbody">
+              <section class="grp" aria-label="Key rules to confirm">
+                <div class="gsub">Please confirm you'll follow these</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t">Check-in 2 PM · Check-out 11 AM</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t">Quiet hours 10 PM – 6 AM</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No smoking inside · no parties</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t">No alcohol on the premises</div></div></div>
+              </section>
+            </div>
+
+            <div class="ack">
+              <span class="ackbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M9 12l2 2 4-4"/></svg>Required to book</span>
+              <div class="checkrow" role="checkbox" aria-checked="false" tabindex="0">
+                <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="cl">I agree to follow <b>Ayesha's house rules</b>. <a href="/rooms/is-f7-2bed/house-rules">Read them again</a></span>
+              </div>
+              <button class="btn" disabled aria-disabled="true">Agree &amp; continue</button>
+              <p class="helper">Tick the box above to continue to payment.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATE — ACKNOWLEDGEMENT ticked (enabled) ============================================================= -->
+    <div class="col">
+      <div class="cap">State — ticked · continue enabled</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="peek" style="height:76px"><img src="../../assets/photos/is-f7-view.jpg" alt="" aria-hidden="true" /><div class="dim"></div><div class="statusbar"><span class="t">9:41</span></div></div>
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>Agree to the house rules</h2>
+                <p>Booking review · Margalla View Apartment</p>
+              </div>
+              <button class="closeb" aria-label="Back to booking review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            </div>
+            <div class="sbody">
+              <section class="grp" aria-label="Key rules to confirm">
+                <div class="gsub">Please confirm you'll follow these</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t">Check-in 2 PM · Check-out 11 AM</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t">Quiet hours 10 PM – 6 AM</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t">No alcohol on the premises</div></div></div>
+              </section>
+            </div>
+            <div class="ack">
+              <span class="ackbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M9 12l2 2 4-4"/></svg>Required to book</span>
+              <div class="checkrow on" role="checkbox" aria-checked="true" tabindex="0">
+                <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="cl">I agree to follow <b>Ayesha's house rules</b>.</span>
+              </div>
+              <button class="btn">Agree &amp; continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu — reading (condensed) ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · reading</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="peek">
+            <img src="../../assets/photos/is-f7-dining.jpg" alt="" aria-hidden="true" />
+            <div class="dim"></div>
+            <div class="statusbar">
+              <span class="t num">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2 class="ur">گھر کے اصول</h2>
+                <p class="ur">مارگلہ ویو اپارٹمنٹ · ایف-۷</p>
+              </div>
+              <button class="closeb" aria-label="اصول بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="sbody">
+              <section class="grp" aria-label="آمد و روانگی">
+                <div class="gsub ur">آمد و روانگی</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t ur">چیک اِن <span class="num">2:00 PM – 8:00 PM</span></div><div class="d ur">لاک باکس سے خود چیک اِن۔</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></span><div class="tx"><div class="t ur">چیک آؤٹ <span class="num">11:00 AM</span> سے پہلے</div></div></div>
+              </section>
+              <section class="grp" aria-label="سکون کے اوقات">
+                <div class="gsub ur">سکون کے اوقات</div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t ur">خاموشی <span class="num">10:00 PM – 6:00 AM</span></div><div class="d ur">فیملی عمارت ہے — رات کو آواز کم رکھیں۔</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t ur">اندر سگریٹ نوشی نہیں</div></div></div>
+              </section>
+              <section class="grp" aria-label="میزبان کی درخواست">
+                <div class="gsub ur">میزبان کی درخواست</div>
+                <p class="gnote ur">عائشہ کی گھر کے لیے ترجیحات — انہیں باقی اصولوں کی طرح پڑھیں۔</p>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M7 3h10l-.7 6a4.3 4.3 0 0 1-8.6 0z"/><path d="M4 4l16 16"/></svg></span><div class="tx"><div class="t ur">احاطے میں الکحل نہیں</div><div class="d ur">یہ الکحل سے پاک گھر ہے۔</div></div></div>
+                <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span><div class="tx"><div class="t ur">کچن حلال رکھا جاتا ہے</div><div class="d ur">براہِ کرم گھر میں پورک نہ لائیں۔</div></div></div>
+              </section>
+            </div>
+            <div class="foot"><button class="btn ur">بند کریں</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

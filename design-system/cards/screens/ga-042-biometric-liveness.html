@@ -1,0 +1,557 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Biometric liveness, guest (GA-042)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ---- phone frame ---- */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.cam-title,.cam-sub,h2,.lead,.step-lb,.btn,.st,.sd,.at-t,.at-d,.path-t,.path-s,.path-tag,.pv-t,.pv-s,.reassure,.helplink,.ph-t,.privacy-list li,.chal-t,.chal-s,.byperson) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .phone.rtl .backchev { transform:scaleX(-1); }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom.oncam { background:var(--scrim); border-top:none; }
+  .sa-bottom.oncam span { color:var(--text-on-inverse); opacity:.85; }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+  .sa-bottom.oncam .home-ind { background:var(--text-on-inverse); }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* thin-bar SUB-progress within Verify (§7.6a); the challenge sub-bar is the same grammar, one tier down */
+  .stepper { display:flex; gap:4px; padding:10px 18px 4px; flex:none; }
+  .stepper i { height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); }
+  .stepper i.done, .stepper i.now { background:var(--int-primary); }
+  .stepper i.now { opacity:.55; }
+  .step-lb { font-size:11px; color:var(--text-tertiary); padding:2px 18px 0; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 18px 20px; }
+  .screen h2 { font-size:20px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:8px; }
+  .screen .lead { font-size:13.5px; color:var(--text-secondary); margin-bottom:16px; }
+  .hero-ic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .hero-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .hero-ic.info { background:var(--info-bg); color:var(--info-fg); }
+  .hero-ic svg { width:28px; height:28px; stroke-width:1.6; }
+  .spacer-fill { flex:1; }
+
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.ghost { background:transparent; color:var(--int-primary); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:14px; font-size:13px; color:var(--int-primary); font-weight:600; text-decoration:none; }
+  .helplink:hover { text-decoration:underline; }
+
+  /* ---- face-oval camera surface — HA-008 / GA-130 shared stage ---- */
+  .cam { flex:1; position:relative; background:var(--bg-sunken); display:flex; flex-direction:column; overflow:hidden; }
+  .cam-scrim-top { position:absolute; top:0; left:0; right:0; z-index:3; background:var(--scrim); display:flex; flex-direction:column; align-items:center; padding:4px 4px 12px; }
+  .cam-scrim-top .cam-bar { display:flex; align-items:center; width:100%; min-height:48px; }
+  .cam-scrim-top .ib svg { color:var(--text-on-inverse); }
+  .cam-title { flex:1; text-align:center; font-size:13.5px; font-weight:600; color:var(--text-on-inverse); padding:0 2px; }
+  .cam-sub { font-size:11.5px; color:var(--text-on-inverse); opacity:.85; text-align:center; margin-top:2px; }
+  /* challenge sub-bar — thin bars, nested one tier below the Verify sub-progress */
+  .chalbar { display:flex; gap:4px; width:78%; margin-top:9px; }
+  .chalbar i { height:3px; flex:1; border-radius:var(--radius-full); background:var(--text-on-inverse); opacity:.28; }
+  .chalbar i.done { opacity:.95; }
+  .chalbar i.now { opacity:.6; }
+  .chal-s { font-size:10.5px; font-weight:600; color:var(--text-on-inverse); opacity:.8; margin-top:6px; letter-spacing:.02em; }
+
+  .cam-stage { flex:1; position:relative; display:flex; align-items:center; justify-content:center; }
+  .guide.oval { position:relative; width:178px; height:228px; border-radius:50%; box-shadow:0 0 0 999px var(--scrim); }
+  .guide-ring { position:absolute; inset:0; border:2px solid rgba(255,255,255,.7); border-radius:50%; }
+  .guide-ring.brand { inset:-6px; border:2px solid var(--int-primary); opacity:.9; }
+  .turn-arrow { position:absolute; left:-30px; top:50%; transform:translateY(-50%); color:var(--text-on-inverse); opacity:.9; }
+  .turn-arrow svg { width:26px; height:26px; stroke-width:2; }
+  .hint-line { position:absolute; bottom:100px; left:50%; transform:translateX(-50%); z-index:3; display:inline-flex; align-items:center; gap:7px; background:var(--scrim); border-radius:var(--radius-full); padding:7px 13px; white-space:nowrap; }
+  .hint-line svg { width:15px; height:15px; stroke-width:2; color:var(--success-fg); flex:none; }
+  .hint-line span { font-size:12px; font-weight:600; color:var(--text-on-inverse); }
+  .cam-scrim-bot { position:absolute; bottom:0; left:0; right:0; z-index:3; background:var(--scrim); padding:12px 18px 16px; }
+  .fallback-btn { width:100%; min-height:44px; border-radius:var(--radius-md); background:transparent; border:1px solid rgba(255,255,255,.5); color:var(--text-on-inverse); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .fallback-btn svg { width:17px; height:17px; stroke-width:2; }
+
+  /* privacy assurance — concept level, no invented retention promise */
+  .privacy { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .privacy-hd { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+  .privacy-hd svg { width:18px; height:18px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .privacy-hd .ph-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .privacy-list { display:flex; flex-direction:column; gap:9px; }
+  .privacy-list li { display:flex; gap:9px; align-items:flex-start; font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .privacy-list li > svg { width:15px; height:15px; stroke-width:2; color:var(--int-primary); flex:none; margin-top:2px; }
+
+  /* challenge preview — what the two steps will be, before the camera opens */
+  .chal { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .chal-row { display:flex; gap:11px; align-items:flex-start; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:12px 13px; }
+  .chal-row .ci { width:32px; height:32px; flex:none; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .chal-row .ci svg { width:17px; height:17px; stroke-width:1.7; }
+  .chal-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .chal-s { font-size:11.5px; color:var(--text-secondary); margin-top:2px; display:block; line-height:1.5; }
+
+  /* attempt caps — a calm count, never a countdown to failure */
+  .attemptcap { border:1px solid var(--info-border); background:var(--info-bg); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; display:flex; gap:11px; align-items:flex-start; }
+  .attemptcap > svg { width:19px; height:19px; stroke-width:1.9; color:var(--info-fg); flex:none; margin-top:1px; }
+  .at-t { font-size:12.5px; font-weight:600; color:var(--info-fg); display:block; }
+  .at-d { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.5; display:block; }
+
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .statusrow .sico { flex:none; margin-top:1px; }
+  .statusrow .sico svg { width:19px; height:19px; stroke-width:2; }
+  .statusrow.ok .sico svg { color:var(--success-fg); }
+  .statusrow.info .sico svg { color:var(--info-fg); }
+  .statusrow .st { font-size:12.5px; font-weight:600; display:block; }
+  .statusrow.ok .st { color:var(--success-fg); }
+  .statusrow.info .st { color:var(--info-fg); }
+  .statusrow .sd { font-size:12px; color:var(--text-secondary); margin-top:2px; display:block; line-height:1.5; }
+
+  /* fallback ladder — equal-dignity paths (HA-008 / GA-044 lineage) */
+  .path-list { display:flex; flex-direction:column; gap:11px; margin-bottom:14px; }
+  .path-card { display:flex; gap:12px; align-items:flex-start; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:13px; background:var(--bg-canvas); }
+  .path-ic { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .path-ic svg { width:19px; height:19px; stroke-width:1.7; }
+  .path-body { flex:1; min-width:0; }
+  .path-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .path-tag { font-size:10px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+  .path-s { font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.5; display:block; }
+  .path-act { display:block; margin-top:8px; font-size:12.5px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .path-act:hover { text-decoration:underline; }
+  .choose-lb { font-size:12px; font-weight:600; color:var(--text-secondary); margin:2px 0 10px; }
+
+  /* queued preview strip — neutral placeholder, never a real face */
+  .pv { display:flex; gap:11px; align-items:center; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; }
+  .pv-thumb { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); flex:none; border:1px solid var(--border-hairline); }
+  .pv-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .pv-s { font-size:11.5px; color:var(--text-secondary); margin-top:1px; display:block; }
+
+  .byperson { display:inline-flex; align-items:center; gap:8px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; font-size:11.5px; font-weight:600; color:var(--text-secondary); margin-bottom:14px; }
+  .byperson svg { width:15px; height:15px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+
+  .reassure { font-size:12px; color:var(--text-tertiary); margin-top:12px; text-align:center; line-height:1.5; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:820px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Biometric liveness, guest (GA-042)</h1>
+    <p>The guest selfie/liveness check that follows CNIC capture (<code>GA-041</code>) inside the Verify step. It is the direct guest mirror of the shipped host screen <code>HA-008</code>: the same face-oval stage with the <strong>turn arrow nested inside it</strong>, the same <strong>attempt caps stated as a calm count</strong> — never a countdown to failure, always paired with what happens next — and the same <strong>first-class upload fallback</strong>, because in Pakistan a live camera stream is a data cost, not a given. The one addition the guest flow needs is a <strong>challenge sub-bar</strong>: the two movements are thin bars nested one tier below the Verify sub-progress, so a guest can see how far through the challenge they are without a second competing stepper (§7.6a). <strong>No real face is rendered anywhere</strong> — the camera preview and queued thumbnail are neutral CSS placeholders, the initials-avatar ethics precedent. Panels: camera challenge · privacy assurance · verified (light) · attempt caps · fallback ladder · queued (dark) · اردو / RTL.</p>
+    <div class="legend">
+      <span>Light — challenge · privacy · verified</span>
+      <span>Dark — attempt caps · fallback ladder · queued</span>
+      <span>RTL · اردو</span>
+      <span>Step 2 of 4 · Verify — bars are sub-progress</span>
+      <span>No real face imagery</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — camera challenge, privacy assurance and the verified state">
+      <div class="panel-tag">Light — camera challenge · privacy assurance · verified</div>
+      <div class="rowflex">
+
+        <!-- A — CAMERA CHALLENGE -->
+        <div class="pcol">
+          <div class="pcap">A · Camera — one plain instruction at a time</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="cam">
+              <div class="cam-scrim-top">
+                <div class="cam-bar">
+                  <a class="ib" href="/checkout/is-f7-2bed/verify/selfie" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+                  <span class="cam-title" id="aH">Turn your head slowly to the left</span>
+                  <span class="spacer" aria-hidden="true"></span>
+                </div>
+                <span class="cam-sub">Just one simple movement</span>
+                <div class="chalbar" aria-hidden="true"><i class="done"></i><i class="now"></i></div>
+                <span class="chal-s">Movement <span class="num">2</span> of <span class="num">2</span></span>
+              </div>
+              <div class="cam-stage" role="img" aria-label="Live camera preview. An oval guide shows where to place your face; the area outside the oval is dimmed. An arrow indicates turning slowly to the left. This is movement 2 of 2.">
+                <p class="sr-only">Center your face in the oval and turn your head slowly to the left when ready. This is the second and last movement. No sudden movements are needed.</p>
+                <div class="guide oval" aria-hidden="true">
+                  <span class="guide-ring"></span>
+                  <span class="guide-ring brand"></span>
+                  <span class="turn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5l-7 7 7 7M4 12h16"/></svg></span>
+                </div>
+                <span class="hint-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg><span>Good light — hold there a moment</span></span>
+              </div>
+              <div class="cam-scrim-bot">
+                <a class="fallback-btn" href="/checkout/is-f7-2bed/verify/selfie/other-ways"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg>Trouble with the camera? See other ways</a>
+              </div>
+            </div>
+            <div class="sa-bottom oncam"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B — PRIVACY ASSURANCE / PRE-CAMERA -->
+        <div class="pcol">
+          <div class="pcap">B · Before the camera — what it is, plainly</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/checkout/is-f7-2bed/verify/cnic" aria-label="Back"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">One quick selfie</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i></div>
+            <p class="step-lb">Step 2 of 4 · Verify</p>
+            <div class="screen">
+              <div class="hero-ic info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3.4"/><path d="M5.5 20c1-3.5 12-3.5 13 0"/><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></div>
+              <h2 id="bH">A short check that it's really you</h2>
+              <p class="lead">One quick selfie confirms you match your CNIC photo — the last part of identity verification.</p>
+
+              <div class="chal">
+                <div class="chal-row">
+                  <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9 11h.01M15 11h.01M9 15c1.8 1.2 4.2 1.2 6 0"/></svg></span>
+                  <span><span class="chal-t">Look straight at the camera</span><span class="chal-s">Hold still for a second — that's it.</span></span>
+                </div>
+                <div class="chal-row">
+                  <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5l-7 7 7 7M4 12h16"/></svg></span>
+                  <span><span class="chal-t">Turn your head slowly to one side</span><span class="chal-s">Whichever side is easier. No sudden movement needed.</span></span>
+                </div>
+              </div>
+
+              <div class="privacy">
+                <div class="privacy-hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="ph-t">Handled privately</span></div>
+                <ul class="privacy-list">
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Your selfie is compared to your CNIC photo once, for this match only</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Then handled per our data policy — never shown to hosts or other guests</li>
+                </ul>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/checkout/is-f7-2bed/verify/selfie/capture">Start</a>
+              <a class="btn ghost" href="/checkout/is-f7-2bed/verify/selfie/other-ways">Use a photo instead</a>
+              <a class="helplink" href="/legal/data-handling">How we handle your data</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C — VERIFIED -->
+        <div class="pcol">
+          <div class="pcap">C · Matched — quiet, no celebration</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">One quick selfie</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i></div>
+            <p class="step-lb">Step 2 of 4 · Verify</p>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="cH">That's a match</h2>
+              <p class="lead">Your selfie matched your CNIC photo. You won't be asked for this again on any future booking.</p>
+
+              <div class="statusrow ok" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span><span class="st">Identity verified</span><span class="sd">CNIC-verified via NADRA Verisys.</span></span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/checkout/is-f7-2bed/verify/family-documents">Continue: family documents</a>
+              <a class="btn ghost" href="/account/verification">See all my verifications</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The instruction is deliberately <b>singular</b> — one plain movement, stated in the camera title itself — while the <b>challenge sub-bar</b> underneath answers "how much more of this is there?" without ever becoming a second journey stepper: two thin bars, a caption that says <em>Movement <span class="num">2</span> of <span class="num">2</span></em>, nested visually inside the camera scrim so it reads as belonging to the challenge, not to checkout. The Verify sub-progress bars (B, C) stay where they always are, above the screen body, with the journey caption <code>Step 2 of 4 · Verify</code>. Pre-camera (B) previews both movements before the lens opens, so nothing is sprung on the guest, and the <b>"Use a photo instead"</b> exit is on this screen — not hidden behind a failure — because a low-end camera is a normal PK condition, not a fault. The face oval, its rings and the turn arrow are all one nested unit; the arrow is a child of the stage, never a floating sibling.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — attempt caps, fallback ladder and the queued-for-review state">
+      <div class="panel-tag">Dark — attempt caps · fallback ladder · queued for a person</div>
+      <div class="rowflex">
+
+        <!-- D — ATTEMPT CAPS -->
+        <div class="pcol">
+          <div class="pcap">D · Attempt caps — a count, with what happens after</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/checkout/is-f7-2bed/verify/selfie" aria-label="Back"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Let's try once more</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i></div>
+            <p class="step-lb">Step 2 of 4 · Verify</p>
+            <div class="screen">
+              <h2 id="dH">The match wasn't clear that time</h2>
+              <p class="lead">Nothing's wrong — lighting or movement can affect the match. One more try in good light usually works.</p>
+
+              <div class="attemptcap" role="status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+                <span>
+                  <span class="at-t"><span class="num">2</span> of <span class="num">3</span> attempts used</span>
+                  <span class="at-d">If the next try doesn't match, we'll move you straight to a well-lit photo and a manual review — never a dead end.</span>
+                </span>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span><span class="st">Your booking is unaffected</span><span class="sd">Your dates and price are held while you finish this.</span></span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/checkout/is-f7-2bed/verify/selfie/capture">Try again</a>
+              <a class="btn ghost" href="/checkout/is-f7-2bed/verify/selfie/other-ways">See other ways to verify</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- E — FALLBACK LADDER -->
+        <div class="pcol">
+          <div class="pcap">E · Fallback ladder — equal-dignity paths</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/checkout/is-f7-2bed/verify/selfie" aria-label="Back"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Other ways to verify</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i></div>
+            <p class="step-lb">Step 2 of 4 · Verify</p>
+            <div class="screen">
+              <p class="choose-lb">Either path finishes your identity check — pick whichever works on your phone.</p>
+              <ul class="path-list">
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg></span>
+                  <span class="path-body">
+                    <span class="path-t">A well-lit photo<span class="path-tag">Uses less data</span></span>
+                    <span class="path-s">Works well on any camera — a single still photo, checked the same way as a live selfie.</span>
+                    <a class="path-act" href="/checkout/is-f7-2bed/verify/selfie/photo">Take a photo instead</a>
+                  </span>
+                </li>
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg></span>
+                  <span class="path-body">
+                    <span class="path-t">Upload one you already have<span class="path-tag">No camera needed</span></span>
+                    <span class="path-s">Pick a clear photo of yourself from your phone — the same check, no live stream.</span>
+                    <a class="path-act" href="/checkout/is-f7-2bed/verify/selfie/upload">Choose from my files</a>
+                  </span>
+                </li>
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg></span>
+                  <span class="path-body">
+                    <span class="path-t">Send to manual review<span class="path-tag">A person looks at it</span></span>
+                    <span class="path-s">A member of our team matches your CNIC and photo by hand — no camera trouble needed.</span>
+                    <a class="path-act" href="/checkout/is-f7-2bed/verify/selfie/manual">Request manual review</a>
+                  </span>
+                </li>
+              </ul>
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/help/verification">Need help choosing?</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F — QUEUED FOR A PERSON -->
+        <div class="pcol">
+          <div class="pcap">F · Queued for a person</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">One quick selfie</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i></div>
+            <p class="step-lb">Step 2 of 4 · Verify</p>
+            <div class="screen">
+              <h2 id="fH">Your photo is with our team</h2>
+              <p class="lead">Thanks — no more attempts needed on this screen. A person will match it to your CNIC directly.</p>
+
+              <span class="byperson"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg>Reviewed by a person, not automatically</span>
+
+              <div class="pv">
+                <span class="pv-thumb" aria-hidden="true"></span>
+                <span>
+                  <span class="pv-t">Selfie photo · queued</span>
+                  <span class="pv-s">Usually within a few hours</span>
+                </span>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+                <span><span class="st">In manual review</span><span class="sd">We'll message you the moment it's done — you don't need to wait here.</span></span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/trips/held/ss-draft">Back to your booking</a>
+              <p class="reassure">Your dates and price stay held while it's reviewed.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Attempt caps (D) state a plain count — <b>never a red countdown</b> — and immediately name what happens after, so a third miss can't arrive as a surprise dead end; the second row answers the guest-specific worry the host flow doesn't have, that a stalled selfie might cost them the booking. The ladder (E) carries <b>three rungs at equal weight</b> — same card, same hierarchy — and the <b>upload rung is first-class</b>, tagged "No camera needed" and "Uses less data" rather than framed as a lesser fallback, which is the whole point on PK mobile data. Queued (F) reuses the shipped <b>"usually within a few hours"</b> phrase and the "reviewed by a person" chip from <code>GA-044</code>/<code>HA-008</code> — the single unified time phrase, with no second SLA invented anywhere on this card. The queued thumbnail is an abstract gradient disc: <b>no face is drawn</b>, matching the initials-avatar ethic.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — camera challenge and fallback ladder">
+      <div class="panel-tag">RTL · اردو — camera challenge &amp; fallback ladder, mirrored</div>
+      <div class="rowflex">
+
+        <!-- G — RTL CAMERA -->
+        <div class="pcol">
+          <div class="pcap">G · Camera — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="gH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="cam">
+              <div class="cam-scrim-top">
+                <div class="cam-bar">
+                  <a class="ib" href="/ur/checkout/is-f7-2bed/verify/selfie" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+                  <span class="cam-title" id="gH">اپنا سر آہستہ سے بائیں طرف موڑیں</span>
+                  <span class="spacer" aria-hidden="true"></span>
+                </div>
+                <span class="cam-sub">صرف ایک آسان حرکت</span>
+                <div class="chalbar" aria-hidden="true"><i class="done"></i><i class="now"></i></div>
+                <span class="chal-s">حرکت <span class="num">2</span> از <span class="num">2</span></span>
+              </div>
+              <div class="cam-stage" role="img" aria-label="لائیو کیمرہ پیش منظر۔ ایک بیضوی رہنما دکھاتا ہے کہ چہرہ کہاں رکھیں؛ ایک تیر آہستہ سے بائیں طرف مڑنے کی نشاندہی کرتا ہے۔ یہ دو میں سے دوسری حرکت ہے۔">
+                <p class="sr-only">اپنا چہرہ بیضے میں درمیان رکھیں اور تیار ہونے پر آہستہ سے بائیں طرف موڑیں۔ یہ آخری حرکت ہے۔ کسی اچانک حرکت کی ضرورت نہیں۔</p>
+                <div class="guide oval" aria-hidden="true">
+                  <span class="guide-ring"></span>
+                  <span class="guide-ring brand"></span>
+                  <span class="turn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5l-7 7 7 7M4 12h16"/></svg></span>
+                </div>
+                <span class="hint-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg><span>روشنی اچھی ہے — ایک لمحہ رکیں</span></span>
+              </div>
+              <div class="cam-scrim-bot">
+                <a class="fallback-btn" href="/ur/checkout/is-f7-2bed/verify/selfie/other-ways"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg>کیمرے میں مشکل ہے؟ دوسرے طریقے دیکھیں</a>
+              </div>
+            </div>
+            <div class="sa-bottom oncam"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- H — RTL FALLBACK LADDER -->
+        <div class="pcol">
+          <div class="pcap">H · Fallback ladder — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="hH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/checkout/is-f7-2bed/verify/selfie" aria-label="واپس"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="hH">تصدیق کے دوسرے طریقے</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="stepper" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i></div>
+            <p class="step-lb">مرحلہ <span class="num">2</span> از <span class="num">4</span> · شناخت</p>
+            <div class="screen">
+              <p class="choose-lb">تینوں طریقے آپ کی شناختی جانچ مکمل کرتے ہیں — جو آپ کے فون پر بہتر کام کرے وہ منتخب کریں۔</p>
+              <ul class="path-list">
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg></span>
+                  <span class="path-body">
+                    <span class="path-t">ایک اچھی روشنی والی تصویر<span class="path-tag">کم ڈیٹا</span></span>
+                    <span class="path-s">کسی بھی کیمرے پر اچھا کام کرتا ہے — ایک ہی تصویر، لائیو سیلفی جیسا جائزہ۔</span>
+                    <a class="path-act" href="/ur/checkout/is-f7-2bed/verify/selfie/photo">اس کے بجائے تصویر لیں</a>
+                  </span>
+                </li>
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg></span>
+                  <span class="path-body">
+                    <span class="path-t">پہلے سے موجود تصویر اپ لوڈ کریں<span class="path-tag">کیمرے کی ضرورت نہیں</span></span>
+                    <span class="path-s">اپنے فون سے اپنی واضح تصویر منتخب کریں — وہی جانچ، بغیر لائیو کیمرے کے۔</span>
+                    <a class="path-act" href="/ur/checkout/is-f7-2bed/verify/selfie/upload">میری فائلوں میں سے منتخب کریں</a>
+                  </span>
+                </li>
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg></span>
+                  <span class="path-body">
+                    <span class="path-t">دستی جائزے کے لیے بھیجیں<span class="path-tag">ایک شخص دیکھتا ہے</span></span>
+                    <span class="path-s">ہماری ٹیم کا ایک رکن آپ کے شناختی کارڈ اور تصویر کا دستی موازنہ کرتا ہے — کیمرے کی کوئی پریشانی نہیں۔</span>
+                    <a class="path-act" href="/ur/checkout/is-f7-2bed/verify/selfie/manual">دستی جائزے کی درخواست دیں</a>
+                  </span>
+                </li>
+              </ul>
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/ur/help/verification">انتخاب میں مدد چاہیے؟</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored (§11): the close control and back chevron follow the reading direction, and the challenge sub-bar fills from the reading-start edge. The <b>face oval, its guide rings and the turn arrow do not mirror</b> — they describe a physical head movement, not UI chrome, exactly as adjudicated on <code>HA-008</code>. The caption follows the Pass #31 lexicon (<span class="num">مرحلہ 2 از 4 · شناخت</span>), and every digit — the attempt count, the movement count — sits in <code>.num</code>, LTR-isolated with Western numerals, matching the numerals spoken in the aria labels. All three ladder rungs stay equal in Urdu too; none reads as the path of last resort.</p>
+    </section>
+
+  </main>
+</body>
+</html>

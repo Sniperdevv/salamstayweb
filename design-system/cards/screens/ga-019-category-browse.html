@@ -1,0 +1,548 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-019 Category browse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-brand:#B7DEC9;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-brand:#2C4A3D;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.topbar-title,.pill-t,.pill-s,.sec-h,.sec-sub,.cat-name,.cat-desc,.noalc span,.tab .lb,.sheet-h,.sheet-p,.btn,.prow-t,.prow-l,.prow-p span) { font-family:'Noto Nastaliq Urdu',serif; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .topbar { display:flex; align-items:center; gap:6px; padding:4px 8px 8px; }
+  .iconback { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; }
+  .iconback svg { width:22px; height:22px; color:var(--text-primary); stroke-width:2; }
+  .phone.rtl .iconback svg { transform:scaleX(-1); }
+  .topbar-title { flex:1; text-align:center; font-size:17px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em; }
+  .topbar-spacer { width:44px; height:44px; flex:none; }
+
+  .scrollarea { max-height:566px; overflow-y:auto; padding-bottom:6px; }
+  .scrollarea::-webkit-scrollbar { width:0; }
+
+  .pill { display:flex; align-items:center; gap:12px; margin:0 16px 4px; height:52px; padding:0 18px; border:1px solid var(--border-default); border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-subtle); }
+  .pill-ic svg { width:19px; height:19px; color:var(--int-primary); stroke-width:2; display:block; }
+  .pill-tx { display:flex; flex-direction:column; min-width:0; }
+  .pill-t { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .pill-s { font-size:12px; color:var(--text-secondary); }
+
+  .sec { padding:16px 16px 2px; }
+  .sec-h { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .sec-sub { display:block; font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+
+  /* Equal-weight category tiles (property type == cultural collection) */
+  .catgrid { padding:10px 16px 2px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .cat { display:flex; flex-direction:column; gap:11px; padding:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-subtle); cursor:pointer; text-align:start; font-family:inherit; }
+  .cat-ic { width:40px; height:40px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .cat-ic svg { width:21px; height:21px; color:var(--text-secondary); stroke-width:1.7; }
+  .cat-tx { display:block; }
+  .cat-name { display:block; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .cat-desc { display:block; font-size:12px; color:var(--text-secondary); margin-top:1px; }
+
+  /* No-alcohol default note — quiet product fact, never a banner (§10) */
+  .noalc { display:flex; gap:9px; align-items:flex-start; margin:14px 16px 4px; padding:11px 13px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .noalc svg { width:16px; height:16px; flex:none; margin-top:1px; color:var(--text-tertiary); stroke-width:1.8; }
+  .noalc span { font-size:12.5px; color:var(--text-secondary); line-height:1.45; }
+  .noalc b { color:var(--text-primary); font-weight:600; }
+
+  .tabbar { display:flex; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); box-shadow:var(--el-hairline); }
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:56px; padding:7px 0; }
+  .tab svg { width:23px; height:23px; color:var(--text-secondary); stroke-width:1.75; }
+  .tab .lb { font-size:11px; color:var(--text-secondary); font-weight:400; }
+  .tab.active svg { color:var(--int-primary); }
+  .tab.active .lb { color:var(--int-primary); font-weight:500; }
+
+  /* Category quick-preview bottom sheet */
+  .scrim-layer { position:absolute; inset:0; background:var(--scrim); z-index:3; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:4; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); padding:0 20px calc(18px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:10px 0 2px; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); display:block; }
+  .sheet-head { display:flex; align-items:flex-start; gap:12px; padding:8px 0 6px; }
+  .sheet-head .st { flex:1; min-width:0; }
+  .sheet-h { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em; }
+  .sheet-p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .sheet-close { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .sheet-close svg { width:18px; height:18px; color:var(--text-primary); stroke-width:2; }
+
+  .ppreview { display:flex; flex-direction:column; gap:12px; margin-top:6px; }
+  .prow { display:flex; gap:12px; align-items:center; }
+  .prow-media { width:64px; height:64px; flex:none; border-radius:var(--radius-md); display:block; }
+  .prow-tx { flex:1; min-width:0; }
+  .prow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .prow-l { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+  .prow-p { font-size:12.5px; margin-top:3px; }
+  .prow-p b { font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .prow-p span { color:var(--text-secondary); }
+  .prow-new { display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:1px 7px; margin-left:6px; vertical-align:middle; }
+  .phone.rtl .prow-new { margin-left:0; margin-right:6px; }
+
+  .btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:50px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; border:1px solid transparent; text-align:center; margin-top:16px; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .phone.rtl .btn svg { transform:scaleX(-1); }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn-primary:hover { background:var(--int-primary-hover); }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  .g-a { background:linear-gradient(160deg,var(--brand-700),var(--brand-300)); }
+  .g-b { background:linear-gradient(160deg,var(--slate-700),var(--slate-400)); }
+  .g-c { background:linear-gradient(160deg,var(--info-fg),var(--slate-700)); }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-019 — Category browse (mobile app)</h1>
+    <p>Browse by property type and by collection. Property types use the canonical entity-register forms (apartment, house, guest house, farmhouse, cottage, room). Cultural collections (Women-hosted, Family-only) sit as equal-weight, neutral tiles at the exact visual weight of a property type — never a special "religious section" (§10.1). The no-alcohol default is surfaced once as a quiet product-fact note, never a banner. Tapping a category opens a quick preview that routes to the filtered results list (GA-025).</p>
+    <div class="legend">
+      <span>Light · default</span>
+      <span>Dark · default</span>
+      <span>RTL · اردو</span>
+      <span>State · category preview → GA-025</span>
+      <span>Cultural = property-type weight</span>
+      <span>≥44pt · safe-area</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · DEFAULT ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — default</div>
+      <section class="phone" aria-label="Category browse — light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <div class="topbar">
+          <a class="iconback" href="/explore" aria-label="Back to Explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <h2 class="topbar-title">Browse</h2>
+          <span class="topbar-spacer" aria-hidden="true"></span>
+        </div>
+
+        <div class="scrollarea">
+          <a class="pill" href="/search" aria-label="Search stays. Where to?">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">Where to?</span><span class="pill-s">Search any city or area</span></span>
+          </a>
+
+          <div class="sec">
+            <h3 class="sec-h">Property type</h3>
+            <span class="sec-sub">Browse homes by what they are.</span>
+          </div>
+          <div class="catgrid">
+            <button class="cat" type="button" aria-label="Browse apartments">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Apartment</span><span class="cat-desc">Flats &amp; portions</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse houses">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">House</span><span class="cat-desc">Whole houses</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse guest houses">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13M9 21v-7h6v7M12 4v4"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Guest house</span><span class="cat-desc">Small guest houses</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse farmhouses">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l7-5 7 5v12M8 21v-5h4v5M17 21V11l4 3v7z"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Farmhouse</span><span class="cat-desc">Out-of-city farmhouses</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse cottages">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-8 9 8M5 10v11h14V10M10 21v-5h4v5"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Cottage</span><span class="cat-desc">Hill &amp; valley cottages</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse private rooms">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h9a3 3 0 0 1 3 3v5M3 14h14M21 18v-4M3 18v2M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Room</span><span class="cat-desc">Private rooms</span></span>
+            </button>
+          </div>
+
+          <div class="sec">
+            <h3 class="sec-h">Collections</h3>
+            <span class="sec-sub">Useful ways to narrow down — at the same weight as any property type.</span>
+          </div>
+          <div class="catgrid">
+            <button class="cat" type="button" aria-label="Browse women-hosted stays">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Women-hosted</span><span class="cat-desc">Homes hosted by women</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse family-only stays">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Family-only</span><span class="cat-desc">Host welcomes families</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse stays near a masjid">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Near a masjid</span><span class="cat-desc">A short walk to a mosque</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse self check-in stays">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 1 0-4 0M7 11h10v9H7z M3 11l4-4M12 11v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Self check-in</span><span class="cat-desc">Arrive on your own time</span></span>
+            </button>
+          </div>
+
+          <div class="noalc" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span><b>Every home is no-alcohol by default.</b> It's the standard across SalamStay, so there's nothing to filter for.</span>
+          </div>
+        </div>
+
+        <nav class="tabbar" aria-label="Primary">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">Trips</span></a>
+          <a class="tab" href="/inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></a>
+          <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Profile</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Property-type and collection tiles are pixel-identical — a "Women-hosted" tile has the exact weight, surface, and icon treatment of "Apartment". Icons are literal line glyphs, never ornament. The no-alcohol fact is stated once, quietly, and is never a filter chip.</p>
+    </div>
+
+    <!-- ============================== DARK · DEFAULT ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — default</div>
+      <section class="phone dark" aria-label="Category browse — dark">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <div class="topbar">
+          <a class="iconback" href="/explore" aria-label="Back to Explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <h2 class="topbar-title">Browse</h2>
+          <span class="topbar-spacer" aria-hidden="true"></span>
+        </div>
+
+        <div class="scrollarea">
+          <a class="pill" href="/search" aria-label="Search stays. Where to?">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">Where to?</span><span class="pill-s">Search any city or area</span></span>
+          </a>
+
+          <div class="sec">
+            <h3 class="sec-h">Property type</h3>
+            <span class="sec-sub">Browse homes by what they are.</span>
+          </div>
+          <div class="catgrid">
+            <button class="cat" type="button" aria-label="Browse apartments">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Apartment</span><span class="cat-desc">Flats &amp; portions</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse houses">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">House</span><span class="cat-desc">Whole houses</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse guest houses">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13M9 21v-7h6v7M12 4v4"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Guest house</span><span class="cat-desc">Small guest houses</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse farmhouses">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l7-5 7 5v12M8 21v-5h4v5M17 21V11l4 3v7z"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Farmhouse</span><span class="cat-desc">Out-of-city farmhouses</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse cottages">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-8 9 8M5 10v11h14V10M10 21v-5h4v5"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Cottage</span><span class="cat-desc">Hill &amp; valley cottages</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse private rooms">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h9a3 3 0 0 1 3 3v5M3 14h14M21 18v-4M3 18v2M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Room</span><span class="cat-desc">Private rooms</span></span>
+            </button>
+          </div>
+
+          <div class="sec">
+            <h3 class="sec-h">Collections</h3>
+            <span class="sec-sub">Useful ways to narrow down — at the same weight as any property type.</span>
+          </div>
+          <div class="catgrid">
+            <button class="cat" type="button" aria-label="Browse women-hosted stays">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Women-hosted</span><span class="cat-desc">Homes hosted by women</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse family-only stays">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Family-only</span><span class="cat-desc">Host welcomes families</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse stays near a masjid">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Near a masjid</span><span class="cat-desc">A short walk to a mosque</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="Browse self check-in stays">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 1 0-4 0M7 11h10v9H7z M3 11l4-4M12 11v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">Self check-in</span><span class="cat-desc">Arrive on your own time</span></span>
+            </button>
+          </div>
+
+          <div class="noalc" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span><b>Every home is no-alcohol by default.</b> It's the standard across SalamStay, so there's nothing to filter for.</span>
+          </div>
+        </div>
+
+        <nav class="tabbar" aria-label="Primary">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">Explore</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">Wishlists</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">Trips</span></a>
+          <a class="tab" href="/inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">Inbox</span></a>
+          <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">Profile</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Dark keeps tile surfaces neutral (<code>bg.canvas</code> on <code>bg.canvas</code> hairline); no cultural tile is tinted brand-green, so nothing reads as ranked or endorsed.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو (default) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL</b> — اردو (mirrored)</div>
+      <section class="phone rtl" lang="ur" dir="rtl" aria-label="زمرہ جات — اردو">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <div class="topbar">
+          <a class="iconback" href="/explore" aria-label="واپس دریافت پر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <h2 class="topbar-title">براؤز کریں</h2>
+          <span class="topbar-spacer" aria-hidden="true"></span>
+        </div>
+
+        <div class="scrollarea">
+          <a class="pill" href="/search" aria-label="قیام تلاش کریں">
+            <span class="pill-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span class="pill-tx"><span class="pill-t">کہاں جانا ہے؟</span><span class="pill-s">کوئی بھی شہر یا علاقہ تلاش کریں</span></span>
+          </a>
+
+          <div class="sec">
+            <h3 class="sec-h">جائیداد کی قسم</h3>
+            <span class="sec-sub">گھروں کو ان کی قسم کے مطابق دیکھیں۔</span>
+          </div>
+          <div class="catgrid">
+            <button class="cat" type="button" aria-label="اپارٹمنٹ دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">اپارٹمنٹ</span><span class="cat-desc">فلیٹس اور پورشن</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="مکان دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">مکان</span><span class="cat-desc">مکمل گھر</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="گیسٹ ہاؤس دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-4 8 4v13M9 21v-7h6v7M12 4v4"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">گیسٹ ہاؤس</span><span class="cat-desc">چھوٹے گیسٹ ہاؤس</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="فارم ہاؤس دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l7-5 7 5v12M8 21v-5h4v5M17 21V11l4 3v7z"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">فارم ہاؤس</span><span class="cat-desc">شہر سے باہر فارم ہاؤس</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="کاٹیج دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-8 9 8M5 10v11h14V10M10 21v-5h4v5"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">کاٹیج</span><span class="cat-desc">پہاڑی اور وادی کاٹیج</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="نجی کمرہ دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h9a3 3 0 0 1 3 3v5M3 14h14M21 18v-4M3 18v2M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">کمرہ</span><span class="cat-desc">نجی کمرے</span></span>
+            </button>
+          </div>
+
+          <div class="sec">
+            <h3 class="sec-h">مجموعے</h3>
+            <span class="sec-sub">تلاش محدود کرنے کے مفید طریقے — کسی بھی جائیداد کی قسم کے برابر وزن پر۔</span>
+          </div>
+          <div class="catgrid">
+            <button class="cat" type="button" aria-label="خواتین کے زیرِ میزبانی قیام دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 17h6"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">خواتین میزبان</span><span class="cat-desc">خواتین کی میزبانی میں گھر</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="صرف فیملی قیام دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20a3 3 0 0 1 6 0M8 10a4 4 0 1 1 8 0M12 3v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">صرف فیملی</span><span class="cat-desc">میزبان خاندانوں کو خوش آمدید کہتا ہے</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="مسجد کے قریب قیام دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-5h6v5"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">مسجد کے قریب</span><span class="cat-desc">مسجد سے پیدل تھوڑی دوری</span></span>
+            </button>
+            <button class="cat" type="button" aria-label="سیلف چیک اِن قیام دیکھیں">
+              <span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 1 0-4 0M7 11h10v9H7z M3 11l4-4M12 11v3"/></svg></span>
+              <span class="cat-tx"><span class="cat-name">سیلف چیک اِن</span><span class="cat-desc">اپنے وقت پر پہنچیں</span></span>
+            </button>
+          </div>
+
+          <div class="noalc" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span><b>ہر گھر بطورِ ڈیفالٹ الکحل سے پاک ہے۔</b> یہ سلام اسٹے کا معیار ہے، اس لیے فلٹر کرنے کی ضرورت نہیں۔</span>
+          </div>
+        </div>
+
+        <nav class="tabbar" aria-label="بنیادی">
+          <a class="tab active" href="/explore" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="lb">دریافت</span></a>
+          <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="lb">پسندیدہ</span></a>
+          <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="lb">سفر</span></a>
+          <a class="tab" href="/inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="lb">پیغامات</span></a>
+          <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="lb">پروفائل</span></a>
+        </nav>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Whole layout mirrors: back chevron flips, grid fills right→left, icons keep their orientation (non-directional). Canonical Urdu forms come from the entity register; "صرف فیملی" (Family-only) and "خواتین میزبان" (Women-hosted) sit at the same weight as the property types.</p>
+    </div>
+
+    <!-- ============================== STATE · CATEGORY PREVIEW → GA-025 ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>State</b> — "Apartment" opened → quick preview → results</div>
+      <section class="phone" aria-label="Category browse — apartment preview">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <div class="topbar" aria-hidden="true">
+          <span class="iconback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+          <span class="topbar-title">Browse</span>
+          <span class="topbar-spacer"></span>
+        </div>
+        <div class="scrollarea" aria-hidden="true">
+          <div class="sec"><h3 class="sec-h">Property type</h3></div>
+          <div class="catgrid">
+            <span class="cat"><span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-3h4v3"/></svg></span><span class="cat-tx"><span class="cat-name">Apartment</span><span class="cat-desc">Flats &amp; portions</span></span></span>
+            <span class="cat"><span class="cat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span><span class="cat-tx"><span class="cat-name">House</span><span class="cat-desc">Whole houses</span></span></span>
+          </div>
+        </div>
+
+        <div class="scrim-layer" aria-hidden="true"></div>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cat-h" aria-describedby="cat-p">
+          <div class="grab" aria-hidden="true"><i></i></div>
+          <div class="sheet-head">
+            <div class="st">
+              <h3 class="sheet-h" id="cat-h">Apartments</h3>
+              <p class="sheet-p" id="cat-p">Flats and portions across the beta cities. A quick look before you open the full list.</p>
+            </div>
+            <button class="sheet-close" aria-label="Close preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+          </div>
+          <div class="ppreview">
+            <a class="prow" href="/rooms/is-f7-2bed" aria-label="Margalla View Apartment in F-7, Islamabad. PKR 12,500 per night. New listing.">
+              <span class="prow-media g-a" aria-hidden="true"></span>
+              <span class="prow-tx">
+                <span class="prow-t">Margalla View Apartment<span class="prow-new">New</span></span>
+                <span class="prow-l">F-7, Islamabad · entire home</span>
+                <span class="prow-p"><b>PKR 12,500</b> <span>/ night</span></span>
+              </span>
+            </a>
+            <a class="prow" href="/rooms/khi-clf-512" aria-label="Sea-view 1-bed apartment in Clifton, Karachi. PKR 15,400 per night. New listing.">
+              <span class="prow-media g-c" aria-hidden="true"></span>
+              <span class="prow-tx">
+                <span class="prow-t">Sea-view 1-bed apartment<span class="prow-new">New</span></span>
+                <span class="prow-l">Clifton, Karachi · entire home</span>
+                <span class="prow-p"><b>PKR 15,400</b> <span>/ night</span></span>
+              </span>
+            </a>
+          </div>
+          <a class="btn btn-primary" href="/s?type=apartment">See all apartments <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Tapping a category opens a quick preview — two sample homes with the pre-launch "New" chip (never a fabricated rating or count) — and one primary action: <b>See all → the filtered results list</b> (<code>GA-025</code>, <code>/s?type=apartment</code>). Same pattern for a collection tile (<code>/s?women-hosted</code>). No dead end: the preview always names the way through.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, cultural law &amp; S1 gate compliance</div>
+      <ul>
+        <li><b>Canonical property types.</b> apartment · house · guest house · farmhouse · cottage · room — the entity-register forms, verbatim, in both English and Urdu (اپارٹمنٹ · مکان · گیسٹ ہاؤس · فارم ہاؤس · کاٹیج · کمرہ).</li>
+        <li><b>Cultural = property weight (§10.1).</b> "Women-hosted" and "Family-only" tiles are byte-for-byte the same component as "Apartment" — same surface, radius, icon box, type. No brand-green fill, no ornament, no "religious section," no ranking. Dignity by normalcy.</li>
+        <li><b>No-alcohol as a quiet fact.</b> The default is stated once, as a plain product note on a neutral surface — never a labelled banner and never a filter chip (there is nothing to filter, since it is universal).</li>
+        <li><b>Routes to results, no dead ends.</b> Every category opens a preview whose single primary action is "See all" → the filtered results list (<code>GA-025</code>). Tiles are real <code>&lt;button&gt;</code>s; the See-all is a real <code>&lt;a href&gt;</code> to <code>/s?type=…</code> / <code>/s?women-hosted</code>.</li>
+        <li><b>Copy governance.</b> No invented counts, ratings, or superlatives on any tile or preview — pre-launch homes carry the "New" chip only (NEVER #3).</li>
+        <li><b>On-palette only.</b> Every color is a <code>var()</code> token; preview thumbs are on-palette gradient placeholders; icons are literal line glyphs (a building, a bed, a family) — never decorative.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-019 (note: "Cultural themes render as equal-weight neutral chips (§10.1)") · cultural law <code>DESIGN §10</code> · a11y <code>§11</code>. Inbound: Explore / Search. Outbound: category → preview → <code>GA-025</code> filtered results.</p>
+    </div>
+  </main>
+</body>
+</html>

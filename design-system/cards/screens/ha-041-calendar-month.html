@@ -1,0 +1,738 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Calendar, month view (HA-041)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<!-- ===========================================================================
+     HA-041 · Calendar, month view — /host/calendar
+     ---------------------------------------------------------------------------
+     GRAMMAR REUSED, NOT REINVENTED:
+       · GA-022 / HA-032 Hijri-aware month grid — Gregorian primary, Hijri quiet
+         secondary, labelled Ramadan band, single Eid dot (the DESIGN §10.3
+         brand-tint exception adjudicated in Pass #28), and the moon-sighting
+         footnote verbatim: "Hijri dates are approximate and may vary by moon
+         sighting."
+       · HA-032's open-by-default banner, verbatim.
+       · HA-043's multi-select + action-on-selection precedent, and its guest
+         -impact line verbatim: price changes apply to new bookings only.
+       · HA-045 owns min-stay; this screen shows it READ-ONLY with a link back
+         (the HA-040 / HA-074 one-fact-one-owner precedent). 2-night minimum,
+         21-night maximum are HA-032/HA-045's shipped example.
+       · HA-044 owns Eid/Ramadan pricing; the March 2027 panel links to it and
+         states its shipped default — none set, base price applies.
+     SHIPPED FACTS ON THE GRID:
+       Cantt View Residence · weekday base PKR 12,000 · weekend (Fri–Sat)
+         PKR 15,000 (HA-031/HA-043)
+       14 & 15 Aug 2026 carry the PKR 16,500 override HA-043 applied and saved.
+       1–4 Aug 2026 is Omar & Sana's confirmed booking (HA-047) — nights 1, 2, 3.
+     HIJRI ARITHMETIC (derived from shipped anchors, not invented):
+       HA-032 ships 20 Mar 2026 = 1 Shawwal 1447 → 1 Muharram 1448 = 16 Jun 2026
+       → 1 Safar 1448 = 16 Jul → 1 Rabi' al-Awwal 1448 = 14 Aug 2026.
+       Cross-checks against HA-044's shipped "1 Ramadan 1448 ≈ 8 Feb 2027"
+       to within the one day its own "Approx" allows.
+     Optimistic edits + toast (registry), NOT an unsaved bar — a block applies
+       immediately and is undoable, the way HA-043's Apply/Save is not.
+     No smart pricing anywhere (HA-031 shipped its explicit absence).
+     =========================================================================== -->
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1740px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1030px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .datenote { font-size:12.5px; color:#5F676D; margin-top:10px; max-width:1030px; background:#fff; border:1px solid #E7E9EA; border-radius:12px; padding:11px 13px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1740px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:340px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1180px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host operational lineage; NO wizard bars, NO unsaved bar (edits are optimistic) */
+  .phone { width:340px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:940px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lsw-name,.lsw-loc,h2,.abanner p,.m,.hj-sub,.rampill,.lg,.rule-t,.rule-v,.rule-lk,.mnote span,.foot,.selbar-t,.selbar-s,.sbtn,.toast-t,.ctx-t,.ctx-d,.ctx-lk,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .phone.rtl :is(.g,.hj,.p) { font-family:'Inter',sans-serif; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing switcher — the .lctx chip grammar as a SWITCH: a real button, not a link,
+     because this surface serves every listing rather than editing one */
+  .lswwrap { padding:9px 16px 0; flex:none; }
+  .lsw { width:100%; display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); min-height:44px; font-family:inherit; cursor:pointer; text-align:start; }
+  .lsw-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lsw-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lsw-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lsw-tx > span { display:block; }
+  .lsw-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lsw-loc { font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lsw-chev { flex:none; width:15px; height:15px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:13px 16px 16px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:10px; }
+
+  /* open-by-default banner — HA-032 verbatim */
+  .abanner { display:flex; gap:9px; align-items:flex-start; padding:10px 12px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); margin-bottom:13px; }
+  .abanner svg { width:16px; height:16px; color:var(--int-primary); flex:none; margin-top:1px; stroke-width:1.8; }
+  .abanner p { font-size:11.5px; color:var(--text-primary); line-height:1.5; }
+
+  /* ===== Calendar — GA-022 / HA-032 grammar, host availability cells ===== */
+  .cal-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .cal-head .mwrap { flex:1; min-width:0; text-align:center; }
+  .cal-head .m { font-size:15px; font-weight:600; color:var(--text-primary); display:block; }
+  .cal-head .hj-sub { font-size:10.5px; color:var(--text-secondary); margin-top:1px; display:block; }
+  .nav { width:36px; height:36px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .nav svg { width:16px; height:16px; color:var(--text-primary); stroke-width:2; }
+  .phone.rtl .nav svg { transform:scaleX(-1); }
+  .rampill { display:inline-flex; align-items:center; gap:6px; margin:10px 0 2px; padding:3px 10px; border-radius:var(--radius-full); background:var(--int-subtle); font-size:9.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--int-primary); }
+
+  .wk { display:grid; grid-template-columns:repeat(7,1fr); margin-top:8px; }
+  .wk span { text-align:center; font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); padding-bottom:5px; }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .day { position:relative; min-height:52px; display:flex; align-items:center; justify-content:center; border:none; background:transparent; cursor:pointer; padding:0; font-family:inherit; }
+  .day.pad { cursor:default; }
+  .inner { width:100%; height:50px; border-radius:var(--radius-md); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; border:1px solid transparent; }
+  .g { font-size:12.5px; font-weight:600; color:var(--text-primary); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .hj { font-size:8.5px; color:var(--text-tertiary); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .p { font-size:9.5px; color:var(--text-secondary); line-height:1.05; font-variant-numeric:tabular-nums; margin-top:1px; }
+
+  .day.ramadan .inner { background:var(--int-subtle); }
+  .day.today .inner { border-color:var(--border-brand); border-width:1.5px; }
+  .day.blocked .inner { background:var(--bg-sunken); }
+  .day.blocked .g { color:var(--text-disabled); text-decoration:line-through; }
+  .day.blocked .hj, .day.blocked .p { color:var(--text-disabled); }
+  .day.booked .inner { background:var(--bg-sunken); border-color:var(--border-hairline); }
+  .day.booked .g { color:var(--text-secondary); }
+  .day.booked .p { color:var(--text-tertiary); font-weight:600; }
+  .bookbar { position:absolute; bottom:3px; inset-inline:9px; height:3px; border-radius:var(--radius-full); background:var(--text-secondary); }
+  .day.ovr .p { color:var(--int-primary); font-weight:700; text-decoration:underline; text-underline-offset:2px; }
+  .day.sel .inner { background:var(--int-subtle); border-color:var(--border-brand); border-width:1.5px; }
+  .day.sel .g { color:var(--int-primary); }
+  .eiddot { position:absolute; top:4px; inset-inline-start:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--int-primary); }
+
+  .legend { display:flex; flex-wrap:wrap; gap:6px 12px; margin-top:11px; padding-top:11px; border-top:1px solid var(--border-hairline); }
+  .lg { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; color:var(--text-secondary); }
+  .lsq { width:13px; height:13px; border-radius:4px; flex:none; position:relative; border:1px solid var(--border-hairline); }
+  .lsq.open { background:var(--bg-canvas); }
+  .lsq.bkd { background:var(--bg-sunken); }
+  .lsq.bkd::after { content:""; position:absolute; inset-inline:2px; bottom:1px; height:2px; border-radius:2px; background:var(--text-secondary); }
+  .lsq.blk { background:var(--bg-sunken); }
+  .lsq.blk::after { content:""; position:absolute; inset:0; margin:auto; width:100%; height:1.5px; background:var(--text-disabled); }
+  .lsq.ovr { background:var(--bg-canvas); }
+  .lsq.ovr::after { content:""; position:absolute; inset-inline:2px; bottom:3px; height:1.5px; background:var(--int-primary); }
+  .lsq.tdy { border:1.5px solid var(--border-brand); background:var(--bg-canvas); }
+  .lsq.rmd { background:var(--int-subtle); }
+  .lsq.eid { background:var(--bg-canvas); }
+  .lsq.eid::after { content:""; position:absolute; top:1px; inset-inline-start:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--int-primary); }
+
+  .mnote { display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:10.5px; color:var(--text-secondary); line-height:1.45; }
+  .mnote svg { width:13px; height:13px; color:var(--text-tertiary); flex:none; margin-top:1px; stroke-width:1.9; }
+
+  /* read-only rule strips — HA-045 and HA-044 own these; shown here, edited there */
+  .rule { display:flex; align-items:center; gap:10px; margin-top:12px; padding:10px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .rule svg { width:15px; height:15px; color:var(--text-secondary); flex:none; stroke-width:1.8; }
+  .rule-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .rule-b > span { display:block; }
+  .rule-t { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+  .rule-v { font-size:10.5px; color:var(--text-secondary); line-height:1.4; }
+  .rule-lk { flex:none; font-size:11px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  .ctx { display:flex; gap:9px; align-items:flex-start; margin-top:10px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .ctx svg { width:15px; height:15px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.8; }
+  .ctx-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ctx-b > span { display:block; }
+  .ctx-t { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+  .ctx-d { font-size:10.5px; color:var(--text-secondary); line-height:1.45; }
+  .ctx-lk { font-size:11px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  .foot { font-size:10.5px; color:var(--text-tertiary); margin-top:11px; line-height:1.5; }
+  .spacer-fill { flex:1; min-height:8px; }
+
+  /* selection action bar — HA-043's act-on-selection precedent, as a sticky footer */
+  .selbar { flex:none; display:flex; flex-direction:column; gap:9px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--bg-raised); border-top:1px solid var(--border-hairline); }
+  .selbar-h { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .selbar-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .selbar-s { font-size:11px; color:var(--text-secondary); }
+  .selbtns { display:flex; gap:8px; }
+  .sbtn { flex:1; min-height:44px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px; text-decoration:none; }
+  .sbtn svg { width:15px; height:15px; stroke-width:2; flex:none; }
+  .sbtn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .sbtn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .sbtn.ghost { flex:none; background:transparent; color:var(--text-secondary); padding:0 12px; }
+
+  /* toast (§8.5) — optimistic edit, undoable */
+  .toast { position:absolute; inset-inline:14px; bottom:36px; display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-lg); background:var(--text-primary); box-shadow:var(--el-popover); z-index:4; }
+  .toast svg { width:16px; height:16px; color:var(--bg-canvas); flex:none; stroke-width:2.2; }
+  .toast-t { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--bg-canvas); line-height:1.35; }
+  .toast-a { flex:none; font-size:12px; font-weight:700; color:var(--bg-canvas); text-decoration:underline; min-height:44px; display:inline-flex; align-items:center; background:transparent; border:none; font-family:inherit; cursor:pointer; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:720px){ .pcol,.phone{ width:100%; max-width:360px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Calendar, month view (HA-041)</h1>
+    <p>The host's month grid at <code>/host/calendar</code>. The calendar itself is <b><code>GA-022</code>/<code>HA-032</code>'s Hijri-aware grid, reused rather than reinvented</b> — Gregorian primary, Hijri quiet-secondary, the labelled <b>Ramadan band</b> and the single <b>Eid dot</b> (the documented DESIGN §10.3 brand-tint exception, Pass&nbsp;#28) — with the guest date-picker's pill swapped for a host availability cell that also carries <b>that night's price</b>. <code>HA-032</code>'s <b>open-by-default</b> banner is verbatim; range selection follows <code>HA-043</code>'s multi-select precedent and hands the selection to <b><code>HA-042</code></b> for a per-date price or blocks it outright. Two rules are shown <b>read-only with a link back</b>, never re-edited here: <b>min-stay</b> belongs to <code>HA-045</code> and <b>Eid/Ramadan pricing</b> to <code>HA-044</code> (the <code>HA-040</code>/<code>HA-074</code> one-fact-one-owner precedent). Edits are <b>optimistic with an undo toast</b>, not a save bar — a blocked night takes effect at once. <b>No smart pricing anywhere</b>: <code>HA-031</code> shipped its explicit absence, and nothing here suggests a rate. Panels: August <span class="num">2026</span> (light) · <span class="num">3</span> nights selected (light) · blocked + undo (light) · March <span class="num">2027</span>, Ramadan &amp; Eid (dark) · اردو / RTL.</p>
+    <p class="datenote"><b>Dating and arithmetic, stated plainly:</b> the live panels sit on <b>Saturday <span class="num">1</span> August <span class="num">2026</span></b> — the day <code>ha-046</code> says Cantt View Residence reopens — so nothing on the grid is in the past. The grid's own facts are all shipped: <b>weekday <span class="num">PKR 12,000</span> / weekend Fri–Sat <span class="num">PKR 15,000</span></b> (<code>ha-031</code>/<code>ha-043</code>), the <b><span class="num">PKR 16,500</span></b> override <code>ha-043</code> applied and saved to <span class="num">14</span>–<span class="num">15</span> Aug, and Omar &amp; Sana's confirmed <span class="num">1</span>–<span class="num">4</span> Aug booking (<code>ha-047</code>). Hijri dates are <b>derived from a shipped anchor, never invented</b>: <code>ha-032</code> ships <span class="num">20</span> Mar <span class="num">2026</span> = <span class="num">1</span> Shawwal <span class="num">1447</span>, which puts <span class="num">1</span> Rabi' al-Awwal <span class="num">1448</span> on <span class="num">14</span> Aug <span class="num">2026</span> and <span class="num">1</span> Shawwal <span class="num">1448</span> on <span class="num">10</span> Mar <span class="num">2027</span> — matching <code>ha-044</code>'s shipped Eid al-Fitr window to within the day its own "Approx" allows.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — month · selection · blocked</span><span>Dark — Ramadan &amp; Eid</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — MONTH · SELECTION · BLOCKED ============================ -->
+    <section class="panel" aria-label="Light theme — the month grid, a three-night selection, and the optimistic result of blocking it">
+      <div class="panel-tag">Light — A August 2026 · B three nights selected · C blocked, undoable</div>
+      <div class="rowflex">
+
+        <!-- A · MONTH -->
+        <div class="pcol">
+          <div class="pcap">A · August <span class="num">2026</span> — open, booked, blocked, overridden</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Calendar</div>
+              <a class="ib" href="/host/listings/cantt-view-residence/availability" aria-label="Availability and booking rules"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 2.6 7a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H7a1.7 1.7 0 0 0 1-1.5V1a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V7a1.7 1.7 0 0 0 1.5 1H23a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a>
+            </div>
+            <div class="lswwrap">
+              <button class="lsw" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Calendar for Cantt View Residence, Rawalpindi Cantonment. Change listing.">
+                <span class="lsw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lsw-tx"><span class="lsw-name">Cantt View Residence</span><span class="lsw-loc">Rawalpindi Cantonment · change listing</span></span>
+                <svg class="lsw-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Availability &amp; prices</h2>
+
+              <div class="abanner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <p>Open by default — every date is bookable until you block it below.</p>
+              </div>
+
+              <div class="cal-head">
+                <button class="nav" type="button" aria-label="Previous month, July 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                <span class="mwrap"><span class="m">August <span class="num">2026</span></span><span class="hj-sub"><span class="num">17</span> Safar – <span class="num">18</span> Rabi' al-Awwal <span class="num">1448</span> AH</span></span>
+                <button class="nav" type="button" aria-label="Next month, September 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+              </div>
+
+              <div class="wk" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+              <div class="days" role="grid" aria-label="August 2026 availability and nightly prices for Cantt View Residence">
+                <span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span>
+                <button class="day today booked" type="button" role="gridcell" aria-current="date" aria-label="Saturday 1 August, today, booked by Omar and Sana"><span class="inner"><span class="g num">1</span><span class="hj num">17</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+
+                <button class="day booked" type="button" role="gridcell" aria-label="2 August, booked by Omar and Sana"><span class="inner"><span class="g num">2</span><span class="hj num">18</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day booked" type="button" role="gridcell" aria-label="3 August, booked by Omar and Sana"><span class="inner"><span class="g num">3</span><span class="hj num">19</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="4 August, open, PKR 12,000"><span class="inner"><span class="g num">4</span><span class="hj num">20</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="5 August, open, PKR 12,000"><span class="inner"><span class="g num">5</span><span class="hj num">21</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="6 August, open, PKR 12,000"><span class="inner"><span class="g num">6</span><span class="hj num">22</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="7 August, open, PKR 15,000"><span class="inner"><span class="g num">7</span><span class="hj num">23</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="8 August, open, PKR 15,000"><span class="inner"><span class="g num">8</span><span class="hj num">24</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="9 August, open, PKR 12,000"><span class="inner"><span class="g num">9</span><span class="hj num">25</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="10 August, open, PKR 12,000"><span class="inner"><span class="g num">10</span><span class="hj num">26</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="11 August, open, PKR 12,000"><span class="inner"><span class="g num">11</span><span class="hj num">27</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="12 August, open, PKR 12,000"><span class="inner"><span class="g num">12</span><span class="hj num">28</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="13 August, open, PKR 12,000"><span class="inner"><span class="g num">13</span><span class="hj num">29</span><span class="p num">12,000</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="14 August, 1 Rabi al-Awwal, open, PKR 16,500, price override"><span class="inner"><span class="g num">14</span><span class="hj num">1</span><span class="p num">16,500</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="15 August, open, PKR 16,500, price override"><span class="inner"><span class="g num">15</span><span class="hj num">2</span><span class="p num">16,500</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="16 August, open, PKR 12,000"><span class="inner"><span class="g num">16</span><span class="hj num">3</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="17 August, open, PKR 12,000"><span class="inner"><span class="g num">17</span><span class="hj num">4</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="18 August, open, PKR 12,000"><span class="inner"><span class="g num">18</span><span class="hj num">5</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="19 August, open, PKR 12,000"><span class="inner"><span class="g num">19</span><span class="hj num">6</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="20 August, open, PKR 12,000"><span class="inner"><span class="g num">20</span><span class="hj num">7</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="21 August, open, PKR 15,000"><span class="inner"><span class="g num">21</span><span class="hj num">8</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="22 August, open, PKR 15,000"><span class="inner"><span class="g num">22</span><span class="hj num">9</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="23 August, open, PKR 12,000"><span class="inner"><span class="g num">23</span><span class="hj num">10</span><span class="p num">12,000</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="24 August, blocked by you"><span class="inner"><span class="g num">24</span><span class="hj num">11</span><span class="p">Blocked</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="25 August, blocked by you"><span class="inner"><span class="g num">25</span><span class="hj num">12</span><span class="p">Blocked</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="26 August, open, PKR 12,000"><span class="inner"><span class="g num">26</span><span class="hj num">13</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="27 August, open, PKR 12,000"><span class="inner"><span class="g num">27</span><span class="hj num">14</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="28 August, open, PKR 15,000"><span class="inner"><span class="g num">28</span><span class="hj num">15</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="29 August, open, PKR 15,000"><span class="inner"><span class="g num">29</span><span class="hj num">16</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="30 August, open, PKR 12,000"><span class="inner"><span class="g num">30</span><span class="hj num">17</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="31 August, open, PKR 12,000"><span class="inner"><span class="g num">31</span><span class="hj num">18</span><span class="p num">12,000</span></span></button>
+              </div>
+
+              <div class="legend">
+                <span class="lg"><span class="lsq open" aria-hidden="true"></span>Open</span>
+                <span class="lg"><span class="lsq bkd" aria-hidden="true"></span>Booked</span>
+                <span class="lg"><span class="lsq blk" aria-hidden="true"></span>Blocked by you</span>
+                <span class="lg"><span class="lsq ovr" aria-hidden="true"></span>Price override</span>
+                <span class="lg"><span class="lsq tdy" aria-hidden="true"></span>Today</span>
+              </div>
+
+              <div class="mnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span>Hijri dates are approximate and may vary by moon sighting. Prices are per night, in PKR.</span>
+              </div>
+
+              <div class="rule">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+                <span class="rule-b"><span class="rule-t">Stay rules</span><span class="rule-v">Minimum stay <span class="num">2</span> nights · maximum <span class="num">21</span> nights</span></span>
+                <a class="rule-lk" href="/host/listings/cantt-view-residence/availability">Edit →</a>
+              </div>
+              <p class="foot">Set once in Min-stay &amp; booking rules — shown here read-only so one rule has one place to edit.</p>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SELECTION -->
+        <div class="pcol">
+          <div class="pcap">B · Three nights selected — price or block, never both by accident</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Calendar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lswwrap">
+              <button class="lsw" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Calendar for Cantt View Residence, Rawalpindi Cantonment. Change listing.">
+                <span class="lsw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lsw-tx"><span class="lsw-name">Cantt View Residence</span><span class="lsw-loc">Rawalpindi Cantonment · change listing</span></span>
+                <svg class="lsw-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Availability &amp; prices</h2>
+
+              <div class="cal-head">
+                <button class="nav" type="button" aria-label="Previous month, July 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                <span class="mwrap"><span class="m">August <span class="num">2026</span></span><span class="hj-sub"><span class="num">17</span> Safar – <span class="num">18</span> Rabi' al-Awwal <span class="num">1448</span> AH</span></span>
+                <button class="nav" type="button" aria-label="Next month, September 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+              </div>
+
+              <div class="wk" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+              <div class="days" role="grid" aria-label="August 2026, 21 to 23 August selected">
+                <span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span>
+                <button class="day today booked" type="button" role="gridcell" aria-current="date" aria-label="Saturday 1 August, today, booked"><span class="inner"><span class="g num">1</span><span class="hj num">17</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+
+                <button class="day booked" type="button" role="gridcell" aria-label="2 August, booked"><span class="inner"><span class="g num">2</span><span class="hj num">18</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day booked" type="button" role="gridcell" aria-label="3 August, booked"><span class="inner"><span class="g num">3</span><span class="hj num">19</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="4 August, open, PKR 12,000"><span class="inner"><span class="g num">4</span><span class="hj num">20</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="5 August, open, PKR 12,000"><span class="inner"><span class="g num">5</span><span class="hj num">21</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="6 August, open, PKR 12,000"><span class="inner"><span class="g num">6</span><span class="hj num">22</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="7 August, open, PKR 15,000"><span class="inner"><span class="g num">7</span><span class="hj num">23</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="8 August, open, PKR 15,000"><span class="inner"><span class="g num">8</span><span class="hj num">24</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="9 August, open, PKR 12,000"><span class="inner"><span class="g num">9</span><span class="hj num">25</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="10 August, open, PKR 12,000"><span class="inner"><span class="g num">10</span><span class="hj num">26</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="11 August, open, PKR 12,000"><span class="inner"><span class="g num">11</span><span class="hj num">27</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="12 August, open, PKR 12,000"><span class="inner"><span class="g num">12</span><span class="hj num">28</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="13 August, open, PKR 12,000"><span class="inner"><span class="g num">13</span><span class="hj num">29</span><span class="p num">12,000</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="14 August, open, PKR 16,500, price override"><span class="inner"><span class="g num">14</span><span class="hj num">1</span><span class="p num">16,500</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="15 August, open, PKR 16,500, price override"><span class="inner"><span class="g num">15</span><span class="hj num">2</span><span class="p num">16,500</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="16 August, open, PKR 12,000"><span class="inner"><span class="g num">16</span><span class="hj num">3</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="17 August, open, PKR 12,000"><span class="inner"><span class="g num">17</span><span class="hj num">4</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="18 August, open, PKR 12,000"><span class="inner"><span class="g num">18</span><span class="hj num">5</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="19 August, open, PKR 12,000"><span class="inner"><span class="g num">19</span><span class="hj num">6</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="20 August, open, PKR 12,000"><span class="inner"><span class="g num">20</span><span class="hj num">7</span><span class="p num">12,000</span></span></button>
+                <button class="day sel" type="button" role="gridcell" aria-pressed="true" aria-label="21 August, PKR 15,000, selected"><span class="inner"><span class="g num">21</span><span class="hj num">8</span><span class="p num">15,000</span></span></button>
+                <button class="day sel" type="button" role="gridcell" aria-pressed="true" aria-label="22 August, PKR 15,000, selected"><span class="inner"><span class="g num">22</span><span class="hj num">9</span><span class="p num">15,000</span></span></button>
+
+                <button class="day sel" type="button" role="gridcell" aria-pressed="true" aria-label="23 August, PKR 12,000, selected"><span class="inner"><span class="g num">23</span><span class="hj num">10</span><span class="p num">12,000</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="24 August, blocked by you"><span class="inner"><span class="g num">24</span><span class="hj num">11</span><span class="p">Blocked</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="25 August, blocked by you"><span class="inner"><span class="g num">25</span><span class="hj num">12</span><span class="p">Blocked</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="26 August, open, PKR 12,000"><span class="inner"><span class="g num">26</span><span class="hj num">13</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="27 August, open, PKR 12,000"><span class="inner"><span class="g num">27</span><span class="hj num">14</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="28 August, open, PKR 15,000"><span class="inner"><span class="g num">28</span><span class="hj num">15</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="29 August, open, PKR 15,000"><span class="inner"><span class="g num">29</span><span class="hj num">16</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="30 August, open, PKR 12,000"><span class="inner"><span class="g num">30</span><span class="hj num">17</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="31 August, open, PKR 12,000"><span class="inner"><span class="g num">31</span><span class="hj num">18</span><span class="p num">12,000</span></span></button>
+              </div>
+
+              <div class="mnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span>Price changes apply to new bookings only — guests who already booked keep the price they paid.</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="selbar">
+              <div class="selbar-h">
+                <span class="selbar-t"><span class="num">3</span> nights selected</span>
+                <span class="selbar-s"><span class="num">21</span>–<span class="num">23 August 2026</span></span>
+              </div>
+              <div class="selbtns">
+                <a class="sbtn primary" href="/host/calendar/2026-08-21..2026-08-23"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 8h6a2 2 0 1 1 0 4h-4a2 2 0 1 0 0 4h6"/></svg>Set price</a>
+                <button class="sbtn secondary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>Block</button>
+                <button class="sbtn ghost" type="button">Clear</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C · BLOCKED + TOAST -->
+        <div class="pcol">
+          <div class="pcap">C · Blocked at once — optimistic, with an undo</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Calendar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lswwrap">
+              <button class="lsw" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Calendar for Cantt View Residence, Rawalpindi Cantonment. Change listing.">
+                <span class="lsw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lsw-tx"><span class="lsw-name">Cantt View Residence</span><span class="lsw-loc">Rawalpindi Cantonment · change listing</span></span>
+                <svg class="lsw-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Availability &amp; prices</h2>
+
+              <div class="cal-head">
+                <button class="nav" type="button" aria-label="Previous month, July 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                <span class="mwrap"><span class="m">August <span class="num">2026</span></span><span class="hj-sub"><span class="num">17</span> Safar – <span class="num">18</span> Rabi' al-Awwal <span class="num">1448</span> AH</span></span>
+                <button class="nav" type="button" aria-label="Next month, September 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+              </div>
+
+              <div class="wk" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+              <div class="days" role="grid" aria-label="August 2026, 21 to 25 August now blocked">
+                <span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span>
+                <button class="day today booked" type="button" role="gridcell" aria-current="date" aria-label="Saturday 1 August, today, booked"><span class="inner"><span class="g num">1</span><span class="hj num">17</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+
+                <button class="day booked" type="button" role="gridcell" aria-label="2 August, booked"><span class="inner"><span class="g num">2</span><span class="hj num">18</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day booked" type="button" role="gridcell" aria-label="3 August, booked"><span class="inner"><span class="g num">3</span><span class="hj num">19</span><span class="p">Booked</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="4 August, open, PKR 12,000"><span class="inner"><span class="g num">4</span><span class="hj num">20</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="5 August, open, PKR 12,000"><span class="inner"><span class="g num">5</span><span class="hj num">21</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="6 August, open, PKR 12,000"><span class="inner"><span class="g num">6</span><span class="hj num">22</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="7 August, open, PKR 15,000"><span class="inner"><span class="g num">7</span><span class="hj num">23</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="8 August, open, PKR 15,000"><span class="inner"><span class="g num">8</span><span class="hj num">24</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="9 August, open, PKR 12,000"><span class="inner"><span class="g num">9</span><span class="hj num">25</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="10 August, open, PKR 12,000"><span class="inner"><span class="g num">10</span><span class="hj num">26</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="11 August, open, PKR 12,000"><span class="inner"><span class="g num">11</span><span class="hj num">27</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="12 August, open, PKR 12,000"><span class="inner"><span class="g num">12</span><span class="hj num">28</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="13 August, open, PKR 12,000"><span class="inner"><span class="g num">13</span><span class="hj num">29</span><span class="p num">12,000</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="14 August, open, PKR 16,500, price override"><span class="inner"><span class="g num">14</span><span class="hj num">1</span><span class="p num">16,500</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="15 August, open, PKR 16,500, price override"><span class="inner"><span class="g num">15</span><span class="hj num">2</span><span class="p num">16,500</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="16 August, open, PKR 12,000"><span class="inner"><span class="g num">16</span><span class="hj num">3</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="17 August, open, PKR 12,000"><span class="inner"><span class="g num">17</span><span class="hj num">4</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="18 August, open, PKR 12,000"><span class="inner"><span class="g num">18</span><span class="hj num">5</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="19 August, open, PKR 12,000"><span class="inner"><span class="g num">19</span><span class="hj num">6</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="20 August, open, PKR 12,000"><span class="inner"><span class="g num">20</span><span class="hj num">7</span><span class="p num">12,000</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="21 August, blocked by you"><span class="inner"><span class="g num">21</span><span class="hj num">8</span><span class="p">Blocked</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="22 August, blocked by you"><span class="inner"><span class="g num">22</span><span class="hj num">9</span><span class="p">Blocked</span></span></button>
+
+                <button class="day blocked" type="button" role="gridcell" aria-label="23 August, blocked by you"><span class="inner"><span class="g num">23</span><span class="hj num">10</span><span class="p">Blocked</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="24 August, blocked by you"><span class="inner"><span class="g num">24</span><span class="hj num">11</span><span class="p">Blocked</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="25 August, blocked by you"><span class="inner"><span class="g num">25</span><span class="hj num">12</span><span class="p">Blocked</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="26 August, open, PKR 12,000"><span class="inner"><span class="g num">26</span><span class="hj num">13</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="27 August, open, PKR 12,000"><span class="inner"><span class="g num">27</span><span class="hj num">14</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="28 August, open, PKR 15,000"><span class="inner"><span class="g num">28</span><span class="hj num">15</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="29 August, open, PKR 15,000"><span class="inner"><span class="g num">29</span><span class="hj num">16</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="30 August, open, PKR 12,000"><span class="inner"><span class="g num">30</span><span class="hj num">17</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="31 August, open, PKR 12,000"><span class="inner"><span class="g num">31</span><span class="hj num">18</span><span class="p num">12,000</span></span></button>
+              </div>
+
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">Eid &amp; Ramadan pricing</span>
+                  <span class="ctx-d">Nothing set — your base price applies to Ramadan and both Eids.</span>
+                  <a class="ctx-lk" href="/host/listings/cantt-view-residence/seasonal-pricing">Set seasonal prices →</a>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="toast" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+              <span class="toast-t"><span class="num">3</span> nights blocked · <span class="num">21</span>–<span class="num">23 Aug</span></span>
+              <button class="toast-a" type="button">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The cell is <code>ga-022</code>'s date-picker pill grown into a host availability cell: Gregorian primary, Hijri quiet-secondary, and one more line the guest picker never needed — <b>that night's price</b>. Nothing about the Hijri grammar is re-invented, and the moon-sighting footnote is the shipped sentence verbatim. Every state carries at least <b>two</b> signals, never colour alone (§11): booked is a sunken fill <i>plus</i> a bar <i>plus</i> the word "Booked"; blocked is a struck-through date <i>plus</i> a sunken fill <i>plus</i> the word "Blocked"; a price override is brand-coloured <i>plus</i> bold <i>plus</i> underlined — and all four appear in the legend. Selection follows <code>ha-043</code>: tap to build a set, then act on it once, with the <b>guest-impact line verbatim</b> — a price change touches new bookings only. Blocking is <b>optimistic</b> — the cells change immediately and the toast carries the undo — which is why this screen has a toast and no save bar, while <code>ha-043</code>'s form has a save bar and no toast. <b>Nothing here suggests a price</b>: <code>HA-031</code> shipped the explicit absence of smart pricing, and a calendar that whispered "similar homes charge more" would quietly undo it.</p>
+    </section>
+
+    <!-- ============================ DARK — RAMADAN + EID ============================ -->
+    <section class="panel dark" aria-label="Dark theme — March 2027, showing the Ramadan band and the Eid al-Fitr dot">
+      <div class="panel-tag">Dark — D March 2027 · Ramadan band &amp; Eid dot</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · March <span class="num">2027</span> — the §10.3 brand-tint exception, dark</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Calendar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lswwrap">
+              <button class="lsw" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Calendar for Cantt View Residence, Rawalpindi Cantonment. Change listing.">
+                <span class="lsw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lsw-tx"><span class="lsw-name">Cantt View Residence</span><span class="lsw-loc">Rawalpindi Cantonment · change listing</span></span>
+                <svg class="lsw-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <div class="screen">
+              <h2 id="dH">Availability &amp; prices</h2>
+
+              <div class="cal-head">
+                <button class="nav" type="button" aria-label="Previous month, February 2027"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                <span class="mwrap"><span class="m">March <span class="num">2027</span></span><span class="hj-sub"><span class="num">21</span> Ramadan – <span class="num">22</span> Shawwal <span class="num">1448</span> AH</span></span>
+                <button class="nav" type="button" aria-label="Next month, April 2027"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+              </div>
+
+              <span class="rampill">Ramadan · to <span class="num">29</span> Ramadan</span>
+
+              <div class="wk" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+              <div class="days" role="grid" aria-label="March 2027 availability and nightly prices, with Ramadan to 9 March and Eid al-Fitr on 10 March">
+                <span class="day pad" role="gridcell" aria-hidden="true"></span>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="1 March, 21 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">1</span><span class="hj num">21</span><span class="p num">12,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="2 March, 22 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">2</span><span class="hj num">22</span><span class="p num">12,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="3 March, 23 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">3</span><span class="hj num">23</span><span class="p num">12,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="4 March, 24 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">4</span><span class="hj num">24</span><span class="p num">12,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="5 March, 25 Ramadan, open, PKR 15,000"><span class="inner"><span class="g num">5</span><span class="hj num">25</span><span class="p num">15,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="6 March, 26 Ramadan, open, PKR 15,000"><span class="inner"><span class="g num">6</span><span class="hj num">26</span><span class="p num">15,000</span></span></button>
+
+                <button class="day ramadan" type="button" role="gridcell" aria-label="7 March, 27 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">7</span><span class="hj num">27</span><span class="p num">12,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="8 March, 28 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">8</span><span class="hj num">28</span><span class="p num">12,000</span></span></button>
+                <button class="day ramadan" type="button" role="gridcell" aria-label="9 March, 29 Ramadan, open, PKR 12,000"><span class="inner"><span class="g num">9</span><span class="hj num">29</span><span class="p num">12,000</span></span></button>
+                <button class="day eid" type="button" role="gridcell" aria-label="10 March, 1 Shawwal, Eid al-Fitr, open, PKR 12,000"><span class="inner"><span class="eiddot" aria-hidden="true"></span><span class="g num">10</span><span class="hj num">1</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="11 March, open, PKR 12,000"><span class="inner"><span class="g num">11</span><span class="hj num">2</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="12 March, open, PKR 15,000"><span class="inner"><span class="g num">12</span><span class="hj num">3</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="13 March, open, PKR 15,000"><span class="inner"><span class="g num">13</span><span class="hj num">4</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="14 March, open, PKR 12,000"><span class="inner"><span class="g num">14</span><span class="hj num">5</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="15 March, open, PKR 12,000"><span class="inner"><span class="g num">15</span><span class="hj num">6</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="16 March, open, PKR 12,000"><span class="inner"><span class="g num">16</span><span class="hj num">7</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="17 March, open, PKR 12,000"><span class="inner"><span class="g num">17</span><span class="hj num">8</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="18 March, open, PKR 12,000"><span class="inner"><span class="g num">18</span><span class="hj num">9</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="19 March, open, PKR 15,000"><span class="inner"><span class="g num">19</span><span class="hj num">10</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="20 March, open, PKR 15,000"><span class="inner"><span class="g num">20</span><span class="hj num">11</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="21 March, open, PKR 12,000"><span class="inner"><span class="g num">21</span><span class="hj num">12</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="22 March, open, PKR 12,000"><span class="inner"><span class="g num">22</span><span class="hj num">13</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="23 March, open, PKR 12,000"><span class="inner"><span class="g num">23</span><span class="hj num">14</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="24 March, open, PKR 12,000"><span class="inner"><span class="g num">24</span><span class="hj num">15</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="25 March, open, PKR 12,000"><span class="inner"><span class="g num">25</span><span class="hj num">16</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="26 March, open, PKR 15,000"><span class="inner"><span class="g num">26</span><span class="hj num">17</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="27 March, open, PKR 15,000"><span class="inner"><span class="g num">27</span><span class="hj num">18</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="28 March, open, PKR 12,000"><span class="inner"><span class="g num">28</span><span class="hj num">19</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="29 March, open, PKR 12,000"><span class="inner"><span class="g num">29</span><span class="hj num">20</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="30 March, open, PKR 12,000"><span class="inner"><span class="g num">30</span><span class="hj num">21</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="31 March, open, PKR 12,000"><span class="inner"><span class="g num">31</span><span class="hj num">22</span><span class="p num">12,000</span></span></button>
+              </div>
+
+              <div class="legend">
+                <span class="lg"><span class="lsq open" aria-hidden="true"></span>Open</span>
+                <span class="lg"><span class="lsq rmd" aria-hidden="true"></span>Ramadan</span>
+                <span class="lg"><span class="lsq eid" aria-hidden="true"></span>Eid al-Fitr</span>
+                <span class="lg"><span class="lsq ovr" aria-hidden="true"></span>Price override</span>
+              </div>
+
+              <div class="mnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span>Hijri dates are approximate and may vary by moon sighting. Prices are per night, in PKR.</span>
+              </div>
+
+              <div class="ctx">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                <span class="ctx-b">
+                  <span class="ctx-t">Eid &amp; Ramadan pricing</span>
+                  <span class="ctx-d">Nothing set — your base price applies to Ramadan and both Eids.</span>
+                  <a class="ctx-lk" href="/host/listings/cantt-view-residence/seasonal-pricing">Set seasonal prices →</a>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">March <span class="num">2027</span> is where the Hijri layer earns its place: the <b>Ramadan band</b> and the single <b>Eid al-Fitr dot</b> on <span class="num">10</span> March (<span class="num">1</span> Shawwal <span class="num">1448</span>) let a host see the season they actually plan around without leaving the grid. That brand tint is the <b>one documented exception</b> to §10.3's no-brand-green-cultural-fill rule (Pass&nbsp;#28), and it stays exactly what <code>ga-022</code>/<code>ha-032</code> shipped — a quiet band and a <span class="num">5</span>px dot, with no religious ornament, no lantern and no gold. Prices across the band are the host's <b>ordinary</b> weekday/weekend rates, because nothing seasonal has been set: the context row states that in <code>ha-044</code>'s own words — "your base price applies" — and links to the editor that owns it rather than inviting a surge here. The dates come from <code>ha-032</code>'s shipped Hijri anchor and land on <code>ha-044</code>'s shipped Eid window, so two screens designed months apart agree.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the month grid">
+      <div class="panel-tag">RTL · اردو — دستیابی اور قیمتیں</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — اگست <span class="num">2026</span></div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="آج پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">کیلنڈر</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lswwrap">
+              <button class="lsw" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="کینٹ ویو ریزیڈنس، راولپنڈی کینٹونمنٹ کا کیلنڈر۔ لسٹنگ بدلیں۔">
+                <span class="lsw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lsw-tx"><span class="lsw-name">کینٹ ویو ریزیڈنس</span><span class="lsw-loc">راولپنڈی کینٹونمنٹ · لسٹنگ بدلیں</span></span>
+                <svg class="lsw-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <div class="screen">
+              <h2 id="eH">دستیابی اور قیمتیں</h2>
+
+              <div class="abanner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <p>پہلے سے کھلا — جب تک آپ کوئی تاریخ بند نہ کریں، ہر تاریخ بک ہو سکتی ہے۔</p>
+              </div>
+
+              <div class="cal-head">
+                <button class="nav" type="button" aria-label="پچھلا مہینہ، جولائی 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+                <span class="mwrap"><span class="m">اگست <span class="num">2026</span></span><span class="hj-sub"><span class="num">17</span> صفر – <span class="num">18</span> ربیع الاول <span class="num">1448</span> ھ</span></span>
+                <button class="nav" type="button" aria-label="اگلا مہینہ، ستمبر 2026"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+              </div>
+
+              <div class="wk" aria-hidden="true"><span>اتوار</span><span>پیر</span><span>منگل</span><span>بدھ</span><span>جمعرات</span><span>جمعہ</span><span>ہفتہ</span></div>
+              <div class="days" role="grid" aria-label="اگست 2026 کی دستیابی اور فی رات قیمتیں">
+                <span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span><span class="day pad" role="gridcell" aria-hidden="true"></span>
+                <button class="day today booked" type="button" role="gridcell" aria-current="date" aria-label="ہفتہ 1 اگست، آج، بک شدہ"><span class="inner"><span class="g num">1</span><span class="hj num">17</span><span class="p">بک شدہ</span></span><span class="bookbar" aria-hidden="true"></span></button>
+
+                <button class="day booked" type="button" role="gridcell" aria-label="2 اگست، بک شدہ"><span class="inner"><span class="g num">2</span><span class="hj num">18</span><span class="p">بک شدہ</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day booked" type="button" role="gridcell" aria-label="3 اگست، بک شدہ"><span class="inner"><span class="g num">3</span><span class="hj num">19</span><span class="p">بک شدہ</span></span><span class="bookbar" aria-hidden="true"></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="4 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">4</span><span class="hj num">20</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="5 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">5</span><span class="hj num">21</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="6 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">6</span><span class="hj num">22</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="7 اگست، کھلا، PKR 15,000"><span class="inner"><span class="g num">7</span><span class="hj num">23</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="8 اگست، کھلا، PKR 15,000"><span class="inner"><span class="g num">8</span><span class="hj num">24</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="9 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">9</span><span class="hj num">25</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="10 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">10</span><span class="hj num">26</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="11 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">11</span><span class="hj num">27</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="12 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">12</span><span class="hj num">28</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="13 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">13</span><span class="hj num">29</span><span class="p num">12,000</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="14 اگست، 1 ربیع الاول، کھلا، PKR 16,500، قیمت تبدیل شدہ"><span class="inner"><span class="g num">14</span><span class="hj num">1</span><span class="p num">16,500</span></span></button>
+                <button class="day ovr" type="button" role="gridcell" aria-label="15 اگست، کھلا، PKR 16,500، قیمت تبدیل شدہ"><span class="inner"><span class="g num">15</span><span class="hj num">2</span><span class="p num">16,500</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="16 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">16</span><span class="hj num">3</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="17 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">17</span><span class="hj num">4</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="18 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">18</span><span class="hj num">5</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="19 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">19</span><span class="hj num">6</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="20 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">20</span><span class="hj num">7</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="21 اگست، کھلا، PKR 15,000"><span class="inner"><span class="g num">21</span><span class="hj num">8</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="22 اگست، کھلا، PKR 15,000"><span class="inner"><span class="g num">22</span><span class="hj num">9</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="23 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">23</span><span class="hj num">10</span><span class="p num">12,000</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="24 اگست، آپ کی جانب سے بند"><span class="inner"><span class="g num">24</span><span class="hj num">11</span><span class="p">بند</span></span></button>
+                <button class="day blocked" type="button" role="gridcell" aria-label="25 اگست، آپ کی جانب سے بند"><span class="inner"><span class="g num">25</span><span class="hj num">12</span><span class="p">بند</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="26 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">26</span><span class="hj num">13</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="27 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">27</span><span class="hj num">14</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="28 اگست، کھلا، PKR 15,000"><span class="inner"><span class="g num">28</span><span class="hj num">15</span><span class="p num">15,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="29 اگست، کھلا، PKR 15,000"><span class="inner"><span class="g num">29</span><span class="hj num">16</span><span class="p num">15,000</span></span></button>
+
+                <button class="day" type="button" role="gridcell" aria-label="30 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">30</span><span class="hj num">17</span><span class="p num">12,000</span></span></button>
+                <button class="day" type="button" role="gridcell" aria-label="31 اگست، کھلا، PKR 12,000"><span class="inner"><span class="g num">31</span><span class="hj num">18</span><span class="p num">12,000</span></span></button>
+              </div>
+
+              <div class="legend">
+                <span class="lg"><span class="lsq open" aria-hidden="true"></span>کھلا</span>
+                <span class="lg"><span class="lsq bkd" aria-hidden="true"></span>بک شدہ</span>
+                <span class="lg"><span class="lsq blk" aria-hidden="true"></span>آپ کی جانب سے بند</span>
+                <span class="lg"><span class="lsq ovr" aria-hidden="true"></span>قیمت تبدیل شدہ</span>
+                <span class="lg"><span class="lsq tdy" aria-hidden="true"></span>آج</span>
+              </div>
+
+              <div class="mnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span>ہجری تاریخیں تخمینی ہیں اور چاند دیکھے جانے کے مطابق مختلف ہو سکتی ہیں۔ قیمتیں فی رات، PKR میں ہیں۔</span>
+              </div>
+
+              <div class="rule">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+                <span class="rule-b"><span class="rule-t">قیام کے اصول</span><span class="rule-v">کم از کم قیام <span class="num">2</span> راتیں · زیادہ سے زیادہ <span class="num">21</span> راتیں</span></span>
+                <a class="rule-lk" href="/ur/host/listings/cantt-view-residence/availability">ترمیم ←</a>
+              </div>
+              <p class="foot">"کم از کم قیام اور بکنگ کے اصول" میں ایک ہی جگہ طے شدہ — یہاں صرف پڑھنے کے لیے دکھایا گیا ہے۔</p>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the week runs right-to-left, the month chevrons flip toward the reading direction, and the read-only rule strip's "Edit →" becomes "ترمیم ←". <b>Every digit in the grid is inside <code>.num</code></b> — <code>direction:ltr; unicode-bidi:isolate</code>, Western numerals, tabular figures — so the Gregorian date, the Hijri date and the price never mirror their digit order, and each cell's <code>aria-label</code> numerals match what is drawn (Pass&nbsp;#31 ruling). The Urdu moon-sighting footnote is <code>ga-022</code>/<code>ha-032</code>'s shipped translation verbatim, not a paraphrase, and the Hijri month names are the ones the calendar family already uses.</p>
+    </section>
+
+  </main>
+</body>
+</html>

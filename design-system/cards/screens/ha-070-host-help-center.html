@@ -1,0 +1,383 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Host help center (HA-070)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1000px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* host chrome — flat phone frame, host app bar; NO journey stepper (host side never carries one, §7.6a) */
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; overflow-y:auto; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 10px; }
+  .sec-label:first-child { margin-top:2px; }
+
+  /* search bar — collapsed pill (§8.4 nav) */
+  .searchbar { display:flex; align-items:center; gap:9px; min-height:48px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-default); padding:0 14px; }
+  .searchbar svg { width:18px; height:18px; stroke-width:2; color:var(--text-secondary); flex:none; }
+  .searchbar input { border:none; background:none; outline:none; flex:1; min-width:0; font-family:inherit; font-size:14px; color:var(--text-primary); }
+  .searchbar input::placeholder { color:var(--text-secondary); }
+  .searchbar.filled { background:var(--bg-canvas); border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-subtle); }
+
+  /* category grid — six hosting categories at identical visual weight (§10.1) */
+  .catgrid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .cattile { display:flex; flex-direction:column; gap:9px; align-items:flex-start; min-height:88px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:12px; text-decoration:none; }
+  .cattile-ic { width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); flex:none; }
+  .cattile-ic svg { width:18px; height:18px; stroke-width:1.7; }
+  .cattile-t { font-size:12.5px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+
+  /* FAQ accordion — GA-059 / GA-108 disclosure grammar, unchanged */
+  .faq { margin-top:2px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .qa { border-bottom:1px solid var(--border-hairline); }
+  .qa:last-child { border-bottom:none; }
+  .qa summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px; min-height:48px; padding:11px 13px; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .qa summary::-webkit-details-marker { display:none; }
+  .qa summary .chev { margin-inline-start:auto; color:var(--text-tertiary); flex:none; transition:transform .15s ease; }
+  .qa summary .chev svg { width:18px; height:18px; stroke-width:2; }
+  .qa[open] summary .chev { transform:rotate(180deg); }
+  .qa .ans { padding:0 13px 13px; font-size:12.5px; color:var(--text-secondary); line-height:1.6; }
+  .qa .ans .term { font-style:italic; color:var(--text-primary); font-weight:600; }
+  .qa .ans b { color:var(--text-primary); font-weight:600; }
+  @media (prefers-reduced-motion: reduce) { .qa summary .chev { transition:none; } }
+
+  /* article list rows */
+  .artlist { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .artrow { display:flex; gap:11px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 12px; text-decoration:none; }
+  .artrow-ic { width:34px; height:34px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .artrow-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .artrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .artrow-t { font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .artrow-s { font-size:11.5px; color:var(--text-secondary); }
+  .artrow-chev { flex:none; color:var(--text-tertiary); }
+  .artrow-chev svg { width:18px; height:18px; stroke-width:2; }
+
+  /* category context header (drilled into a category) */
+  .catctx { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .catctx-ic { width:36px; height:36px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; }
+  .catctx-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .catctx-b { display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .catctx-t { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .catctx-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* bilingual support line */
+  .bilang { display:flex; align-items:center; gap:9px; margin-top:16px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .bilang svg { width:16px; height:16px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .bilang span { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .ur-inline { font-family:'Noto Nastaliq Urdu', serif; unicode-bidi:isolate; }
+
+  /* empty search state — orient + one action (§8.5 nav) */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px 10px; }
+  .empty-ic { color:var(--text-tertiary); margin-bottom:14px; }
+  .empty-ic svg { width:40px; height:40px; stroke-width:1.5; }
+  .empty h2 { font-size:16.5px; font-weight:600; color:var(--text-primary); }
+  .empty p { font-size:12.5px; color:var(--text-secondary); margin-top:6px; max-width:246px; line-height:1.55; }
+
+  .grow { flex:1; min-height:8px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:14.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; margin-top:18px; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Host help center (HA-070)</h1>
+    <p>The host mirror of <code>GA-108</code>: <code>/host/help</code>, scoped entirely to hosting. Same hub grammar — search pill, six category tiles at identical visual weight, a "Popular questions" disclosure list, a bilingual availability line, and an empty search that hands off to a person instead of dead-ending. The categories are ordered by what a Pakistani host actually gets stuck on: <strong>Getting started hosting · Payouts &amp; taxes · Licenses &amp; regulations · Bookings &amp; guests · Listing quality · Trip safety</strong>. Regulatory and Shariah-adjacent categories carry <strong>plain neutral glyphs</strong> — a document, a shield — never ornament (§10.1–§10.2). Every FAQ answer is <strong>shipped copy only</strong>: the <code>HA-055</code> payout fee chain (wakala <span class="num">3%</span> → MDR → withholding), <code>HA-010</code>/<code>HA-011</code>'s license auto-pause, and <code>HA-050</code>'s Hotel Eye guest registration — no new claims, no invented rates (SEO-RULES §5). No journey stepper — the host side never carries one (§7.6a). Panels: hub + search results (light) · category drill-in + empty search (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Hub · light</span><span>Search results</span><span>Category · empty search · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the host help hub, and search results for a regulatory query">
+      <div class="panel-tag">Light — hub · search results</div>
+      <div class="rowflex">
+
+        <!-- A · HUB -->
+        <div class="pcol">
+          <div class="pcap">A · Hub — categories + popular questions</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to Today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Help</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <label class="sr-only" for="hs-a">Search hosting help</label>
+              <div class="searchbar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input id="hs-a" type="text" placeholder="Search hosting help" />
+              </div>
+
+              <div class="sec-label">Browse by category</div>
+              <div class="catgrid">
+                <a class="cattile" href="/host/help/getting-started"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg></span><span class="cattile-t">Getting started hosting</span></a>
+                <a class="cattile" href="/host/help/fees"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M6 15h4"/></svg></span><span class="cattile-t">Payouts &amp; taxes</span></a>
+                <a class="cattile" href="/host/help/regulations"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="cattile-t">Licenses &amp; regulations</span></a>
+                <a class="cattile" href="/host/help/bookings"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span class="cattile-t">Bookings &amp; guests</span></a>
+                <a class="cattile" href="/host/help/listing-quality"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></svg></span><span class="cattile-t">Listing quality</span></a>
+                <a class="cattile" href="/host/help/trip-safety"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg></span><span class="cattile-t">Trip safety</span></a>
+              </div>
+
+              <div class="sec-label">Popular questions</div>
+              <div class="faq">
+                <details class="qa" open>
+                  <summary>How is my payout calculated?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">Every booking runs the same chain: gross booking amount, then the service fee (<span class="term">wakala</span>) — a fixed <span class="num">3%</span> of the gross booking value — then payment processing (MDR), then withholding tax at your ATL filer rate. What's left is your <b>net payout</b>, and every line is shown before every payout.</p>
+                </details>
+                <details class="qa">
+                  <summary>What happens if my tourism license expires?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">We pause your listing automatically until it's renewed — <b>never a surprise, always fixable</b>. It comes back the moment your renewal is in, and nothing else about your account changes.</p>
+                </details>
+                <details class="qa">
+                  <summary>Do I have to register my guests with the police?<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans">No — <b>SalamStay files this for you</b>. Short-stay guest registration is a routine legal requirement across Punjab, filed through the Hotel Eye system, the same formality any hotel or guest house completes. It's filed automatically within <span class="num">24</span> hours of check-in.</p>
+                </details>
+              </div>
+
+              <div class="bilang">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>
+                <span>Help is available in <span class="ur-inline">اردو</span> and English.</span>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SEARCH RESULTS -->
+        <div class="pcol">
+          <div class="pcap">B · Search results — "NOC"</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/help" aria-label="Back to Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Search</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="searchbar filled">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" value="NOC" readonly aria-label="Search query" />
+              </div>
+
+              <div class="sec-label"><span class="num">4</span> results in Licenses &amp; regulations</div>
+              <ul class="artlist">
+                <li><a class="artrow" href="/host/help/regulations/cantonment-noc"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="artrow-b"><span class="artrow-t">Do I need an NOC for a cantonment listing?</span><span class="artrow-s">Licenses &amp; regulations</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/regulations/tourism-license"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="artrow-b"><span class="artrow-t">Adding your provincial tourism license</span><span class="artrow-s">Licenses &amp; regulations</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/regulations/license-auto-pause"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="artrow-b"><span class="artrow-t">What happens when a license lapses</span><span class="artrow-s">Licenses &amp; regulations</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/regulations/guest-registration"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="artrow-b"><span class="artrow-t">Guest registration and the Hotel Eye system</span><span class="artrow-s">Licenses &amp; regulations</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <div class="bilang">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>
+                <span>Help is available in <span class="ur-inline">اردو</span> and English.</span>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The six tiles carry <strong>identical weight</strong> — the regulatory tile ("Licenses &amp; regulations") is a plain document glyph at the same size and surface as "Listing quality", so a compliance topic never reads as a warning (§10.1/§10.6). Popular questions reuse the <code>GA-108</code>/<code>GA-059</code> disclosure grammar verbatim, and every answer is lifted from copy already shipped elsewhere — the fee chain from <code>HA-055</code>, the auto-pause promise from <code>HA-010</code>/<code>HA-011</code> ("never a surprise, always fixable"), and the Hotel Eye filing from <code>HA-050</code> ("SalamStay files this for you"). No new figure, rate, or timing is introduced.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the payouts category drilled in, and the empty search state handing off to host support">
+      <div class="panel-tag">Dark — category drill-in · empty search → HA-071</div>
+      <div class="rowflex">
+
+        <!-- C · CATEGORY DRILL-IN -->
+        <div class="pcol">
+          <div class="pcap">C · Category — Payouts &amp; taxes</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/help" aria-label="Back to Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Payouts &amp; taxes</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="catctx">
+                <span class="catctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M6 15h4"/></svg></span>
+                <span class="catctx-b"><span class="catctx-t">Payouts &amp; taxes</span><span class="catctx-s"><span class="num">5</span> articles</span></span>
+              </div>
+              <ul class="artlist">
+                <li><a class="artrow" href="/host/help/fees"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg></span><span class="artrow-b"><span class="artrow-t">How each payout is calculated</span><span class="artrow-s"><span class="num">4</span> min read</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/fees#wakala"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span><span class="artrow-b"><span class="artrow-t">The service fee (wakala), explained</span><span class="artrow-s"><span class="num">3</span> min read</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/fees#withholding"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M8 10h8M8 14h5"/></svg></span><span class="artrow-b"><span class="artrow-t">Withholding tax: filer vs non-filer</span><span class="artrow-s"><span class="num">4</span> min read</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/payouts/where-to-see"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span><span class="artrow-b"><span class="artrow-t">Where to see your next payout</span><span class="artrow-s"><span class="num">2</span> min read</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="artrow" href="/host/help/payouts/tax-documents"><span class="artrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg></span><span class="artrow-b"><span class="artrow-t">Your tax documents and receipts</span><span class="artrow-s"><span class="num">3</span> min read</span></span><span class="artrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · EMPTY SEARCH — HANDS OFF TO HA-071 -->
+        <div class="pcol">
+          <div class="pcap">D · Empty search — hand-off to host support</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/help" aria-label="Back to Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Search</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="searchbar filled">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" value="minimum internet speed required" readonly aria-label="Search query" />
+              </div>
+              <div class="empty">
+                <span class="empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M8.5 8.5l5 5M13.5 8.5l-5 5"/></svg></span>
+                <h2>No results for "minimum internet speed required"</h2>
+                <p>Try different words, or send it to our host support team — a person will read it.</p>
+              </div>
+              <a class="btn" href="/host/help/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>Contact host support</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The drill-in reuses the identical article-row grammar as search results — same height, same hairline, same chevron — and its first three rows point at the <strong>routes already shipped</strong> by <code>HA-055</code>'s fee table (<code>/host/help/fees#wakala</code>, <code>#withholding</code>), so one fee explanation has one owner. The empty state follows the empty-states spec exactly: one line glyph, a headline naming the query, one sentence, <strong>one action</strong> — a direct hand-off to <code>HA-071</code>. The example query is deliberately one the product refuses to answer with a number (<code>HA-075</code> won't invent Mbps figures), so the hand-off is honest rather than decorative.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the host help hub">
+      <div class="panel-tag">RTL · اردو — hub, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">میزبان مدد — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="آج پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur" id="uH">مدد</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <label class="sr-only ur" for="hs-u">میزبانی سے متعلق مدد تلاش کریں</label>
+              <div class="searchbar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input class="ur" id="hs-u" type="text" placeholder="میزبانی سے متعلق مدد تلاش کریں" />
+              </div>
+
+              <div class="sec-label ur">قسم کے مطابق دیکھیں</div>
+              <div class="catgrid">
+                <a class="cattile" href="/ur/host/help/getting-started"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg></span><span class="cattile-t ur">میزبانی کی شروعات</span></a>
+                <a class="cattile" href="/ur/host/help/fees"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M14 15h4"/></svg></span><span class="cattile-t ur">ادائیگیاں اور ٹیکس</span></a>
+                <a class="cattile" href="/ur/host/help/regulations"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3H9L5 7v14h13z"/><path d="M10 3v5H5M9 13h6M11 17h4"/></svg></span><span class="cattile-t ur">لائسنس اور ضوابط</span></a>
+                <a class="cattile" href="/ur/host/help/bookings"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span class="cattile-t ur">بکنگ اور مہمان</span></a>
+                <a class="cattile" href="/ur/host/help/listing-quality"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="15.5" cy="9.5" r="1.5"/><path d="M3 16l5-5 11 9"/></svg></span><span class="cattile-t ur">فہرست کا معیار</span></a>
+                <a class="cattile" href="/ur/host/help/trip-safety"><span class="cattile-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/></svg></span><span class="cattile-t ur">سفر کی حفاظت</span></a>
+              </div>
+
+              <div class="sec-label ur">مقبول سوالات</div>
+              <div class="faq">
+                <details class="qa" open>
+                  <summary class="ur">میری ادائیگی کیسے شمار ہوتی ہے؟<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans ur">ہر بکنگ ایک ہی ترتیب سے گزرتی ہے: مجموعی رقم، پھر سروس فیس (<span class="term">وکالت</span>) — مجموعی بکنگ رقم کا مقررہ <span class="num">3%</span> — پھر ادائیگی پروسیسنگ (MDR)، پھر آپ کے ATL فائلر ریٹ پر ود ہولڈنگ ٹیکس۔ جو باقی بچے وہ آپ کی <b>خالص ادائیگی</b> ہے، اور ہر لائن ہر ادائیگی سے پہلے دکھائی جاتی ہے۔</p>
+                </details>
+                <details class="qa">
+                  <summary class="ur">اگر میرا ٹورازم لائسنس ختم ہو جائے تو کیا ہوگا؟<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans ur">ہم آپ کی فہرست خودکار طور پر روک دیتے ہیں یہاں تک کہ تجدید ہو جائے — <b>یہ کبھی اچانک نہیں ہوتا، اور ہمیشہ قابلِ اصلاح ہے</b>۔ تجدید آتے ہی فہرست واپس آ جاتی ہے، اور آپ کے اکاؤنٹ میں اور کچھ نہیں بدلتا۔</p>
+                </details>
+                <details class="qa">
+                  <summary class="ur">کیا مجھے مہمانوں کو پولیس میں رجسٹر کرنا ہوتا ہے؟<span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></summary>
+                  <p class="ans ur">نہیں — <b>سلام سٹے یہ آپ کے لیے فائل کرتا ہے</b>۔ مختصر قیام کی رجسٹریشن پنجاب بھر میں ایک معمول کی قانونی ضرورت ہے، جو ہوٹل آئی سسٹم کے ذریعے جمع ہوتی ہے — وہی کارروائی جو کوئی بھی ہوٹل یا گیسٹ ہاؤس کرتا ہے۔ یہ چیک اِن کے <span class="num">24</span> گھنٹوں کے اندر خودکار طور پر فائل ہو جاتی ہے۔</p>
+                </details>
+              </div>
+
+              <div class="bilang">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>
+                <span class="ur">مدد اردو اور انگریزی میں دستیاب ہے۔</span>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): the back chevron moves to the reading-start edge, the tile glyphs that carry direction (the document fold, the photo horizon, the card stripe) are redrawn rather than flipped by transform, and the disclosure chevron still rotates on open. Every numeral stays <strong>Western and LTR-isolated</strong> inside <code>.num</code> — <span class="num">3%</span>, <span class="num">24</span> hours — with Urdu prose around them (Pass #31 ruling). "MDR", "ATL" and "CNIC"-class acronyms stay Latin as proper nouns; no fact is added or softened in translation.</p>
+    </section>
+
+  </main>
+</body>
+</html>

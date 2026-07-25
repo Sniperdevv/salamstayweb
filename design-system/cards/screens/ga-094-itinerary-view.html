@@ -1,0 +1,416 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Itinerary view (GA-094)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --map-land:#EEF0F1; --map-park:#E7F1EB; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --map-land:#141918; --map-park:#132019; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:640px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 16px; overflow-y:auto; }
+
+  /* trip title strip */
+  .tripline { padding-bottom:12px; margin-bottom:6px; border-bottom:1px solid var(--border-hairline); }
+  .tripline .tt { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .tripline .tl { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+  /* day-grouped agenda */
+  .daygrp { padding:14px 0; border-bottom:1px solid var(--border-hairline); }
+  .daygrp:last-of-type { border-bottom:none; }
+  .day-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .day-dt { display:flex; flex-direction:column; gap:1px; }
+  .day-g { font-size:13.5px; font-weight:700; color:var(--text-primary); }
+  .day-hj { font-size:10.5px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+  .day-tag { flex:none; font-size:10px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; border-radius:var(--radius-full); padding:4px 10px; margin-top:1px; }
+  .day-tag.arrive { color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .day-tag.depart { color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .day-tag.stay { color:var(--text-tertiary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+
+  .ditem { display:flex; gap:11px; align-items:flex-start; margin-top:11px; }
+  .ditem-ic { width:32px; height:32px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .ditem.muted .ditem-ic { background:var(--bg-sunken); color:var(--text-tertiary); }
+  .ditem-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .ditem-tx { display:flex; flex-direction:column; gap:1px; padding-top:2px; }
+  .ditem-tx b { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .ditem-tx span { font-size:11.5px; color:var(--text-secondary); }
+
+  .moon-note { font-size:11px; color:var(--text-tertiary); margin-top:12px; }
+
+  /* static map strip — ga-073 muted-palette lineage */
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 10px; }
+  .mapstrip { position:relative; height:104px; border-radius:var(--radius-lg); overflow:hidden; background:var(--map-land); border:1px solid var(--border-hairline); }
+  .m-road { position:absolute; background:var(--map-road); border-radius:2px; }
+  .m-road.thin { background:var(--map-road2); }
+  .m-park { position:absolute; border-radius:50% 40% 55% 45%; background:var(--map-park); }
+  .mlbl { position:absolute; font-size:9.5px; font-weight:500; color:var(--map-label); letter-spacing:.02em; }
+  .map-pin { position:absolute; top:50%; left:50%; transform:translate(-50%,-100%); width:20px; height:20px; }
+  .map-pin svg { width:20px; height:20px; color:var(--int-primary); stroke-width:1.8; }
+  .map-area { position:absolute; inset-block-end:8px; inset-inline-start:8px; font-size:10px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:3px 8px; box-shadow:var(--el-hairline); }
+
+  /* print / share affordance */
+  .utilrow { display:flex; gap:10px; margin-top:14px; }
+  .utilbtn { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); font-size:12.5px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .utilbtn svg { width:17px; height:17px; stroke-width:1.9; flex:none; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Itinerary view (GA-094)</h1>
+    <p>A consolidated, day-grouped agenda for the whole stay at <strong>Margalla View Apartment · F-7, Islamabad</strong> — check-in Fri, two stay days, checkout Mon. Every day leads with the <strong>Gregorian date</strong> and carries the <strong>Hijri date as a quiet secondary line</strong> (§10.5, never pinned as primary); each row states only <strong>practical booking facts</strong> — check-in/checkout time, that a day has no scheduled action — never an invented activity or suggestion. A small static map strip (<code>GA-073</code> muted-palette lineage) and a print/share affordance close the screen. Post-book read view — no journey stepper (§7.6a). Panels: full agenda (light) · full agenda (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Full agenda · light</span><span>Full agenda · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — full day-by-day itinerary">
+      <div class="panel-tag">Light — 4-day agenda · map strip · print / share</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Itinerary — full</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Your itinerary</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tripline">
+                <div class="tt">Margalla View Apartment</div>
+                <div class="tl">F-7, Islamabad · 3 nights · hosted by Ayesha</div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Fri 14 Aug 2026</span><span class="day-hj">2 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag arrive">Check-in day</span>
+                </div>
+                <div class="ditem">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="ditem-tx"><b>Check-in from 2:00 PM</b><span>Self check-in — codes are in your Check-in instructions</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Sat 15 Aug 2026</span><span class="day-hj">3 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag stay">Day 2 of 3</span>
+                </div>
+                <div class="ditem muted">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                  <span class="ditem-tx"><b>Staying at Margalla View Apartment</b><span>Nothing scheduled — no check-in or checkout today</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Sun 16 Aug 2026</span><span class="day-hj">4 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag stay">Day 3 of 3</span>
+                </div>
+                <div class="ditem muted">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                  <span class="ditem-tx"><b>Staying at Margalla View Apartment</b><span>Nothing scheduled — no check-in or checkout today</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Mon 17 Aug 2026</span><span class="day-hj">5 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag depart">Check-out day</span>
+                </div>
+                <div class="ditem">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="ditem-tx"><b>Checkout by 11:00 AM</b><span>Steps are in your Checkout instructions</span></span>
+                </div>
+              </div>
+
+              <p class="moon-note">Hijri dates are approximate and may vary by moon sighting.</p>
+
+              <div class="sec-label">Where you'll stay</div>
+              <div class="mapstrip" role="img" aria-label="Map showing the stay in F-7, Islamabad">
+                <span class="m-park" style="right:-20px;top:-18px;width:100px;height:90px"></span>
+                <span class="m-road" style="top:56px;left:-16px;width:340px;height:5px;transform:rotate(-8deg)"></span>
+                <span class="m-road thin" style="top:14px;left:130px;width:4px;height:110px;transform:rotate(6deg)"></span>
+                <span class="mlbl" style="top:40px;left:16px">Margalla Rd</span>
+                <span class="mlbl" style="top:70px;left:150px">F-7 Markaz</span>
+                <span class="map-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span class="map-area">F-7 · Islamabad</span>
+              </div>
+
+              <div class="utilrow">
+                <button class="utilbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>Print</button>
+                <button class="utilbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-3.6M8.6 13.4l6.8 3.6"/></svg>Share</button>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every day is a real grouped row: the Gregorian date leads at <code>bodyMd</code> weight, the Hijri line sits quietly beneath at <code>caption</code> weight (§10.5) — no single Hijri day is pinned as primary, and the honesty footnote about moon sighting closes the list once, not per-row. Stay days carry a neutral "nothing scheduled" fact rather than any invented suggestion or activity — this is a booking-facts agenda, not a trip-planning surface. The map strip is a static, muted-palette substrate (generated from the Slate/Brand ramps), matching the <code>GA-073</code> route-map treatment at a smaller scale. Print and Share are real ≥44pt affordances, not decorative icons.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — full day-by-day itinerary">
+      <div class="panel-tag">Dark — same 4-day agenda</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Itinerary — dark</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back to trip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Your itinerary</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tripline">
+                <div class="tt">Margalla View Apartment</div>
+                <div class="tl">F-7, Islamabad · 3 nights · hosted by Ayesha</div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Fri 14 Aug 2026</span><span class="day-hj">2 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag arrive">Check-in day</span>
+                </div>
+                <div class="ditem">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="ditem-tx"><b>Check-in from 2:00 PM</b><span>Self check-in — codes are in your Check-in instructions</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Sat 15 Aug 2026</span><span class="day-hj">3 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag stay">Day 2 of 3</span>
+                </div>
+                <div class="ditem muted">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                  <span class="ditem-tx"><b>Staying at Margalla View Apartment</b><span>Nothing scheduled — no check-in or checkout today</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Sun 16 Aug 2026</span><span class="day-hj">4 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag stay">Day 3 of 3</span>
+                </div>
+                <div class="ditem muted">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                  <span class="ditem-tx"><b>Staying at Margalla View Apartment</b><span>Nothing scheduled — no check-in or checkout today</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g">Mon 17 Aug 2026</span><span class="day-hj">5 Rabi ul-Awwal 1448 AH</span></div>
+                  <span class="day-tag depart">Check-out day</span>
+                </div>
+                <div class="ditem">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="ditem-tx"><b>Checkout by 11:00 AM</b><span>Steps are in your Checkout instructions</span></span>
+                </div>
+              </div>
+
+              <p class="moon-note">Hijri dates are approximate and may vary by moon sighting.</p>
+
+              <div class="sec-label">Where you'll stay</div>
+              <div class="mapstrip" role="img" aria-label="Map showing the stay in F-7, Islamabad">
+                <span class="m-park" style="right:-20px;top:-18px;width:100px;height:90px"></span>
+                <span class="m-road" style="top:56px;left:-16px;width:340px;height:5px;transform:rotate(-8deg)"></span>
+                <span class="m-road thin" style="top:14px;left:130px;width:4px;height:110px;transform:rotate(6deg)"></span>
+                <span class="mlbl" style="top:40px;left:16px">Margalla Rd</span>
+                <span class="mlbl" style="top:70px;left:150px">F-7 Markaz</span>
+                <span class="map-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span class="map-area">F-7 · Islamabad</span>
+              </div>
+
+              <div class="utilrow">
+                <button class="utilbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>Print</button>
+                <button class="utilbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-3.6M8.6 13.4l6.8 3.6"/></svg>Share</button>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical agenda through a single <code>.dark</code> scope — the day tags, muted stay-day icons, and the map strip all recede calmly with tokens only, zero off-palette values.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the itinerary">
+      <div class="panel-tag">RTL · اردو — "آپ کا شیڈول", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">آپ کا شیڈول — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="سفر پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title ur" id="uH">آپ کا شیڈول</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="tripline">
+                <div class="tt ur">مارگلہ ویو اپارٹمنٹ</div>
+                <div class="tl ur">ایف-۷، اسلام آباد · <span class="num">3</span> راتیں · میزبان عائشہ</div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g ur">جمعہ <span class="num">14</span> اگست <span class="num">2026</span></span><span class="day-hj ur"><span class="num">2</span> ربیع الاول <span class="num">1448</span>ھ</span></div>
+                  <span class="day-tag arrive ur">چیک اِن کا دن</span>
+                </div>
+                <div class="ditem">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="ditem-tx"><b class="ur">دوپہر <span class="num">2:00</span> بجے سے چیک اِن</b><span class="ur">سیلف چیک اِن — کوڈز آپ کی چیک اِن ہدایات میں ہیں</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g ur">ہفتہ <span class="num">15</span> اگست <span class="num">2026</span></span><span class="day-hj ur"><span class="num">3</span> ربیع الاول <span class="num">1448</span>ھ</span></div>
+                  <span class="day-tag stay ur">دن <span class="num">2</span> از <span class="num">3</span></span>
+                </div>
+                <div class="ditem muted">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                  <span class="ditem-tx"><b class="ur">مارگلہ ویو اپارٹمنٹ میں قیام</b><span class="ur">آج کچھ طے نہیں — نہ چیک اِن نہ چیک آؤٹ</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g ur">اتوار <span class="num">16</span> اگست <span class="num">2026</span></span><span class="day-hj ur"><span class="num">4</span> ربیع الاول <span class="num">1448</span>ھ</span></div>
+                  <span class="day-tag stay ur">دن <span class="num">3</span> از <span class="num">3</span></span>
+                </div>
+                <div class="ditem muted">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                  <span class="ditem-tx"><b class="ur">مارگلہ ویو اپارٹمنٹ میں قیام</b><span class="ur">آج کچھ طے نہیں — نہ چیک اِن نہ چیک آؤٹ</span></span>
+                </div>
+              </div>
+
+              <div class="daygrp">
+                <div class="day-head">
+                  <div class="day-dt"><span class="day-g ur">پیر <span class="num">17</span> اگست <span class="num">2026</span></span><span class="day-hj ur"><span class="num">5</span> ربیع الاول <span class="num">1448</span>ھ</span></div>
+                  <span class="day-tag depart ur">چیک آؤٹ کا دن</span>
+                </div>
+                <div class="ditem">
+                  <span class="ditem-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="ditem-tx"><b class="ur"><span class="num">11:00 AM</span> تک چیک آؤٹ</b><span class="ur">مراحل آپ کی چیک آؤٹ ہدایات میں ہیں</span></span>
+                </div>
+              </div>
+
+              <p class="moon-note ur">ہجری تاریخیں تخمینی ہیں اور رؤیتِ ہلال سے بدل سکتی ہیں۔</p>
+
+              <div class="sec-label ur">آپ کہاں ٹھہریں گے</div>
+              <div class="mapstrip" role="img" aria-label="ایف-۷، اسلام آباد میں قیام کا نقشہ">
+                <span class="m-park" style="left:-20px;top:-18px;width:100px;height:90px"></span>
+                <span class="m-road" style="top:56px;right:-16px;width:340px;height:5px;transform:rotate(8deg)"></span>
+                <span class="m-road thin" style="top:14px;right:130px;width:4px;height:110px;transform:rotate(-6deg)"></span>
+                <span class="mlbl ur" style="top:40px;right:16px">مارگلہ روڈ</span>
+                <span class="mlbl ur" style="top:70px;right:150px">ایف-۷ مرکز</span>
+                <span class="map-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span class="map-area ur">ایف-۷ · اسلام آباد</span>
+              </div>
+
+              <div class="utilrow">
+                <button class="utilbtn ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>پرنٹ</button>
+                <button class="utilbtn ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-3.6M8.6 13.4l6.8 3.6"/></svg>شیئر</button>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: day rows, tags and the map's road/park shapes flip to the reading direction; dates read real Urdu (<span lang="ur">ربیع الاول 1448ھ</span>) while day-count numerals ("2 از 3") stay legible without digit-mirroring (§11). "Margalla View Apartment" is transliterated as a place name; the moon-sighting footnote and "nothing scheduled" phrasing keep the same calm, factual register as the English panel.</p>
+    </section>
+
+  </main>
+</body>
+</html>

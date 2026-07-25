@@ -1,0 +1,430 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Wishlist detail (GA-102)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --map-land:#EEF0F1; --map-water:#E4EDEC; --map-park:#E7F1EB; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --map-land:#141918; --map-water:#101716; --map-park:#132019; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — flat discover lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:640px; position:relative; }
+  .phone.rtl { direction:rtl; font-family:'Noto Nastaliq Urdu', serif; line-height:1.95; }
+  .phone.rtl .num, .phone.rtl .latin { font-family:'Inter', sans-serif; line-height:1.5; direction:ltr; unicode-bidi:isolate; }
+  .phone.rtl .backchev { transform:scaleX(-1); }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:2px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; color:var(--text-primary); }
+  .ib svg { width:22px; height:22px; stroke-width:1.85; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 14px 12px; overflow:hidden; }
+
+  .dhead { display:flex; flex-direction:column; gap:2px; margin:2px 2px 14px; }
+  .dtitle { font-size:22px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); }
+  .dsub { font-size:13px; color:var(--text-secondary); }
+
+  /* muted static map strip (ga-073 lineage) */
+  .mapstrip { position:relative; height:130px; border-radius:var(--radius-lg); overflow:hidden; background:var(--map-land); border:1px solid var(--border-hairline); margin-bottom:16px; }
+  .mp-water { position:absolute; background:var(--map-water); border-radius:45% 55% 50% 40%; }
+  .mp-park { position:absolute; background:var(--map-park); border-radius:50% 42% 55% 45%; }
+  .mp-road { position:absolute; background:var(--map-road); border-radius:2px; }
+  .mp-road.thin { background:var(--map-road2); }
+  .mp-pin { position:absolute; transform:translate(-50%,-50%); width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); box-shadow:var(--el-hairline); display:flex; align-items:center; justify-content:center; z-index:3; }
+  .mp-pin svg { width:13px; height:13px; color:var(--error-fg); }
+  .mp-lbl { position:absolute; font-size:10px; font-weight:600; color:var(--map-label); letter-spacing:.02em; z-index:2; }
+
+  .listtool { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 2px 12px; }
+  .lt-count { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .sortbtn { display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 12px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-size:12.5px; font-weight:500; color:var(--text-primary); cursor:pointer; font-family:inherit; }
+  .sortbtn svg { width:15px; height:15px; color:var(--text-secondary); stroke-width:1.85; flex:none; }
+
+  /* saved listing cards */
+  .dlist { list-style:none; display:flex; flex-direction:column; gap:22px; }
+  .lwrap { position:relative; }
+  .lcard { display:block; text-decoration:none; color:inherit; }
+  .lmedia { position:relative; display:block; aspect-ratio:20/13; border-radius:var(--radius-xl); overflow:hidden; background:var(--bg-sunken); }
+  .lmedia img { width:100%; height:100%; object-fit:cover; display:block; }
+  .tag { position:absolute; top:12px; inset-inline-start:12px; height:24px; display:inline-flex; align-items:center; padding:0 9px; border-radius:var(--radius-full); background:var(--bg-canvas); color:var(--text-primary); font-size:11px; font-weight:600; box-shadow:var(--el-hairline); }
+  .heart { position:absolute; top:10px; inset-inline-end:10px; width:38px; height:38px; border-radius:var(--radius-full); background:var(--scrim); display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; z-index:4; }
+  .heart svg { width:20px; height:20px; }
+  .lbody { display:block; padding-top:11px; }
+  .titlerow { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .ttl { font-size:15px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rating { display:inline-flex; align-items:center; gap:4px; font-size:13px; font-weight:600; color:var(--text-primary); flex:none; }
+  .rating svg { width:14px; height:14px; color:var(--warning-fg); }
+  .rating .cnt { color:var(--text-secondary); font-weight:400; }
+  .newchip { font-size:11px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:2px 9px; flex:none; }
+  .loc { display:block; font-size:13px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+  .badges { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .badge { display:inline-flex; align-items:center; gap:5px; height:24px; padding:0 8px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:11px; font-weight:500; color:var(--text-primary); }
+  .badge svg { width:12px; height:12px; color:var(--text-secondary); stroke-width:1.9; }
+  .badge.info { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .badge.info svg { color:var(--info-fg); }
+  .price { display:block; margin-top:10px; font-size:15px; }
+  .price b { font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .price .unit { color:var(--text-secondary); font-size:13px; }
+
+  /* note affordances — minimal */
+  .noterow { display:flex; align-items:flex-start; gap:8px; margin-top:9px; padding:8px 10px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-md); }
+  .noteq { flex:none; color:var(--text-tertiary); display:flex; }
+  .noteq svg { width:14px; height:14px; stroke-width:1.9; }
+  .notetext { font-size:12.5px; color:var(--text-secondary); }
+  .addnote { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 4px; margin-top:5px; background:transparent; border:none; cursor:pointer; color:var(--int-primary); font-family:inherit; font-size:12.5px; font-weight:600; }
+  .addnote svg { width:15px; height:15px; stroke-width:2; }
+
+  /* undo toast (snackbar) */
+  .toast { position:absolute; left:12px; right:12px; bottom:34px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border-radius:var(--radius-md); background:var(--text-primary); color:var(--bg-canvas); box-shadow:var(--el-popover); z-index:20; }
+  .toast-msg { font-size:13px; font-weight:500; }
+  .toast-act { background:transparent; border:none; color:var(--bg-canvas); font-family:inherit; font-size:13px; font-weight:700; text-decoration:underline; cursor:pointer; flex:none; min-height:32px; padding:0 4px; }
+
+  /* empty-list state */
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px 24px 40px; }
+  .empty-icn { width:66px; height:66px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; color:var(--int-primary); margin-bottom:18px; }
+  .empty-icn svg { width:30px; height:30px; stroke-width:1.7; }
+  .empty-h { font-size:19px; font-weight:600; color:var(--text-primary); }
+  .empty-p { font-size:13px; color:var(--text-secondary); margin-top:8px; max-width:236px; }
+  .btn { min-height:48px; padding:0 22px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; margin-top:22px; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .spacer-fill { flex:1; }
+
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Wishlist detail (GA-102)</h1>
+    <p>Inside one saved list. The list's own name and one-line description lead, then a <strong>muted static map strip</strong> (ga-073 lineage — CSS/SVG, no live tiles) plots the saved places across F-7, E-7 and G-6. Below, the same photo-forward listing cards carry a <strong>filled</strong> heart — tapping it removes the stay and drops an <strong>Undo</strong> snackbar (no confirm dialog). A note is an optional quiet line; sort is a single low-weight control. When the last stay is removed the list stays and shows a warm empty state. Panels: full list + map (light) · Undo snackbar + empty-list (dark) · اردو / RTL. Saved heart = muted terracotta, never brand-green (§8.2).</p>
+    <div class="toggle" role="presentation"><span class="on">List + map · light</span><span>Undo snackbar · dark</span><span>Empty list · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — a wishlist with map and three saved stays">
+      <div class="panel-tag">Light — map strip · 3 saved stays · note affordances</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Islamabad — August</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/wishlists" aria-label="Back to wishlists"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Islamabad — August</div>
+              <a class="ib" href="/wishlists/islamabad-august/edit" aria-label="Edit this wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="dhead">
+                <span class="dtitle">Islamabad — August</span>
+                <span class="dsub">For the family Eid trip</span>
+              </div>
+
+              <div class="mapstrip" role="img" aria-label="Map of 3 saved places across F-7, E-7 and G-6, Islamabad">
+                <span class="mp-park" style="left:-8%;top:34%;width:46%;height:64%;"></span>
+                <span class="mp-water" style="right:-10%;top:-14%;width:44%;height:52%;"></span>
+                <span class="mp-road" style="left:8%;top:52%;width:84%;height:5px;transform:rotate(-9deg);"></span>
+                <span class="mp-road thin" style="left:40%;top:6%;width:5px;height:90%;transform:rotate(6deg);"></span>
+                <span class="mp-lbl" style="left:12%;top:12%;">F-7</span>
+                <span class="mp-lbl" style="right:16%;bottom:16%;">E-7</span>
+                <span class="mp-lbl" style="left:44%;bottom:10%;">G-6</span>
+                <span class="mp-pin" style="left:26%;top:40%;"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+                <span class="mp-pin" style="left:66%;top:30%;"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+                <span class="mp-pin" style="left:52%;top:70%;"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+              </div>
+
+              <div class="listtool">
+                <span class="lt-count">3 saved</span>
+                <button class="sortbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h12M3 12h9M3 18h6M17 6v12M17 18l3-3M17 18l-3-3"/></svg>Recently added</button>
+              </div>
+
+              <ul class="dlist">
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/cedar-lodge-f7" aria-label="Cedar Lodge, F-7 Markaz — entire home for 6 guests. 4.92 stars, 214 reviews. PKR 14,200 per night.">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-living.jpg" alt="Sunlit living room of Cedar Lodge, F-7 Markaz" loading="eager" data-prod-loading="lazy" />
+                      <span class="tag">SalamStar host</span>
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">Cedar Lodge, F-7 Markaz</span><span class="rating"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.92 <span class="cnt">(214)</span></span></span>
+                      <span class="loc">F-7 · entire home · 6 guests</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3"/></svg>Halal kitchen</span><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5l-2 5-3-2z"/></svg>Qibla</span></span>
+                      <span class="price"><b class="num">PKR 14,200</b> <span class="unit">/ night</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="Saved to Islamabad — August. Tap to remove."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  <div class="noterow">
+                    <span class="noteq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                    <span class="notetext">Your note — walking distance to the cousins' place.</span>
+                  </div>
+                </li>
+
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/margalla-view-e7" aria-label="Margalla View Apartment, E-7 — 2-bed, women-hosted. New listing, no reviews yet. PKR 11,800 per night.">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-bedroom.jpg" alt="Calm neutral bedroom at Margalla View Apartment, E-7" loading="eager" data-prod-loading="lazy" />
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">Margalla View Apartment, E-7</span><span class="newchip">New</span></span>
+                      <span class="loc">E-7 · 2-bed · women-hosted</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3"/><path d="M12 10.5v6M9 13.5h6"/></svg>Women-only</span><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3"/></svg>Halal kitchen</span></span>
+                      <span class="price"><b class="num">PKR 11,800</b> <span class="unit">/ night</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="Saved to Islamabad — August. Tap to remove."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  <button class="addnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add a note</button>
+                </li>
+
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/g6-family-house" aria-label="Sector G-6 Family House — family-only, backup power. 4.74 stars, 58 reviews. PKR 8,900 per night.">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-dining.jpg" alt="Bright dining area at Sector G-6 Family House" loading="eager" data-prod-loading="lazy" />
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">Sector G-6 Family House</span><span class="rating"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.74 <span class="cnt">(58)</span></span></span>
+                      <span class="loc">G-6 · family-only · 4 guests</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6.5" r="2.3"/><circle cx="16" cy="6.5" r="2.3"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M12 20v-3a4 4 0 0 1 8 0v3"/></svg>Family-only</span><span class="badge info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Backup power</span></span>
+                      <span class="price"><b class="num">PKR 8,900</b> <span class="unit">/ night</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="Saved to Islamabad — August. Tap to remove."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  <button class="addnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add a note</button>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">The map is drawn from the neutral Slate/Brand ramp (<code>--map-*</code>) — no live tiles, no new hues; pins carry the muted-terracotta heart so "saved" reads at a glance. Each card is one <code>&lt;a&gt;</code> to <code>/rooms/{slug}</code>; the heart is a separate <code>&lt;button aria-pressed&gt;</code> sibling (never nested in the link), so it removes without opening the stay. Note and sort are deliberately low-weight. Targets ≥44pt.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — undo + empty ============================ -->
+    <section class="panel dark" aria-label="Dark theme — Undo snackbar after a remove, and the empty-list state">
+      <div class="panel-tag">Dark — remove → Undo snackbar · empty-list state</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Removed — Undo snackbar</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/wishlists" aria-label="Back to wishlists"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Islamabad — August</div>
+              <a class="ib" href="/wishlists/islamabad-august/edit" aria-label="Edit this wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="dhead">
+                <span class="dtitle">Islamabad — August</span>
+                <span class="dsub">For the family Eid trip</span>
+              </div>
+              <div class="listtool">
+                <span class="lt-count">2 saved</span>
+                <button class="sortbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h12M3 12h9M3 18h6M17 6v12M17 18l3-3M17 18l-3-3"/></svg>Recently added</button>
+              </div>
+              <ul class="dlist">
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/margalla-view-e7" aria-label="Margalla View Apartment, E-7 — 2-bed, women-hosted. New listing. PKR 11,800 per night.">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-bedroom.jpg" alt="Calm neutral bedroom at Margalla View Apartment, E-7" loading="eager" data-prod-loading="lazy" />
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">Margalla View Apartment, E-7</span><span class="newchip">New</span></span>
+                      <span class="loc">E-7 · 2-bed · women-hosted</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3"/><path d="M12 10.5v6M9 13.5h6"/></svg>Women-only</span><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3"/></svg>Halal kitchen</span></span>
+                      <span class="price"><b class="num">PKR 11,800</b> <span class="unit">/ night</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="Saved to Islamabad — August. Tap to remove."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                </li>
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/g6-family-house" aria-label="Sector G-6 Family House — family-only, backup power. 4.74 stars, 58 reviews. PKR 8,900 per night.">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-dining.jpg" alt="Bright dining area at Sector G-6 Family House" loading="eager" data-prod-loading="lazy" />
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">Sector G-6 Family House</span><span class="rating"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>4.74 <span class="cnt">(58)</span></span></span>
+                      <span class="loc">G-6 · family-only · 4 guests</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6.5" r="2.3"/><circle cx="16" cy="6.5" r="2.3"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M12 20v-3a4 4 0 0 1 8 0v3"/></svg>Family-only</span><span class="badge info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Backup power</span></span>
+                      <span class="price"><b class="num">PKR 8,900</b> <span class="unit">/ night</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="Saved to Islamabad — August. Tap to remove."><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                </li>
+              </ul>
+            </div>
+            <div class="toast" role="status">
+              <span class="toast-msg">Removed from Islamabad — August</span>
+              <button class="toast-act">Undo</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">Empty list — last stay removed</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/wishlists" aria-label="Back to wishlists"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Islamabad — August</div>
+              <a class="ib" href="/wishlists/islamabad-august/edit" aria-label="Edit this wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="empty">
+                <span class="empty-icn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+                <span class="empty-h">This list is empty</span>
+                <span class="empty-p">The list is still here for your Eid trip — tap the heart on any stay to save it back in.</span>
+                <a class="btn primary" href="/explore">Browse stays</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Removing a stay is <strong>optimistic and reversible</strong>: the card leaves instantly, the count drops, and a snackbar offers <strong>Undo</strong> for a few seconds — no "Are you sure?" modal. When the last stay goes, the list itself is never deleted here; it shows a calm empty state that points straight back to browsing (no dead end). The snackbar action is high-contrast on the inverse surface.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the wishlist detail">
+      <div class="panel-tag">RTL · اردو — mirrored, map + saved stays</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">اسلام آباد — اگست</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/wishlists" aria-label="واپس پسندیدہ فہرستوں پر"><svg class="backchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="uH">اسلام آباد — اگست</div>
+              <a class="ib" href="/wishlists/islamabad-august/edit" aria-label="اس فہرست میں ترمیم کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="dhead">
+                <span class="dtitle">اسلام آباد — اگست</span>
+                <span class="dsub">فیملی کے عید سفر کے لیے</span>
+              </div>
+              <div class="mapstrip" role="img" aria-label="ایف-۷، ای-۷ اور جی-۶ میں محفوظ ۳ مقامات کا نقشہ">
+                <span class="mp-park" style="right:-8%;top:34%;width:46%;height:64%;"></span>
+                <span class="mp-water" style="left:-10%;top:-14%;width:44%;height:52%;"></span>
+                <span class="mp-road" style="right:8%;top:52%;width:84%;height:5px;transform:rotate(9deg);"></span>
+                <span class="mp-road thin" style="right:40%;top:6%;width:5px;height:90%;transform:rotate(-6deg);"></span>
+                <span class="mp-lbl" style="right:12%;top:12%;">ایف-۷</span>
+                <span class="mp-lbl" style="left:16%;bottom:16%;">ای-۷</span>
+                <span class="mp-lbl" style="right:44%;bottom:10%;">جی-۶</span>
+                <span class="mp-pin" style="right:26%;top:40%;"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+                <span class="mp-pin" style="right:66%;top:30%;"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+                <span class="mp-pin" style="right:52%;top:70%;"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+              </div>
+              <div class="listtool">
+                <span class="lt-count">۳ محفوظ</span>
+                <button class="sortbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h12M3 12h9M3 18h6M17 6v12M17 18l3-3M17 18l-3-3"/></svg>حال ہی میں شامل</button>
+              </div>
+              <ul class="dlist">
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/cedar-lodge-f7" aria-label="سیڈر لاج، ایف-۷ مرکز — پورا گھر، ۶ مہمان، ۴.۹۲ ستارے، فی رات ۱۴٬۲۰۰ روپے">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-living.jpg" alt="سیڈر لاج، ایف-۷ مرکز کا روشن کمرہ" loading="eager" data-prod-loading="lazy" />
+                      <span class="tag">سلام اسٹار میزبان</span>
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">سیڈر لاج، ایف-۷ مرکز</span><span class="rating"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>۴.۹۲</span></span>
+                      <span class="loc">ایف-۷ · پورا گھر · ۶ مہمان</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3"/></svg>حلال کچن</span><span class="badge">قبلہ</span></span>
+                      <span class="price"><b class="num">PKR 14,200</b> <span class="unit">/ رات</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="اسلام آباد — اگست میں محفوظ۔ ہٹانے کے لیے دبائیں۔"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  <div class="noterow">
+                    <span class="noteq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                    <span class="notetext">آپ کا نوٹ — کزنز کے گھر سے پیدل فاصلے پر۔</span>
+                  </div>
+                </li>
+                <li class="lwrap">
+                  <a class="lcard" href="/rooms/margalla-view-e7" aria-label="مارگلہ ویو اپارٹمنٹ، ای-۷ — خواتین میزبان، نئی قیام گاہ، فی رات ۱۱٬۸۰۰ روپے">
+                    <span class="lmedia">
+                      <img src="../../assets/photos/is-f7-bedroom.jpg" alt="مارگلہ ویو اپارٹمنٹ، ای-۷ کا سادہ بیڈروم" loading="eager" data-prod-loading="lazy" />
+                    </span>
+                    <span class="lbody">
+                      <span class="titlerow"><span class="ttl">مارگلہ ویو اپارٹمنٹ، ای-۷</span><span class="newchip">نئی</span></span>
+                      <span class="loc">ای-۷ · ۲ بیڈ · خواتین میزبان</span>
+                      <span class="badges"><span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3"/><path d="M12 10.5v6M9 13.5h6"/></svg>صرف خواتین</span><span class="badge">حلال کچن</span></span>
+                      <span class="price"><b class="num">PKR 11,800</b> <span class="unit">/ رات</span></span>
+                    </span>
+                  </a>
+                  <button class="heart" aria-pressed="true" aria-label="اسلام آباد — اگست میں محفوظ۔ ہٹانے کے لیے دبائیں۔"><svg viewBox="0 0 24 24" fill="var(--error-fg)" stroke="var(--error-fg)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+                  <button class="addnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>نوٹ شامل کریں</button>
+                </li>
+              </ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored end-to-end — the back chevron flips, the map blobs and sector labels move to the leading edge, the heart stays symmetric (never mirrored, §8.2). PKR amounts hold Latin digit order inside <code>.num</code> (LTR-isolated); counts, notes and sector names use Urdu numerals and real Urdu.</p>
+    </section>
+
+  </main>
+</body>
+</html>

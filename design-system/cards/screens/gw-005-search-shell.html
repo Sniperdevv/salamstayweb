@@ -1,0 +1,826 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Search shell + faceted results (GW-005)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     GW-005 · SEARCH (list + map) · route "/search" and "/search?…"
+     SSR + SPA hybrid · SEO-RULES §3.5 · GATE 75 (facets) · GATE 76 (internal
+     search indexability & crawl-trap prevention)
+     Web twin of the shipped app screens ga-025 (results list), ga-026 (results
+     map) and ga-118 (relax-a-filter) — G78 structural parity applies.
+     ---------------------------------------------------------------------------
+
+     ROBOTS SPLIT — THE CENTRAL RULE OF THIS PAGE:
+
+       /search                       → noindex, follow   (the shell)
+       /search?city=…                → noindex, follow
+       /search?city=…&halal_kitchen=1&dates=…&sort=…  → noindex, follow
+       …every parameter combination  → noindex, follow, forever
+
+     CANONICALS (no search URL is ever self-canonical — G76 L2):
+       /search                         → canonical https://salamstay.com/
+       /search?city=islamabad&…        → canonical https://salamstay.com/stays-in-islamabad
+       /search?city=islamabad&area=f-7 → canonical https://salamstay.com/stays-in-islamabad/f-7
+     The clean /stays-in-{city} and /stays-in-{city}/{area} pages are the
+     indexable surfaces; this page is the interactive path to them.
+
+     Also: `robots.txt` disallows the parameter search paths (MANDATE G3 owns
+     the file); no /search URL appears in any sitemap or as a crawlable internal
+     link target that claims indexability (G11/G37/G75); date navigation never
+     mints per-day crawlable URLs (G76 crawl-trap cap). The homepage's
+     WebSite/SearchAction (gw-001) still targets /search — G76 explicitly allows
+     that: the endpoint works, the results are simply never the indexable route.
+
+     ---------------------------------------------------------------------------
+     PARKED FOR THE FOUNDER — registry row vs HARD gate (row NOT edited):
+       The SCREENS §2 GW-005 row reads "canonical shell indexable; param URLs
+       noindex,follow (SEO §3.5)" and classes the row indexable-page. GATE 76
+       (HARD, S0) states the opposite for the shell itself: "The /search shell is
+       noindex, follow (per SEO-RULES §3.5); the clean /stays-in-{city} page is
+       the indexable surface", and §3.5 names the city page — not /search — as
+       the indexable surface. Extension gates may only TIGHTEN, and where they
+       conflict with SCREENS.md "the stricter of the two governs".
+       **THE GATE WINS: the shell ships noindex, follow.**
+       Consequences carried through this card, deliberately and visibly:
+         · <main> carries NO class="indexable" — that flag marks a page as an
+           in-scope indexable surface (§1) and would be false here.
+         · No canonical self-reference, no hreflang pair, no JSON-LD of any kind
+           (§3.5: "none required"; no ItemList, no per-listing schema, no
+           AggregateRating on transient results).
+         · The shell is still fully crawlable and `follow`, so the six beta-city
+           links below pass crawl and link equity to the pages that ARE
+           indexable. That is the entire SEO job of this page.
+       Founder decision needed: either amend the GW-005 row to match G76, or
+       amend G76 (a gate loosening — founder-only). Not editable by design work.
+
+     ---------------------------------------------------------------------------
+     HEADING OUTLINE (§3.5 — a11y only, since the page is noindex):
+       H1: Search results            (the shell; "Stays in {City}" only when a
+                                      city is set — and even then the city page
+                                      still owns that query, G69/G13, because
+                                      this view never enters the index)
+       H2: Filters
+       H2: Results
+     The six crawlable city links are the Results block's empty state — the
+     shell's real, useful content rather than a dead end.
+
+     FILTERS ARE CONTROLS, NOT LINKS (crawl hygiene, G75/G76): on the shell the
+     cultural/practical filters render as <button> state controls, so browsing
+     filters cannot mint crawlable facet URLs. Facet URLs still exist when the
+     SPA writes them into the address bar — they are noindex, follow and
+     canonicalise to the clean city/area page, per the split above.
+
+     PANELS IN THIS CARD:
+       1. Light · the crawlable SHELL (authoritative semantic page, one h1)
+       2. Light · the NOINDEX RESULTS state — list view, ga-025 parity, with the
+          ga-118 relax-a-filter rail
+       3. Light · the NOINDEX RESULTS state — map view, ga-026 parity
+       4. Dark · shell (visual-only)
+       5. Urdu / RTL · shell + results (visual-only)
+     Panels 2–5 are aria-hidden and use non-heading tags so the document keeps
+     one h1 and one set of landmarks.
+
+     PRICING: "PKR —" placeholder everywhere, exactly as GW-002/003/004 — live
+       pricing resolves per date range; no PKR figure is hard-coded on any web
+       card, including the map pins.
+     COUNTS: "128 stays in Islamabad · F-7, E-7 and nearby" and the relax-rail
+       counts (4 / 2 / 11 more stays) are the SHIPPED ga-025 / ga-118 figures,
+       reused verbatim for app-parity on a noindex view. Nothing is invented,
+       and no count appears on an indexable surface.
+     REVIEWS/RATINGS: none — the ga-016 "New" chip stands where a rating would
+       sit (§5 scope rule, §6, G74).
+     CLAIMS: only SEO-RULES §5 registry claims, verbatim.
+============================================================================ -->
+
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px;
+    --map-land:#EEF0F1; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+    --map-land:#141918; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:880px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+
+  /* color re-declared per panel so .dark re-resolves the token (body-computed
+     color would otherwise inherit the LIGHT ink into the dark panel) */
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .panel-tag .robots { color:var(--error-fg); }
+  .panel-tag .robots-ok { color:var(--int-primary); }
+  .panel-tag code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; text-transform:none; letter-spacing:0; }
+
+  /* header — shipped web chrome, logged-out (§3.12) */
+  .site-header { display:flex; align-items:center; gap:20px; height:64px; padding:0 28px; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; z-index:2; }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hspacer { flex:1; }
+  .hnav { display:flex; align-items:center; gap:14px; }
+  .hnav a.txtlink { font-size:14px; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .hnav a.txtlink:hover { color:var(--text-primary); }
+  .langsw { display:inline-flex; align-items:stretch; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { border:none; background:transparent; font-family:inherit; font-size:13px; line-height:1; padding:7px 13px; color:var(--text-secondary); cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:14px; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current="page"] { background:var(--int-primary); color:var(--text-on-brand); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .btn { font-family:inherit; font-size:14px; font-weight:600; border-radius:var(--radius-md); padding:9px 16px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid transparent; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--int-primary); }
+  .btn-primary:hover { background:var(--int-hover); border-color:var(--int-hover); }
+  .btn-ghost { background:transparent; color:var(--text-primary); border-color:var(--border-default); }
+
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+  main { display:block; }
+  section { padding:40px 0; border-top:1px solid var(--border-hairline); }
+  section:first-of-type { border-top:none; }
+  h2 { font-size:22px; font-weight:600; letter-spacing:-0.015em; color:var(--text-primary); line-height:1.24; }
+  h3 { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .sec-eyebrow { font-size:12px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--int-primary); margin-bottom:10px; }
+  .sec-sub { font-size:14.5px; color:var(--text-secondary); margin-top:8px; max-width:66ch; }
+
+  /* shell hero + search bar */
+  .shellhero { padding:44px 0 36px; background:
+      radial-gradient(120% 90% at 88% -20%, var(--int-subtle) 0%, rgba(0,0,0,0) 44%),
+      var(--bg-canvas); }
+  .shellhero h1 { font-size:38px; line-height:1.1; font-weight:600; letter-spacing:-0.025em; color:var(--text-primary); }
+  .shellhero .lede { font-size:17px; line-height:1.6; color:var(--text-secondary); margin-top:16px; max-width:64ch; }
+  .shellhero .lede strong { color:var(--text-primary); font-weight:600; }
+  .searchbar { margin-top:28px; display:inline-flex; align-items:stretch; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-full); box-shadow:var(--el-card); max-width:100%; overflow:hidden; }
+  .searchbar .seg { display:flex; flex-direction:column; justify-content:center; padding:12px 22px; min-width:150px; border-right:1px solid var(--border-hairline); }
+  .searchbar .seg .lab { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-secondary); }
+  .searchbar .seg .val { font-size:15px; color:var(--text-primary); margin-top:3px; white-space:nowrap; }
+  .searchbar .seg .val.ph { color:var(--text-secondary); }
+  .searchbar .submit { align-self:center; margin:6px; border:none; cursor:pointer; font-family:inherit; background:var(--int-primary); color:var(--text-on-brand); font-weight:600; font-size:15px; height:56px; padding:0 26px; border-radius:var(--radius-full); display:inline-flex; align-items:center; gap:9px; white-space:nowrap; }
+  .searchbar .submit:hover { background:var(--int-hover); }
+  .searchbar .submit svg { width:18px; height:18px; }
+
+  /* filter chips (controls, not links) */
+  .chiprow { display:flex; flex-wrap:wrap; gap:9px; margin-top:18px; }
+  .chip { display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 15px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); font-family:inherit; font-size:13.5px; font-weight:500; color:var(--text-primary); cursor:pointer; }
+  .chip:hover { border-color:var(--border-brand); color:var(--int-primary); }
+  .chip svg { width:15px; height:15px; color:var(--text-secondary); }
+  .chip:hover svg { color:var(--int-primary); }
+  .chip[aria-pressed="true"] { background:var(--int-subtle); border-color:var(--border-brand); color:var(--int-primary); font-weight:600; }
+  .chip[aria-pressed="true"] svg { color:var(--int-primary); }
+  .chip .b { display:inline-flex; align-items:center; justify-content:center; min-width:19px; height:19px; padding:0 5px; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-size:11px; font-weight:700; }
+  .defnote { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-tertiary); margin-top:14px; }
+  .defnote svg { width:14px; height:14px; }
+
+  /* results empty state + city links (the crawlable content) */
+  .empty { display:flex; gap:14px; align-items:flex-start; padding:20px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); margin-top:16px; }
+  .empty .eic { width:40px; height:40px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; }
+  .empty .eic svg { width:19px; height:19px; color:var(--text-secondary); }
+  .empty .et { display:block; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .empty .ed { display:block; font-size:13.5px; color:var(--text-secondary); margin-top:5px; line-height:1.6; }
+  .citygrid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:24px; }
+  .citycard { display:block; text-decoration:none; color:inherit; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border-hairline); background:var(--bg-canvas); box-shadow:var(--el-subtle); }
+  .citycard:hover { box-shadow:var(--el-card); border-color:var(--border-brand); }
+  .citycard .ph { display:block; aspect-ratio:3/1; background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); position:relative; }
+  .citycard .ph .land { position:absolute; inset:0; opacity:.5; color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .citycard .ph .land svg { width:44px; height:44px; }
+  .citycard .cbody { display:block; padding:14px 16px 16px; }
+  .citycard .cname { font-size:17px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .citycard .cname svg { width:17px; height:17px; color:var(--text-secondary); flex:none; }
+  .citycard:hover .cname svg { color:var(--int-primary); }
+  .citycard .cdesc { display:block; font-size:13.5px; color:var(--text-secondary); margin-top:5px; }
+  .crawlnote { font-size:12.5px; color:var(--text-tertiary); margin-top:18px; max-width:76ch; line-height:1.6; }
+  .crawlnote a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  .crawlnote a:hover { text-decoration:underline; }
+
+  /* results state (noindex panels) */
+  .rtoolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:6px; }
+  .rcount { font-size:15px; color:var(--text-secondary); }
+  .rcount b { color:var(--text-primary); font-weight:600; }
+  .rtools { display:flex; align-items:center; gap:10px; }
+  .sortbtn { display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 14px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-family:inherit; font-size:13.5px; font-weight:500; color:var(--text-primary); cursor:pointer; }
+  .sortbtn svg { width:14px; height:14px; color:var(--text-secondary); }
+  .vtoggle { display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; }
+  .vtoggle button { border:none; background:var(--bg-canvas); font-family:inherit; font-size:13.5px; font-weight:600; color:var(--text-secondary); padding:0 14px; height:38px; display:inline-flex; align-items:center; gap:7px; cursor:pointer; border-right:1px solid var(--border-default); }
+  .vtoggle button:last-child { border-right:none; }
+  .vtoggle button svg { width:14px; height:14px; }
+  .vtoggle button[aria-pressed="true"] { background:var(--int-subtle); color:var(--int-primary); }
+  .resgrid { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:22px; }
+  .rcard { display:block; text-decoration:none; color:inherit; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-canvas); }
+  .rcard .rmedia { display:block; aspect-ratio:16/9; overflow:hidden; background:var(--bg-sunken); }
+  .rcard .rmedia img { width:100%; height:100%; object-fit:cover; display:block; }
+  .rcard .rbody { display:block; padding:14px 16px 16px; }
+  .rcard .rtitlerow { display:flex; align-items:center; gap:8px; }
+  .rcard .rtitle { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .newchip { flex:none; font-size:11px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:2px 9px; }
+  .rcard .rloc { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .rbadges { display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; }
+  .rbadge { display:inline-flex; align-items:center; height:24px; padding:0 9px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); font-size:11px; font-weight:500; color:var(--text-primary); }
+  .rprice { display:block; margin-top:10px; font-size:13.5px; color:var(--text-secondary); }
+  .rprice .amt { font-size:15.5px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+
+  /* relax-a-filter rail (ga-118 parity) */
+  .relax { margin-top:26px; padding:18px 20px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .relax .rh { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .relax .rs { font-size:13px; color:var(--text-secondary); margin-top:5px; }
+  .relaxrow { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .relaxbtn { display:inline-flex; align-items:center; gap:9px; height:42px; padding:0 15px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-family:inherit; cursor:pointer; text-align:left; }
+  .relaxbtn:hover { border-color:var(--border-brand); }
+  .relaxbtn svg { width:15px; height:15px; color:var(--text-secondary); flex:none; }
+  .relaxbtn .rt { display:block; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .relaxbtn .rm { display:block; font-size:11.5px; color:var(--text-secondary); }
+
+  /* map view */
+  .maplayout { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); gap:20px; margin-top:22px; align-items:start; }
+  .maplist { display:flex; flex-direction:column; gap:14px; }
+  .mlcard { display:flex; gap:12px; padding:10px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; color:inherit; }
+  .mlcard.sel { border-color:var(--border-brand); box-shadow:var(--el-subtle); }
+  .mlcard .mlph { width:84px; aspect-ratio:1/1; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .mlcard .mlph img { width:100%; height:100%; object-fit:cover; display:block; }
+  .mlcard .mlt { display:block; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .mlcard .mll { display:block; font-size:12.5px; color:var(--text-secondary); margin-top:3px; }
+  .mlcard .mlp { display:block; font-size:12.5px; color:var(--text-secondary); margin-top:6px; }
+  .mlcard .mlp .amt { font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .mapbox { position:relative; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; background:var(--map-land); aspect-ratio:4/3; }
+  .mapbox svg.substrate { position:absolute; inset:0; width:100%; height:100%; }
+  .mapbox .road { stroke:var(--map-road); stroke-width:8; fill:none; }
+  .mapbox .road2 { stroke:var(--map-road2); stroke-width:5; fill:none; }
+  .mapbox .lbl { font-size:12px; fill:var(--map-label); font-family:'Inter',sans-serif; }
+  .mpin { position:absolute; transform:translate(-50%,-50%); height:32px; display:inline-flex; align-items:center; padding:0 12px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); box-shadow:var(--el-card); font-family:inherit; font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; cursor:pointer; }
+  .mpin.sel { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--border-brand); }
+  .mcluster { position:absolute; transform:translate(-50%,-50%); width:44px; height:44px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-strong); box-shadow:var(--el-card); display:flex; align-items:center; justify-content:center; font-family:inherit; font-size:13.5px; font-weight:700; color:var(--text-primary); cursor:pointer; }
+  .maphint { font-size:12.5px; color:var(--text-tertiary); margin-top:12px; }
+  .maphint code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px; color:var(--text-secondary); }
+
+  /* footer */
+  .site-footer { background:var(--bg-canvas); border-top:1px solid var(--border-hairline); padding:48px 28px 0; }
+  .fwrap { max-width:1100px; margin:0 auto; }
+  .fintro { display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:flex-start; margin-bottom:36px; }
+  .fintro .fbrand { font-size:20px; font-weight:600; }
+  .fintro .fbrand .dot { color:var(--int-primary); }
+  .fintro .fentity { font-size:13.5px; color:var(--text-secondary); margin-top:8px; max-width:44ch; }
+  .cols { display:grid; grid-template-columns:repeat(4,1fr); gap:28px; }
+  .col h3 { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:14px; }
+  .col a { display:block; font-size:14px; color:var(--text-secondary); text-decoration:none; margin-bottom:9px; }
+  .col a:hover { color:var(--text-primary); text-decoration:underline; }
+  .fbottom { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:36px; padding:20px 0; border-top:1px solid var(--border-hairline); font-size:12px; color:var(--text-tertiary); flex-wrap:wrap; }
+  .fbottom .legal { display:flex; gap:14px 18px; flex-wrap:wrap; }
+  .fbottom a { color:var(--text-tertiary); text-decoration:none; }
+  .fbottom a:hover { color:var(--text-secondary); text-decoration:underline; }
+
+  /* RTL demo */
+  .num { direction:ltr; unicode-bidi:isolate; }
+  .rtl { direction:rtl; }
+  .rtl .searchbar .seg { border-right:none; border-left:1px solid var(--border-hairline); }
+  .rtl .vtoggle button { border-right:none; border-left:1px solid var(--border-default); }
+  .rtl .vtoggle button:last-child { border-left:none; }
+  .rtl .mpin, .rtl .mcluster { transform:translate(50%,-50%); }
+  .rtl .nastaliq, .rtl h1, .rtl h2, .rtl h3, .rtl p, .rtl .val { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl h1 { line-height:1.55; font-weight:700; }
+
+  @media (max-width:1000px){
+    .citygrid { grid-template-columns:repeat(2,1fr); }
+    .resgrid { grid-template-columns:1fr; }
+    .maplayout { grid-template-columns:1fr; }
+    .searchbar { flex-direction:column; border-radius:var(--radius-xl); align-items:stretch; }
+    .searchbar .seg { border-right:none; border-bottom:1px solid var(--border-hairline); }
+    .shellhero h1 { font-size:30px; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">GW-005 — Search: the crawlable shell + the noindex faceted results</div>
+    <p>Two states of <code>/search</code> (SEO §3.5 · G75 · G76). <strong>The shell is <code>noindex, follow</code> and so is every parameter URL</strong> — the clean <code>/stays-in-{city}</code> and <code>/stays-in-{city}/{area}</code> pages are the indexable surfaces, and this page's SEO job is to pass crawl to them through six real city links. The registry row calls the shell indexable; GATE 76 (HARD) says it is not — the gate wins and the conflict is parked for the founder in the header comment. Filters are buttons, not links, so browsing cannot mint crawlable facet URLs. Results + map mirror <code>ga-025</code>/<code>ga-026</code> with the <code>ga-118</code> relax-a-filter rail.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ============ 1 · LIGHT — THE CRAWLABLE SHELL (authoritative semantic page) ============ -->
+    <div class="doc">
+      <div class="panel-tag">Light · the shell at <code>/search</code> — <span class="robots">noindex, follow</span> · canonical → <code class="robots-ok">/</code> · one h1, no <code>main.indexable</code> flag, no JSON-LD</div>
+
+      <header class="site-header">
+        <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+        <span class="hspacer"></span>
+        <nav class="hnav" aria-label="Primary">
+          <a class="txtlink" href="/become-a-host">Become a host</a>
+          <a class="txtlink" href="/help">Help</a>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/search" aria-current="page" lang="en">EN</a>
+            <a class="urdu" href="/ur/search" lang="ur">اردو</a>
+          </div>
+          <a class="btn btn-ghost" href="/login">Log in</a>
+          <a class="btn btn-primary" href="/signup">Sign up</a>
+        </nav>
+      </header>
+
+      <!-- No breadcrumb: search is not a deep content page (§2) and it is noindex. -->
+
+      <main>
+
+        <section class="shellhero" aria-labelledby="search-h">
+          <div class="wrap">
+            <h1 id="search-h">Search results</h1>
+            <p class="lede">Pick a city, add your dates, and filter for what actually matters — <strong>no-alcohol listings by default</strong>, halal kitchen, women-only stays, prayer space, backup power. Every home shows its <strong>load-shedding hours and backup power</strong> before you book.</p>
+
+            <form class="searchbar" role="search" aria-label="Search stays" action="/search" method="get">
+              <div class="seg">
+                <span class="lab">Where</span>
+                <span class="val ph">Choose a city</span>
+              </div>
+              <div class="seg">
+                <span class="lab">Dates</span>
+                <span class="val ph">Add dates</span>
+              </div>
+              <div class="seg">
+                <span class="lab">Guests</span>
+                <span class="val ph">Add guests</span>
+              </div>
+              <button class="submit" type="submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                Search stays
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- FILTERS (§3.5 outline) — controls, never crawlable facet links -->
+        <section aria-labelledby="filters-h">
+          <div class="wrap">
+            <h2 id="filters-h">Filters</h2>
+            <p class="sec-sub">Filters narrow the homes you see. They do not create new pages — whatever you pick, the address stays a search, and the city page keeps the permanent link.</p>
+            <div class="chiprow">
+              <button class="chip" type="button" aria-haspopup="dialog">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+                All filters
+              </button>
+              <button class="chip" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a3 3 0 0 0 6 0V3M10 9v12M17 3c1.5 1.5 2 3.5 2 6s-.5 4-2 5v7"/></svg>
+                Halal kitchen
+              </button>
+              <button class="chip" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3.2"/><path d="M6 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+                Women-only
+              </button>
+              <button class="chip" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20c0-3 3-5 7-5s7 2 7 5M17 8h5"/></svg>
+                Family-only
+              </button>
+              <button class="chip" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>
+                Prayer space
+              </button>
+              <button class="chip" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="9" width="10" height="12" rx="1"/><path d="M10 9V4h4v5M12 13v4"/></svg>
+                Backup power
+              </button>
+              <button class="chip" type="button" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>
+                Entire place
+              </button>
+            </div>
+            <p class="defnote">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l-1 7a3 3 0 0 1-6 0L8 3zM12 13v6M8 21h8M4 4l16 16"/></svg>
+              No-alcohol listings by default — you never have to filter for it.
+            </p>
+          </div>
+        </section>
+
+        <!-- RESULTS (§3.5 outline) — empty until a search runs; the six city
+             links are the shell's real, crawlable content -->
+        <section aria-labelledby="results-h">
+          <div class="wrap">
+            <h2 id="results-h">Results</h2>
+            <div class="empty">
+              <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+              <span>
+                <span class="et">No search yet</span>
+                <span class="ed">Choose a city above to see verified homes, or open a city page — every one lists its real neighbourhoods, local practical notes and the homes available there.</span>
+              </span>
+            </div>
+
+            <h3 class="sr-only">Browse verified stays by city</h3>
+            <div class="citygrid">
+              <a class="citycard" href="/stays-in-islamabad">
+                <span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20V9l4-3 4 3"/><path d="M13 20V6l6 4v10"/></svg></span></span>
+                <span class="cbody">
+                  <span class="cname">Stays in Islamabad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+                  <span class="cdesc">The leafy capital — F-6, F-7 and the Margalla foothills.</span>
+                </span>
+              </a>
+              <a class="citycard" href="/stays-in-karachi">
+                <span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20"/><path d="M4 18V8l5-3 5 3v10"/><path d="M14 18v-6l5-2v8"/></svg></span></span>
+                <span class="cbody">
+                  <span class="cname">Stays in Karachi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+                  <span class="cdesc">The coastal metro — Clifton, DHA and the city centre.</span>
+                </span>
+              </a>
+              <a class="citycard" href="/stays-in-lahore">
+                <span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 20V9h12v11"/><path d="M9 20v-5h6v5"/></svg></span></span>
+                <span class="cbody">
+                  <span class="cname">Stays in Lahore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+                  <span class="cdesc">The cultural capital — Gulberg, DHA and the Walled City.</span>
+                </span>
+              </a>
+              <a class="citycard" href="/stays-in-peshawar">
+                <span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20v-8l7-5 7 5v8"/><path d="M10 20v-4h4v4"/></svg></span></span>
+                <span class="cbody">
+                  <span class="cname">Stays in Peshawar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+                  <span class="cdesc">The old Silk-Road city — Hayatabad and the historic bazaars.</span>
+                </span>
+              </a>
+              <a class="citycard" href="/stays-in-faisalabad">
+                <span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M12 3v6"/><path d="M8 21V9h8v12"/><circle cx="12" cy="12" r="2"/></svg></span></span>
+                <span class="cbody">
+                  <span class="cname">Stays in Faisalabad <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+                  <span class="cdesc">The textile city — D-Ground and the Clock Tower bazaars.</span>
+                </span>
+              </a>
+              <a class="citycard" href="/stays-in-rawalpindi">
+                <span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 20v-9l5-3 5 3"/><path d="M16 20v-6h3v6"/></svg></span></span>
+                <span class="cbody">
+                  <span class="cname">Stays in Rawalpindi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span>
+                  <span class="cdesc">Islamabad's twin — Saddar, Bahria Town and the Murree road.</span>
+                </span>
+              </a>
+            </div>
+            <p class="crawlnote">Searching is temporary; city pages are permanent. Whatever you filter here, the lasting address for a place is its city page — and, where a neighbourhood has enough verified homes of its own, its area page, like <a href="/stays-in-islamabad/f-7">stays in F-7, Islamabad</a>. New to SalamStay? Start from the <a href="/">home page</a>.</p>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="site-footer">
+        <h2 class="sr-only">Footer</h2>
+        <div class="fwrap">
+          <div class="fintro">
+            <div>
+              <div class="fbrand">Salam<span class="dot">.</span>Stay</div>
+              <p class="fentity">SalamStay, a home-sharing marketplace for Pakistan — verified homes and rooms across six cities.</p>
+            </div>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/search" aria-current="page" lang="en">EN</a>
+              <a class="urdu" href="/ur/search" lang="ur">اردو</a>
+            </div>
+          </div>
+          <div class="cols">
+            <nav class="col" aria-label="Cities">
+              <h3>Cities</h3>
+              <a href="/stays-in-islamabad">Stays in Islamabad</a>
+              <a href="/stays-in-karachi">Stays in Karachi</a>
+              <a href="/stays-in-lahore">Stays in Lahore</a>
+              <a href="/stays-in-peshawar">Stays in Peshawar</a>
+              <a href="/stays-in-faisalabad">Stays in Faisalabad</a>
+              <a href="/stays-in-rawalpindi">Stays in Rawalpindi</a>
+            </nav>
+            <nav class="col" aria-label="Hosting">
+              <h3>Hosting</h3>
+              <a href="/become-a-host">Become a host</a>
+              <a href="/legal/host-terms">Host terms</a>
+              <a href="/legal/community-standards">Community standards</a>
+            </nav>
+            <nav class="col" aria-label="Company">
+              <h3>Company</h3>
+              <a href="/about">About</a>
+              <a href="/trust-and-safety">Trust &amp; safety</a>
+              <a href="/shariah-policy">Shariah approach</a>
+              <a href="/help">Help center</a>
+            </nav>
+            <nav class="col" aria-label="Legal">
+              <h3>Legal</h3>
+              <a href="/legal/terms">Terms</a>
+              <a href="/legal/privacy">Privacy</a>
+              <a href="/legal/guest-refund-policy">Guest refund policy</a>
+              <a href="/legal/cookie-policy">Cookie policy</a>
+            </nav>
+          </div>
+          <div class="fbottom">
+            <span>© 2026 SalamStay</span>
+            <div class="legal">
+              <a href="/legal/editorial-policy">Editorial policy</a>
+              <a href="/legal/corrections">Corrections</a>
+              <a href="/legal/community-standards">Community standards</a>
+              <a href="/shariah-policy">Shariah approach</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ============ 2 · LIGHT — THE NOINDEX RESULTS STATE (list) ============ -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · <code>/search?city=islamabad&amp;halal_kitchen=1&amp;women_only=1&amp;dates=26-29jul</code> — <span class="robots">noindex, follow</span> · canonical → <code class="robots-ok">/stays-in-islamabad</code> · list view (ga-025 parity, visual-only)</div>
+      <div class="site-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="hnav">
+          <span class="txtlink">Become a host</span>
+          <div class="langsw"><a href="/search" aria-current="page">EN</a><a class="urdu" href="/ur/search">اردو</a></div>
+          <span class="btn btn-ghost">Log in</span>
+          <span class="btn btn-primary">Sign up</span>
+        </div>
+      </div>
+      <div style="padding:28px 0 40px">
+        <div class="wrap">
+          <div style="font-size:26px;font-weight:600;letter-spacing:-0.02em">Stays in Islamabad</div>
+          <p class="sec-sub">26–29 Jul · 2 guests · 2 filters. This view is a search, not a page — the permanent address for these homes is the Islamabad city page.</p>
+
+          <div class="chiprow">
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>All filters<span class="b">2</span></span>
+            <span class="chip" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a3 3 0 0 0 6 0V3M10 9v12M17 3c1.5 1.5 2 3.5 2 6s-.5 4-2 5v7"/></svg>Halal kitchen</span>
+            <span class="chip" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3.2"/><path d="M6 21c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Women-only</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>Prayer space</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="9" width="10" height="12" rx="1"/><path d="M10 9V4h4v5M12 13v4"/></svg>Backup power</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>Entire place</span>
+          </div>
+
+          <div class="rtoolbar" style="margin-top:22px">
+            <p class="rcount"><b>128 stays</b> in Islamabad · F-7, E-7 and nearby</p>
+            <div class="rtools">
+              <span class="sortbtn">Recommended <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span class="vtoggle">
+                <button type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>List</button>
+                <button type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l6 3 6-3v13l-6 3-6-3-6 3V7z"/><path d="M9 4v13M15 7v13"/></svg>Map</button>
+              </span>
+            </div>
+          </div>
+
+          <div class="resgrid">
+            <span class="rcard">
+              <span class="rmedia"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+              <span class="rbody">
+                <span class="rtitlerow"><span class="rtitle">Margalla View Apartment, F-7</span><span class="newchip">New</span></span>
+                <span class="rloc">F-7 · entire apartment · 6 guests</span>
+                <span class="rbadges"><span class="rbadge">Halal kitchen</span><span class="rbadge">Prayer space</span><span class="rbadge">Backup power</span></span>
+                <span class="rprice"><span class="amt">PKR —</span> / night · live pricing</span>
+              </span>
+            </span>
+            <span class="rcard">
+              <span class="rmedia"><img src="../../assets/photos/is-f7-dining.jpg" alt="" data-prod-loading="lazy" /></span>
+              <span class="rbody">
+                <span class="rtitlerow"><span class="rtitle">Cedar Lodge, F-7 Markaz</span><span class="newchip">New</span></span>
+                <span class="rloc">F-7 · entire home · 6 guests</span>
+                <span class="rbadges"><span class="rbadge">Qibla marked</span><span class="rbadge">Halal kitchen</span><span class="rbadge">Backup power</span></span>
+                <span class="rprice"><span class="amt">PKR —</span> / night · live pricing</span>
+              </span>
+            </span>
+            <span class="rcard">
+              <span class="rmedia"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="" data-prod-loading="lazy" /></span>
+              <span class="rbody">
+                <span class="rtitlerow"><span class="rtitle">Central studio by Jinnah Super</span><span class="newchip">New</span></span>
+                <span class="rloc">F-7 · studio · 2 guests</span>
+                <span class="rbadges"><span class="rbadge">Women-only</span><span class="rbadge">Halal kitchen</span><span class="rbadge">Backup power</span></span>
+                <span class="rprice"><span class="amt">PKR —</span> / night · live pricing</span>
+              </span>
+            </span>
+            <span class="rcard">
+              <span class="rmedia"><img src="../../assets/photos/is-f7-view.jpg" alt="" data-prod-loading="lazy" /></span>
+              <span class="rbody">
+                <span class="rtitlerow"><span class="rtitle">Upper portion near F-7 Markaz</span><span class="newchip">New</span></span>
+                <span class="rloc">F-7 · upper portion · 4 guests</span>
+                <span class="rbadges"><span class="rbadge">Women-only</span><span class="rbadge">Backup power</span><span class="rbadge">Halal kitchen</span></span>
+                <span class="rprice"><span class="amt">PKR —</span> / night · live pricing</span>
+              </span>
+            </span>
+          </div>
+
+          <!-- relax-a-filter (ga-118 parity; shipped counts reused verbatim) -->
+          <div class="relax">
+            <p class="rh">Not enough matches?</p>
+            <p class="rs">Four filters are narrowing your search in Islamabad for these dates. Loosen one and we will show you what appears.</p>
+            <div class="relaxrow">
+              <span class="relaxbtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                <span><span class="rt">Remove "Entire place"</span><span class="rm">See <span class="num">4</span> more stays</span></span>
+              </span>
+              <span class="relaxbtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                <span><span class="rt">Remove "Women-only"</span><span class="rm">See <span class="num">2</span> more stays</span></span>
+              </span>
+              <span class="relaxbtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M8 11h6M11 8v6"/></svg>
+                <span><span class="rt">Broaden the area</span><span class="rm">Include nearby sectors — <span class="num">11</span> more stays</span></span>
+              </span>
+            </div>
+          </div>
+          <p class="maphint">Every card links to the listing's permanent page under <code>/stays-in-islamabad/f-7/…</code> — the search URL itself is never indexed and never sits in a sitemap.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 3 · LIGHT — THE NOINDEX RESULTS STATE (map) ============ -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · same URL, map view — <span class="robots">noindex, follow</span> · ga-026 parity · the list stays the primary accessible path (visual-only)</div>
+      <div style="padding:24px 0 40px">
+        <div class="wrap">
+          <div class="rtoolbar">
+            <p class="rcount"><b>128 stays</b> in Islamabad · F-7, E-7 and nearby</p>
+            <div class="rtools">
+              <span class="sortbtn">Recommended <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span class="vtoggle">
+                <button type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>List</button>
+                <button type="button" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l6 3 6-3v13l-6 3-6-3-6 3V7z"/><path d="M9 4v13M15 7v13"/></svg>Map</button>
+              </span>
+            </div>
+          </div>
+
+          <div class="maplayout">
+            <div class="maplist">
+              <span class="mlcard sel">
+                <span class="mlph"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                <span>
+                  <span class="mlt">Margalla View Apartment, F-7</span>
+                  <span class="mll">Entire apartment · 6 guests</span>
+                  <span class="mlp"><span class="amt">PKR —</span> / night · live pricing</span>
+                </span>
+              </span>
+              <span class="mlcard">
+                <span class="mlph"><img src="../../assets/photos/is-f7-dining.jpg" alt="" data-prod-loading="lazy" /></span>
+                <span>
+                  <span class="mlt">Cedar Lodge, F-7 Markaz</span>
+                  <span class="mll">Entire home · 6 guests</span>
+                  <span class="mlp"><span class="amt">PKR —</span> / night · live pricing</span>
+                </span>
+              </span>
+              <span class="mlcard">
+                <span class="mlph"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="" data-prod-loading="lazy" /></span>
+                <span>
+                  <span class="mlt">Central studio by Jinnah Super</span>
+                  <span class="mll">Studio · 2 guests</span>
+                  <span class="mlp"><span class="amt">PKR —</span> / night · live pricing</span>
+                </span>
+              </span>
+            </div>
+            <div class="mapbox">
+              <svg class="substrate" viewBox="0 0 800 600" aria-hidden="true">
+                <path class="road" d="M0 420 H800" />
+                <path class="road" d="M330 0 V600" />
+                <path class="road2" d="M0 180 H800" />
+                <path class="road2" d="M600 0 V600" />
+                <path class="road2" d="M120 0 V600" />
+                <text class="lbl" x="346" y="166">F-7 Markaz</text>
+                <text class="lbl" x="620" y="404">Jinnah Super</text>
+                <text class="lbl" x="20" y="442">Margalla Road</text>
+              </svg>
+              <span class="mpin sel" style="top:36%;left:42%">PKR —</span>
+              <span class="mpin" style="top:56%;left:66%">PKR —</span>
+              <span class="mpin" style="top:72%;left:30%">PKR —</span>
+              <span class="mcluster" style="top:44%;left:80%">18</span>
+            </div>
+          </div>
+          <p class="maphint">Pins carry live nightly pricing at render; the map never introduces a figure the listing page does not show. Panning the map re-runs the search — it does not mint a new URL for the crawler.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 4 · DARK — SHELL (visual-only) ============ -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">Dark · the shell — visual theme rendering (divs, no second h1/landmarks)</div>
+      <div class="site-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="hnav">
+          <span class="txtlink">Become a host</span>
+          <div class="langsw"><a href="/search" aria-current="page">EN</a><a class="urdu" href="/ur/search">اردو</a></div>
+          <span class="btn btn-ghost">Log in</span>
+          <span class="btn btn-primary">Sign up</span>
+        </div>
+      </div>
+      <div class="shellhero">
+        <div class="wrap">
+          <div style="font-size:38px;line-height:1.1;font-weight:600;letter-spacing:-0.025em">Search results</div>
+          <p class="lede">Pick a city, add your dates, and filter for what actually matters — <strong>no-alcohol listings by default</strong>, halal kitchen, women-only stays, prayer space, backup power.</p>
+          <div class="searchbar">
+            <div class="seg"><span class="lab">Where</span><span class="val ph">Choose a city</span></div>
+            <div class="seg"><span class="lab">Dates</span><span class="val ph">Add dates</span></div>
+            <div class="seg"><span class="lab">Guests</span><span class="val ph">Add guests</span></div>
+            <button class="submit" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Search stays</button>
+          </div>
+        </div>
+      </div>
+      <div style="padding:36px 0 44px;border-top:1px solid var(--border-hairline)">
+        <div class="wrap">
+          <div style="font-size:22px;font-weight:600;letter-spacing:-0.015em">Results</div>
+          <div class="empty">
+            <span class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+            <span>
+              <span class="et">No search yet</span>
+              <span class="ed">Choose a city above to see verified homes, or open a city page.</span>
+            </span>
+          </div>
+          <div class="citygrid">
+            <span class="citycard"><span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20V9l4-3 4 3"/><path d="M13 20V6l6 4v10"/></svg></span></span><span class="cbody"><span class="cname">Stays in Islamabad</span><span class="cdesc">The leafy capital — F-6, F-7 and the Margalla foothills.</span></span></span>
+            <span class="citycard"><span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20"/><path d="M4 18V8l5-3 5 3v10"/><path d="M14 18v-6l5-2v8"/></svg></span></span><span class="cbody"><span class="cname">Stays in Karachi</span><span class="cdesc">The coastal metro — Clifton, DHA and the city centre.</span></span></span>
+            <span class="citycard"><span class="ph"><span class="land"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 20V9h12v11"/><path d="M9 20v-5h6v5"/></svg></span></span><span class="cbody"><span class="cname">Stays in Lahore</span><span class="cdesc">The cultural capital — Gulberg, DHA and the Walled City.</span></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 5 · URDU / RTL — SHELL + RESULTS (visual-only) ============ -->
+    <div class="doc rtl" aria-hidden="true" lang="ur" dir="rtl">
+      <div class="panel-tag" style="direction:ltr">Urdu · RTL — layout &amp; direction demo (production Urdu is human-translated for full parity, §4)</div>
+      <div class="site-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="hnav">
+          <div class="langsw"><a href="/search">EN</a><a class="urdu" href="/ur/search" aria-current="page">اردو</a></div>
+          <span class="btn btn-ghost nastaliq">لاگ اِن</span>
+          <span class="btn btn-primary nastaliq">سائن اپ</span>
+        </div>
+      </div>
+      <div class="shellhero">
+        <div class="wrap">
+          <div class="nastaliq" style="font-size:34px;line-height:1.55;font-weight:700">تلاش کے نتائج</div>
+          <p class="lede nastaliq">شہر منتخب کریں، تاریخیں شامل کریں، اور جو واقعی اہم ہے اُس پر فلٹر لگائیں — بطورِ ڈیفالٹ الکوحل سے پاک رہائشیں، حلال کچن، صرف خواتین کی رہائشیں، نماز کی جگہ، بیک اپ پاور۔</p>
+          <div class="searchbar">
+            <div class="seg"><span class="lab nastaliq">کہاں</span><span class="val ph nastaliq">شہر منتخب کریں</span></div>
+            <div class="seg"><span class="lab nastaliq">تاریخیں</span><span class="val ph nastaliq">تاریخیں شامل کریں</span></div>
+            <div class="seg"><span class="lab nastaliq">مہمان</span><span class="val ph nastaliq">مہمان شامل کریں</span></div>
+            <button class="submit nastaliq" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>رہائشیں تلاش کریں</button>
+          </div>
+          <div class="chiprow">
+            <span class="chip nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>تمام فلٹرز</span>
+            <span class="chip nastaliq" aria-pressed="true">حلال کچن</span>
+            <span class="chip nastaliq" aria-pressed="true">صرف خواتین</span>
+            <span class="chip nastaliq">نماز کی جگہ</span>
+            <span class="chip nastaliq">بیک اپ پاور</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:32px 0 44px;border-top:1px solid var(--border-hairline)">
+        <div class="wrap">
+          <div class="rtoolbar">
+            <p class="rcount nastaliq">اسلام آباد میں <b><span class="num">128</span> رہائشیں</b> · <span class="num">F-7</span>، <span class="num">E-7</span> اور قریبی علاقے</p>
+            <div class="rtools">
+              <span class="sortbtn nastaliq">تجویز کردہ</span>
+              <span class="vtoggle">
+                <button type="button" class="nastaliq" aria-pressed="true">فہرست</button>
+                <button type="button" class="nastaliq" aria-pressed="false">نقشہ</button>
+              </span>
+            </div>
+          </div>
+          <div class="resgrid">
+            <span class="rcard">
+              <span class="rmedia"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+              <span class="rbody">
+                <span class="rtitlerow"><span class="rtitle nastaliq">مارگلہ ویو اپارٹمنٹ، <span class="num">F-7</span></span><span class="newchip nastaliq">نیا</span></span>
+                <span class="rloc nastaliq">پورا اپارٹمنٹ · <span class="num">6</span> مہمان</span>
+                <span class="rbadges"><span class="rbadge nastaliq">حلال کچن</span><span class="rbadge nastaliq">نماز کی جگہ</span><span class="rbadge nastaliq">بیک اپ پاور</span></span>
+                <span class="rprice nastaliq"><span class="amt num">PKR —</span> فی رات · لائیو قیمت</span>
+              </span>
+            </span>
+            <span class="rcard">
+              <span class="rmedia"><img src="../../assets/photos/is-f7-bedroom.jpg" alt="" data-prod-loading="lazy" /></span>
+              <span class="rbody">
+                <span class="rtitlerow"><span class="rtitle nastaliq">جناح سپر کے پاس سٹوڈیو</span><span class="newchip nastaliq">نیا</span></span>
+                <span class="rloc nastaliq">سٹوڈیو · <span class="num">2</span> مہمان</span>
+                <span class="rbadges"><span class="rbadge nastaliq">صرف خواتین</span><span class="rbadge nastaliq">حلال کچن</span><span class="rbadge nastaliq">بیک اپ پاور</span></span>
+                <span class="rprice nastaliq"><span class="amt num">PKR —</span> فی رات · لائیو قیمت</span>
+              </span>
+            </span>
+          </div>
+          <div class="relax">
+            <p class="rh nastaliq">کافی نتائج نہیں؟</p>
+            <p class="rs nastaliq">اسلام آباد میں ان تاریخوں کے لیے <span class="num">4</span> فلٹرز آپ کی تلاش کو محدود کر رہے ہیں۔</p>
+            <div class="relaxrow">
+              <span class="relaxbtn"><span><span class="rt nastaliq">"پورا گھر" ہٹائیں</span><span class="rm nastaliq"><span class="num">4</span> مزید رہائشیں دیکھیں</span></span></span>
+              <span class="relaxbtn"><span><span class="rt nastaliq">"صرف خواتین" ہٹائیں</span><span class="rm nastaliq"><span class="num">2</span> مزید رہائشیں دیکھیں</span></span></span>
+              <span class="relaxbtn"><span><span class="rt nastaliq">علاقہ وسیع کریں</span><span class="rm nastaliq">قریبی سیکٹرز شامل کریں — <span class="num">11</span> مزید</span></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,813 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Cultural-attributes editor (HA-037)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-032 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-primary-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-primary-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1000px; line-height:1.6; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — EDITOR app-bar (post-publish, reached from the Edit-listing hub HA-036): NO wizard bars, NO "Host setup · Listing" breadcrumb (§7.6a: host-side editors use context, never a guest-checkout stepper; this editor replaces the wizard breadcrumb with a listing-context chip) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:900px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.lctx-name,.tog-tt,.tog-d,.tog-note,.cpop-ht,.cpop p,.bp-h,.bp-s,.badge,.impact p,.ub-t,.toast-h,.toast-d,.btn,.helplink,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .phone.rtl :is(.tog-t,.lctx-pill) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* editor app-bar — "Cultural attributes" title, NOT a wizard "Host setup · Listing" breadcrumb */
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* listing-context chip — replaces the wizard hub breadcrumb (§7.6a host-editor convention) */
+  .lctx { display:flex; align-items:center; gap:8px; padding:9px 18px 12px; flex:none; border-bottom:1px solid var(--border-hairline); }
+  .lctx-a { display:flex; align-items:center; gap:8px; flex:1; min-width:0; text-decoration:none; }
+  .lctx-ic { flex:none; width:22px; height:22px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .lctx-ic svg { width:12px; height:12px; stroke-width:2; }
+  .lctx-name { font-size:12px; font-weight:600; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-name:hover { text-decoration:underline; }
+  .lctx-pill { flex:none; display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:3px 9px; }
+  .lctx-pill i { width:5px; height:5px; border-radius:50%; background:var(--success-fg); display:block; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:12px; line-height:1.5; }
+
+  /* guest-impact note — "changes show on your listing right away" */
+  .impact { display:flex; gap:9px; align-items:flex-start; padding:11px 12px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-bottom:14px; }
+  .impact svg { width:16px; height:16px; color:var(--info-fg); flex:none; margin-top:1px; stroke-width:1.8; }
+  .impact p { font-size:11.5px; color:var(--text-primary); line-height:1.5; }
+
+  /* toggle rows — plain neutral switches, equal weight, no ornament (§10.1/§10.2) — reused byte-for-byte from HA-023 */
+  .toglist { display:flex; flex-direction:column; }
+  .togrow { display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--border-hairline); }
+  .togrow:last-child { border-bottom:none; }
+  .tog-ic { width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px; }
+  .tog-ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.6; }
+  .tog-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding-top:2px; }
+  .tog-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .tog-th { display:flex; align-items:center; gap:6px; }
+  .tog-th .tog-tt { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .tog-d { font-size:12px; color:var(--text-secondary); line-height:1.42; }
+  .tog-note { display:inline-flex; align-self:flex-start; margin-top:5px; font-size:10.5px; font-weight:600; color:var(--text-tertiary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:3px 9px; }
+  .tog-changed { display:inline-flex; align-self:flex-start; margin-top:5px; font-size:10.5px; font-weight:700; color:var(--warning-fg); background:var(--warning-bg); border:1px solid var(--warning-border); border-radius:var(--radius-full); padding:3px 9px; }
+  .infob { width:22px; height:22px; border-radius:50%; background:transparent; border:none; padding:0; display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); cursor:pointer; flex:none; }
+  .infob svg { width:16px; height:16px; stroke-width:1.8; }
+
+  /* switch — square-off/round-on grammar (§8.1 §4 inputs); [44pt] via padded button wrapper */
+  .swbtn { flex:none; width:44px; height:44px; margin:-10px -10px -10px 0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; padding:0; cursor:pointer; }
+  .sw { position:relative; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); display:block; }
+  .sw i { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(16,25,27,.28); display:block; }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { transform:translateX(16px); }
+  .phone.rtl .sw i { left:auto; right:2px; }
+  .phone.rtl .sw.on i { transform:translateX(-16px); }
+
+  /* inline info popover — quiet helper (§8.5) */
+  .cpop { margin:9px 0 0 48px; padding:11px 12px; border-radius:var(--radius-md); background:var(--info-bg); border:1px solid var(--info-border); }
+  .phone.rtl .cpop { margin-left:0; margin-right:48px; }
+  .cpop-h { display:flex; align-items:center; gap:6px; }
+  .cpop-h svg { width:14px; height:14px; color:var(--info-fg); stroke-width:2; flex:none; }
+  .cpop-ht { font-size:11.5px; font-weight:600; color:var(--info-fg); }
+  .cpop p { font-size:12px; color:var(--text-secondary); margin-top:5px; line-height:1.5; }
+
+  /* badge preview strip — the shipped cultural-badges.html treatment, reused exactly */
+  .bprev { margin-top:18px; padding:14px 14px 15px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .bp-h { font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:3px; }
+  .bp-s { font-size:11.5px; color:var(--text-secondary); margin-bottom:11px; line-height:1.4; }
+  .badges { display:flex; gap:8px; flex-wrap:wrap; }
+  .badge { display:inline-flex; align-items:center; gap:7px; height:30px; padding:0 12px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); font-size:12.5px; font-weight:500; color:var(--text-primary); }
+  .badge svg { width:17px; height:17px; color:var(--text-secondary); flex:none; stroke-width:1.6; }
+  .badge.added { border-color:var(--border-brand); }
+  .badge.removed { text-decoration:line-through; color:var(--text-tertiary); border-style:dashed; }
+  .badge.removed svg { color:var(--text-tertiary); }
+
+  .spacer-fill { flex:1; min-height:16px; }
+
+  /* unsaved-changes bar — appended as the last flex child (pinned by the short-content column, not position:fixed) */
+  .unsavedbar { display:flex; align-items:center; gap:10px; margin-top:16px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--warning-bg); border:1px solid var(--warning-border); }
+  .ub-ic { flex:none; color:var(--warning-fg); }
+  .ub-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .ub-t { flex:1; min-width:0; font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .ub-btns { display:flex; gap:8px; margin-top:12px; }
+  .btn { min-height:44px; border-radius:var(--radius-md); font-size:13.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; flex:1; }
+  .btn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  /* save toast — success register, ga-110/ga-064 toast grammar */
+  .toast { position:absolute; inset-inline:16px; bottom:calc(18px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-canvas); border:1px solid var(--success-border); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:13px 14px; }
+  .toast .ti { color:var(--success-fg); flex:none; }
+  .toast .ti svg { width:21px; height:21px; stroke-width:2.1; }
+  .toast .tbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .toast .toast-h { display:block; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .toast .toast-d { display:block; font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Cultural-attributes editor (HA-037)</h1>
+    <p>The <b>standalone editor</b> for a live listing's Shariah-respectful attributes, reached from the Edit-listing hub (<code>HA-036</code>). It renders the <b>same 9 toggles and badge preview as the wizard step <code>HA-023</code></b> — identical icons, labels and guest-facing sentences — but in an <b>editor frame</b>: no wizard progress bars, and the wizard's "Host setup · Listing" breadcrumb is replaced by an <b>editor app-bar titled "Cultural attributes"</b> with a <b>listing-context chip</b> (property name + a live status pill, linking back to the hub). A <b>guest-impact note</b> states plainly that changes publish immediately — there is no review queue for these facts, unlike document verification. Editing produces a real <b>unsaved-changes bar</b> (Discard / Save) and a <b>save toast</b> on confirm. Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b> (live since <code>HA-034</code>). Panels: current — saved state (light) · edited + unsaved-changes bar (light) · edited + unsaved-changes bar (dark) · saved + confirmation toast (dark) · اردو / RTL, edited + unsaved bar.</p>
+    <div class="legend">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span>
+      <span>Editor frame — no wizard bars</span><span>Neutral switches — no brand-green fill</span>
+      <span>Badge preview = shipped set</span><span>Unsaved bar + save toast in DOM</span><span>No invented stats</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — A CURRENT · B EDITED + UNSAVED BAR ============================ -->
+    <section class="panel" aria-label="Light theme — the current saved state, and an edited state with the unsaved-changes bar">
+      <div class="panel-tag">Light — A current, saved · B edited, unsaved-changes bar</div>
+      <div class="rowflex">
+
+        <!-- A · CURRENT (SAVED) -->
+        <div class="pcol">
+          <div class="pcap">A · Current — as saved, no changes pending</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cultural attributes</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-a" href="/host/listings/cantt-view-residence">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-6h6v6"/></svg></span>
+                <span class="lctx-name">Cantt View Residence</span>
+              </a>
+              <span class="lctx-pill"><i aria-hidden="true"></i>Live</span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Cultural attributes</h2>
+              <p class="lead">What guests see about this home's Shariah-respectful attributes.</p>
+
+              <div class="impact" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+                <p>Changes here show on your listing right away — no review needed, unlike document verification.</p>
+              </div>
+
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">No-alcohol</div>
+                    <div class="tog-d">Guests see your listing as alcohol-free.</div>
+                    <span class="tog-note">Standard on SalamStay</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No-alcohol, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Halal kitchen</div>
+                    <div class="tog-d">Guests see: no pork or alcohol prepared or stored on site.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Halal kitchen, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Wudu-friendly bathroom</div>
+                    <div class="tog-d">Guests see a hand-held bidet shower or equivalent washing setup.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Wudu-friendly bathroom, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Prayer mats provided</div>
+                    <div class="tog-d">Guests see a clean prayer mat kept ready in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Prayer mats provided, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Qibla marked</div>
+                    <div class="tog-d">Guests see the direction marked in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Qibla marked, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Women-only floor</span><button class="infob" type="button" aria-label="What guests see"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A separate floor or section with its own entrance.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Women-only floor, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2.5"/><circle cx="16" cy="6" r="2.5"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M12 20v-3a4 4 0 0 1 8 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Family-only booking</div>
+                    <div class="tog-d">Only families and married couples can book — no solo or unrelated-group stays.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Family-only booking, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Mosque-adjacent</div>
+                    <div class="tog-d">Guests see the exact walk time to the nearest masjid you've set for this home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Mosque-adjacent, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Pardah-respectful photography</span><button class="infob" type="button" aria-label="What this means for your photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A commitment to modest, respectful photos throughout your listing.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Pardah-respectful photography commitment, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <div class="bprev">
+                <div class="bp-h">Badge preview</div>
+                <div class="bp-s">What guests see on your listing right now.</div>
+                <div class="badges">
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg>No-alcohol</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>Wudu-friendly</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg>Prayer mat</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg>Qibla marked</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg>Mosque nearby</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EDITED + UNSAVED BAR -->
+        <div class="pcol">
+          <div class="pcap">B · Edited — women-only turned on, mosque-adjacent turned off</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cultural attributes</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-a" href="/host/listings/cantt-view-residence">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-6h6v6"/></svg></span>
+                <span class="lctx-name">Cantt View Residence</span>
+              </a>
+              <span class="lctx-pill"><i aria-hidden="true"></i>Live</span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Cultural attributes</h2>
+              <p class="lead">What guests see about this home's Shariah-respectful attributes.</p>
+
+              <div class="impact" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+                <p>Changes here show on your listing right away — no review needed, unlike document verification.</p>
+              </div>
+
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">No-alcohol</div>
+                    <div class="tog-d">Guests see your listing as alcohol-free.</div>
+                    <span class="tog-note">Standard on SalamStay</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No-alcohol, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Halal kitchen</div>
+                    <div class="tog-d">Guests see: no pork or alcohol prepared or stored on site.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Halal kitchen, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Wudu-friendly bathroom</div>
+                    <div class="tog-d">Guests see a hand-held bidet shower or equivalent washing setup.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Wudu-friendly bathroom, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Prayer mats provided</div>
+                    <div class="tog-d">Guests see a clean prayer mat kept ready in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Prayer mats provided, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Qibla marked</div>
+                    <div class="tog-d">Guests see the direction marked in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Qibla marked, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Women-only floor</span><button class="infob" type="button" aria-label="What guests see"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A separate floor or section with its own entrance.</div>
+                    <span class="tog-changed">Changed — not saved yet</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Women-only floor, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2.5"/><circle cx="16" cy="6" r="2.5"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M12 20v-3a4 4 0 0 1 8 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Family-only booking</div>
+                    <div class="tog-d">Only families and married couples can book — no solo or unrelated-group stays.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Family-only booking, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Mosque-adjacent</div>
+                    <div class="tog-d">Guests see the exact walk time to the nearest masjid you've set for this home.</div>
+                    <span class="tog-changed">Changed — not saved yet</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Mosque-adjacent, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Pardah-respectful photography</span><button class="infob" type="button" aria-label="What this means for your photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A commitment to modest, respectful photos throughout your listing.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Pardah-respectful photography commitment, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <div class="bprev">
+                <div class="bp-h">Badge preview</div>
+                <div class="bp-s">Updates live as you toggle — nothing publishes until you save.</div>
+                <div class="badges">
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg>No-alcohol</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>Wudu-friendly</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg>Prayer mat</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg>Qibla marked</span>
+                  <span class="badge added"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg>Women-only</span>
+                  <span class="badge removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg>Mosque nearby</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="unsavedbar" role="status">
+                <span class="ub-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+                <span class="ub-t">Unsaved changes</span>
+              </div>
+              <div class="ub-btns">
+                <button class="btn discard" type="button">Discard</button>
+                <button class="btn save" type="button">Save changes</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every toggle, icon, label and guest-facing sentence is reused <b>byte-for-byte from <code>HA-023</code></b> — the editor never invents a second vocabulary for the same fact. <b>A</b> is the listing as it currently stands (7 of 9 attributes on, matching what published in <code>HA-034</code>). <b>B</b> shows a host turning <b>on</b> "Women-only floor" and turning <b>off</b> "Mosque-adjacent" — each changed row carries an amber "Changed — not saved yet" pill (never colour-only), the badge preview marks the delta (<code>added</code>/<code>removed</code> styling), and the <b>unsaved-changes bar</b> appears with equal-weight Discard/Save actions, both ≥44pt. Qibla and Mosque-adjacent copy drop the wizard's "set next" phrasing (there is no next step in an editor) in favour of "you've set for this home."</p>
+    </section>
+
+    <!-- ============================ DARK — C EDITED + UNSAVED BAR · D SAVED + TOAST ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the edited state with the unsaved-changes bar, and the saved state with the confirmation toast">
+      <div class="panel-tag">Dark — C edited, unsaved-changes bar · D saved, confirmation toast</div>
+      <div class="rowflex">
+
+        <!-- C · EDITED + UNSAVED BAR (DARK) -->
+        <div class="pcol">
+          <div class="pcap">C · Dark — edited, unsaved-changes bar</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cultural attributes</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-a" href="/host/listings/cantt-view-residence">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-6h6v6"/></svg></span>
+                <span class="lctx-name">Cantt View Residence</span>
+              </a>
+              <span class="lctx-pill"><i aria-hidden="true"></i>Live</span>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Cultural attributes</h2>
+              <p class="lead">What guests see about this home's Shariah-respectful attributes.</p>
+
+              <div class="impact" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+                <p>Changes here show on your listing right away — no review needed, unlike document verification.</p>
+              </div>
+
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">No-alcohol</div>
+                    <div class="tog-d">Guests see your listing as alcohol-free.</div>
+                    <span class="tog-note">Standard on SalamStay</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No-alcohol, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Halal kitchen</div>
+                    <div class="tog-d">Guests see: no pork or alcohol prepared or stored on site.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Halal kitchen, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Prayer mats provided</div>
+                    <div class="tog-d">Guests see a clean prayer mat kept ready in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Prayer mats provided, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Qibla marked</div>
+                    <div class="tog-d">Guests see the direction marked in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Qibla marked, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Women-only floor</span><button class="infob" type="button" aria-label="What guests see"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A separate floor or section with its own entrance.</div>
+                    <span class="tog-changed">Changed — not saved yet</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Women-only floor, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Mosque-adjacent</div>
+                    <div class="tog-d">Guests see the exact walk time to the nearest masjid you've set for this home.</div>
+                    <span class="tog-changed">Changed — not saved yet</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Mosque-adjacent, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Pardah-respectful photography</span><button class="infob" type="button" aria-label="What this means for your photos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A commitment to modest, respectful photos throughout your listing.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Pardah-respectful photography commitment, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <div class="bprev">
+                <div class="bp-h">Badge preview</div>
+                <div class="bp-s">Updates live as you toggle — nothing publishes until you save.</div>
+                <div class="badges">
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg>No-alcohol</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg>Prayer mat</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg>Qibla marked</span>
+                  <span class="badge added"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg>Women-only</span>
+                  <span class="badge removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg>Mosque nearby</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="unsavedbar" role="status">
+                <span class="ub-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+                <span class="ub-t">Unsaved changes</span>
+              </div>
+              <div class="ub-btns">
+                <button class="btn discard" type="button">Discard</button>
+                <button class="btn save" type="button">Save changes</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · SAVED + CONFIRMATION TOAST (DARK) -->
+        <div class="pcol">
+          <div class="pcap">D · Dark — saved, confirmation toast</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cultural attributes</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-a" href="/host/listings/cantt-view-residence">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-6h6v6"/></svg></span>
+                <span class="lctx-name">Cantt View Residence</span>
+              </a>
+              <span class="lctx-pill"><i aria-hidden="true"></i>Live</span>
+            </div>
+            <div class="screen">
+              <h2 id="dH">Cultural attributes</h2>
+              <p class="lead">What guests see about this home's Shariah-respectful attributes.</p>
+
+              <div class="impact" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+                <p>Changes here show on your listing right away — no review needed, unlike document verification.</p>
+              </div>
+
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">No-alcohol</div>
+                    <div class="tog-d">Guests see your listing as alcohol-free.</div>
+                    <span class="tog-note">Standard on SalamStay</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No-alcohol, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Halal kitchen</div>
+                    <div class="tog-d">Guests see: no pork or alcohol prepared or stored on site.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Halal kitchen, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Prayer mats provided</div>
+                    <div class="tog-d">Guests see a clean prayer mat kept ready in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Prayer mats provided, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Qibla marked</div>
+                    <div class="tog-d">Guests see the direction marked in the home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Qibla marked, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">Women-only floor</span><button class="infob" type="button" aria-label="What guests see"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">A separate floor or section with its own entrance.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Women-only floor, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">Mosque-adjacent</div>
+                    <div class="tog-d">Guests see the exact walk time to the nearest masjid you've set for this home.</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Mosque-adjacent, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <div class="bprev">
+                <div class="bp-h">Badge preview</div>
+                <div class="bp-s">Live on your listing now.</div>
+                <div class="badges">
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg>No-alcohol</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>Halal kitchen</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg>Prayer mat</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg>Qibla marked</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg>Women-only</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="tbd"><span class="toast-h">Saved</span><span class="toast-d">This is live on your listing now.</span></span>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark tokens re-resolve every role (§1.5) — the amber "changed" pills, the unsaved bar and the success toast stay AA on the dark canvas with no new colours introduced. <b>D</b> is the moment right after Save: the unsaved bar is gone, the toggles now read as the new saved state (Women-only on, Mosque-adjacent off, no more "Changed" pills), the badge preview matches, and a quiet success toast confirms — reusing <code>GA-110</code>/<code>GA-064</code>'s toast grammar (icon + two-line text, <code>aria-live="polite"</code>, one visible at a time), never a modal interruption.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — edited state with the unsaved-changes bar">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — ترمیم شدہ، غیر محفوظ شدہ تبدیلیوں کی پٹی</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence" aria-label="لسٹنگ پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">ثقافتی خصوصیات</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-a" href="/ur/host/listings/cantt-view-residence">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M9 21v-6h6v6"/></svg></span>
+                <span class="lctx-name">کینٹ ویو ریزیڈنس</span>
+              </a>
+              <span class="lctx-pill"><i aria-hidden="true"></i>لائیو</span>
+            </div>
+            <div class="screen">
+              <h2 id="eH">ثقافتی خصوصیات</h2>
+              <p class="lead">اس گھر کی شریعت کے مطابق خصوصیات کے بارے میں مہمان کیا دیکھتے ہیں۔</p>
+
+              <div class="impact" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+                <p>یہاں کی تبدیلیاں فوراً آپ کی لسٹنگ پر ظاہر ہوتی ہیں — دستاویز کی تصدیق کے برعکس، کسی جائزے کی ضرورت نہیں۔</p>
+              </div>
+
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">الکحل سے پاک</div>
+                    <div class="tog-d">مہمان آپ کی لسٹنگ کو الکحل سے پاک دیکھتے ہیں۔</div>
+                    <span class="tog-note">سلام اسٹے پر معیاری</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="الکحل سے پاک، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">حلال کچن</div>
+                    <div class="tog-d">مہمان دیکھتے ہیں: جگہ پر نہ سؤر کا گوشت نہ الکحل تیار یا محفوظ ہوتا ہے۔</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="حلال کچن، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">وضو کے لیے موزوں باتھ روم</div>
+                    <div class="tog-d">مہمان ہاتھ سے چلنے والا بڈیٹ شاور یا اسی جیسا انتظام دیکھتے ہیں۔</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="وضو کے لیے موزوں باتھ روم، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">جائے نماز فراہم</div>
+                    <div class="tog-d">مہمان گھر میں تیار صاف جائے نماز دیکھتے ہیں۔</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="جائے نماز فراہم، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">قبلہ نشان زد</div>
+                    <div class="tog-d">مہمان گھر میں نشان زدہ سمت دیکھتے ہیں۔</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="قبلہ نشان زد، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">خواتین کے لیے مخصوص منزل</span><button class="infob" type="button" aria-label="مہمان کیا دیکھتے ہیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">اپنے الگ داخلی راستے کے ساتھ ایک الگ منزل یا حصہ۔</div>
+                    <span class="tog-changed">تبدیل شدہ — ابھی محفوظ نہیں</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="خواتین کے لیے مخصوص منزل، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2.5"/><circle cx="16" cy="6" r="2.5"/><path d="M4 20v-3a4 4 0 0 1 8 0v3M12 20v-3a4 4 0 0 1 8 0v3"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">صرف فیملی بکنگ</div>
+                    <div class="tog-d">صرف خاندان اور شادی شدہ جوڑے بک کر سکتے ہیں — اکیلے یا غیر متعلقہ گروپ نہیں۔</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="صرف فیملی بکنگ، آف"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-t">مسجد کے قریب</div>
+                    <div class="tog-d">مہمان اس گھر کے لیے آپ کا طے کردہ قریب ترین مسجد تک درست پیدل وقت دیکھتے ہیں۔</div>
+                    <span class="tog-changed">تبدیل شدہ — ابھی محفوظ نہیں</span>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="مسجد کے قریب، آف"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                  <div class="tog-b">
+                    <div class="tog-th"><span class="tog-tt">پردہ دار تصویر کشی</span><button class="infob" type="button" aria-label="آپ کی تصاویر کے لیے اس کا کیا مطلب ہے"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button></div>
+                    <div class="tog-d">اپنی پوری لسٹنگ میں شائستہ، باوقار تصاویر کا عہد۔</div>
+                  </div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="پردہ دار تصویر کشی کا عہد، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <div class="bprev">
+                <div class="bp-h">بیج پیش منظر</div>
+                <div class="bp-s">آپ کے ٹوگل کرتے ہی اپ ڈیٹ ہوتا ہے — جب تک آپ محفوظ نہ کریں کچھ شائع نہیں ہوگا۔</div>
+                <div class="badges">
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg>الکحل سے پاک</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18M3 8h6a3 3 0 0 0 0-6H3M18 3v6M15 3v6a3 3 0 0 0 6 0V3M18 9v12"/></svg>حلال کچن</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg>وضو کے لیے موزوں</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg>جائے نماز</span>
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.2 5.3-5.3 2.2 2.2-5.3z"/></svg>قبلہ نشان زد</span>
+                  <span class="badge added"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M12 10v6M9 13h6M10 21l2-3 2 3"/></svg>خواتین کے لیے مخصوص</span>
+                  <span class="badge removed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V11l8-6 8 6v10M12 5V3M9 21v-5h6v5"/></svg>مسجد قریب</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="unsavedbar" role="status">
+                <span class="ub-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+                <span class="ub-t">غیر محفوظ شدہ تبدیلیاں</span>
+              </div>
+              <div class="ub-btns">
+                <button class="btn discard" type="button">مسترد کریں</button>
+                <button class="btn save" type="button">تبدیلیاں محفوظ کریں</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron flips to the leading (right) edge, the switch thumb travels toward the reading-start "on" side (mirrored so "on" still reads as forward, matching <code>HA-023</code>'s established convention), the info popover's offset flips from a left- to a right-margin, and the listing-context chip's icon/pill order mirrors with the row. Discard/Save keep equal visual weight and both stay ≥44pt under the longer Urdu labels.</p>
+    </section>
+
+  </main>
+</body>
+</html>

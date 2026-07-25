@@ -1,0 +1,483 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Earnings estimator (HA-002)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13), copied from ha-055-earnings.html ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  .head { max-width:1220px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+
+  .stack { max-width:1220px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .row { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; }
+  .panel { border-radius:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); overflow:hidden; background:var(--bg-canvas); flex:1; min-width:420px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:18px 22px 0; background:var(--bg-canvas); }
+  .note { font-size:12px; color:var(--text-tertiary); padding:8px 22px 16px; background:var(--bg-canvas); line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  .app { background:var(--bg-canvas); }
+
+  /* slim topbar — a focused tool, not the full site chrome (n-a SEO class, §1.3 app-only view) */
+  .topbar { display:flex; align-items:center; gap:16px; height:60px; padding:0 22px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .wordmark { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; text-decoration:none; white-space:nowrap; }
+  .wordmark .dot { color:var(--int-primary); }
+  .backlink { display:inline-flex; align-items:center; gap:6px; font-size:13.5px; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .backlink:hover { color:var(--text-primary); }
+  .backlink svg { width:15px; height:15px; }
+  .spacer { flex:1; }
+  .langsw { display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { font-size:12.5px; line-height:1; padding:6px 11px; color:var(--text-secondary); text-decoration:none; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; padding-top:4px; padding-bottom:8px; }
+  .langsw a[aria-current] { background:var(--int-primary); color:var(--text-on-brand); font-weight:600; }
+
+  .main { max-width:640px; margin:0 auto; padding:30px 24px 32px; display:flex; flex-direction:column; gap:22px; }
+  .toph { display:flex; flex-direction:column; gap:6px; }
+  .toph h2 { font-size:23px; font-weight:600; letter-spacing:-0.015em; color:var(--text-primary); }
+  .toph p { font-size:14px; color:var(--text-secondary); line-height:1.5; }
+
+  /* form */
+  .form { display:flex; flex-direction:column; gap:16px; }
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field .flabel { font-size:12.5px; font-weight:600; color:var(--text-secondary); }
+  .field .fhint { font-size:11.5px; color:var(--text-tertiary); }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  select, .txtinput { font-family:inherit; font-size:14.5px; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-md); height:46px; padding:0 14px; width:100%; }
+  select:focus, .txtinput:focus-within { border-color:var(--border-brand,var(--int-primary)); }
+  select.placeholder { color:var(--text-tertiary); }
+
+  .amtwrap { display:flex; align-items:center; height:46px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); }
+  .amtwrap .pre { font-size:14.5px; font-weight:600; color:var(--text-secondary); padding:0 4px 0 14px; }
+  .amtwrap input { flex:1; border:none; font-family:inherit; font-size:14.5px; color:var(--text-primary); padding:0 14px 0 2px; background:transparent; min-width:0; }
+  .amtwrap input::placeholder { color:var(--text-tertiary); }
+
+  .sliderrow { display:flex; align-items:center; gap:14px; }
+  .sliderrow input[type="range"] { flex:1; accent-color:var(--int-primary); height:20px; }
+  .sliderval { flex:none; min-width:74px; text-align:end; font-size:14px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .sliderends { display:flex; justify-content:space-between; font-size:11px; color:var(--text-tertiary); }
+
+  /* output — empty */
+  .outempty { display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; padding:30px 20px; border-radius:var(--radius-lg); border:1px dashed var(--border-default); background:var(--bg-sunken); }
+  .outempty .oi { width:44px; height:44px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .outempty .oi svg { width:22px; height:22px; }
+  .outempty .ot { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .outempty .od { font-size:13px; color:var(--text-secondary); max-width:340px; }
+
+  /* output — computed */
+  .outcard { border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); padding:22px 22px 24px; }
+  .outcard .oeyebrow { font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--int-primary); }
+  .outcard .sumline { font-size:17px; line-height:1.55; color:var(--text-primary); margin-top:10px; }
+  .outcard .sumline .num { font-weight:700; }
+  .outcard .subline { font-size:13px; color:var(--text-secondary); margin-top:6px; }
+  .outcard .assumelist { margin-top:16px; padding-top:14px; border-top:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:8px; }
+  .assumerow { display:flex; align-items:flex-start; gap:9px; }
+  .assumerow svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .assumerow span { font-size:12.5px; color:var(--text-secondary); line-height:1.55; }
+  .outcard .halalnote { display:flex; align-items:flex-start; gap:9px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border-hairline); }
+  .outcard .halalnote svg { width:16px; height:16px; color:var(--int-primary); flex:none; margin-top:1px; }
+  .outcard .halalnote span { font-size:12.5px; color:var(--text-secondary); line-height:1.55; }
+
+  .feelink { margin-top:4px; display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:500; color:var(--int-primary); text-decoration:none; }
+  .feelink:hover { text-decoration:underline; }
+  .feelink svg { width:13px; height:13px; }
+
+  .btn { font-family:inherit; font-size:14.5px; font-weight:600; border-radius:var(--radius-md); padding:12px 20px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid transparent; width:100%; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--int-primary); }
+  .btn-primary:hover { background:var(--int-hover); border-color:var(--int-hover); }
+  .btn-primary[aria-disabled="true"] { background:var(--border-default); border-color:var(--border-default); color:var(--text-tertiary); cursor:not-allowed; pointer-events:none; }
+
+  .num { font-variant-numeric:tabular-nums; }
+
+  .urdu { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl { direction:rtl; }
+  .rtl .num { direction:ltr; unicode-bidi:isolate; display:inline-block; }
+  .rtl .backlink svg, .rtl .feelink svg { transform:scaleX(-1); }
+
+  @media (max-width:920px){
+    .panel{ min-width:100%; }
+    .row2{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Screen — Earnings estimator (HA-002)</h1>
+    <p>The interactive "what could I earn" calculator at <code>/become-a-host/earnings-estimator</code> — reached from the <code>HA-001</code> teaser, no signup wall (SCREENS §1.2). City is the 6-city beta scope only; property type is Private room / Entire place; the nightly rate is <strong>host-set, never a suggested market rate</strong> ("you set your price"); the output is transparent arithmetic — a plain multiplication, restated assumptions, an honesty line ("your actual earnings depend on your listing and bookings"), and the same rent-not-riba quiet note as <code>HA-001</code>. SEO class <code>n-a</code> — no market claims, no invented averages anywhere on this screen. Panels: A) empty/default (light) · B) computed (light) · C) computed (dark) · D) computed (اردو/RTL).</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ============ ROW 1 — A) EMPTY/DEFAULT · B) COMPUTED (light) ============ -->
+    <div class="row">
+
+      <!-- A · EMPTY / DEFAULT STATE -->
+      <div class="panel">
+        <div class="panel-tag">A · Light — empty / default (no rate entered yet)</div>
+        <div class="note">City and property type carry a neutral placeholder; the nightly-rate field is empty; the slider still shows a default 10 nights so the control is never blank. The output region is a calm prompt, not a zero or a blank box.</div>
+        <div class="app">
+          <div class="topbar">
+            <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+            <a class="backlink" href="/become-a-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Become a host</a>
+            <span class="spacer"></span>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/become-a-host/earnings-estimator" aria-current="true" lang="en">EN</a>
+              <a class="urdu" href="/ur/become-a-host/earnings-estimator" lang="ur">اردو</a>
+            </div>
+          </div>
+          <main class="main">
+            <div class="toph">
+              <h2>Estimate your earnings</h2>
+              <p>See what hosting could look like — set your own numbers, no market averages.</p>
+            </div>
+
+            <form class="form" aria-label="Earnings estimator">
+              <div class="row2">
+                <div class="field">
+                  <label class="flabel" for="cityA">City</label>
+                  <select id="cityA" class="placeholder">
+                    <option value="" selected disabled>Choose a city</option>
+                    <option>Islamabad</option>
+                    <option>Karachi</option>
+                    <option>Lahore</option>
+                    <option>Peshawar</option>
+                    <option>Faisalabad</option>
+                    <option>Rawalpindi</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="flabel" for="typeA">Property type</label>
+                  <select id="typeA" class="placeholder">
+                    <option value="" selected disabled>Choose a property type</option>
+                    <option>Entire place</option>
+                    <option>Private room</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="rateA">Nightly rate</label>
+                <div class="amtwrap">
+                  <span class="pre">₨</span>
+                  <input id="rateA" type="text" inputmode="numeric" placeholder="e.g. 12,500" />
+                </div>
+                <span class="fhint">You set your price — this isn't a suggested market rate.</span>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="nightsA">Nights per month</label>
+                <div class="sliderrow">
+                  <input id="nightsA" type="range" min="1" max="30" value="10" />
+                  <span class="sliderval">10 nights</span>
+                </div>
+                <div class="sliderends"><span>1</span><span>30</span></div>
+              </div>
+            </form>
+
+            <div class="outempty" role="status">
+              <span class="oi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l3-3 3 2 4-5"/></svg></span>
+              <span class="ot">Choose a city and set your nightly rate</span>
+              <span class="od">Your estimate — a plain multiplication of your rate and nights — will show here.</span>
+            </div>
+
+            <a class="btn btn-primary" href="/host/signup" aria-disabled="true">Start hosting</a>
+          </main>
+        </div>
+      </div>
+
+      <!-- B · COMPUTED STATE (light) -->
+      <div class="panel">
+        <div class="panel-tag">B · Light — computed (Islamabad · Entire place · PKR 12,500 · 10 nights)</div>
+        <div class="note">Output is <b>transparent arithmetic</b> only — nightly rate × nights, restated as assumptions the visitor set themselves. No market-rate invention (NEVER #3); a link continues to the deeper fee breakdown reused verbatim from <code>ha-055-earnings.html</code>.</div>
+        <div class="app">
+          <div class="topbar">
+            <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+            <a class="backlink" href="/become-a-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Become a host</a>
+            <span class="spacer"></span>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/become-a-host/earnings-estimator" aria-current="true" lang="en">EN</a>
+              <a class="urdu" href="/ur/become-a-host/earnings-estimator" lang="ur">اردو</a>
+            </div>
+          </div>
+          <main class="main">
+            <div class="toph">
+              <h2>Estimate your earnings</h2>
+              <p>See what hosting could look like — set your own numbers, no market averages.</p>
+            </div>
+
+            <form class="form" aria-label="Earnings estimator">
+              <div class="row2">
+                <div class="field">
+                  <label class="flabel" for="cityB">City</label>
+                  <select id="cityB">
+                    <option>Islamabad</option>
+                    <option>Karachi</option>
+                    <option>Lahore</option>
+                    <option>Peshawar</option>
+                    <option>Faisalabad</option>
+                    <option>Rawalpindi</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="flabel" for="typeB">Property type</label>
+                  <select id="typeB">
+                    <option>Entire place</option>
+                    <option>Private room</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="rateB">Nightly rate</label>
+                <div class="amtwrap">
+                  <span class="pre">₨</span>
+                  <input id="rateB" type="text" inputmode="numeric" value="12,500" />
+                </div>
+                <span class="fhint">You set your price — this isn't a suggested market rate.</span>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="nightsB">Nights per month</label>
+                <div class="sliderrow">
+                  <input id="nightsB" type="range" min="1" max="30" value="10" />
+                  <span class="sliderval"><span class="num">10</span> nights</span>
+                </div>
+                <div class="sliderends"><span>1</span><span>30</span></div>
+              </div>
+            </form>
+
+            <div class="outcard">
+              <span class="oeyebrow">Your estimate</span>
+              <p class="sumline"><span class="num">PKR 12,500</span> × <span class="num">10</span> nights = <span class="num">PKR 125,000</span> a month, before the service fee</p>
+              <p class="subline">Islamabad · Entire place</p>
+              <div class="assumelist">
+                <div class="assumerow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>This is a plain multiplication of the nightly rate and nights you entered — not a market average or a promise of what you'll earn.</span></div>
+                <div class="assumerow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Your actual earnings depend on your listing and bookings.</span></div>
+              </div>
+              <div class="halalnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a3 3 0 0 0 6 0V3"/><path d="M10 9v12"/><path d="M17 3c1.5 1.5 2 3.5 2 6s-.5 4-2 5v7"/></svg>
+                <span>Hosting income is rent for the use of your home — never interest, never riba.</span>
+              </div>
+              <a class="feelink" href="/host/help/fees#wakala">See how the service fee, MDR and withholding tax apply
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+
+            <a class="btn btn-primary" href="/host/signup">Start hosting</a>
+          </main>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ ROW 2 — C) DARK · D) اردو/RTL (both computed) ============ -->
+    <div class="row">
+
+      <!-- C · DARK — COMPUTED -->
+      <div class="panel dark">
+        <div class="panel-tag">C · Dark — computed (Lahore · Private room · PKR 8,000 · 14 nights)</div>
+        <div class="note">Same grammar, different inputs, proving the arithmetic isn't hard-coded to one example: <code>PKR 8,000 × 14 = PKR 112,000</code>.</div>
+        <div class="app">
+          <div class="topbar">
+            <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+            <a class="backlink" href="/become-a-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Become a host</a>
+            <span class="spacer"></span>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/become-a-host/earnings-estimator" aria-current="true" lang="en">EN</a>
+              <a class="urdu" href="/ur/become-a-host/earnings-estimator" lang="ur">اردو</a>
+            </div>
+          </div>
+          <main class="main">
+            <div class="toph">
+              <h2>Estimate your earnings</h2>
+              <p>See what hosting could look like — set your own numbers, no market averages.</p>
+            </div>
+
+            <form class="form" aria-label="Earnings estimator">
+              <div class="row2">
+                <div class="field">
+                  <label class="flabel" for="cityC">City</label>
+                  <select id="cityC">
+                    <option>Karachi</option>
+                    <option>Lahore</option>
+                    <option>Islamabad</option>
+                    <option>Peshawar</option>
+                    <option>Faisalabad</option>
+                    <option>Rawalpindi</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="flabel" for="typeC">Property type</label>
+                  <select id="typeC">
+                    <option>Private room</option>
+                    <option>Entire place</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="rateC">Nightly rate</label>
+                <div class="amtwrap">
+                  <span class="pre">₨</span>
+                  <input id="rateC" type="text" inputmode="numeric" value="8,000" />
+                </div>
+                <span class="fhint">You set your price — this isn't a suggested market rate.</span>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="nightsC">Nights per month</label>
+                <div class="sliderrow">
+                  <input id="nightsC" type="range" min="1" max="30" value="14" />
+                  <span class="sliderval"><span class="num">14</span> nights</span>
+                </div>
+                <div class="sliderends"><span>1</span><span>30</span></div>
+              </div>
+            </form>
+
+            <div class="outcard">
+              <span class="oeyebrow">Your estimate</span>
+              <p class="sumline"><span class="num">PKR 8,000</span> × <span class="num">14</span> nights = <span class="num">PKR 112,000</span> a month, before the service fee</p>
+              <p class="subline">Lahore · Private room</p>
+              <div class="assumelist">
+                <div class="assumerow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>This is a plain multiplication of the nightly rate and nights you entered — not a market average or a promise of what you'll earn.</span></div>
+                <div class="assumerow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Your actual earnings depend on your listing and bookings.</span></div>
+              </div>
+              <div class="halalnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a3 3 0 0 0 6 0V3"/><path d="M10 9v12"/><path d="M17 3c1.5 1.5 2 3.5 2 6s-.5 4-2 5v7"/></svg>
+                <span>Hosting income is rent for the use of your home — never interest, never riba.</span>
+              </div>
+              <a class="feelink" href="/host/help/fees#wakala">See how the service fee, MDR and withholding tax apply
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+
+            <a class="btn btn-primary" href="/host/signup">Start hosting</a>
+          </main>
+        </div>
+      </div>
+
+      <!-- D · اردو / RTL — COMPUTED -->
+      <div class="panel">
+        <div class="panel-tag">D · اردو · RTL — computed (Karachi · Entire place · PKR 15,000 · 8 nights)</div>
+        <div class="note">Full mirror: form, slider and output flow right-to-left; chevrons flip. <code>PKR</code> figures and night counts stay LTR-isolated via <code>.num</code> so they never digit-order-mirror (DESIGN §11).</div>
+        <div class="app" dir="rtl" lang="ur">
+          <div class="topbar">
+            <a class="wordmark" href="/ur/">Salam<span class="dot">.</span>Stay</a>
+            <a class="backlink urdu" href="/ur/become-a-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>میزبان بنیں</a>
+            <span class="spacer"></span>
+            <div class="langsw" role="group" aria-label="زبان">
+              <a href="/become-a-host/earnings-estimator" lang="en">EN</a>
+              <a class="urdu" href="/ur/become-a-host/earnings-estimator" aria-current="true" lang="ur">اردو</a>
+            </div>
+          </div>
+          <main class="main">
+            <div class="toph">
+              <h2 class="urdu">اپنی آمدنی کا اندازہ لگائیں</h2>
+              <p class="urdu">میزبانی کیسی لگ سکتی ہے دیکھیں — اپنے نمبر خود طے کریں، کوئی مارکیٹ اوسط نہیں۔</p>
+            </div>
+
+            <form class="form" aria-label="آمدنی کا تخمینہ">
+              <div class="row2">
+                <div class="field">
+                  <label class="flabel urdu" for="cityD">شہر</label>
+                  <select id="cityD" class="urdu">
+                    <option>کراچی</option>
+                    <option>لاہور</option>
+                    <option>اسلام آباد</option>
+                    <option>پشاور</option>
+                    <option>فیصل آباد</option>
+                    <option>راولپنڈی</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="flabel urdu" for="typeD">پراپرٹی کی قسم</label>
+                  <select id="typeD" class="urdu">
+                    <option>پورا گھر</option>
+                    <option>نجی کمرہ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="flabel urdu" for="rateD">فی رات کرایہ</label>
+                <div class="amtwrap">
+                  <span class="pre">₨</span>
+                  <input id="rateD" type="text" inputmode="numeric" value="15,000" />
+                </div>
+                <span class="fhint urdu">قیمت آپ خود طے کرتے ہیں — یہ تجویز کردہ مارکیٹ ریٹ نہیں۔</span>
+              </div>
+
+              <div class="field">
+                <label class="flabel urdu" for="nightsD">ماہانہ راتیں</label>
+                <div class="sliderrow">
+                  <input id="nightsD" type="range" min="1" max="30" value="8" />
+                  <span class="sliderval urdu"><span class="num">8</span> راتیں</span>
+                </div>
+                <div class="sliderends"><span>1</span><span>30</span></div>
+              </div>
+            </form>
+
+            <div class="outcard">
+              <span class="oeyebrow urdu">آپ کا تخمینہ</span>
+              <p class="sumline urdu"><span class="num">PKR 15,000</span> × <span class="num">8</span> راتیں = <span class="num">PKR 120,000</span> ماہانہ، سروس فیس سے پہلے</p>
+              <p class="subline urdu">کراچی · پورا گھر</p>
+              <div class="assumelist">
+                <div class="assumerow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span class="urdu">یہ آپ کے درج کردہ کرائے اور راتوں کی سادہ ضرب ہے — مارکیٹ اوسط یا وعدہ نہیں۔</span></div>
+                <div class="assumerow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span class="urdu">آپ کی اصل آمدنی آپ کی لسٹنگ اور بکنگز پر منحصر ہے۔</span></div>
+              </div>
+              <div class="halalnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a3 3 0 0 0 6 0V3"/><path d="M10 9v12"/><path d="M17 3c1.5 1.5 2 3.5 2 6s-.5 4-2 5v7"/></svg>
+                <span class="urdu">میزبانی کی آمدنی آپ کے گھر کے کرائے کے طور پر ہے — کبھی سود نہیں۔</span>
+              </div>
+              <a class="feelink urdu" href="/ur/host/help/fees#wakala">سروس فیس، MDR اور ودہولڈنگ ٹیکس کیسے لاگو ہوتے ہیں
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+
+            <a class="btn btn-primary urdu" href="/ur/host/signup">میزبانی شروع کریں</a>
+          </main>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

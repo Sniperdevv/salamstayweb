@@ -1,0 +1,545 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — SalamStar programme status (HA-067)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     HA-067 · SALAMSTAR PROGRAMME STATUS · app view (noindex) · route
+       "/host/salamstar" · host chrome, NO stepper (§7.6a — post-onboarding)
+     ---------------------------------------------------------------------------
+     OWN-NUMBERS-ONLY DOCTRINE (inherited verbatim from shipped HA-066):
+       every figure on this screen is Aqib's own, checkable data. There is no
+       benchmark, no "hosts like you", no percentile, no league table, and no
+       aggregate host rating anywhere (HA-062/HA-066 ship none — inventing one
+       here would fabricate a number the product does not hold).
+     WHAT IS SHIPPED, AND THEREFORE WHAT THIS SCREEN MAY STATE:
+       · The SalamStar TAG itself — rendered on the public host profile
+         (GA-033) and beside listings in results (GA-025 / GA-102 / GA-027).
+         That placement is the only shipped consequence of the programme.
+       · Occupancy 78% = 54 of 69 nights, 1–23 July 2026, +6% vs last month
+         (HA-046 headline, HA-066 fraction) — reused verbatim.
+       · Three listings: Gulberg 2 Residence, F-6 Studio, Cantt View Residence
+         (HA-046 / HA-062 / HA-066).
+       · Reviews exist per listing (HA-062) but NO host-level score is shipped.
+     WHAT IS NOT SHIPPED, AND IS THEREFORE A LABELLED TEMPLATE SLOT:
+       the qualifying CRITERIA, any threshold or tier, the assessment period,
+       and every benefit beyond the tag placement. These render as visibly
+       empty, labelled slots with a "Not set yet" chip — never as an invented
+       number. PARKED for founder sign-off; scope changes are founder-only.
+     NO response-time or SLA promise anywhere (loop-wide rule).
+     Cultural framing: SalamStar is a calm recognition tag, never gamified
+       religiosity and never brand-green celebration (DESIGN §10.3).
+============================================================================ -->
+
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --dv-series-1:#3B8371; --dv-series-2:#34527E; --dv-series-3:#8A5A16;
+    --dv-axis:#5F676D; --dv-gridline:#E7E9EA;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --dv-series-1:#579D8B; --dv-series-2:#9AC0F4; --dv-series-3:#E0B36B;
+    --dv-axis:#A7AFAD; --dv-gridline:#2A3230;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1060px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ha-066 host lineage */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:840px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:21px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .lead { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-top:6px; }
+
+  /* status card — the calm tag, exactly as GA-033 renders it, plus a plain state line */
+  .statecard { margin-top:14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:15px 15px 14px; display:flex; flex-direction:column; gap:9px; }
+  .sstag { display:inline-flex; align-items:center; gap:6px; align-self:flex-start; height:26px; padding:0 11px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:12px; font-weight:600; color:var(--text-primary); }
+  .sstag svg { width:13px; height:13px; color:var(--warning-fg); flex:none; }
+  .sstag.off { color:var(--text-tertiary); border-style:dashed; }
+  .sstag.off svg { color:var(--text-tertiary); }
+  .st-state { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .st-body { font-size:12px; color:var(--text-secondary); line-height:1.55; display:block; }
+
+  /* honesty note — boxed, informative register, never punitive */
+  .hbox { display:flex; gap:9px; align-items:flex-start; margin-top:12px; padding:12px 13px; border-radius:var(--radius-lg); border:1px solid var(--info-border); background:var(--info-bg); }
+  .hbox .hb-ic { flex:none; margin-top:1px; }
+  .hbox .hb-ic svg { width:17px; height:17px; stroke-width:1.9; color:var(--info-fg); }
+  .hbox .hb-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .hbox .hb-h { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .hbox .hb-d { font-size:11.5px; color:var(--text-secondary); line-height:1.55; display:block; }
+
+  .sec-h { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 9px; }
+
+  /* own-numbers rows (ha-066 lrow lineage) */
+  .lrows { display:flex; flex-direction:column; gap:8px; }
+  .lrow { display:flex; align-items:flex-start; gap:10px; min-height:60px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); text-decoration:none; }
+  .lr-ic { flex:none; width:32px; height:32px; border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .lr-ic svg { width:17px; height:17px; stroke-width:1.7; }
+  .lr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .lr-n { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .lr-s { font-size:11px; color:var(--text-tertiary); display:block; line-height:1.5; }
+  .lr-r { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+  .lr-pct { font-size:17px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; line-height:1.15; display:block; direction:ltr; unicode-bidi:isolate; }
+  .lr-chev { flex:none; color:var(--text-tertiary); display:inline-flex; align-self:center; }
+  .lr-chev svg { width:15px; height:15px; stroke-width:2; }
+  .delta { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .delta svg { width:13px; height:13px; flex:none; }
+  .delta.up { color:var(--success-fg); }
+  .dv { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* no-score note (ha-066 verbatim register) */
+  .noscore { display:flex; gap:8px; align-items:flex-start; margin-top:9px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .noscore svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:1px; stroke-width:1.9; }
+  .noscore span { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+
+  /* TEMPLATE SLOTS — visibly empty, labelled, never an invented number */
+  .slots { display:flex; flex-direction:column; gap:8px; }
+  .slot { display:flex; align-items:center; gap:10px; min-height:58px; padding:11px 12px; border:1px dashed var(--border-default); border-radius:var(--radius-lg); background:var(--bg-sunken); }
+  .slot-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .slot-n { font-size:12.5px; font-weight:600; color:var(--text-secondary); display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .slot-s { font-size:11px; color:var(--text-tertiary); display:block; line-height:1.5; }
+  .slot-p { flex:none; font-size:10.5px; font-weight:700; border-radius:var(--radius-full); padding:4px 9px; white-space:nowrap; background:var(--bg-canvas); color:var(--text-tertiary); border:1px solid var(--border-default); }
+  .slot-bar { height:6px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px dashed var(--border-default); margin-top:5px; }
+
+  /* where the tag shows — shipped placements only */
+  .plist { display:flex; flex-direction:column; gap:8px; }
+  .prow { display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); text-decoration:none; }
+  .pr-ic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .pr-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .pr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .pr-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .pr-d { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .pr-chev { flex:none; color:var(--text-tertiary); display:inline-flex; align-self:center; }
+  .pr-chev svg { width:15px; height:15px; stroke-width:2; }
+
+  /* footer link rows */
+  .linkrow { display:flex; align-items:center; gap:10px; min-height:52px; margin-top:8px; padding:10px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; }
+  .lk-ic { flex:none; color:var(--text-secondary); display:inline-flex; }
+  .lk-ic svg { width:17px; height:17px; stroke-width:1.8; }
+  .lk-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lk-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .lk-s { font-size:11px; color:var(--text-secondary); display:block; }
+  .lk-chev { flex:none; color:var(--text-tertiary); display:inline-flex; }
+  .lk-chev svg { width:15px; height:15px; stroke-width:2; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — SalamStar programme status (HA-067)</h1>
+    <p>The host's SalamStar surface at <code>/host/salamstar</code>. SalamStar is SalamStay's Superhost equivalent, and the product currently ships exactly <strong>one</strong> thing about it: the <strong>tag itself</strong>, rendered on the public host profile (<code>GA-033</code>) and beside listings in results (<code>GA-025</code>/<code>GA-102</code>/<code>GA-027</code>). No criteria, no threshold, no tier and no benefit beyond that placement exists anywhere in the corpus — so this screen <strong>does not invent one</strong>. It states the shipped placement as fact, shows the host's <strong>own checkable numbers</strong> (occupancy <span class="num">78%</span> = <span class="num">54</span> of <span class="num">69</span> nights, <span class="num">1</span>–<span class="num">23</span> July <span class="num">2026</span>, carried verbatim from <code>HA-046</code>/<code>HA-066</code>), and renders every unshipped criterion and benefit as a <strong>visibly empty, labelled template slot</strong> with a <em>Not set yet</em> chip — <strong>parked for founder sign-off</strong>. No percentile, no "hosts like you", no league table, and — per <code>HA-062</code>/<code>HA-066</code> — <strong>no aggregate host rating anywhere</strong>. Host chrome, no stepper (§7.6a). Panels: status + own numbers (light) · criteria slots + placements (light) · status (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Status + own numbers · light</span><span>Criteria slots · placements</span><span>Status · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — A · STATUS + OWN NUMBERS · B · SLOTS ============================ -->
+    <section class="panel" aria-label="Light theme — SalamStar status with the host's own numbers, and the unset-criteria template slots">
+      <div class="panel-tag">Light — honest status · own numbers · criteria template slots</div>
+      <div class="rowflex">
+
+        <!-- A -->
+        <div class="pcol">
+          <div class="pcap">A · Status — stated, never scored</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">SalamStar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">SalamStar</h2>
+              <p class="lead">SalamStay's recognition for hosts who look after their guests well. It is a quiet tag on your profile — not a score, not a rank, and never a comparison with other hosts.</p>
+
+              <div class="statecard">
+                <span class="sstag off"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>SalamStar</span>
+                <span class="st-state">Not assessed yet</span>
+                <span class="st-body">The SalamStar tag is not on your profile today. Nothing about your hosting is counted against you — the programme's criteria simply have not been published yet, so no one is being assessed.</span>
+              </div>
+
+              <div class="hbox" role="note">
+                <span class="hb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="hb-b">
+                  <span class="hb-h">We won't show you a target we haven't published</span>
+                  <span class="hb-d">When the criteria are agreed, each one appears below with your own progress against it — and you'll be told before anything changes. Until then this page shows only what is already true.</span>
+                </div>
+              </div>
+
+              <div class="sec-h">Your own numbers</div>
+              <div class="lrows">
+                <a class="lrow" href="/host/insights">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Occupancy · all listings</span>
+                    <span class="lr-s"><span class="num">54</span> of <span class="num">69</span> nights booked · <span class="num">1</span>–<span class="num">23</span> July <span class="num">2026</span></span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">78%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+6%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/host/listings">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Homes you host</span>
+                    <span class="lr-s">Gulberg <span class="num">2</span> Residence · F-<span class="num">6</span> Studio · Cantt View Residence</span>
+                  </span>
+                  <span class="lr-r"><span class="lr-pct">3</span></span>
+                </a>
+                <a class="lrow" href="/host/reviews">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Reviews your guests wrote</span>
+                    <span class="lr-s">Read them in full, in their words — with your replies</span>
+                  </span>
+                  <span class="lr-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="noscore">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span>SalamStay does not publish a single score for a host. There is no average, no rank and no percentile here — only your own figures, and the reviews your guests actually wrote.</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B -->
+        <div class="pcol">
+          <div class="pcap">B · Criteria — labelled slots, not guesses</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">SalamStar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">How SalamStar works</h2>
+              <p class="lead">Two parts: what the tag already does today, and what still has to be decided. Both are shown as they are.</p>
+
+              <div class="sec-h">What the tag does today</div>
+              <div class="plist">
+                <a class="prow" href="/users/aqib-g">
+                  <span class="pr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+                  <span class="pr-b">
+                    <span class="pr-t">It appears on your public profile</span>
+                    <span class="pr-d">A SalamStar host carries the tag beside their name on the profile guests read before booking.</span>
+                  </span>
+                  <span class="pr-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+                <a class="prow" href="/host/listings">
+                  <span class="pr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 13h5"/></svg></span>
+                  <span class="pr-b">
+                    <span class="pr-t">It appears beside your homes in results</span>
+                    <span class="pr-d">The same small tag sits on the listing card when a guest is browsing or has saved your home.</span>
+                  </span>
+                  <span class="pr-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="sec-h">Criteria — not set yet</div>
+              <ul class="slots">
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{criterion_1}</span>
+                    <span class="slot-s">Its wording, its measure and your progress bar render here once published.</span>
+                    <span class="slot-bar" aria-hidden="true"></span>
+                  </div>
+                  <span class="slot-p">Not set yet</span>
+                </li>
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{criterion_2}</span>
+                    <span class="slot-s">Same shape — one plain sentence, your own figure, and where it comes from.</span>
+                    <span class="slot-bar" aria-hidden="true"></span>
+                  </div>
+                  <span class="slot-p">Not set yet</span>
+                </li>
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{assessment_period}</span>
+                    <span class="slot-s">How often status is reviewed, and the window it looks at.</span>
+                  </div>
+                  <span class="slot-p">Not set yet</span>
+                </li>
+              </ul>
+
+              <div class="sec-h">What else it changes — not set yet</div>
+              <ul class="slots">
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{benefit_1}</span>
+                    <span class="slot-s">Any benefit beyond the tag itself appears here, in plain words, once decided.</span>
+                  </div>
+                  <span class="slot-p">Not set yet</span>
+                </li>
+              </ul>
+
+              <a class="linkrow" href="/host/insights">
+                <span class="lk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg></span>
+                <span class="lk-b"><span class="lk-t">See your performance</span><span class="lk-s">Occupancy, trend and what guests mention</span></span>
+                <span class="lk-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+              <a class="linkrow" href="/host/help/salamstar">
+                <span class="lk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7M12 17h.01"/></svg></span>
+                <span class="lk-b"><span class="lk-t">Questions about SalamStar</span><span class="lk-s">A person reads every message you send us</span></span>
+                <span class="lk-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note"><b>The whole design decision on this screen is what it refuses to say.</b> A Superhost-equivalent surface normally leads with thresholds — "<span class="num">4.8</span>+ rating, <span class="num">90%</span> response rate, top <span class="num">10%</span> of hosts". None of those exist in this product: <code>HA-062</code> and <code>HA-066</code> ship <b>no host-level score at all</b>, and no criterion, tier or percentile appears anywhere in the corpus. So the criteria render as <b>visibly empty, monospaced, dashed-border slots</b> with a <em>Not set yet</em> chip — the shape of the future row without a fabricated value in it, which is also exactly what the Next.js build will bind to. What the screen <i>does</i> assert is checkable: the tag's two shipped placements (profile <code>GA-033</code>, listing card <code>GA-025</code>), and Aqib's own figures reused verbatim — <span class="num">78%</span> occupancy stated as the fraction <span class="num">54</span>/<span class="num">69</span> so he can check it himself, and <span class="num">+6%</span> against his own last month, never against another host. The status line is <b>non-punitive by construction</b>: "Not assessed yet" plus "nothing is counted against you" — a missing badge is never framed as a failure. The support row promises a person, never a response time.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the SalamStar status surface">
+      <div class="panel-tag">Dark — status · own numbers</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">C · Dark — identical token set</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">SalamStar</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="cH" class="sr-only">SalamStar</h2>
+              <p class="lead" style="margin-top:0">SalamStay's recognition for hosts who look after their guests well. It is a quiet tag on your profile — not a score, not a rank, and never a comparison with other hosts.</p>
+
+              <div class="statecard">
+                <span class="sstag off"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>SalamStar</span>
+                <span class="st-state">Not assessed yet</span>
+                <span class="st-body">The SalamStar tag is not on your profile today. Nothing about your hosting is counted against you — the programme's criteria simply have not been published yet.</span>
+              </div>
+
+              <div class="hbox" role="note">
+                <span class="hb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="hb-b">
+                  <span class="hb-h">We won't show you a target we haven't published</span>
+                  <span class="hb-d">When the criteria are agreed, each one appears with your own progress against it — and you'll be told before anything changes.</span>
+                </div>
+              </div>
+
+              <div class="sec-h">Your own numbers</div>
+              <div class="lrows">
+                <a class="lrow" href="/host/insights">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Occupancy · all listings</span>
+                    <span class="lr-s"><span class="num">54</span> of <span class="num">69</span> nights booked · <span class="num">1</span>–<span class="num">23</span> July <span class="num">2026</span></span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">78%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+6%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/host/reviews">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Reviews your guests wrote</span>
+                    <span class="lr-s">No average, no rank — the reviews themselves</span>
+                  </span>
+                  <span class="lr-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="sec-h">Criteria — not set yet</div>
+              <ul class="slots">
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{criterion_1}</span>
+                    <span class="slot-s">Its wording, its measure and your progress bar render here once published.</span>
+                    <span class="slot-bar" aria-hidden="true"></span>
+                  </div>
+                  <span class="slot-p">Not set yet</span>
+                </li>
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{assessment_period}</span>
+                    <span class="slot-s">How often status is reviewed, and the window it looks at.</span>
+                  </div>
+                  <span class="slot-p">Not set yet</span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (§11). The SalamStar glyph keeps the <b>muted-amber</b> pair (<code>--warning-fg</code>) that <code>HA-062</code> established for stars — legible without becoming a gold accent, and never the brand green that would read as endorsement (§10.3). The tag in its un-earned state is a <b>dashed outline in tertiary text</b>: present, explained, and not shouting. Nothing on this surface celebrates, and nothing scolds.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the SalamStar status surface">
+      <div class="panel-tag">RTL · اردو — status, own numbers, criteria slots</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">سلام اسٹار</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="واپس آج پر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur">سلام اسٹار</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="uH" class="ur">سلام اسٹار</h2>
+              <p class="lead ur">اُن میزبانوں کے لیے سلام اسٹے کی پہچان جو اپنے مہمانوں کا خیال رکھتے ہیں۔ یہ آپ کے پروفائل پر ایک سادہ ٹیگ ہے — نہ کوئی اسکور، نہ درجہ بندی، اور نہ ہی دوسرے میزبانوں سے کوئی موازنہ۔</p>
+
+              <div class="statecard">
+                <span class="sstag off ur"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg>سلام اسٹار</span>
+                <span class="st-state ur">ابھی جائزہ نہیں لیا گیا</span>
+                <span class="st-body ur">آج آپ کے پروفائل پر سلام اسٹار ٹیگ نہیں ہے۔ آپ کی میزبانی کے خلاف کچھ شمار نہیں ہو رہا — پروگرام کے معیار ابھی شائع ہی نہیں ہوئے، اس لیے کسی کا جائزہ نہیں لیا جا رہا۔</span>
+              </div>
+
+              <div class="hbox" role="note">
+                <span class="hb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="hb-b">
+                  <span class="hb-h ur">جو ہدف شائع نہیں ہوا، وہ ہم آپ کو نہیں دکھائیں گے</span>
+                  <span class="hb-d ur">جب معیار طے ہو جائیں گے، ہر معیار یہاں آپ کی اپنی پیش رفت کے ساتھ ظاہر ہوگا — اور کسی تبدیلی سے پہلے آپ کو بتا دیا جائے گا۔</span>
+                </div>
+              </div>
+
+              <div class="sec-h ur">آپ کے اپنے اعداد</div>
+              <div class="lrows">
+                <a class="lrow" href="/ur/host/insights">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n ur">قیام کی شرح · تمام لسٹنگز</span>
+                    <span class="lr-s ur"><span class="num">69</span> میں سے <span class="num">54</span> راتیں بک · <span class="num">1</span>–<span class="num">23</span> جولائی <span class="num">2026</span></span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">78%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+6%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/ur/host/reviews">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n ur">آپ کے مہمانوں کے جائزے</span>
+                    <span class="lr-s ur">کوئی اوسط نہیں، کوئی درجہ نہیں — خود جائزے</span>
+                  </span>
+                  <span class="lr-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="noscore">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span class="ur">سلام اسٹے کسی میزبان کے لیے ایک ہی اسکور شائع نہیں کرتا۔ یہاں نہ اوسط ہے، نہ درجہ، نہ فیصد — صرف آپ کے اپنے اعداد اور وہ جائزے جو مہمانوں نے واقعی لکھے۔</span>
+              </div>
+
+              <div class="sec-h ur">معیار — ابھی طے نہیں</div>
+              <ul class="slots">
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{criterion_1}</span>
+                    <span class="slot-s ur">شائع ہوتے ہی اس کے الفاظ، پیمائش اور آپ کی پیش رفت یہاں آ جائے گی۔</span>
+                    <span class="slot-bar" aria-hidden="true"></span>
+                  </div>
+                  <span class="slot-p ur">طے نہیں</span>
+                </li>
+                <li class="slot">
+                  <div class="slot-b">
+                    <span class="slot-n">{assessment_period}</span>
+                    <span class="slot-s ur">جائزہ کتنے عرصے بعد ہوگا، اور کس مدت کو دیکھے گا۔</span>
+                  </div>
+                  <span class="slot-p ur">طے نہیں</span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored end to end — the back chevron and the row chevrons flip, the tag and the slot rows read from the right, and the percentage keeps LTR digit order inside its isolated span. Every value is a <b>Western digit inside <code>.num</code></b> with Urdu prose around it (Pass #<span class="num">31</span> ruling), so <span class="num">54</span>/<span class="num">69</span> and <span class="num">1</span>–<span class="num">23</span> July stay readable and never digit-order-mirror. The slot tokens stay in Latin monospace on both sides — they are build-time identifiers, not prose, and translating them would break the binding.</p>
+    </section>
+
+  </main>
+</body>
+</html>

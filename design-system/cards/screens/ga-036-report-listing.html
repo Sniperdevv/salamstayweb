@@ -1,0 +1,378 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-036 Report listing (mobile app)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    --map-land:#EEF0F1; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+    --map-land:#141918; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:#16191B; -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1320px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .head .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .tags span { font-size:11.5px; font-weight:600; letter-spacing:.02em; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 11px; }
+
+  .rail { max-width:1320px; margin:0 auto; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-start; }
+  .col { display:flex; flex-direction:column; gap:12px; }
+  .cap { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#828A90; padding-left:4px; }
+  .dark-cap { color:#8A938F; }
+
+  /* ============ Phone frame ============ */
+  .phone { width:384px; background:var(--bg-canvas); border-radius:38px; border:1px solid var(--border-hairline); box-shadow:var(--el-popover); overflow:hidden; position:relative; }
+  .phone.dark { background:#0E1211; }
+  .screen { position:relative; background:var(--bg-canvas); display:flex; flex-direction:column; }
+
+  /* scrim behind the sheet (modal/dialog reuse §8.5) */
+  .backdrop { position:relative; height:72px; background:var(--scrim); flex:none; }
+  .backdrop.plain { background:var(--bg-sunken); }
+  .statusbar { position:absolute; top:0; left:0; right:0; height:44px; z-index:6; display:flex; align-items:center; justify-content:space-between; padding:0 22px; pointer-events:none; }
+  .statusbar .t { font-size:13px; font-weight:600; color:#fff; font-variant-numeric:tabular-nums; }
+  .statusbar.ink .t { color:var(--text-primary); }
+  .statusbar .ic { display:flex; gap:5px; align-items:center; }
+  .statusbar .ic svg { width:16px; height:16px; color:#fff; }
+  .statusbar.ink .ic svg { color:var(--text-primary); }
+
+  /* ============ Bottom sheet ============ */
+  .sheet { position:relative; z-index:2; margin-top:-20px; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; display:flex; flex-direction:column; flex:1; }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; flex:none; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .shead { display:flex; align-items:center; gap:12px; padding:8px 18px 12px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .shead .st { flex:1; min-width:0; }
+  .shead .st h2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.005em; }
+  .shead .st p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .closeb { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; color:var(--text-primary); }
+  .closeb svg { width:18px; height:18px; stroke-width:2; }
+
+  .sbody { padding:14px 18px 8px; }
+  .grouplbl { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:8px; }
+
+  /* ============ Reason radio list-rows (§10 nav list-row picker) ============ */
+  .reasons { display:flex; flex-direction:column; gap:8px; }
+  .reason { display:flex; gap:12px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); border:1px solid var(--border-default); background:var(--bg-canvas); cursor:pointer; text-align:start; width:100%; font-family:inherit; }
+  .rx { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .reason .radio { width:20px; height:20px; flex:none; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .reason .radio i { width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); opacity:0; }
+  .reason .rx .t { font-size:14px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .reason .rx .d { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .reason.on { border-color:var(--border-brand); background:var(--int-subtle); }
+  .reason.on .radio { border-color:var(--int-primary); }
+  .reason.on .radio i { opacity:1; }
+
+  /* detail block that appears once a reason is chosen */
+  .detail { margin-top:16px; }
+  .dlabel { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:flex; align-items:baseline; gap:6px; }
+  .dlabel span { font-size:12px; font-weight:400; color:var(--text-tertiary); }
+  .dlabel .dl-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .ta { width:100%; min-height:84px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:11px 13px; font-family:inherit; font-size:13.5px; color:var(--text-primary); line-height:1.5; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); background:var(--bg-canvas); }
+  .count { font-size:11.5px; color:var(--text-tertiary); text-align:end; margin-top:5px; }
+
+  /* optional photo attach */
+  .attach { margin-top:12px; display:flex; gap:10px; align-items:center; }
+  .addphoto { width:64px; height:64px; flex:none; border-radius:var(--radius-md); border:1.5px dashed var(--border-default); background:var(--bg-sunken); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:var(--text-secondary); font-family:inherit; }
+  .addphoto svg { width:20px; height:20px; }
+  .addphoto span { font-size:10px; font-weight:600; }
+  .attach .thumb { width:64px; height:64px; flex:none; border-radius:var(--radius-md); background:linear-gradient(158deg,var(--bg-raised),var(--bg-sunken)); border:1px solid var(--border-hairline); position:relative; overflow:hidden; }
+  .attach .thumb img { width:100%; height:100%; object-fit:cover; }
+  .attach .thumb .x { position:absolute; top:3px; inset-inline-end:3px; width:18px; height:18px; border-radius:var(--radius-full); background:var(--scrim); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .attach .thumb .x svg { width:11px; height:11px; color:#fff; stroke-width:2.4; }
+  .attach .hint { font-size:11.5px; color:var(--text-tertiary); line-height:1.4; }
+
+  /* what-happens-next note (info) */
+  .whatnext { margin-top:16px; display:flex; gap:12px; align-items:flex-start; padding:13px 14px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .whatnext .wic { width:32px; height:32px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1.5px solid var(--info-fg); display:flex; align-items:center; justify-content:center; }
+  .whatnext .wic svg { width:17px; height:17px; color:var(--info-fg); stroke-width:1.75; }
+  .whatnext .wt { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .whatnext ul { list-style:none; margin-top:5px; }
+  .whatnext li { font-size:12.5px; color:var(--text-secondary); line-height:1.5; padding-inline-start:16px; position:relative; margin-top:3px; }
+  .whatnext li::before { content:""; position:absolute; inset-inline-start:2px; top:8px; width:5px; height:5px; border-radius:50%; background:var(--info-fg); }
+  .whatnext li b { color:var(--text-primary); font-weight:600; }
+
+  /* sticky action footer */
+  .foot { padding:12px 18px calc(12px + 6px); border-top:1px solid var(--border-hairline); background:var(--bg-canvas); flex:none; margin-top:8px; }
+  .btn { width:100%; height:48px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
+  .btn[disabled] { background:var(--bg-sunken); color:var(--text-disabled); border:1px solid var(--border-default); cursor:not-allowed; }
+  .foot .helper { font-size:12px; color:var(--text-secondary); text-align:center; margin-top:9px; }
+
+  /* ============ Confirmation state ============ */
+  .confirm { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; padding:40px 26px 0; }
+  .confirm .seal { width:66px; height:66px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; }
+  .confirm .seal svg { width:32px; height:32px; color:var(--success-fg); stroke-width:2; }
+  .confirm h2 { font-size:20px; font-weight:600; color:var(--text-primary); margin-top:20px; letter-spacing:-0.01em; }
+  .confirm p { font-size:13.5px; color:var(--text-secondary); line-height:1.55; margin-top:10px; max-width:280px; }
+  .confirm .ref { margin-top:16px; font-size:12px; color:var(--text-tertiary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:5px 12px; font-variant-numeric:tabular-nums; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL — Urdu */
+  .phone.rtl .screen { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu',serif; line-height:1.75; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+
+  @media (max-width:520px){ body{ padding:16px; } .phone{ width:100%; max-width:384px; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>GA-036 — Report listing (mobile app)</h1>
+    <p>Flagging a listing for the safety team — calm, never dramatic (§10.8). A reason radio-list (inaccurate, safety concern, policy violation, offensive content, scam, something else) reuses the modal/dialog list-row picker (§8.5); choosing one reveals an optional detail note and an optional photo attach. A quiet "what happens next" note sets honest expectations: the safety team reviews every report and the host is never told who reported them. The submit button is disabled until a reason is picked. The confirmation state thanks the reporter and hands off — no dead end, no alarm.</p>
+    <div class="tags">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>Reason picker + detail + confirmation</span><span>Calm, never dramatic (§10.8)</span><span>Reporter identity protected</span><span>Optional photo attach</span><span>Submit gated until reason chosen</span>
+    </div>
+  </div>
+
+  <div class="rail">
+
+    <!-- ============================================================= LIGHT — reason chosen, detail + attach ============================================================= -->
+    <div class="col">
+      <div class="cap">Light — safety concern selected · detail + photo</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="backdrop">
+            <div class="statusbar">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>Report this listing</h2>
+                <p>Thanks for looking out. Tell us what's wrong and our safety team will review it.</p>
+              </div>
+              <button class="closeb" aria-label="Close report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+
+            <div class="sbody">
+              <div class="grouplbl">What's the issue?</div>
+              <div class="reasons" role="radiogroup" aria-label="Reason for reporting">
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Inaccurate listing</span><span class="d">Photos, location or details don't match the real place.</span></span></button>
+                <button class="reason on" role="radio" aria-checked="true"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Safety concern</span><span class="d">Something here could put a guest at risk.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Breaks SalamStay policy</span><span class="d">Discrimination, prohibited items, or off-platform requests.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Offensive content</span><span class="d">Text or photos that aren't appropriate.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Possible scam</span><span class="d">Asked to pay or message outside SalamStay.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Something else</span><span class="d">Tell us in your own words below.</span></span></button>
+              </div>
+
+              <div class="detail">
+                <label class="dlabel" for="rep-note"><span class="dl-t">Add anything that helps</span><span>Optional</span></label>
+                <textarea class="ta" id="rep-note" placeholder="What did you notice? The more detail, the faster we can check.">The address in the photos doesn't seem to match the map area, and the balcony railing looks unsafe for children.</textarea>
+                <div class="count">184 / 1000</div>
+
+                <div class="attach">
+                  <button class="addphoto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M8 5l1.5-2h5L16 5"/></svg><span>Add</span></button>
+                  <div class="thumb"><img src="../../assets/photos/is-f7-view.jpg" alt="Attached screenshot of the listing" /><button class="x" aria-label="Remove photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+                  <p class="hint">Add a screenshot or photo if it helps explain. Optional.</p>
+                </div>
+              </div>
+
+              <div class="whatnext">
+                <span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <div>
+                  <div class="wt">What happens next</div>
+                  <ul>
+                    <li>Our <b>safety team reviews every report</b>, usually within a day.</li>
+                    <li>The host is <b>never told who reported</b> them.</li>
+                    <li>We may message you if we need a little more detail.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="foot"><button class="btn">Submit report</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= DARK — pristine (no reason yet → submit disabled) ============================================================= -->
+    <div class="col">
+      <div class="cap dark-cap">Dark — nothing chosen yet · submit gated</div>
+      <div class="phone dark">
+        <div class="screen">
+          <div class="backdrop">
+            <div class="statusbar">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2>Report this listing</h2>
+                <p>Margalla View Apartment · F-7, Islamabad</p>
+              </div>
+              <button class="closeb" aria-label="Close report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+
+            <div class="sbody">
+              <div class="grouplbl">What's the issue?</div>
+              <div class="reasons" role="radiogroup" aria-label="Reason for reporting">
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Inaccurate listing</span><span class="d">Photos, location or details don't match the real place.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Safety concern</span><span class="d">Something here could put a guest at risk.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Breaks SalamStay policy</span><span class="d">Discrimination, prohibited items, or off-platform requests.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Offensive content</span><span class="d">Text or photos that aren't appropriate.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Possible scam</span><span class="d">Asked to pay or message outside SalamStay.</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t">Something else</span><span class="d">Tell us in your own words.</span></span></button>
+              </div>
+
+              <div class="whatnext">
+                <span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <div>
+                  <div class="wt">Reporting is private</div>
+                  <ul>
+                    <li>The host <b>won't know it was you</b>.</li>
+                    <li>Use this for the listing itself — to report a person, open their profile.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="foot"><button class="btn" disabled aria-disabled="true">Submit report</button><p class="helper">Pick a reason above to continue.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= STATE — confirmation ============================================================= -->
+    <div class="col">
+      <div class="cap">State — report received (confirmation)</div>
+      <div class="phone" style="width:340px">
+        <div class="screen">
+          <div class="backdrop plain">
+            <div class="statusbar ink">
+              <span class="t">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="confirm">
+              <span class="seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+              <h2>Report received</h2>
+              <p>Thank you. Our safety team will take it from here, and we'll reach out only if we need anything more.</p>
+              <span class="ref">Ref RPT-2026-0714-3391</span>
+            </div>
+            <div class="foot"><button class="btn">Back to listing</button><p class="helper">You can keep browsing — nothing else is needed from you.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= RTL / Urdu ============================================================= -->
+    <div class="col">
+      <div class="cap">RTL — اردو · reason chosen</div>
+      <div class="phone rtl" dir="rtl" lang="ur">
+        <div class="screen">
+          <div class="backdrop">
+            <div class="statusbar">
+              <span class="t num">9:41</span>
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="sheet">
+            <div class="grab" aria-hidden="true"><i></i></div>
+            <div class="shead">
+              <div class="st">
+                <h2 class="ur">اس لسٹنگ کی اطلاع دیں</h2>
+                <p class="ur">بتائیں کیا مسئلہ ہے؛ ہماری سیفٹی ٹیم جائزہ لے گی۔</p>
+              </div>
+              <button class="closeb" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+
+            <div class="sbody">
+              <div class="grouplbl ur">مسئلہ کیا ہے؟</div>
+              <div class="reasons" role="radiogroup" aria-label="اطلاع کی وجہ">
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t ur">غلط لسٹنگ</span><span class="d ur">تصاویر یا تفصیلات اصل جگہ سے میل نہیں کھاتیں۔</span></span></button>
+                <button class="reason on" role="radio" aria-checked="true"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t ur">حفاظتی خدشہ</span><span class="d ur">یہاں کوئی چیز مہمان کے لیے خطرہ بن سکتی ہے۔</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t ur">پالیسی کی خلاف ورزی</span><span class="d ur">امتیازی سلوک یا پلیٹ فارم سے باہر ادائیگی کی درخواست۔</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t ur">نامناسب مواد</span><span class="d ur">غیر مناسب تحریر یا تصاویر۔</span></span></button>
+                <button class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><i></i></span><span class="rx"><span class="t ur">ممکنہ دھوکہ</span><span class="d ur">سلام اسٹے سے باہر رابطے کی درخواست۔</span></span></button>
+              </div>
+
+              <div class="detail">
+                <label class="dlabel ur" for="rep-note-ur"><span class="dl-t ur">مزید تفصیل شامل کریں</span><span class="ur">اختیاری</span></label>
+                <textarea class="ta ur" id="rep-note-ur" placeholder="آپ نے کیا دیکھا؟ جتنی تفصیل ہوگی، اتنی جلدی جائزہ ممکن ہے۔"></textarea>
+              </div>
+
+              <div class="whatnext">
+                <span class="wic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <div>
+                  <div class="wt ur">آگے کیا ہوگا</div>
+                  <ul>
+                    <li class="ur">سیفٹی ٹیم ہر اطلاع کا جائزہ لیتی ہے۔</li>
+                    <li class="ur">میزبان کو <b>کبھی نہیں بتایا جاتا</b> کہ اطلاع کس نے دی۔</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="foot"><button class="btn ur">اطلاع جمع کریں</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

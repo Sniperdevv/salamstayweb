@@ -1,0 +1,564 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-011 Account recovery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.h-title,.h-sub,.opt-h,.opt-p,.primary,.secondary-btn,.ghost-btn,.brandmark,.hint,.altline,.flabel,.fhint,.banner,.nt-h,.nt-p,.mrow-h,.mrow-p,.pk-h,.pk-p,.tag) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:10px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:23px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:8px; }
+  .h-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; line-height:1.55; }
+  .h-sub b { color:var(--text-primary); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  /* Recovery method options */
+  .opts { display:flex; flex-direction:column; gap:12px; margin-top:20px; }
+  .opt { display:flex; align-items:center; gap:13px; padding:14px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); cursor:pointer; text-align:start; width:100%; font-family:inherit; }
+  .opt:hover { background:var(--bg-canvas); border-color:var(--border-default); }
+  .opt-ic { flex:none; width:42px; height:42px; border-radius:var(--radius-md); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; }
+  .opt-ic svg { width:22px; height:22px; color:var(--int-primary); stroke-width:1.8; }
+  .opt-tx { flex:1; }
+  .opt-h { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .opt-p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .opt-p b { color:var(--text-primary); font-weight:600; }
+  .opt .chev { flex:none; width:18px; height:18px; color:var(--text-tertiary); }
+  .phone.rtl .chev { transform:scaleX(-1); }
+
+  .hint { display:flex; gap:9px; align-items:flex-start; margin-top:16px; font-size:12.5px; color:var(--text-secondary); line-height:1.5; }
+  .hint svg { width:16px; height:16px; flex:none; margin-top:1px; color:var(--text-tertiary); stroke-width:1.9; }
+
+  /* Text field (backup code) */
+  .field { margin-top:20px; }
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:8px; }
+  .fwrap { display:flex; align-items:center; gap:11px; height:52px; padding:0 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); }
+  .fwrap.focus { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .fval { font-size:16px; color:var(--text-primary); }
+  .fval.mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:2px; }
+  .fval.ph { color:var(--text-tertiary); }
+  .caret { display:inline-block; width:1.5px; height:22px; background:var(--int-primary); vertical-align:-4px; }
+  .fhint { font-size:12px; color:var(--text-secondary); margin-top:8px; line-height:1.45; }
+
+  .primary { width:100%; min-height:52px; margin-top:20px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-tertiary); cursor:default; }
+  .primary svg { width:19px; height:19px; }
+  .spin { width:19px; height:19px; border-radius:50%; border:2px solid var(--text-on-brand); border-top-color:transparent; animation:rot .7s linear infinite; }
+  @keyframes rot { 100% { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation:none; } }
+
+  .secondary-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; width:100%; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); color:var(--int-primary); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:12px; }
+  .secondary-btn:hover { background:var(--bg-raised); }
+  .secondary-btn svg { width:18px; height:18px; }
+  .ghost-btn { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; width:100%; background:transparent; border:none; color:var(--text-secondary); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; margin-top:8px; }
+  .ghost-btn svg { width:16px; height:16px; }
+
+  /* PK identity-fallback card */
+  .pkcard { margin-top:18px; padding:16px 15px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .pk-top { display:flex; align-items:center; gap:11px; }
+  .pk-ic { flex:none; width:40px; height:40px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--info-border); display:flex; align-items:center; justify-content:center; }
+  .pk-ic svg { width:21px; height:21px; color:var(--info-fg); stroke-width:1.8; }
+  .pk-h { font-size:15px; font-weight:700; color:var(--text-primary); }
+  .pk-p { font-size:12.5px; color:var(--text-secondary); margin-top:8px; line-height:1.5; }
+  .pk-p b { color:var(--text-primary); font-weight:600; }
+
+  /* Notices / banners */
+  .notice { display:flex; gap:12px; padding:15px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-top:8px; }
+  .notice-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .notice-ic svg { width:20px; height:20px; color:var(--warning-fg); stroke-width:1.9; }
+  .nt-h { font-size:15px; font-weight:700; color:var(--text-primary); }
+  .nt-p { font-size:12.5px; color:var(--text-secondary); margin-top:4px; line-height:1.5; }
+  .nt-p b { color:var(--text-primary); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:16px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner b { font-weight:700; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+
+  /* Success crown + secure-account nudge */
+  .crown { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:16px; }
+  .crown-ic { width:60px; height:60px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; }
+  .crown-ic svg { width:30px; height:30px; color:var(--success-fg); stroke-width:2; }
+  .mlist { margin-top:20px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .mrow { display:flex; align-items:center; gap:12px; padding:14px 14px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); width:100%; text-align:start; font-family:inherit; cursor:pointer; border-left:none; border-right:none; border-top:none; }
+  .mrow:last-child { border-bottom:none; }
+  .mrow:hover { background:var(--bg-raised); }
+  .mrow-ic { flex:none; width:34px; height:34px; border-radius:var(--radius-md); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; }
+  .mrow-ic svg { width:18px; height:18px; color:var(--int-primary); stroke-width:1.9; }
+  .mrow-tx { flex:1; }
+  .mrow-h { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .mrow-p { font-size:12px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .tag { flex:none; font-size:10.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:3px 9px; }
+  .chev { flex:none; width:18px; height:18px; color:var(--text-tertiary); }
+
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:15px 20px calc(4px + env(safe-area-inset-bottom)); font-size:13px; color:var(--text-tertiary); flex:none; line-height:1.5; }
+  .altline a { color:var(--text-secondary); font-weight:600; text-decoration:underline; }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-011 — Account recovery (mobile app)</h1>
+    <p>Regain access when factors are lost (<code>/help/account-recovery</code>). Entry names what the guest <em>still</em> has (phone, email, or a backup code); the backup-code path; the Pakistan-specific fallback — re-verify with CNIC via the <code>GA-041</code> flow when every login factor is gone; a real human-support escalation; recovery success with a secure-your-account nudge; and a calm failed state that always offers the next option. No dead ends, no blame, no fear. Quiet Modern: tokens only, one brand button, no ornament, registry-only copy.</p>
+    <div class="legend">
+      <span>Light · what you still have</span>
+      <span>Dark · backup-code path</span>
+      <span>Light · CNIC re-verify (PK fallback)</span>
+      <span>Light · back in + secure account</span>
+      <span>Dark · couldn't confirm yet</span>
+      <span>RTL · اردو</span>
+      <span>≥44pt targets · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · ENTRY (WHAT YOU STILL HAVE) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — what you still have</div>
+      <section class="phone" aria-label="Account recovery — entry, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/login" aria-label="Back to log in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Let's get you back in</h2>
+          <p class="h-sub">Locked out is normal — it happens. Pick anything you still have and we'll take it from there.</p>
+
+          <div class="opts" role="list" aria-label="Ways to recover your account">
+            <a class="opt" role="listitem" href="/help/account-recovery/phone">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">Text my phone</span>
+                <span class="opt-p">A code to <b dir="ltr">+92 300 ••• ••67</b></span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a class="opt" role="listitem" href="/help/account-recovery/email">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">Email me a link</span>
+                <span class="opt-p">To <b dir="ltr">a•••b@example.com</b></span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a class="opt" role="listitem" href="/help/account-recovery/backup-code">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9.5 11.5L20 11l-2 2 2 2-3 .5"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">Use a backup code</span>
+                <span class="opt-p">One of the codes you saved with two-step</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </div>
+
+          <p class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            Have none of these? There's still a way in below — verify your CNIC or talk to our team.
+          </p>
+
+          <a class="secondary-btn" href="/account/recovery/verify-identity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M13 10h4M13 13h3M6 16h6"/></svg>
+            Verify with CNIC instead
+          </a>
+        </div>
+
+        <div class="altline">Still stuck? <a href="/help/account-recovery/contact">Message our team</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Recovery starts from what the guest <b>still has</b>, not what they lost — three ordered options (phone, email, backup code) as real anchors, then the PK fallback (<b>CNIC re-verify</b>) and a human route always visible. "Locked out is normal" removes shame from the first line.</p>
+    </div>
+
+    <!-- ============================== DARK · BACKUP-CODE PATH ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — enter a backup code</div>
+      <section class="phone dark" aria-label="Account recovery — backup-code path, dark">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/help/account-recovery" aria-label="Back to recovery options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Enter a backup code</h2>
+          <p class="h-sub">Type one of the codes you saved when you turned on two-step. Each one works a single time.</p>
+
+          <div class="field">
+            <span class="flabel" id="bc-l">Backup code</span>
+            <div class="fwrap focus" role="group" aria-labelledby="bc-l">
+              <span class="fval mono" dir="ltr">4K2P-9QX</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="fhint">Format: four letters or numbers, a dash, then four more — e.g. <span dir="ltr">4K2P-9QX7</span>.</p>
+          </div>
+
+          <button class="primary" type="button">Continue</button>
+
+          <a class="ghost-btn" href="/help/account-recovery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-4-4 4-4M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+            Try a different way
+          </a>
+        </div>
+
+        <div class="altline">Out of codes too? <a href="/account/recovery/verify-identity">Verify with your CNIC</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">A single monospace field with a plain format hint (no shaming the guest for mistyping), one primary action, and — always — two more ways forward: a different factor, or the CNIC fallback. The code stays LTR regardless of UI direction.</p>
+    </div>
+
+    <!-- ============================== LIGHT · CNIC RE-VERIFY (PK FALLBACK) ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — the Pakistan fallback · re-verify with CNIC</div>
+      <section class="phone" aria-label="Account recovery — CNIC identity fallback, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/help/account-recovery" aria-label="Back to recovery options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Prove it's really you</h2>
+          <p class="h-sub">No phone, email, or backup code? You can still get back in by re-verifying the CNIC on your account — the same one you verified with before.</p>
+
+          <div class="pkcard">
+            <div class="pk-top">
+              <span class="pk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M13 10h4M13 13h3M6 16h6"/></svg></span>
+              <span class="pk-h">Re-verify with CNIC</span>
+            </div>
+            <p class="pk-p">We'll ask you to scan your CNIC and take a quick selfie — the same check as sign-up. A person on our team reviews it and matches it to your account. <b>This usually takes a few hours</b>, and we message you the moment it's done.</p>
+          </div>
+
+          <p class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg>
+            Your CNIC is used only to confirm identity for this recovery. It's never shown to hosts.
+          </p>
+
+          <a class="primary" href="/account/recovery/verify-identity">Start CNIC check</a>
+
+          <a class="ghost-btn" href="/help/account-recovery/contact">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12 7.7L3 21l1.8-6A8.5 8.5 0 1 1 21 11.5z"/></svg>
+            Prefer to talk to a person?
+          </a>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The Pakistan advantage: because identity was CNIC-verified at sign-up, a fully locked-out guest is <b>never</b> stranded — they re-run the <code>GA-041</code> capture and a human matches it. The timeframe is stated <b>honestly</b> (a few hours, human-reviewed), and the privacy line is calm, not clinical (§10.6).</p>
+    </div>
+
+    <!-- ============================== LIGHT · BACK IN + SECURE ACCOUNT ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — you're back in · secure your account</div>
+      <section class="phone" aria-label="Account recovery — success and secure-your-account, light">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <span class="ib-spacer" aria-hidden="true"></span>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <div class="crown">
+            <span class="crown-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 9.5"/></svg></span>
+          </div>
+          <h2 class="h-title" style="text-align:center;">You're back in</h2>
+          <p class="h-sub" style="text-align:center;">Welcome back. Take a minute to secure your account so this is easier next time.</p>
+
+          <div class="mlist">
+            <a class="mrow" href="/reset-password">
+              <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+              <span class="mrow-tx">
+                <span class="mrow-h">Set a new password</span>
+                <span class="mrow-p">In case your old one was seen</span>
+              </span>
+              <span class="tag">Recommended</span>
+            </a>
+            <a class="mrow" href="/account/security/2fa-setup">
+              <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+              <span class="mrow-tx">
+                <span class="mrow-h">Turn on two-step</span>
+                <span class="mrow-p">And save fresh backup codes</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a class="mrow" href="/account/security/sessions">
+              <span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>
+              <span class="mrow-tx">
+                <span class="mrow-h">Check where you're logged in</span>
+                <span class="mrow-p">Sign out any device you don't know</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </div>
+
+          <a class="primary" href="/">Continue to SalamStay</a>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Success is a quiet tick, then a gentle security nudge — reset password (recommended), turn on two-step (<code>GA-010</code>), review sessions (<code>GA-079</code>). Each is optional and skippable via "Continue"; recovery hands back to a stronger account, not just an open door.</p>
+    </div>
+
+    <!-- ============================== DARK · COULDN'T CONFIRM YET (FAILED, NO DEAD END) ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — couldn't confirm yet · next options</div>
+      <section class="phone dark" aria-label="Account recovery — could not confirm, next options, dark">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/help/account-recovery" aria-label="Back to recovery options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">We couldn't confirm it yet</h2>
+
+          <div class="notice" role="alert">
+            <span class="notice-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+            <div>
+              <p class="nt-h">That code didn't match</p>
+              <p class="nt-p">It may have been used already, or mistyped. Nothing has changed on your account — let's try another way in.</p>
+            </div>
+          </div>
+
+          <a class="secondary-btn" href="/help/account-recovery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-4-4 4-4M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+            Try a different way in
+          </a>
+          <a class="secondary-btn" href="/account/recovery/verify-identity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M13 10h4M13 13h3M6 16h6"/></svg>
+            Verify with your CNIC
+          </a>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12 7.7L3 21l1.8-6A8.5 8.5 0 1 1 21 11.5z"/></svg>
+            <span>Still stuck? Our team can help you in person. We answer in Urdu and English, and around prayer times.</span>
+          </div>
+
+          <a class="primary" href="/help/account-recovery/contact">Message our team</a>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The failed state is calm and blame-free — a muted <code>role="alert"</code> that explains <i>why</i> ("used already, or mistyped") and reassures ("nothing has changed"), then <b>three</b> live exits: another factor, the CNIC fallback, or a real human (<code>/help/account-recovery/contact</code>). Never a dead end (journeys §3.2).</p>
+    </div>
+
+    <!-- ============================== RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — what you still have</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="Account recovery — Urdu, right to left">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/login" aria-label="لاگ اِن پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">آئیے آپ کو واپس اندر لے چلیں</h2>
+          <p class="h-sub">لاک آؤٹ ہو جانا عام بات ہے۔ آپ کے پاس جو کچھ بھی موجود ہے، اُسے چنیں — باقی ہم سنبھال لیں گے۔</p>
+
+          <div class="opts" role="list" aria-label="اکاؤنٹ واپس حاصل کرنے کے طریقے">
+            <a class="opt" role="listitem" href="/help/account-recovery/phone">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">میرے فون پر کوڈ بھیجیں</span>
+                <span class="opt-p"><b dir="ltr">+92 300 ••• ••67</b> پر</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a class="opt" role="listitem" href="/help/account-recovery/email">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">مجھے ای میل پر لنک بھیجیں</span>
+                <span class="opt-p"><b dir="ltr">a•••b@example.com</b> پر</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a class="opt" role="listitem" href="/help/account-recovery/backup-code">
+              <span class="opt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M9.5 11.5L20 11l-2 2 2 2-3 .5"/></svg></span>
+              <span class="opt-tx">
+                <span class="opt-h">بیک اپ کوڈ استعمال کریں</span>
+                <span class="opt-p">دو مرحلوں کے ساتھ محفوظ کیا گیا کوڈ</span>
+              </span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </div>
+
+          <p class="hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            ان میں سے کچھ بھی نہیں؟ پھر بھی راستہ موجود ہے — اپنا شناختی کارڈ تصدیق کریں یا ہماری ٹیم سے بات کریں۔
+          </p>
+
+          <a class="secondary-btn" href="/account/recovery/verify-identity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M13 10h4M13 13h3M6 16h6"/></svg>
+            شناختی کارڈ سے تصدیق کریں
+          </a>
+        </div>
+
+        <div class="altline">اب بھی مشکل ہے؟ <a href="/help/account-recovery/contact">ہماری ٹیم کو پیغام بھیجیں</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Fully mirrored: back chevron, option rows and their trailing chevrons all swap edges; the <b>+92 number and email stay LTR</b> (content locale). Urdu is Nastaliq — full EN/UR parity. "CNIC" localises to شناختی کارڈ.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, the PK advantage &amp; S1 gate compliance · web-variant note</div>
+      <ul>
+        <li><b>Start from what you still have.</b> Entry lists phone / email / backup code as ordered real anchors — never a wall of "contact support". Each routes to its own capture; all reconverge on a verified session.</li>
+        <li><b>The PK advantage: CNIC re-verify.</b> Because identity was CNIC-verified at sign-up, a fully locked-out guest is never stranded — they re-run the <code>GA-041</code> CNIC + selfie capture and a human matches it to the account. Timeframe is stated honestly ("a few hours", human-reviewed); the privacy line says the CNIC is used only for this recovery and never shown to hosts (§10.6).</li>
+        <li><b>Human escalation is always one tap away.</b> "Message our team" (<code>/help/account-recovery/contact</code>) sits on the entry, the fallback, and the failed state — with a plain note that support answers in Urdu + English and around prayer times (host-support §1.2 tone), never a promise we can't keep.</li>
+        <li><b>Recovery hands back a stronger account.</b> Success is a quiet tick, then an optional secure-your-account nudge: reset password (recommended), turn on two-step (<code>GA-010</code>), review sessions (<code>GA-079</code>). All skippable via "Continue".</li>
+        <li><b>No dead ends, no blame, no fear (journeys §3.2, §10.6/§10.8).</b> The failed state explains <i>why</i> ("used already, or mistyped"), reassures ("nothing has changed"), and offers three live exits. Copy never accuses the guest and never fear-markets the lockout.</li>
+        <li><b>No color-only state.</b> The failed alert carries an icon + heading + text, not a red fill; the "recommended" pill is text + tint; every option pairs colour with a glyph and label (DESIGN §11).</li>
+        <li><b>Real anchors, real controls, [44pt].</b> <code>/help/account-recovery</code> (+ <code>/phone</code>, <code>/email</code>, <code>/backup-code</code>, <code>/contact</code>), CNIC <code>/account/recovery/verify-identity</code>, reset <code>/reset-password</code>, 2FA <code>/account/security/2fa-setup</code>, sessions <code>/account/security/sessions</code>, back <code>/login</code>. Options and controls carry Urdu accessible names; no <code>href="#"</code>, no button-in-anchor.</li>
+        <li><b>On-palette, dignified, bilingual.</b> Every colour is a <code>var()</code> token; no ornament; EN/UR parity with CNIC localised to شناختی کارڈ; copy is plain and registry-safe — no invented stats, awards, or superlatives.</li>
+        <li><b>Web variant (<code>/help/account-recovery</code>, SPA).</b> Same steps in a centred ~460px card on the help/auth chrome; the CNIC fallback opens the same capture as <code>GA-041</code>'s web upload; the human-support route becomes an inline contact form; keyboard focus-ring on every control.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-011 (manage-account, app+web, Phase 3) · components <code>Input §2</code> · <code>Button §1</code> · <code>banner</code> · a11y <code>DESIGN §11</code>. Inbound from login lockout / step-up (<code>GA-007</code>) + the 2FA challenge (<code>GA-010</code>); the CNIC path reuses <code>GA-041</code>; outbound to a secured session. <b>Judgment calls:</b> (1) recovery options are anchors (each is a distinct route) rather than radios, so a screen-reader user hears a clear list of destinations. (2) Human-support escalation uses <code>/help/account-recovery/contact</code> — a real sub-route of the brief's <code>/help/account-recovery</code> anchor — so the ticket has its own addressable page.</p>
+    </div>
+  </main>
+</body>
+</html>

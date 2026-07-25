@@ -1,0 +1,464 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Security (GA-079)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* flat phone frame — ga-064/ga-123 lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 15px 18px; }
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 8px; }
+  .scap:first-of-type { margin-top:4px; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* grouped chevron rows (password · recent activity) — ga-123 grammar */
+  .grp { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-canvas); }
+  .srow { display:flex; align-items:center; gap:12px; min-height:60px; padding:10px 12px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); text-decoration:none; }
+  .srow:last-child { border-bottom:none; }
+  .srow:hover { background:var(--bg-raised); }
+  .sic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sic svg { width:19px; height:19px; stroke-width:1.8; }
+  .sbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .st { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .shint { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .schev { flex:none; color:var(--text-tertiary); display:flex; }
+  .schev svg { width:18px; height:18px; stroke-width:2; }
+  .phone.rtl .schev svg { transform:scaleX(-1); }
+
+  /* status chip + inline action (2FA) */
+  .statchip { flex:none; font-size:10.5px; font-weight:600; border-radius:var(--radius-full); padding:3px 9px; display:inline-flex; align-items:center; gap:4px; }
+  .statchip.ok { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .statchip.avail { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .statchip svg { width:11px; height:11px; stroke-width:2.4; }
+  .rowact { flex:none; font-size:12.5px; font-weight:600; color:var(--int-primary); text-decoration:none; padding:6px 4px; }
+  .rowact:hover { text-decoration:underline; }
+
+  /* active sessions list */
+  .sesrow { display:flex; align-items:center; gap:12px; min-height:64px; padding:11px 12px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .sesrow:last-child { border-bottom:none; }
+  .ses-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .ses-ic svg { width:19px; height:19px; stroke-width:1.8; }
+  .ses-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .ses-name { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .ses-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .thisdev { font-size:10px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-brand); border-radius:var(--radius-full); padding:1px 7px; }
+  .ses-meta { font-size:11.5px; color:var(--text-secondary); display:block; }
+  .ses-out { flex:none; background:transparent; border:none; font-family:inherit; font-size:12px; font-weight:600; color:var(--text-secondary); cursor:pointer; padding:8px 6px; min-height:44px; }
+  .ses-out:hover { color:var(--int-primary); text-decoration:underline; }
+  .ses-here { flex:none; font-size:11px; color:var(--text-tertiary); padding:0 6px; }
+
+  /* switch row — ga-091 grammar */
+  .swrow { display:flex; align-items:center; gap:12px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; }
+  .sw-ic { flex:none; width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sw-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .sw-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sw-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .sw-s { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .switch { width:48px; height:30px; border-radius:var(--radius-full); border:none; background:var(--border-default); position:relative; flex:none; padding:0; }
+  .switch::after { content:""; position:absolute; top:3px; inset-inline-start:3px; width:24px; height:24px; border-radius:50%; background:var(--bg-canvas); box-shadow:var(--el-hairline); transition:transform .15s; }
+  .switch[aria-checked="true"] { background:var(--int-primary); }
+  .switch[aria-checked="true"]::after { transform:translateX(18px); }
+  .phone.rtl .switch[aria-checked="true"]::after { transform:translateX(-18px); }
+  .switch-hit { width:48px; height:44px; display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; padding:0; cursor:pointer; }
+
+  /* password change form */
+  .lead { font-size:12.5px; color:var(--text-secondary); margin:2px 2px 14px; line-height:1.5; }
+  .field { margin-bottom:14px; }
+  .flabel { font-size:12px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:6px; padding-left:2px; }
+  .finput { display:flex; align-items:center; gap:8px; min-height:48px; border:1px solid var(--border-default); background:var(--bg-sunken); border-radius:var(--radius-md); padding:0 12px; }
+  .finput.focus { border-color:var(--border-brand); background:var(--bg-canvas); box-shadow:0 0 0 2px var(--int-subtle); }
+  .fval { flex:1; min-width:0; font-size:15px; letter-spacing:.14em; color:var(--text-primary); }
+  .feye { flex:none; background:transparent; border:none; color:var(--text-tertiary); cursor:pointer; width:36px; height:36px; display:flex; align-items:center; justify-content:center; }
+  .feye svg { width:18px; height:18px; stroke-width:1.8; }
+  .strength { display:flex; align-items:center; gap:6px; margin-top:8px; padding-left:2px; font-size:11.5px; color:var(--success-fg); }
+  .strength svg { width:13px; height:13px; stroke-width:2.2; flex:none; }
+  .strength.mid { color:var(--warning-fg); }
+
+  /* buttons */
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .signout-all { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; min-height:50px; margin-top:14px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-canvas); color:var(--text-secondary); font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; }
+  .signout-all:hover { background:var(--bg-raised); color:var(--text-primary); }
+  .signout-all svg { width:18px; height:18px; stroke-width:1.9; }
+
+  /* sign-out-everywhere confirm — calm, not alarm */
+  .cfm { margin-top:6px; }
+  .cfm-ic { width:48px; height:48px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .cfm-ic svg { width:24px; height:24px; stroke-width:1.7; }
+  .cfm-h { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .cfm-d { font-size:13px; color:var(--text-secondary); margin-top:8px; line-height:1.55; }
+  .cfm-note { font-size:12px; color:var(--text-tertiary); margin-top:10px; line-height:1.5; }
+  .cfm-btns { margin-top:20px; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Security (GA-079)</h1>
+    <p>The account-security home at <strong>/account/security</strong> — password, two-step verification, and the devices signed in to this account, laid out as calm plainly-grouped rows (§7.6a: no journey stepper). Two-step is <strong>on</strong> with a WhatsApp code by default; the <strong>authenticator app</strong> is offered with its signal-free note (works on weak networks — the GA-010 precedent). Active sessions read like a quiet ledger — device, city, last active — with a sign-out per row and a sign-out-everywhere, framed reassuringly rather than as an alarm. A recent-activity row and a new-device alert Switch close it. Panels: security home (light) · change-password form + sign-out-everywhere confirm (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Security home · light</span><span>Change password · confirm · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — SECURITY HOME ============================ -->
+    <section class="panel" aria-label="Light theme — the security home screen">
+      <div class="panel-tag">Light — password · two-step · devices · alerts</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Account security — grouped, current state spelled out</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings" aria-label="Back to settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Security</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="scap">Sign-in</div>
+              <div class="grp">
+                <a class="srow" href="/account/security/password">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span class="sbd"><span class="st">Password</span><span class="shint">Last changed <span class="num">12 Apr 2026</span></span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">Two-step verification</div>
+              <div class="grp">
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">Two-step verification</span></span>
+                    <span class="ses-meta">A second check when you sign in on a new device</span>
+                  </span>
+                  <span class="statchip ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>On</span>
+                </div>
+                <a class="srow" href="/account/security/2fa">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 0-3.2 6.4L20 20l-.6-3.1"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></span>
+                  <span class="sbd"><span class="st">WhatsApp code</span><span class="shint">Sent to <span class="num" dir="ltr">+92 300 ••• ••67</span></span></span>
+                  <span class="statchip avail">Default</span>
+                </a>
+                <a class="srow" href="/account/security/2fa/authenticator">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 7h4M9 11h6M9 14h6"/></svg></span>
+                  <span class="sbd"><span class="st">Authenticator app</span><span class="shint">Works without signal — good for travel and weak networks</span></span>
+                  <span class="rowact">Add</span>
+                </a>
+              </div>
+
+              <div class="scap">Where you're signed in</div>
+              <div class="grp">
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">Android phone</span><span class="thisdev">This device</span></span>
+                    <span class="ses-meta">Islamabad · Active now</span>
+                  </span>
+                  <span class="ses-here">—</span>
+                </div>
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">iPhone · Safari</span></span>
+                    <span class="ses-meta">Lahore · <span class="num">2 days ago</span></span>
+                  </span>
+                  <button class="ses-out" type="button">Sign out</button>
+                </div>
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">Chrome · Windows</span></span>
+                    <span class="ses-meta">Karachi · <span class="num">12 Jul 2026</span></span>
+                  </span>
+                  <button class="ses-out" type="button">Sign out</button>
+                </div>
+              </div>
+
+              <button class="signout-all" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12H4M8 8l-4 4 4 4"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg>
+                Sign out of all other devices
+              </button>
+
+              <div class="scap">Activity &amp; alerts</div>
+              <div class="grp">
+                <a class="srow" href="/account/security/activity">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <span class="sbd"><span class="st">Recent security activity</span><span class="shint">New sign-in · Lahore · <span class="num">2 days ago</span></span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="swrow" style="margin-top:10px;">
+                <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                <span class="sw-b"><span class="sw-t">Alert me about new-device sign-ins</span><span class="sw-s">We'll message you on WhatsApp if someone signs in on a device we don't recognise.</span></span>
+                <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="Alert me about new-device sign-ins"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The password row states when it last changed; two-step is <strong>On</strong> (a quiet success chip, glyph + text, never colour alone), with WhatsApp the <strong>Default</strong> code method and the authenticator offered as an <strong>Add</strong> — its signal-free benefit stated plainly, not sold (§10, the <code>GA-010</code> precedent). The sessions list is a calm ledger: <strong>This device</strong> carries no sign-out (you can't sign yourself out from under yourself), every other row has a real <code>&lt;button&gt;</code> sign-out, and "Sign out of all other devices" is an outlined <code>text.secondary</code> action — never a destructive-red row (§10.8). Phone tail is <code>.num</code> LTR-isolated. No <code>&lt;button&gt;</code> in an <code>&lt;a&gt;</code>; no dead <code>href</code>.</p>
+    </section>
+
+    <!-- ============================ DARK — CHANGE PASSWORD + CONFIRM ============================ -->
+    <section class="panel dark" aria-label="Dark theme — change-password form and the sign-out-everywhere confirm">
+      <div class="panel-tag">Dark — change password (qualitative strength) · sign-out-everywhere confirm</div>
+      <div class="rowflex">
+
+        <!-- A · CHANGE PASSWORD -->
+        <div class="pcol">
+          <div class="pcap">A · Change password — a plain-English strength read, no meter</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/security" aria-label="Back to security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Password</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <p class="lead">Choose a new password. A longer phrase you'll remember beats a short jumble you won't.</p>
+
+              <div class="field">
+                <span class="flabel">Current password</span>
+                <div class="finput">
+                  <span class="fval" aria-hidden="true">••••••••••</span>
+                  <button class="feye" type="button" aria-label="Show current password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </div>
+              </div>
+
+              <div class="field">
+                <span class="flabel">New password</span>
+                <div class="finput focus">
+                  <span class="fval" aria-hidden="true">•••••••••••••••••</span>
+                  <button class="feye" type="button" aria-label="Show new password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </div>
+                <span class="strength"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Strong — long and not an easy guess</span>
+              </div>
+
+              <a class="btn primary" href="/account/security/password/save">Update password</a>
+              <a class="btn secondary" href="/account/security">Cancel</a>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SIGN OUT EVERYWHERE — CONFIRM -->
+        <div class="pcol">
+          <div class="pcap">B · Sign out everywhere — reassuring, not an alarm</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/security" aria-label="Back to security"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Sign out everywhere</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="cfm">
+                <span class="cfm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12H4M8 8l-4 4 4 4"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg></span>
+                <h2 class="cfm-h">Sign out of your other devices?</h2>
+                <p class="cfm-d">The <span class="num">2</span> other devices signed in to your account will be signed out. This device stays signed in.</p>
+                <p class="cfm-note">Your bookings, messages, and saved places are untouched — you'll just sign in again next time on those devices.</p>
+              </div>
+              <div class="grow"></div>
+              <div class="cfm-btns">
+                <button class="btn primary" type="button">Sign out other devices</button>
+                <a class="btn secondary" href="/account/security">Keep them signed in</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The password strength read is <strong>qualitative</strong> — "Strong — long and not an easy guess" (glyph + words), never a percent or a coloured meter bar. Focus lifts the field to <code>bg.canvas</code> + a brand ring. The sign-out-everywhere confirm is deliberately calm — a neutral icon, a plain count, and a reassurance that nothing is lost — its primary action is the ordinary brand button, <strong>not</strong> a destructive-red panic surface (§10.8): signing out your own devices is routine, not dangerous.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU — SECURITY HOME ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the security home">
+      <div class="panel-tag">RTL · اردو — "سیکیورٹی", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Security home — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/settings" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">سیکیورٹی</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="scap">سائن اِن</div>
+              <div class="grp">
+                <a class="srow" href="/account/security/password">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                  <span class="sbd"><span class="st">پاس ورڈ</span><span class="shint">آخری تبدیلی <span class="num">12 Apr 2026</span></span></span>
+                  <span class="schev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                </a>
+              </div>
+
+              <div class="scap">دو مرحلوں کی تصدیق</div>
+              <div class="grp">
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">دو مرحلوں کی تصدیق</span></span>
+                    <span class="ses-meta">نئے آلے پر سائن اِن کرتے وقت ایک اضافی جانچ</span>
+                  </span>
+                  <span class="statchip ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>آن</span>
+                </div>
+                <a class="srow" href="/account/security/2fa">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 0-3.2 6.4L20 20l-.6-3.1"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></span>
+                  <span class="sbd"><span class="st">WhatsApp کوڈ</span><span class="shint"><span class="num" dir="ltr">+92 300 ••• ••67</span> پر بھیجا جاتا ہے</span></span>
+                  <span class="statchip avail">ڈیفالٹ</span>
+                </a>
+                <a class="srow" href="/account/security/2fa/authenticator">
+                  <span class="sic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 7h4M9 11h6M9 14h6"/></svg></span>
+                  <span class="sbd"><span class="st">تصدیقی ایپ (Authenticator)</span><span class="shint">سگنل کے بغیر کام کرتی ہے — سفر اور کمزور نیٹ ورک کے لیے بہتر</span></span>
+                  <span class="rowact">شامل کریں</span>
+                </a>
+              </div>
+
+              <div class="scap">آپ جہاں سائن اِن ہیں</div>
+              <div class="grp">
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">اینڈرائیڈ فون</span><span class="thisdev">یہ آلہ</span></span>
+                    <span class="ses-meta">اسلام آباد · ابھی فعال</span>
+                  </span>
+                  <span class="ses-here">—</span>
+                </div>
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">iPhone · Safari</span></span>
+                    <span class="ses-meta">لاہور · <span class="num">2 days ago</span></span>
+                  </span>
+                  <button class="ses-out" type="button">سائن آؤٹ</button>
+                </div>
+                <div class="sesrow">
+                  <span class="ses-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+                  <span class="ses-b">
+                    <span class="ses-name"><span class="ses-t">Chrome · Windows</span></span>
+                    <span class="ses-meta">کراچی · <span class="num">12 Jul 2026</span></span>
+                  </span>
+                  <button class="ses-out" type="button">سائن آؤٹ</button>
+                </div>
+              </div>
+
+              <button class="signout-all" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12H4M8 8l-4 4 4 4"/><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5"/></svg>
+                باقی تمام آلات سے سائن آؤٹ کریں
+              </button>
+
+              <div class="swrow" style="margin-top:10px;">
+                <span class="sw-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/></svg></span>
+                <span class="sw-b"><span class="sw-t">نئے آلے پر سائن اِن کی اطلاع دیں</span><span class="sw-s">اگر کوئی ایسے آلے پر سائن اِن کرے جسے ہم نہیں پہچانتے، ہم آپ کو WhatsApp پر پیغام بھیجیں گے۔</span></span>
+                <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-label="نئے آلے پر سائن اِن کی اطلاع دیں"><span class="switch" aria-checked="true" aria-hidden="true"></span></button>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and row chevrons flip to the reading-start edge (<code>scaleX(-1)</code>), icon slots lead per direction, the Switch travels toward the reading-start "on" side (§11). Latin proper nouns (WhatsApp, iPhone, Safari, Chrome, Windows) and the phone tail stay LTR — the number wraps in <code>.num { direction:ltr; unicode-bidi:isolate }</code> so it never digit-order-mirrors. Security copy reads identically calm in Urdu.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — HA-055 Earnings dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    /* dataviz (mirrors @salamstay/design-tokens dataviz.light) */
+    --dv-series-1:#3B8371; --dv-series-2:#34527E; --dv-series-3:#8A5A16;
+    --dv-axis:#5F676D; --dv-gridline:#E7E9EA;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --shadow-card:var(--el-card);
+    /* dataviz (mirrors @salamstay/design-tokens dataviz.dark) */
+    --dv-series-1:#579D8B; --dv-series-2:#9AC0F4; --dv-series-3:#E0B36B;
+    --dv-axis:#A7AFAD; --dv-gridline:#2A3230;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:920px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .panel { border-radius:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); overflow:hidden; background:var(--bg-canvas); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:18px 24px 0; background:var(--bg-canvas); }
+  .note { font-size:12px; color:var(--text-tertiary); padding:8px 24px 16px; background:var(--bg-canvas); max-width:1000px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  .app { background:var(--bg-canvas); }
+
+  /* slim authenticated header */
+  .hdr { display:flex; align-items:center; gap:16px; height:60px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .wordmark { font-size:19px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; text-decoration:none; white-space:nowrap; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hostchip { font-size:12px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:4px 11px; white-space:nowrap; }
+  .spacer { flex:1; }
+  .txtlink { font-size:14px; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .txtlink:hover { color:var(--text-primary); }
+  .langsw { display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { font-size:13px; line-height:1; padding:7px 12px; color:var(--text-secondary); text-decoration:none; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current] { background:var(--int-primary); color:var(--text-on-brand); font-weight:600; }
+  .curr { font-size:14px; color:var(--text-secondary); white-space:nowrap; }
+  .avatar { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; text-decoration:none; }
+
+  /* host section nav */
+  .hostnav { display:flex; align-items:center; gap:4px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .hostnav a.tab { font-size:15px; color:var(--text-secondary); text-decoration:none; padding:14px 12px; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; }
+  .hostnav a.tab:hover { color:var(--text-primary); }
+  .hostnav a.tab[aria-current] { color:var(--text-primary); font-weight:600; border-bottom-color:var(--int-primary); }
+  .navspacer { flex:1; }
+
+  /* buttons */
+  .btn { font-family:inherit; font-size:14px; font-weight:600; border-radius:var(--radius-md); padding:9px 16px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; gap:7px; border:1px solid transparent; }
+  .btn.sm { font-size:13px; padding:7px 13px; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--int-primary); }
+  .btn-primary:hover { background:var(--int-hover); border-color:var(--int-hover); }
+  .btn-ghost { background:transparent; color:var(--text-primary); border-color:var(--border-default); }
+  .btn-ghost:hover { background:var(--bg-sunken); }
+
+  /* main */
+  .main { max-width:1148px; margin:0 auto; padding:28px 24px 36px; display:flex; flex-direction:column; gap:22px; }
+  .toph { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .toph h2 { font-size:28px; font-weight:600; letter-spacing:-0.015em; color:var(--text-primary); }
+  .toph .date { font-size:14px; color:var(--text-secondary); margin-top:4px; }
+  .toph .rhs { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+
+  /* date-range segmented */
+  .seg { display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; }
+  .seg a { font-size:13px; color:var(--text-secondary); text-decoration:none; padding:8px 13px; border-inline-end:1px solid var(--border-default); white-space:nowrap; }
+  .seg a:last-child { border-inline-end:none; }
+  .seg a:hover { color:var(--text-primary); background:var(--bg-sunken); }
+  .seg a[aria-current] { background:var(--int-subtle); color:var(--int-primary); font-weight:600; }
+
+  /* KPI tiles */
+  .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .kpi { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:16px 18px; display:flex; flex-direction:column; gap:7px; }
+  .kpi .label { font-size:13px; font-weight:600; color:var(--text-secondary); }
+  .kpi .val { font-size:24px; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em; font-variant-numeric:tabular-nums; line-height:1.15; }
+  .kpi .foot { font-size:12.5px; color:var(--text-tertiary); }
+  .kpi.accent .val { color:var(--int-primary); }
+
+  /* chart card */
+  .chartcard { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:20px 20px 16px; }
+  .chart-head { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:8px; flex-wrap:wrap; }
+  .chart-head h3 { font-size:17px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .legend { display:flex; gap:16px; }
+  .legend .lg { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); }
+  .legend .sw { width:14px; height:3px; border-radius:2px; }
+  .chartwrap { overflow-x:auto; }
+  svg.chart { width:100%; min-width:600px; height:auto; display:block; }
+  .chart .grid { stroke:var(--dv-gridline); stroke-width:1; }
+  .chart .axtxt { fill:var(--dv-axis); font-size:11px; font-family:'Inter',sans-serif; }
+  .chart .series1 { stroke:var(--dv-series-1); }
+  .chart .series2 { stroke:var(--dv-series-2); }
+  .chart .pt1 { fill:var(--bg-raised); stroke:var(--dv-series-1); }
+  .chart .pt2 { fill:var(--bg-raised); stroke:var(--dv-series-2); }
+
+  /* details / data table */
+  details.disc { margin-top:14px; border-top:1px solid var(--border-hairline); padding-top:12px; }
+  details.disc > summary { font-size:13px; font-weight:600; color:var(--int-primary); cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:7px; }
+  details.disc > summary::-webkit-details-marker { display:none; }
+  details.disc > summary .chev { width:14px; height:14px; transition:transform .18s ease; }
+  details.disc[open] > summary .chev { transform:rotate(90deg); }
+  details.disc[open] > summary { margin-bottom:12px; }
+
+  .tblwrap { overflow-x:auto; }
+  .tbl { width:100%; border-collapse:collapse; min-width:420px; }
+  .tbl caption { text-align:start; font-size:12.5px; color:var(--text-tertiary); padding:0 0 10px; }
+  .tbl th, .tbl td { text-align:start; padding:9px 12px; font-size:13.5px; border-top:1px solid var(--border-hairline); color:var(--text-primary); }
+  .tbl thead th { background:var(--bg-sunken); color:var(--text-secondary); font-weight:600; font-size:12px; border-top:none; text-transform:uppercase; letter-spacing:.03em; }
+  .tbl td.num, .tbl th.num { text-align:end; font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate }
+
+  /* per-booking breakdown */
+  .sec-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .sec-head h3 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .sec-head a { font-size:13.5px; color:var(--int-primary); text-decoration:none; font-weight:500; }
+  .sec-head a:hover { text-decoration:underline; }
+
+  .bktable { width:100%; border-collapse:collapse; background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .bktable + .bktable { margin-top:16px; }
+  .bktable caption { text-align:start; font-size:14.5px; font-weight:600; color:var(--text-primary); padding:14px 16px 4px; }
+  .bktable caption .csub { display:block; font-size:12.5px; font-weight:400; color:var(--text-secondary); margin-top:2px; }
+  .bktable th, .bktable td { padding:9px 16px; font-size:13.5px; border-top:1px solid var(--border-hairline); text-align:start; }
+  .bktable thead th { background:var(--bg-sunken); color:var(--text-secondary); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; border-top:1px solid var(--border-hairline); }
+  .bktable .num { text-align:end; font-variant-numeric:tabular-nums; }
+  .bktable .gross td { font-weight:600; color:var(--text-primary); }
+  .bktable .ded td { color:var(--text-secondary); }
+  .bktable .rate { color:var(--text-tertiary); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .bktable tfoot td { border-top:2px solid var(--border-default); font-weight:700; color:var(--text-primary); font-size:14.5px; }
+  .li { display:inline-flex; align-items:center; gap:7px; }
+  .info { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:var(--radius-full); color:var(--text-tertiary); text-decoration:none; flex:none; }
+  .info svg { width:14px; height:14px; }
+  .info:hover { color:var(--int-primary); }
+  .tag { font-size:10.5px; font-weight:600; border-radius:var(--radius-full); padding:1px 7px; white-space:nowrap; }
+  .tag-filer { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+
+  /* explainer dl */
+  .explain dl { display:flex; flex-direction:column; gap:13px; }
+  .explain dt { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:8px; }
+  .explain dd { font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .explain dd a { color:var(--int-primary); text-decoration:none; }
+  .explain dd a:hover { text-decoration:underline; }
+
+  /* payout + tax cards */
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .infocard { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:18px; display:flex; flex-direction:column; gap:6px; }
+  .infocard .ih { font-size:15px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:9px; }
+  .infocard .ihicon { width:18px; height:18px; color:var(--int-primary); }
+  .infocard .big { font-size:22px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; margin-top:2px; }
+  .infocard .line { font-size:13.5px; color:var(--text-secondary); }
+  .infocard .muted { font-size:12.5px; color:var(--text-tertiary); }
+  .infocard .foot { margin-top:auto; padding-top:10px; }
+  .infocard .foot a { font-size:13.5px; color:var(--int-primary); text-decoration:none; font-weight:500; display:inline-flex; align-items:center; gap:6px; }
+  .infocard .foot a:hover { text-decoration:underline; }
+  .infocard .foot svg { width:15px; height:15px; }
+  .schedrow { display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--text-secondary); }
+  .schedrow .k { color:var(--text-tertiary); min-width:96px; }
+
+  /* empty */
+  .empty { max-width:520px; margin:36px auto; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; padding:24px; }
+  .empty .eglyph { width:56px; height:56px; border-radius:var(--radius-full); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; color:var(--int-primary); }
+  .empty .eglyph svg { width:28px; height:28px; }
+  .empty h3 { font-size:21px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .empty p { font-size:14.5px; color:var(--text-secondary); max-width:440px; }
+  .empty .acts { display:flex; gap:10px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
+
+  .urdu { font-family:'Noto Nastaliq Urdu',serif; }
+  .urdu-t { font-family:'Noto Nastaliq Urdu',serif; line-height:2.1; }
+  .urdu .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:920px){
+    .kpi-row{ grid-template-columns:repeat(2,1fr); }
+    .cols2{ grid-template-columns:1fr; }
+    .hostnav{ overflow-x:auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>HA-055 — Host earnings dashboard</h1>
+    <p>Authenticated web earnings view. MDR + withholding-tax transparency is the trust feature: every rupee is labelled and explained. The 6-month trend renders from the <code>dataviz</code> tokens <strong>and</strong> ships an accessible <code>&lt;table&gt;</code> fallback kept in the DOM (gate G58/G59 — never chart-only). Per-booking chain: gross → Service fee (wakala) → Payment processing (MDR) → Withholding tax (ATL filer/non-filer) → net payout. Light · dark · no-earnings empty · one RTL/اردو panel.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ============ LIGHT — primary ============ -->
+    <div class="panel">
+      <div class="panel-tag">Light — earnings, last 6 months</div>
+      <div class="note">Chart uses <code>--dv-series-1</code> (net payout) + <code>--dv-series-2</code> (gross) with a legend + direct labels — color is never the only signal. The <code>Chart data (table)</code> disclosure is open and always present in the DOM.</div>
+      <div class="app">
+        <header class="hdr">
+          <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <a class="txtlink" href="/">Switch to travelling</a>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/earnings" aria-current="true" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/earnings" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/account" aria-label="Your account, Aqib">AK</a>
+        </header>
+        <nav class="hostnav" aria-label="Host sections">
+          <a class="tab" href="/host/today">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings" aria-current="page">Earnings</a>
+          <a class="tab" href="/host/insights">Insights</a>
+        </nav>
+
+        <main class="main">
+          <div class="toph">
+            <div>
+              <h2>Earnings</h2>
+              <p class="date">Last 6 months · Feb–Jul 2026 · all amounts in PKR</p>
+            </div>
+            <div class="rhs">
+              <div class="seg" role="group" aria-label="Date range">
+                <a href="/host/earnings?range=this-month">This month</a>
+                <a href="/host/earnings?range=6-months" aria-current="true">Last 6 months</a>
+                <a href="/host/earnings?range=this-year">This year</a>
+                <a href="/host/earnings?range=custom">Custom</a>
+              </div>
+              <a class="btn btn-ghost sm" href="/host/tax-documents/2025-26.pdf">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg>
+                Tax receipt
+              </a>
+            </div>
+          </div>
+
+          <!-- summary KPIs -->
+          <section aria-label="Earnings summary">
+            <div class="kpi-row">
+              <div class="kpi">
+                <span class="label">Paid out</span>
+                <span class="val">PKR 1,181,471</span>
+                <span class="foot">11 payouts · last 6 months</span>
+              </div>
+              <div class="kpi accent">
+                <span class="label">Upcoming payout</span>
+                <span class="val">PKR 84,200</span>
+                <span class="foot">Expected Mon 28 Jul · Meezan</span>
+              </div>
+              <div class="kpi">
+                <span class="label">Gross earnings</span>
+                <span class="val">PKR 1,343,600</span>
+                <span class="foot">Before fees &amp; tax</span>
+              </div>
+              <div class="kpi">
+                <span class="label">Net after fees &amp; tax</span>
+                <span class="val">PKR 1,265,671</span>
+                <span class="foot">94.2% of gross</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- earnings chart + data-table fallback -->
+          <section class="chartcard" aria-label="Earnings trend">
+            <div class="chart-head">
+              <h3>Gross vs. net payout</h3>
+              <div class="legend" aria-hidden="true">
+                <span class="lg"><span class="sw" style="background:var(--dv-series-2)"></span>Gross</span>
+                <span class="lg"><span class="sw" style="background:var(--dv-series-1)"></span>Net payout</span>
+              </div>
+            </div>
+            <div class="chartwrap">
+              <svg class="chart" viewBox="0 0 760 272" role="img" aria-label="Line chart of monthly gross earnings and net payout, February to July 2026. Gross rises from PKR 172,000 in February to a peak of PKR 289,000 in June, with July to date at PKR 214,600. Net payout after fees and tax tracks below gross, from PKR 162,024 to PKR 272,238. Full figures are in the data table below.">
+                <!-- gridlines + y labels -->
+                <g>
+                  <line class="grid" x1="64" y1="24" x2="724" y2="24"/>
+                  <line class="grid" x1="64" y1="76" x2="724" y2="76"/>
+                  <line class="grid" x1="64" y1="128" x2="724" y2="128"/>
+                  <line class="grid" x1="64" y1="180" x2="724" y2="180"/>
+                  <line class="grid" x1="64" y1="232" x2="724" y2="232"/>
+                  <text class="axtxt" x="52" y="27" text-anchor="end">PKR 300k</text>
+                  <text class="axtxt" x="52" y="79" text-anchor="end">PKR 225k</text>
+                  <text class="axtxt" x="52" y="131" text-anchor="end">PKR 150k</text>
+                  <text class="axtxt" x="52" y="183" text-anchor="end">PKR 75k</text>
+                  <text class="axtxt" x="52" y="235" text-anchor="end">PKR 0</text>
+                </g>
+                <!-- gross (series-2) -->
+                <path class="series2" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M64,112.75 L196,125.23 L328,61.44 L460,46.19 L592,31.63 L724,83.21"/>
+                <!-- net payout (series-1) -->
+                <path class="series1" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M64,136.32 L196,146.72 L328,95.41 L460,82.93 L592,71.15 L724,112.25"/>
+                <!-- markers -->
+                <g stroke-width="2">
+                  <circle class="pt2" cx="64" cy="112.75" r="3.2"/><circle class="pt2" cx="196" cy="125.23" r="3.2"/><circle class="pt2" cx="328" cy="61.44" r="3.2"/><circle class="pt2" cx="460" cy="46.19" r="3.2"/><circle class="pt2" cx="592" cy="31.63" r="3.2"/><circle class="pt2" cx="724" cy="83.21" r="3.2"/>
+                  <circle class="pt1" cx="64" cy="136.32" r="3.2"/><circle class="pt1" cx="196" cy="146.72" r="3.2"/><circle class="pt1" cx="328" cy="95.41" r="3.2"/><circle class="pt1" cx="460" cy="82.93" r="3.2"/><circle class="pt1" cx="592" cy="71.15" r="3.2"/><circle class="pt1" cx="724" cy="112.25" r="3.2"/>
+                </g>
+                <!-- x labels -->
+                <g>
+                  <text class="axtxt" x="64" y="252" text-anchor="middle">Feb</text>
+                  <text class="axtxt" x="196" y="252" text-anchor="middle">Mar</text>
+                  <text class="axtxt" x="328" y="252" text-anchor="middle">Apr</text>
+                  <text class="axtxt" x="460" y="252" text-anchor="middle">May</text>
+                  <text class="axtxt" x="592" y="252" text-anchor="middle">Jun</text>
+                  <text class="axtxt" x="724" y="252" text-anchor="middle">Jul</text>
+                </g>
+              </svg>
+            </div>
+
+            <details class="disc" open>
+              <summary>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                Chart data (table)
+              </summary>
+              <div class="tblwrap">
+                <table class="tbl">
+                  <caption>Monthly gross earnings and net payout, February–July 2026 (PKR)</caption>
+                  <thead>
+                    <tr><th scope="col">Month</th><th scope="col" class="num">Gross earnings</th><th scope="col" class="num">Net payout</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th scope="row">February 2026</th><td class="num">172,000</td><td class="num">162,024</td></tr>
+                    <tr><th scope="row">March 2026</th><td class="num">154,000</td><td class="num">145,068</td></tr>
+                    <tr><th scope="row">April 2026</th><td class="num">246,000</td><td class="num">231,732</td></tr>
+                    <tr><th scope="row">May 2026</th><td class="num">268,000</td><td class="num">252,456</td></tr>
+                    <tr><th scope="row">June 2026</th><td class="num">289,000</td><td class="num">272,238</td></tr>
+                    <tr><th scope="row">July 2026 (to date)</th><td class="num">214,600</td><td class="num">202,153</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <!-- per-booking breakdown -->
+          <section aria-label="Payout breakdown">
+            <div class="sec-head">
+              <h3>How each payout is calculated</h3>
+              <a href="/host/earnings/bookings">All bookings</a>
+            </div>
+
+            <table class="bktable">
+              <caption>Gulberg 2 Residence · Ayesha Khan
+                <span class="csub">12–16 Jul 2026 · 4 nights · paid out 17 Jul 2026</span>
+              </caption>
+              <thead>
+                <tr><th scope="col">Line item</th><th scope="col" class="num">Rate</th><th scope="col" class="num">Amount</th></tr>
+              </thead>
+              <tbody>
+                <tr class="gross"><th scope="row">Gross booking value <span class="rate" style="font-weight:400;color:var(--text-tertiary)">(PKR 12,500 × 4 nights)</span></th><td class="num rate">—</td><td class="num">PKR 50,000</td></tr>
+                <tr class="ded"><td><span class="li">Service fee (wakala) <a class="info" href="/host/help/fees#wakala" aria-label="What is the wakala service fee?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 11v5" stroke-linecap="round"/><path d="M12 8h.01" stroke-linecap="round"/></svg></a></span></td><td class="num rate">−3%</td><td class="num">−PKR 1,500</td></tr>
+                <tr class="ded"><td><span class="li">Payment processing (MDR) <a class="info" href="/host/help/fees#mdr" aria-label="What is the MDR payment-processing fee?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 11v5" stroke-linecap="round"/><path d="M12 8h.01" stroke-linecap="round"/></svg></a></span></td><td class="num rate">−1.8%</td><td class="num">−PKR 900</td></tr>
+                <tr class="ded"><td><span class="li">Withholding tax <span class="tag tag-filer">ATL filer</span> <a class="info" href="/host/help/fees#withholding" aria-label="How withholding tax and filer status work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 11v5" stroke-linecap="round"/><path d="M12 8h.01" stroke-linecap="round"/></svg></a></span></td><td class="num rate">−1%</td><td class="num">−PKR 500</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><th scope="row">Net payout to you</th><td class="num"></td><td class="num">PKR 47,100</td></tr>
+              </tfoot>
+            </table>
+
+            <table class="bktable">
+              <caption>F-6 Studio, Islamabad · Bilal Ahmed
+                <span class="csub">8–10 Jul 2026 · 2 nights · paid out 11 Jul 2026</span>
+              </caption>
+              <thead>
+                <tr><th scope="col">Line item</th><th scope="col" class="num">Rate</th><th scope="col" class="num">Amount</th></tr>
+              </thead>
+              <tbody>
+                <tr class="gross"><th scope="row">Gross booking value <span class="rate" style="font-weight:400;color:var(--text-tertiary)">(PKR 13,500 × 2 nights)</span></th><td class="num rate">—</td><td class="num">PKR 27,000</td></tr>
+                <tr class="ded"><td><span class="li">Service fee (wakala) <a class="info" href="/host/help/fees#wakala" aria-label="What is the wakala service fee?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 11v5" stroke-linecap="round"/><path d="M12 8h.01" stroke-linecap="round"/></svg></a></span></td><td class="num rate">−3%</td><td class="num">−PKR 810</td></tr>
+                <tr class="ded"><td><span class="li">Payment processing (MDR) <a class="info" href="/host/help/fees#mdr" aria-label="What is the MDR payment-processing fee?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 11v5" stroke-linecap="round"/><path d="M12 8h.01" stroke-linecap="round"/></svg></a></span></td><td class="num rate">−1.8%</td><td class="num">−PKR 486</td></tr>
+                <tr class="ded"><td><span class="li">Withholding tax <span class="tag tag-filer">ATL filer</span> <a class="info" href="/host/help/fees#withholding" aria-label="How withholding tax and filer status work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 11v5" stroke-linecap="round"/><path d="M12 8h.01" stroke-linecap="round"/></svg></a></span></td><td class="num rate">−1%</td><td class="num">−PKR 270</td></tr>
+              </tbody>
+              <tfoot>
+                <tr><th scope="row">Net payout to you</th><td class="num"></td><td class="num">PKR 25,434</td></tr>
+              </tfoot>
+            </table>
+
+            <details class="disc explain" open>
+              <summary>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                What these deductions mean
+              </summary>
+              <dl>
+                <div>
+                  <dt id="wakala">Service fee (wakala)</dt>
+                  <dd>An agency (wakala) commission SalamStay charges for listing your stay, handling the booking, and holding payment in escrow until check-in. It is a fixed 3% of the gross booking value, shown before every payout.</dd>
+                </div>
+                <div>
+                  <dt id="mdr">Payment processing (MDR)</dt>
+                  <dd>The merchant discount rate — the card-network and acquirer (HBL) fee to process the guest's card payment. It is passed through at cost, not marked up.</dd>
+                </div>
+                <div>
+                  <dt id="withholding">Withholding tax · filer vs. non-filer</dt>
+                  <dd>Advance tax collected under FBR rules and deposited against your account. You're on the Active Taxpayers List (ATL), so the <strong>filer</strong> rate applies. Non-filers are withheld at roughly double, and a withholding certificate is issued for every payout. <a href="/host/payout-settings/tax">Update your ATL status</a>.</dd>
+                </div>
+              </dl>
+            </details>
+          </section>
+
+          <!-- payout schedule + tax receipt -->
+          <div class="cols2">
+            <section class="infocard" aria-label="Next payout">
+              <div class="ih"><svg class="ihicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg> Next payout</div>
+              <div class="big">PKR 84,200</div>
+              <div class="schedrow"><span class="k">Expected</span> Monday 28 Jul 2026</div>
+              <div class="schedrow"><span class="k">To</span> Meezan Bank ••••4821</div>
+              <div class="muted">Payouts release 24 hours after each guest checks in.</div>
+              <div class="foot"><a href="/host/payout-settings">Payout settings<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a></div>
+            </section>
+            <section class="infocard" aria-label="Tax documents">
+              <div class="ih"><svg class="ihicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg> Tax documents</div>
+              <div class="line">Withholding certificates and receipts for your records and FBR filing.</div>
+              <div class="schedrow"><span class="k">Tax year</span> FY 2025–26</div>
+              <div class="muted">FBR e-invoice records are generated automatically per payout.</div>
+              <div class="foot">
+                <a href="/host/tax-documents/2025-26.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg>Download tax receipt (FY 2025–26)</a>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ============ DARK ============ -->
+    <div class="panel dark">
+      <div class="panel-tag">Dark — earnings</div>
+      <div class="note">Series/axis/gridlines swap to their dark <code>dataviz</code> siblings (authored to stay mutually AA-distinct on the <code>#0E1211</code> canvas); the data table and breakdown carry the same figures.</div>
+      <div class="app">
+        <div class="hdr">
+          <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <a class="txtlink" href="/">Switch to travelling</a>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/earnings" aria-current="true" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/earnings" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/account" aria-label="Your account, Aqib">AK</a>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today">Today</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings" aria-current="page">Earnings</a>
+          <a class="tab" href="/host/insights">Insights</a>
+        </div>
+        <div class="main">
+          <div class="toph">
+            <div>
+              <h2>Earnings</h2>
+              <p class="date">Last 6 months · Feb–Jul 2026 · PKR</p>
+            </div>
+            <div class="rhs">
+              <div class="seg" role="group" aria-label="Date range">
+                <a href="/host/earnings?range=this-month">This month</a>
+                <a href="/host/earnings?range=6-months" aria-current="true">Last 6 months</a>
+                <a href="/host/earnings?range=this-year">This year</a>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi"><span class="label">Paid out</span><span class="val">PKR 1,181,471</span><span class="foot">11 payouts</span></div>
+            <div class="kpi accent"><span class="label">Upcoming payout</span><span class="val">PKR 84,200</span><span class="foot">Expected 28 Jul · Meezan</span></div>
+            <div class="kpi"><span class="label">Gross earnings</span><span class="val">PKR 1,343,600</span><span class="foot">Before fees &amp; tax</span></div>
+            <div class="kpi"><span class="label">Net after fees &amp; tax</span><span class="val">PKR 1,265,671</span><span class="foot">94.2% of gross</span></div>
+          </div>
+          <section class="chartcard" aria-label="Earnings trend (dark)">
+            <div class="chart-head">
+              <h3>Gross vs. net payout</h3>
+              <div class="legend" aria-hidden="true">
+                <span class="lg"><span class="sw" style="background:var(--dv-series-2)"></span>Gross</span>
+                <span class="lg"><span class="sw" style="background:var(--dv-series-1)"></span>Net payout</span>
+              </div>
+            </div>
+            <div class="chartwrap">
+              <svg class="chart" viewBox="0 0 760 272" role="img" aria-label="Line chart of monthly gross earnings and net payout, February to July 2026, dark theme. Same figures as the accessible table below.">
+                <g>
+                  <line class="grid" x1="64" y1="24" x2="724" y2="24"/>
+                  <line class="grid" x1="64" y1="76" x2="724" y2="76"/>
+                  <line class="grid" x1="64" y1="128" x2="724" y2="128"/>
+                  <line class="grid" x1="64" y1="180" x2="724" y2="180"/>
+                  <line class="grid" x1="64" y1="232" x2="724" y2="232"/>
+                  <text class="axtxt" x="52" y="27" text-anchor="end">PKR 300k</text>
+                  <text class="axtxt" x="52" y="79" text-anchor="end">PKR 225k</text>
+                  <text class="axtxt" x="52" y="131" text-anchor="end">PKR 150k</text>
+                  <text class="axtxt" x="52" y="183" text-anchor="end">PKR 75k</text>
+                  <text class="axtxt" x="52" y="235" text-anchor="end">PKR 0</text>
+                </g>
+                <path class="series2" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M64,112.75 L196,125.23 L328,61.44 L460,46.19 L592,31.63 L724,83.21"/>
+                <path class="series1" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M64,136.32 L196,146.72 L328,95.41 L460,82.93 L592,71.15 L724,112.25"/>
+                <g stroke-width="2">
+                  <circle class="pt2" cx="64" cy="112.75" r="3.2"/><circle class="pt2" cx="196" cy="125.23" r="3.2"/><circle class="pt2" cx="328" cy="61.44" r="3.2"/><circle class="pt2" cx="460" cy="46.19" r="3.2"/><circle class="pt2" cx="592" cy="31.63" r="3.2"/><circle class="pt2" cx="724" cy="83.21" r="3.2"/>
+                  <circle class="pt1" cx="64" cy="136.32" r="3.2"/><circle class="pt1" cx="196" cy="146.72" r="3.2"/><circle class="pt1" cx="328" cy="95.41" r="3.2"/><circle class="pt1" cx="460" cy="82.93" r="3.2"/><circle class="pt1" cx="592" cy="71.15" r="3.2"/><circle class="pt1" cx="724" cy="112.25" r="3.2"/>
+                </g>
+                <g>
+                  <text class="axtxt" x="64" y="252" text-anchor="middle">Feb</text>
+                  <text class="axtxt" x="196" y="252" text-anchor="middle">Mar</text>
+                  <text class="axtxt" x="328" y="252" text-anchor="middle">Apr</text>
+                  <text class="axtxt" x="460" y="252" text-anchor="middle">May</text>
+                  <text class="axtxt" x="592" y="252" text-anchor="middle">Jun</text>
+                  <text class="axtxt" x="724" y="252" text-anchor="middle">Jul</text>
+                </g>
+              </svg>
+            </div>
+            <details class="disc" open>
+              <summary>
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                Chart data (table)
+              </summary>
+              <div class="tblwrap">
+                <table class="tbl">
+                  <caption>Monthly gross earnings and net payout, February–July 2026 (PKR)</caption>
+                  <thead>
+                    <tr><th scope="col">Month</th><th scope="col" class="num">Gross earnings</th><th scope="col" class="num">Net payout</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th scope="row">February 2026</th><td class="num">172,000</td><td class="num">162,024</td></tr>
+                    <tr><th scope="row">March 2026</th><td class="num">154,000</td><td class="num">145,068</td></tr>
+                    <tr><th scope="row">April 2026</th><td class="num">246,000</td><td class="num">231,732</td></tr>
+                    <tr><th scope="row">May 2026</th><td class="num">268,000</td><td class="num">252,456</td></tr>
+                    <tr><th scope="row">June 2026</th><td class="num">289,000</td><td class="num">272,238</td></tr>
+                    <tr><th scope="row">July 2026 (to date)</th><td class="num">214,600</td><td class="num">202,153</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+          <section aria-label="Payout breakdown (dark)">
+            <div class="sec-head"><h3>How each payout is calculated</h3><a href="/host/earnings/bookings">All bookings</a></div>
+            <table class="bktable">
+              <caption>Gulberg 2 Residence · Ayesha Khan<span class="csub">12–16 Jul 2026 · 4 nights</span></caption>
+              <thead><tr><th scope="col">Line item</th><th scope="col" class="num">Rate</th><th scope="col" class="num">Amount</th></tr></thead>
+              <tbody>
+                <tr class="gross"><th scope="row">Gross booking value</th><td class="num rate">—</td><td class="num">PKR 50,000</td></tr>
+                <tr class="ded"><td>Service fee (wakala)</td><td class="num rate">−3%</td><td class="num">−PKR 1,500</td></tr>
+                <tr class="ded"><td>Payment processing (MDR)</td><td class="num rate">−1.8%</td><td class="num">−PKR 900</td></tr>
+                <tr class="ded"><td><span class="li">Withholding tax <span class="tag tag-filer">ATL filer</span></span></td><td class="num rate">−1%</td><td class="num">−PKR 500</td></tr>
+              </tbody>
+              <tfoot><tr><th scope="row">Net payout to you</th><td class="num"></td><td class="num">PKR 47,100</td></tr></tfoot>
+            </table>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ EMPTY — no earnings yet ============ -->
+    <div class="panel">
+      <div class="panel-tag">Empty — no earnings yet</div>
+      <div class="note">Per §13: a calm line glyph + one next step, never an empty grid. The chart region is replaced, not drawn blank.</div>
+      <div class="app">
+        <div class="hdr">
+          <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/account" aria-label="Your account">AK</a>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today">Today</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings" aria-current="page">Earnings</a>
+        </div>
+        <div class="main">
+          <div class="toph"><div><h2>Earnings</h2><p class="date">All amounts in PKR</p></div></div>
+          <div class="empty">
+            <span class="eglyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l3-3 3 2 4-5"/></svg>
+            </span>
+            <h3>No earnings yet</h3>
+            <p>Your first payout will show here once a guest checks in and their stay begins. Set up how you'd like to be paid so we're ready.</p>
+            <div class="acts">
+              <a class="btn btn-primary" href="/host/payout-settings">Set up your payout method</a>
+              <a class="btn btn-ghost" href="/host/help/getting-paid">How payouts work</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RTL / اردو ============ -->
+    <div class="panel">
+      <div class="panel-tag">RTL · اردو — chart + breakdown mirror</div>
+      <div class="note">Per §13 RTL: the chart x-axis reverses (earliest month at the reading-start = right) and the y-axis moves to the right; ₨ stays labelled and digits are not mirrored. The breakdown table and its data mirror; deduction chain reads right-to-left.</div>
+      <div class="app" dir="rtl" lang="ur">
+        <div class="hdr">
+          <a class="wordmark" href="/ur/">Salam<span class="dot">.</span>Stay</a>
+          <span class="hostchip urdu">میزبانی</span>
+          <span class="spacer"></span>
+          <a class="txtlink urdu" href="/ur/">مسافری پر جائیں</a>
+          <div class="langsw" role="group" aria-label="زبان">
+            <a href="/host/earnings" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/earnings" aria-current="true" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR ₨</span>
+          <a class="avatar" href="/ur/account" aria-label="آپ کا اکاؤنٹ">AK</a>
+        </div>
+        <div class="hostnav">
+          <a class="tab urdu" href="/ur/host/today">آج</a>
+          <a class="tab urdu" href="/ur/host/reservations">بکنگز</a>
+          <a class="tab urdu" href="/ur/host/earnings" aria-current="page">کمائی</a>
+          <a class="tab urdu" href="/ur/host/insights">تجزیے</a>
+        </div>
+        <div class="main">
+          <div class="toph"><div><h2 class="urdu urdu-t">کمائی</h2><p class="date urdu urdu-t">پچھلے <span class="num">6</span> ماہ · فروری–جولائی <span class="num">2026</span></p></div></div>
+          <div class="kpi-row">
+            <div class="kpi"><span class="label urdu">ادا شدہ</span><span class="val">PKR 1,181,471</span><span class="foot urdu"><span class="num">11</span> ادائیگیاں</span></div>
+            <div class="kpi accent"><span class="label urdu">آئندہ ادائیگی</span><span class="val">PKR 84,200</span><span class="foot urdu"><span class="num">28</span> جولائی · میزان</span></div>
+            <div class="kpi"><span class="label urdu">مجموعی کمائی</span><span class="val">PKR 1,343,600</span><span class="foot urdu">فیس و ٹیکس سے پہلے</span></div>
+            <div class="kpi"><span class="label urdu">خالص رقم</span><span class="val">PKR 1,265,671</span><span class="foot urdu">فیس و ٹیکس کے بعد</span></div>
+          </div>
+
+          <section class="chartcard" aria-label="کمائی کا رجحان">
+            <div class="chart-head">
+              <h3 class="urdu">مجموعی بمقابلہ خالص ادائیگی</h3>
+              <div class="legend" aria-hidden="true">
+                <span class="lg urdu"><span class="sw" style="background:var(--dv-series-1)"></span>خالص ادائیگی</span>
+              </div>
+            </div>
+            <div class="chartwrap">
+              <!-- RTL: months reversed (Feb at right), y-axis on the right -->
+              <svg class="chart" viewBox="0 0 540 210" role="img" aria-label="خالص ادائیگی کا لائن چارٹ، فروری تا جولائی 2026۔ اعداد نیچے جدول میں موجود ہیں۔" style="min-width:480px">
+                <g>
+                  <line class="grid" x1="24" y1="20" x2="470" y2="20"/>
+                  <line class="grid" x1="24" y1="98" x2="470" y2="98"/>
+                  <line class="grid" x1="24" y1="176" x2="470" y2="176"/>
+                  <text class="axtxt" x="478" y="23" text-anchor="start">PKR 300k</text>
+                  <text class="axtxt" x="478" y="101" text-anchor="start">PKR 150k</text>
+                  <text class="axtxt" x="478" y="179" text-anchor="start">PKR 0</text>
+                </g>
+                <path class="series1" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M24,86.2 L113.2,55.36 L202.4,64.2 L291.6,73.56 L380.8,112.04 L470,104.24"/>
+                <g stroke-width="2">
+                  <circle class="pt1" cx="24" cy="86.2" r="3.2"/><circle class="pt1" cx="113.2" cy="55.36" r="3.2"/><circle class="pt1" cx="202.4" cy="64.2" r="3.2"/><circle class="pt1" cx="291.6" cy="73.56" r="3.2"/><circle class="pt1" cx="380.8" cy="112.04" r="3.2"/><circle class="pt1" cx="470" cy="104.24" r="3.2"/>
+                </g>
+                <g class="urdu">
+                  <text class="axtxt" x="24" y="196" text-anchor="middle">جولائی</text>
+                  <text class="axtxt" x="113.2" y="196" text-anchor="middle">جون</text>
+                  <text class="axtxt" x="202.4" y="196" text-anchor="middle">مئی</text>
+                  <text class="axtxt" x="291.6" y="196" text-anchor="middle">اپریل</text>
+                  <text class="axtxt" x="380.8" y="196" text-anchor="middle">مارچ</text>
+                  <text class="axtxt" x="470" y="196" text-anchor="middle">فروری</text>
+                </g>
+              </svg>
+            </div>
+            <details class="disc" open>
+              <summary class="urdu">
+                <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)"><path d="M9 6l6 6-6 6"/></svg>
+                چارٹ کا ڈیٹا (جدول)
+              </summary>
+              <div class="tblwrap">
+                <table class="tbl">
+                  <caption class="urdu">ماہانہ خالص ادائیگی، فروری–جولائی <span class="num">2026</span> (PKR)</caption>
+                  <thead><tr><th scope="col" class="urdu">ماہ</th><th scope="col" class="num urdu">خالص ادائیگی</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row" class="urdu">فروری <span class="num">2026</span></th><td class="num">162,024</td></tr>
+                    <tr><th scope="row" class="urdu">مارچ <span class="num">2026</span></th><td class="num">145,068</td></tr>
+                    <tr><th scope="row" class="urdu">اپریل <span class="num">2026</span></th><td class="num">231,732</td></tr>
+                    <tr><th scope="row" class="urdu">مئی <span class="num">2026</span></th><td class="num">252,456</td></tr>
+                    <tr><th scope="row" class="urdu">جون <span class="num">2026</span></th><td class="num">272,238</td></tr>
+                    <tr><th scope="row" class="urdu">جولائی <span class="num">2026</span></th><td class="num">202,153</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <section aria-label="ادائیگی کی تفصیل">
+            <div class="sec-head"><h3 class="urdu">ہر ادائیگی کیسے بنتی ہے</h3><a class="urdu" href="/ur/host/earnings/bookings">تمام بکنگز</a></div>
+            <table class="bktable">
+              <caption class="urdu">گلبرگ <span class="num">2</span> ریزیڈنس · عائشہ خان<span class="csub urdu"><span class="num">12–16</span> جولائی <span class="num">2026</span> · <span class="num">4</span> راتیں</span></caption>
+              <thead><tr><th scope="col" class="urdu">مد</th><th scope="col" class="num urdu">شرح</th><th scope="col" class="num urdu">رقم</th></tr></thead>
+              <tbody>
+                <tr class="gross"><th scope="row" class="urdu">مجموعی رقم</th><td class="num rate">—</td><td class="num">PKR 50,000</td></tr>
+                <tr class="ded"><td class="urdu">سروس فیس (وکالہ)</td><td class="num rate">−3%</td><td class="num">−PKR 1,500</td></tr>
+                <tr class="ded"><td class="urdu">ادائیگی پروسیسنگ (MDR)</td><td class="num rate">−1.8%</td><td class="num">−PKR 900</td></tr>
+                <tr class="ded"><td><span class="li urdu">وِد ہولڈنگ ٹیکس <span class="tag tag-filer urdu">فائلر</span></span></td><td class="num rate">−1%</td><td class="num">−PKR 500</td></tr>
+              </tbody>
+              <tfoot><tr><th scope="row" class="urdu">آپ کی خالص ادائیگی</th><td class="num"></td><td class="num">PKR 47,100</td></tr></tfoot>
+            </table>
+          </section>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

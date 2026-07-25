@@ -1,0 +1,136 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Chips &amp; Filters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --int-primary:#2E7D6A; --int-subtle:#EEF6F3; --focus-ring:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --int-primary:#579D8B; --int-subtle:#16231F; --focus-ring:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  .head { max-width:1180px; margin:0 auto 28px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; }
+  .grid2 { max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:20px; padding:28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); margin:22px 0 12px; }
+  .sec-label:first-of-type { margin-top:0; }
+  .row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  .pill { display:inline-flex; align-items:center; gap:8px; height:32px; padding:0 12px; border-radius:var(--radius-full); font-size:13px; font-weight:500; border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); cursor:pointer; transition:background .12s,border-color .12s; }
+  .pill svg { width:16px; height:16px; color:var(--text-secondary); }
+  .pill.hover { background:var(--bg-raised); border-color:var(--border-strong); }
+  .pill.selected { background:var(--int-subtle); border-color:var(--border-brand); color:var(--int-primary); }
+  .pill.selected svg { color:var(--int-primary); }
+  .pill.focus { box-shadow:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--focus-ring); }
+  .pill.disabled { border-color:var(--border-hairline); color:var(--text-disabled); cursor:not-allowed; }
+  .pill .count { background:var(--int-subtle); color:var(--int-primary); border-radius:var(--radius-full); font-size:11px; padding:1px 7px; font-variant-numeric:tabular-nums; }
+  .pill.selected .count { background:var(--bg-canvas); }
+  .pill .x { display:flex; }
+  .chip-info { background:var(--bg-raised); border:none; cursor:default; color:var(--text-secondary); }
+
+  .segmented { display:inline-flex; height:40px; padding:4px; background:var(--bg-sunken); border-radius:var(--radius-md); gap:2px; }
+  .segmented .seg { display:flex; align-items:center; justify-content:center; min-width:88px; padding:0 14px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; color:var(--text-secondary); cursor:pointer; }
+  .segmented .seg.active { background:var(--bg-canvas); color:var(--text-primary); font-weight:600; box-shadow:var(--el-subtle); }
+  .statecap { font-size:11px; color:var(--text-tertiary); width:100%; margin-bottom:2px; }
+  @media (max-width:880px){ .grid2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Chips, Filter Pills &amp; Segmented</h1>
+    <p>Pills for filters (the one place the pill belongs), segmented for exclusive views. Selection is a tint — never a full brand fill.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-tag">Light</div>
+
+      <div class="sec-label">Filter pills — states</div>
+      <div class="row">
+        <span class="statecap">default · hover · selected · focus · disabled</span>
+        <button class="pill">Halal kitchen</button>
+        <button class="pill hover">Family-only</button>
+        <button class="pill selected">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          Prayer space
+        </button>
+        <button class="pill focus">Women-only</button>
+        <button class="pill disabled" disabled>Pool</button>
+      </div>
+
+      <div class="sec-label">With count · dismissible · info chip</div>
+      <div class="row">
+        <button class="pill">Halal kitchen <span class="count">128</span></button>
+        <button class="pill selected">Near masjid <span class="count">54</span></button>
+        <button class="pill selected">Islamabad
+          <span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
+        </button>
+        <span class="pill chip-info">SalamStar</span>
+      </div>
+
+      <div class="sec-label">Segmented control</div>
+      <div class="segmented">
+        <div class="seg active">Stays</div>
+        <div class="seg">Experiences</div>
+        <div class="seg">Long-term</div>
+      </div>
+    </div>
+
+    <div class="panel dark">
+      <div class="panel-tag">Dark</div>
+
+      <div class="sec-label">Filter pills</div>
+      <div class="row">
+        <button class="pill">Halal kitchen</button>
+        <button class="pill hover">Family-only</button>
+        <button class="pill selected">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          Prayer space
+        </button>
+        <button class="pill focus">Women-only</button>
+      </div>
+
+      <div class="sec-label">With count · dismissible</div>
+      <div class="row">
+        <button class="pill">Backup power <span class="count">92</span></button>
+        <button class="pill selected">Peshawar
+          <span class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
+        </button>
+        <span class="pill chip-info">New</span>
+      </div>
+
+      <div class="sec-label">Segmented control</div>
+      <div class="segmented">
+        <div class="seg">List</div>
+        <div class="seg active">Map</div>
+      </div>
+
+      <div class="sec-label">Price range (2 segments)</div>
+      <div class="segmented">
+        <div class="seg active">Per night</div>
+        <div class="seg">Total</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

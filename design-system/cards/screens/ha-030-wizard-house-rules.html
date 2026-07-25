@@ -1,0 +1,621 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Wizard: House rules (HA-030)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-019 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-primary-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-primary-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  fieldset { border:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { max-width:980px; font-size:14px; color:#5F676D; margin-top:8px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:334px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1060px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host wizard lineage (ha-019 canon); NEVER the guest checkout stepper */
+  .phone { width:334px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:820px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.hc-a,.hc-now,.wcap,h2,.lead,.seclab,.tog-t,.tog-d,.select-trig .stv,.flabel,.fhint,.gsub,.arow .t,.arow .d,.gp-ack,.reassure,.btn) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — copied byte-for-byte from ha-019 canon */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 0; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  /* wizard progress — 12 thin bars, verify-family sub-progress grammar (§7.6a), copied byte-for-byte from ha-019 */
+  .wprog { padding:8px 18px 0; flex:none; }
+  .wprog .wbars { display:flex; gap:3px; margin-bottom:6px; }
+  .wprog .wbars i { display:block; height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); font-style:normal; }
+  .wprog .wbars i.done, .wprog .wbars i.now { background:var(--int-primary); }
+  .wprog .wbars i.now { opacity:.55; }
+  .wprog .wcap { font-size:11px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:12px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:12px; line-height:1.5; }
+  .seclab { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 9px; }
+  .seclab:first-of-type { margin-top:0; }
+
+  /* Select trigger shell — reuses the Input shell exactly (ha-020 grammar) */
+  .fld { margin-bottom:11px; }
+  .flabel { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px; }
+  .select-trig { width:100%; min-height:44px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 12px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:16px; height:16px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .fld2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .fhint { display:block; font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.4; }
+
+  /* toggle rows — plain neutral switches, equal weight, no ornament (§10.1/§10.2), ha-023 grammar */
+  .toglist { display:flex; flex-direction:column; margin-top:2px; }
+  .togrow { display:flex; gap:11px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--border-hairline); }
+  .togrow:last-child { border-bottom:none; }
+  .tog-ic { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px; }
+  .tog-ic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.6; }
+  .tog-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding-top:2px; }
+  .tog-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .tog-d { font-size:11.5px; color:var(--text-secondary); line-height:1.42; }
+  .swbtn { flex:none; width:44px; height:44px; margin:-10px -10px -10px 0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; padding:0; cursor:pointer; }
+  .sw { position:relative; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); display:block; }
+  .sw i { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(16,25,27,.28); display:block; }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { transform:translateX(16px); }
+  .phone.rtl .sw i { left:auto; right:2px; }
+  .phone.rtl .sw.on i { transform:translateX(-16px); }
+
+  /* quiet-hours time sub-row — appears when the toggle is on */
+  .subtime { margin:8px 0 2px 45px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .phone.rtl .subtime { margin-left:0; margin-right:45px; }
+  .subtime .select-trig { min-height:38px; }
+  .subtime .select-trig .stv { font-size:12px; }
+
+  /* custom rule + dignity note */
+  .customwrap { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); }
+  .custominput { display:block; width:100%; min-height:44px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 12px; font-family:inherit; font-size:13px; color:var(--text-primary); }
+  .custominput::placeholder { color:var(--text-tertiary); }
+  .dignitynote { display:flex; gap:9px; align-items:flex-start; margin-top:10px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .dignitynote svg { width:15px; height:15px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .dignitynote p { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+  .customrule { display:flex; gap:9px; align-items:flex-start; margin-top:10px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .customrule svg { width:15px; height:15px; color:var(--text-secondary); flex:none; margin-top:2px; stroke-width:1.7; }
+  .customrule span { font-size:12px; color:var(--text-primary); line-height:1.45; }
+
+  /* guest preview — reuses ga-035's exact rule vocabulary and .arow/.gsub grammar */
+  .gpwrap { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); }
+  .gp-h { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; }
+  .gpcard { border-radius:var(--radius-lg); border:1px solid var(--border-hairline); background:var(--bg-raised); padding:4px 13px 12px; }
+  .gsub { font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); padding-top:11px; }
+  .arow { display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-top:1px solid var(--border-hairline); }
+  .gsub + .arow { border-top:none; }
+  .arow .ic { width:28px; height:28px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .arow .ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .arow .tx { flex:1; min-width:0; }
+  .arow .tx .t { font-size:12.5px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .arow .tx .d { font-size:11px; color:var(--text-secondary); margin-top:1px; line-height:1.4; }
+  .gp-ack { display:flex; gap:8px; align-items:flex-start; margin-top:11px; padding-top:11px; border-top:1px solid var(--border-hairline); }
+  .gp-ack svg { width:14px; height:14px; color:var(--text-tertiary); flex:none; margin-top:1px; }
+  .gp-ack p { font-size:11px; color:var(--text-tertiary); line-height:1.45; }
+
+  .spacer-fill { flex:1; }
+  .reassure { font-size:11px; color:var(--text-tertiary); text-align:center; margin-top:12px; line-height:1.4; }
+  .btn { width:100%; min-height:48px; margin-top:18px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:352px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Wizard: House rules (HA-030)</h1>
+    <p><b>Step 11 of 12</b> (<code>ha-019</code> convention, <code>.hubctx</code>/<code>.wprog</code>/<code>.wcap</code> copied byte-for-byte). Check-in/check-out windows as Select triggers, five standard rule toggles reusing <b>ga-035's exact rule vocabulary</b> (no smoking inside, no parties or events, quiet hours with a time sub-field, shoes off inside, and two Select rows for kitchen use / guest &amp; visitor policy — the same wording a guest will read on <code>GA-035</code>'s sheet), a <b>custom-rule Input</b> with a dignity note ("rules here are practical instructions, not a checklist of suspicion"), and a <b>guest-preview mock</b> of exactly what <code>GA-035</code>'s house-rules sheet and <code>GA-038</code>'s booking-review tap-through will show, ending in the same acknowledgement tie-in line (perspective-flipped to the host, ga-035/ga-038 lineage). Case continuity: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b> — entire place, 6 guests (<code>ha-021</code>). Panels: defaults (light) · configured + preview (light) · configured + preview, dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — defaults · configured + preview</span><span>Dark — configured + preview</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — DEFAULTS · CONFIGURED + PREVIEW ============================ -->
+    <section class="panel" aria-label="Light theme — default rule toggles, and a configured set with the guest preview">
+      <div class="panel-tag">Light — A defaults · B configured + custom rule + guest preview</div>
+      <div class="rowflex">
+
+        <!-- A · DEFAULTS -->
+        <div class="pcol">
+          <div class="pcap">A · Defaults — sensible starting rules</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/description" aria-label="Back to Description"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">House rules</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+              <p class="wcap">Step 11 of 12 · House rules</p>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Set your house rules</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment. Plain, practical rules guests will read the same way as check-in time.</p>
+
+              <p class="seclab">Checking in &amp; out</p>
+              <div class="fld2">
+                <div class="fld"><label class="flabel" for="ci-a">Check-in window</label>
+                  <button class="select-trig" id="ci-a" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">2:00 PM – 8:00 PM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                </div>
+                <div class="fld"><label class="flabel" for="co-a">Check-out by</label>
+                  <button class="select-trig" id="co-a" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">11:00 AM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                </div>
+              </div>
+
+              <p class="seclab">Standard rules</p>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">No smoking inside</span><span class="tog-d">Guests see: smoking is not permitted indoors.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No smoking inside, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">No parties or events</span><span class="tog-d">Guests see: the home doesn't allow large gatherings.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No parties or events, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">Quiet hours</span><span class="tog-d">Guests see a set window to keep noise low.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Quiet hours, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <div class="subtime">
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">From 10:00 PM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">To 6:00 AM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">Shoes off inside</span><span class="tog-d">Off — guests may keep shoes on unless you turn this on.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Shoes off inside, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <p class="seclab">Kitchen &amp; visitors</p>
+              <div class="fld"><label class="flabel" for="kit-a">Kitchen use</label>
+                <button class="select-trig" id="kit-a" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">Guests have full use</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+              <div class="fld"><label class="flabel" for="vis-a">Daytime visitors</label>
+                <button class="select-trig" id="vis-a" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">Welcome</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="fhint">Guests see: please let the host know if a guest will stay overnight.</span>
+              </div>
+
+              <div class="customwrap">
+                <label class="flabel" for="custom-a">Add your own rule (optional)</label>
+                <input class="custominput" id="custom-a" type="text" placeholder="e.g. Street parking only, rarely full" />
+                <div class="dignitynote">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  <p>Rules here are practical instructions, not a checklist of suspicion — guests will read your rule the same way as check-in time.</p>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/pricing">Save &amp; continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · CONFIGURED + PREVIEW -->
+        <div class="pcol">
+          <div class="pcap">B · Configured — shoes-off on, custom rule added, guest preview</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/description" aria-label="Back to Description"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">House rules</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+              <p class="wcap">Step 11 of 12 · House rules</p>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Set your house rules</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment. Plain, practical rules guests will read the same way as check-in time.</p>
+
+              <p class="seclab">Checking in &amp; out</p>
+              <div class="fld2">
+                <div class="fld"><label class="flabel" for="ci-b">Check-in window</label>
+                  <button class="select-trig" id="ci-b" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">2:00 PM – 8:00 PM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                </div>
+                <div class="fld"><label class="flabel" for="co-b">Check-out by</label>
+                  <button class="select-trig" id="co-b" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">11:00 AM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                </div>
+              </div>
+
+              <p class="seclab">Standard rules</p>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">No smoking inside</span><span class="tog-d">Guests see: smoking is not permitted indoors.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No smoking inside, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">No parties or events</span><span class="tog-d">Guests see: the home doesn't allow large gatherings.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No parties or events, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">Quiet hours</span><span class="tog-d">Guests see a set window to keep noise low.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Quiet hours, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <div class="subtime">
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">From 10:00 PM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">To 6:00 AM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">Shoes off inside</span><span class="tog-d">On — guests see a request to remove shoes at the door.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Shoes off inside, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <p class="seclab">Kitchen &amp; visitors</p>
+              <div class="fld"><label class="flabel" for="kit-b">Kitchen use</label>
+                <button class="select-trig" id="kit-b" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">Guests have full use</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+              <div class="fld"><label class="flabel" for="vis-b">Daytime visitors</label>
+                <button class="select-trig" id="vis-b" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">By arrangement only</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="fhint">Guests see: please message Aqib before a visitor comes by.</span>
+              </div>
+
+              <div class="customwrap">
+                <label class="flabel" for="custom-b">Add your own rule (optional)</label>
+                <div class="customrule">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+                  <span>"Tuesday mornings, the water tanker refills — a short pressure dip, usually done within the hour."</span>
+                </div>
+                <div class="dignitynote">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  <p>Rules here are practical instructions, not a checklist of suspicion — guests will read your rule the same way as check-in time.</p>
+                </div>
+              </div>
+
+              <div class="gpwrap">
+                <div class="gp-h">What guests will see (GA-035 sheet)</div>
+                <div class="gpcard" role="img" aria-label="Guest house-rules preview">
+                  <p class="gsub">Checking in &amp; out</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t">Check-in 2:00 PM – 8:00 PM</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></span><div class="tx"><div class="t">Check-out before 11:00 AM</div></div></div>
+                  <p class="gsub">Quiet &amp; the neighbours</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t">Quiet hours 10:00 PM – 6:00 AM</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No parties or events</div></div></div>
+                  <p class="gsub">Smoking &amp; the home</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No smoking inside</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span><div class="tx"><div class="t">Shoes off inside, please</div></div></div>
+                  <p class="gsub">What Aqib asks</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg></span><div class="tx"><div class="t">Tuesday water-tanker refill</div><div class="d">A short pressure dip, usually done within the hour.</div></div></div>
+                  <div class="gp-ack">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <p>Guests agree to these rules once, at booking review (GA-038), before they pay.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/pricing">Save &amp; continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The five standard toggles use <b>ga-035's exact rule vocabulary</b> ("No smoking inside," "No parties or events," "Quiet hours," "Shoes off inside," and the visitors line "please let the host know if a guest will stay overnight") — the same phrases a guest reads on the shipped house-rules sheet, so nothing drifts between what the host sets and what the guest is shown. Kitchen use and daytime-visitor policy are <b>Select rows</b>, not switches, because they are three-way choices, not on/off facts. The custom rule carries an explicit <b>dignity note</b>: rules are practical instructions, never a checklist of suspicion. The guest-preview mock groups rows exactly as <code>GA-035</code>'s sheet does and ends with the acknowledgement tie-in to <code>GA-038</code>'s booking-review checkbox, perspective-flipped from guest ("you'll agree") to host ("guests agree") per the established host-facing pattern (<code>ha-005</code>/<code>ha-006</code>).</p>
+    </section>
+
+    <!-- ============================ DARK — CONFIGURED + PREVIEW ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a different configuration with the guest preview">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Dark — visitors not allowed, different custom rule</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/description" aria-label="Back to Description"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">House rules</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+              <p class="wcap">Step 11 of 12 · House rules</p>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Set your house rules</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment. Plain, practical rules guests will read the same way as check-in time.</p>
+
+              <p class="seclab">Checking in &amp; out</p>
+              <div class="fld2">
+                <div class="fld"><label class="flabel" for="ci-c">Check-in window</label>
+                  <button class="select-trig" id="ci-c" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">3:00 PM – 9:00 PM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                </div>
+                <div class="fld"><label class="flabel" for="co-c">Check-out by</label>
+                  <button class="select-trig" id="co-c" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">10:00 AM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                </div>
+              </div>
+
+              <p class="seclab">Standard rules</p>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">No smoking inside</span><span class="tog-d">Guests see: smoking is not permitted indoors.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No smoking inside, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">No parties or events</span><span class="tog-d">Guests see: the home doesn't allow large gatherings.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="No parties or events, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">Quiet hours</span><span class="tog-d">Guests see a set window to keep noise low.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Quiet hours, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <div class="subtime">
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">From 11:00 PM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">To 6:30 AM</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">Shoes off inside</span><span class="tog-d">On — guests see a request to remove shoes at the door.</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Shoes off inside, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <p class="seclab">Kitchen &amp; visitors</p>
+              <div class="fld"><label class="flabel" for="kit-c">Kitchen use</label>
+                <button class="select-trig" id="kit-c" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">Guests have full use</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+              <div class="fld"><label class="flabel" for="vis-c">Daytime visitors</label>
+                <button class="select-trig" id="vis-c" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">Not allowed</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="fhint">Guests see: the home doesn't host outside visitors during a stay.</span>
+              </div>
+
+              <div class="customwrap">
+                <label class="flabel" for="custom-c">Add your own rule (optional)</label>
+                <div class="customrule">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+                  <span>"Street parking only — no reserved spot, but it's rarely full."</span>
+                </div>
+                <div class="dignitynote">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  <p>Rules here are practical instructions, not a checklist of suspicion — guests will read your rule the same way as check-in time.</p>
+                </div>
+              </div>
+
+              <div class="gpwrap">
+                <div class="gp-h">What guests will see (GA-035 sheet)</div>
+                <div class="gpcard" role="img" aria-label="Guest house-rules preview">
+                  <p class="gsub">Checking in &amp; out</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t">Check-in 3:00 PM – 9:00 PM</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></span><div class="tx"><div class="t">Check-out before 10:00 AM</div></div></div>
+                  <p class="gsub">Quiet &amp; the neighbours</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t">Quiet hours 11:00 PM – 6:30 AM</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No parties or events</div></div></div>
+                  <p class="gsub">Smoking &amp; the home</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">No smoking inside</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span><div class="tx"><div class="t">Shoes off inside, please</div></div></div>
+                  <p class="gsub">What Aqib asks</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg></span><div class="tx"><div class="t">Street parking only</div><div class="d">No reserved spot, but it's rarely full.</div></div></div>
+                  <div class="gp-ack">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <p>Guests agree to these rules once, at booking review (GA-038), before they pay.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/pricing">Save &amp; continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">A second, different configuration (tighter check-in window, visitors "Not allowed," a parking note instead of the water-tanker note) proves the rows aren't hard-coded to one setup. Dark tokens re-resolve every role (§1.5); the switch on-state, Select triggers and preview surfaces stay legible at AA on the dark canvas.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — configured with guest preview">
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — گھر کے اصول، ترتیب شدہ</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="rH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/new/description" aria-label="تفصیل پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">گھر کے اصول</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">لسٹنگ</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+              <p class="wcap">مرحلہ <span class="num">11</span> از <span class="num">12</span> · گھر کے اصول</p>
+            </div>
+            <div class="screen">
+              <h2 id="rH">اپنے گھر کے اصول طے کریں</h2>
+              <p class="lead">کینٹ ویو ریزیڈنس — راولپنڈی کینٹونمنٹ۔ سادہ، عملی اصول جنہیں مہمان چیک اِن وقت کی طرح ہی پڑھیں گے۔</p>
+
+              <p class="seclab">آمد و روانگی</p>
+              <div class="fld2">
+                <div class="fld"><label class="flabel" for="ci-r">چیک اِن کا وقت</label>
+                  <button class="select-trig" id="ci-r" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv"><span class="num">2:00 PM</span> – <span class="num">8:00 PM</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                </div>
+                <div class="fld"><label class="flabel" for="co-r">چیک آؤٹ تک</label>
+                  <button class="select-trig" id="co-r" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv"><span class="num">11:00 AM</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                </div>
+              </div>
+
+              <p class="seclab">معیاری اصول</p>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">اندر سگریٹ نوشی نہیں</span><span class="tog-d">مہمان دیکھتے ہیں: گھر کے اندر سگریٹ نوشی کی اجازت نہیں۔</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="اندر سگریٹ نوشی نہیں، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">پارٹیاں یا تقریبات نہیں</span><span class="tog-d">مہمان دیکھتے ہیں: گھر میں بڑی محفلوں کی اجازت نہیں۔</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="پارٹیاں یا تقریبات نہیں، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">خاموشی کے اوقات</span><span class="tog-d">مہمان آواز کم رکھنے کا مقررہ وقت دیکھتے ہیں۔</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="خاموشی کے اوقات، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+              <div class="subtime">
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv"><span class="num">10:00 PM</span> سے</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv"><span class="num">6:00 AM</span> تک</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+              </div>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span>
+                  <div class="tog-b"><span class="tog-t">اندر جوتے اتارنا</span><span class="tog-d">آن — مہمان دروازے پر جوتے اتارنے کی درخواست دیکھتے ہیں۔</span></div>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="اندر جوتے اتارنا، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <p class="seclab">کچن اور ملاقاتی</p>
+              <div class="fld"><label class="flabel" for="kit-r">کچن کا استعمال</label>
+                <button class="select-trig" id="kit-r" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">مہمانوں کو مکمل استعمال حاصل ہے</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+              </div>
+              <div class="fld"><label class="flabel" for="vis-r">دن کے وقت ملاقاتی</label>
+                <button class="select-trig" id="vis-r" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="stv">پیشگی اطلاع پر</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                <span class="fhint">مہمان دیکھتے ہیں: ملاقاتی آنے سے پہلے عاقب کو پیغام بھیجیں۔</span>
+              </div>
+
+              <div class="customwrap">
+                <label class="flabel" for="custom-r">اپنا اصول شامل کریں (اختیاری)</label>
+                <div class="customrule">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+                  <span>"منگل کی صبح پانی کا ٹینکر بھرا جاتا ہے — دباؤ میں مختصر کمی، عموماً ایک گھنٹے میں ٹھیک ہو جاتی ہے۔"</span>
+                </div>
+                <div class="dignitynote">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  <p>یہاں اصول عملی ہدایات ہیں، شک کی فہرست نہیں — مہمان آپ کا اصول بھی چیک اِن وقت کی طرح ہی پڑھیں گے۔</p>
+                </div>
+              </div>
+
+              <div class="gpwrap">
+                <div class="gp-h">مہمان یہ دیکھیں گے (GA-035 شیٹ)</div>
+                <div class="gpcard" role="img" aria-label="مہمان کے لیے گھر کے اصولوں کا پیش نظارہ">
+                  <p class="gsub">آمد و روانگی</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="tx"><div class="t">چیک اِن <span class="num">2:00 PM</span> – <span class="num">8:00 PM</span></div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></span><div class="tx"><div class="t">چیک آؤٹ <span class="num">11:00 AM</span> سے پہلے</div></div></div>
+                  <p class="gsub">خاموشی اور پڑوسی</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><div class="tx"><div class="t">خاموشی <span class="num">10:00 PM</span> – <span class="num">6:00 AM</span></div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4-9 4 6 3-2 3 5"/><path d="M4 12h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">پارٹیاں یا تقریبات نہیں</div></div></div>
+                  <p class="gsub">سگریٹ اور گھر</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h13a3 3 0 1 0-3-3M4 16h9"/><path d="M3 3l18 18"/></svg></span><div class="tx"><div class="t">اندر سگریٹ نوشی نہیں</div></div></div>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 8-8-3-3-8 8-1 4z"/><path d="M13 6l3 3"/></svg></span><div class="tx"><div class="t">براہِ کرم جوتے اتار دیں</div></div></div>
+                  <p class="gsub">عاقب کی درخواست</p>
+                  <div class="arow"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg></span><div class="tx"><div class="t">منگل کو پانی کے ٹینکر کی بھرائی</div><div class="d">دباؤ میں مختصر کمی، عموماً ایک گھنٹے میں ٹھیک۔</div></div></div>
+                  <div class="gp-ack">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <p>مہمان ادائیگی سے پہلے، بکنگ ریویو (GA-038) پر ایک بار ان اصولوں سے اتفاق کرتے ہیں۔</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/host/listings/new/pricing">محفوظ کریں اور جاری رکھیں</a>
+              <p class="reassure">آپ کی پیش رفت خودکار طور پر محفوظ ہوتی ہے — کسی بھی وقت میزبان سیٹ اپ سے دوبارہ شروع کریں۔</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron and wizard-progress bars flip to the reading-start (right) edge; Select chevrons point down and don't mirror (a vertical direction, per §11's non-directional-glyph rule) but the trigger row itself flows RTL; the switch thumb travels toward the reading-start "on" side. Times, step digits and rule hours stay Latin and LTR-isolated (<code>.num</code>) inside RTL sentences, matching <code>HA-028</code>/<code>HA-029</code>/<code>HA-023</code>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Force-update (GA-111)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* interstitial frame — ga-002 welcome/carousel lineage: brandmark-leading top bar, centered hero, NO tbar-back (§9-I) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .iscreen, .phone.rtl .brandmark, .phone.rtl .laterbtn, .phone.rtl .ihero h2, .phone.rtl .ihero p, .phone.rtl .irow-t, .phone.rtl .irow-s, .phone.rtl .isafe p, .phone.rtl .iwindow, .phone.rtl .ihome { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl .ihero p, .phone.rtl .isafe p { line-height:1.9; }
+  .phone.rtl .brandmark { direction:ltr; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* top bar — brand leading; ONLY the soft-update variant adds a trailing Later (no back, ever: this is an interstitial, not a nav screen) */
+  .itop { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 4px; min-height:44px; flex:none; }
+  .brandmark { font-size:19px; font-weight:600; letter-spacing:-0.02em; color:var(--text-primary); }
+  .brandmark .dot { color:var(--int-primary); }
+  .laterbtn { min-height:44px; padding:0 12px; background:transparent; border:none; font-family:inherit; font-size:14px; font-weight:600; color:var(--text-secondary); cursor:pointer; border-radius:var(--radius-md); }
+
+  .iscreen { flex:1; display:flex; flex-direction:column; padding:4px 22px 20px; }
+  .ihero { display:flex; flex-direction:column; align-items:center; text-align:center; padding:10px 4px 18px; }
+  .ihero-ic { width:68px; height:68px; border-radius:var(--radius-2xl); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; margin-bottom:20px; flex:none; }
+  .ihero-ic svg { width:30px; height:30px; color:var(--int-primary); stroke-width:1.6; }
+  .ihero h2 { font-size:20px; font-weight:600; letter-spacing:-0.015em; color:var(--text-primary); }
+  .ihero p { font-size:13.5px; color:var(--text-secondary); line-height:1.55; margin-top:10px; max-width:246px; }
+
+  .irows { display:flex; flex-direction:column; gap:9px; margin-top:2px; }
+  .irow { display:flex; align-items:center; gap:12px; min-height:56px; border:1px solid var(--border-default); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 14px; text-decoration:none; width:100%; }
+  .irow-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .irow-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .irow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; text-align:start; }
+  .irow-t { font-size:14px; font-weight:600; color:var(--text-primary); display:block; }
+  .irow-s { font-size:12px; color:var(--text-secondary); display:block; }
+  .irow-chev { flex:none; color:var(--text-tertiary); }
+  .irow-chev svg { width:18px; height:18px; stroke-width:2; }
+
+  .isafe { display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 13px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .isafe-ic { flex:none; color:var(--text-secondary); margin-top:1px; }
+  .isafe-ic svg { width:17px; height:17px; stroke-width:1.85; }
+  .isafe p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .isafe p b { color:var(--text-primary); font-weight:600; }
+
+  .ihome { display:block; text-align:center; margin-top:16px; font-size:13px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .ihome:hover { text-decoration:underline; }
+
+  .grow { flex:1; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Force-update (GA-111)</h1>
+    <p>The outdated-build block, in the <strong>GA-002 welcome/interstitial lineage</strong> — a brandmark-leading top bar over a centered hero, never the tab-bar chrome of a real nav screen. Two severities, never mixed: the <strong>hard block</strong> has no dismiss anywhere — no back, no skip, no X — only the two store rows; the <strong>soft "update available"</strong> variant adds a persistent <strong>Later</strong> (top-trailing, same slot as GA-002's Skip). Store rows are plain text-and-icon list rows — no fake Play/App Store badge assets. The row note's <strong>dead deep-link / app-not-installed</strong> case gets its own panel: continue in the browser, or go home — never a wall. Panels: hard block (light) · update available + Later (dark) · link couldn't open — fallback (light) · Urdu / RTL (hard block).</p>
+    <div class="toggle" role="presentation"><span class="on">Hard block · light</span><span>Update available · Later · dark</span><span>Link couldn't open · fallback</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ ROW 1 — HARD BLOCK (light) · SOFT UPDATE (dark) ============================ -->
+    <section class="panel" aria-label="Light theme hard block, and dark theme soft update-available variant">
+      <div class="panel-tag">Light — hard block, no dismiss · Dark — update available, dismissible</div>
+      <div class="rowflex">
+
+        <!-- A · HARD BLOCK -->
+        <div class="pcol">
+          <div class="pcap">A · Hard block — no dismiss anywhere</div>
+          <section class="phone" aria-labelledby="aH" role="alertdialog" aria-modal="true">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="itop">
+              <span class="brandmark" dir="ltr">Salam<span class="dot" aria-hidden="true">.</span>Stay</span>
+            </div>
+            <div class="iscreen">
+              <div class="ihero">
+                <span class="ihero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></span>
+                <h2 id="aH">Update SalamStay to continue</h2>
+                <p>This version can't connect safely anymore. Update to keep booking and messaging safely.</p>
+              </div>
+              <div class="irows">
+                <a class="irow" href="/update/play-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">Continue in Google Play</span><span class="irow-s">Update over Wi-Fi or mobile data</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                <a class="irow" href="/update/app-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">Continue in the App Store</span><span class="irow-s">Update over Wi-Fi or mobile data</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+              </div>
+              <div class="isafe" role="note">
+                <span class="isafe-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <p><b>Nothing is lost.</b> Your bookings, messages and saved trips are all still there after you update.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SOFT UPDATE AVAILABLE (dark) -->
+        <div class="pcol">
+          <div class="pcap">B · Update available — dismissible with Later</div>
+          <section class="phone dark" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="itop">
+              <span class="brandmark" dir="ltr">Salam<span class="dot" aria-hidden="true">.</span>Stay</span>
+              <button class="laterbtn" type="button">Later</button>
+            </div>
+            <div class="iscreen">
+              <div class="ihero">
+                <span class="ihero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></span>
+                <h2 id="bH">A new version is available</h2>
+                <p>Update SalamStay for the latest fixes and features. You can keep using this version for now.</p>
+              </div>
+              <div class="irows">
+                <a class="irow" href="/update/play-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">Continue in Google Play</span><span class="irow-s">Takes under a minute</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                <a class="irow" href="/update/app-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">Continue in the App Store</span><span class="irow-s">Takes under a minute</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+              </div>
+              <div class="isafe" role="note">
+                <span class="isafe-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <p><b>Nothing is lost.</b> Your bookings, messages and saved trips are all still there after you update.</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Two severities, never reinterpreted (parallel to the §7.6a stepper canon): the <strong>hard block</strong> (A) is an <code>alertdialog</code> with no exit — the splash-time force-update gate (DESIGN §9-I) for a build below the minimum supported version. The <strong>soft variant</strong> (B) adds <code>Later</code> in the exact top-trailing slot GA-002's Skip uses, so a returning user can keep going. Both use the same honest reassurance strip — updating never loses bookings, messages, or saved trips — and identical plain-text-plus-icon store rows (no fake Play/App Store badge art, per the ornament-free asset rule). Store rows are real <code>&lt;a&gt;</code> targets, ≥44pt.</p>
+    </section>
+
+    <!-- ============================ ROW 2 — DEAD DEEP-LINK FALLBACK · RTL ============================ -->
+    <section class="panel" aria-label="Light theme dead-deep-link fallback, and the right-to-left Urdu hard block">
+      <div class="panel-tag">Light — link couldn't open (fallback) · اردو · RTL — hard block</div>
+      <div class="rowflex">
+
+        <!-- C · DEAD DEEP-LINK / APP-NOT-INSTALLED FALLBACK -->
+        <div class="pcol">
+          <div class="pcap">C · Link couldn't open — browser / home fallback</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="itop">
+              <span class="brandmark" dir="ltr">Salam<span class="dot" aria-hidden="true">.</span>Stay</span>
+            </div>
+            <div class="iscreen">
+              <div class="ihero">
+                <span class="ihero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M10 6l.5-.5a3.5 3.5 0 0 1 5 5L15 11"/><path d="M14 18l-.5.5a3.5 3.5 0 0 1-5-5L9 13"/></svg></span>
+                <h2 id="cH">This link couldn't open in the app</h2>
+                <p>It looks like SalamStay isn't installed on this device, or this app link is out of date.</p>
+              </div>
+              <div class="irows">
+                <a class="irow" href="/update/play-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">Get the SalamStay app</span><span class="irow-s">Google Play or App Store</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                <a class="irow" href="/r/continue-in-browser"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg></span><span class="irow-b"><span class="irow-t">Continue in your browser</span><span class="irow-s">Open this page on the web instead</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+              </div>
+              <a class="ihome" href="/">Go to SalamStay home</a>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · RTL / URDU — HARD BLOCK -->
+        <div class="pcol">
+          <div class="pcap">D · اردو — سلام اسٹے کو اپ ڈیٹ کریں</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH" role="alertdialog" aria-modal="true">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="itop">
+              <span class="brandmark" dir="ltr">Salam<span class="dot" aria-hidden="true">.</span>Stay</span>
+            </div>
+            <div class="iscreen">
+              <div class="ihero">
+                <span class="ihero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></span>
+                <h2 id="dH">جاری رکھنے کے لیے سلام اسٹے اپ ڈیٹ کریں</h2>
+                <p>یہ ورژن اب محفوظ طریقے سے کنیکٹ نہیں ہو سکتا۔ محفوظ طریقے سے بکنگ اور پیغام رسانی جاری رکھنے کے لیے اپ ڈیٹ کریں۔</p>
+              </div>
+              <div class="irows">
+                <a class="irow" href="/update/play-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">گوگل پلے میں جاری رکھیں</span><span class="irow-s">وائی فائی یا موبائل ڈیٹا پر اپ ڈیٹ کریں</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                <a class="irow" href="/update/app-store"><span class="irow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></span><span class="irow-b"><span class="irow-t">ایپ اسٹور میں جاری رکھیں</span><span class="irow-s">وائی فائی یا موبائل ڈیٹا پر اپ ڈیٹ کریں</span></span><span class="irow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+              </div>
+              <div class="isafe" role="note">
+                <span class="isafe-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <p><b>کچھ ضائع نہیں ہوتا۔</b> اپ ڈیٹ کے بعد بھی آپ کی بکنگز، پیغامات اور محفوظ شدہ سفر موجود رہتے ہیں۔</p>
+              </div>
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The fallback (C) is the row note's second case — a dead deep-link or a device without SalamStay installed — and it names <em>both</em> exits: get the app, or continue in the browser, plus a calm <code>Go to SalamStay home</code> text link. It is deliberately not phrased as a failure. RTL (D) mirrors the hard block end to end: chevrons flip, layout mirrors, the wordmark stays LTR-unmirrored per §0.4/§11, and — like the light hard block — carries <strong>no dismiss control of any kind</strong>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Edit listing, section hub (HA-036)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<!-- ===========================================================================
+     HA-036 · Edit listing, section hub — /host/listings/{slug}/edit
+     ---------------------------------------------------------------------------
+     THE RETURN POINT every shipped post-publish editor already links back to:
+       ha-037 ha-038 ha-039 ha-040 ha-043 ha-044 ha-045 ha-074 ha-075 ha-076
+       ha-078 all carry href="/host/listings/cantt-view-residence/edit". This
+       screen is that destination.
+     THE 12 SECTIONS mirror the wizard captions verbatim (ha-019 → ha-032):
+       1 Property type · 2 Location · 3 Capacity · 4 Amenities ·
+       5 Cultural attributes · 6 Qibla & prayer · 7 Women-only & mahram ·
+       8 PK-practical infrastructure · 9 Photos · 10 Title & description ·
+       11 House rules · 12 Pricing & availability
+     ONE-FACT-ONE-OWNER — THE LOAD-BEARING RULE HERE: the hub renders NO owned
+       value. No nightly rate, no capacity number, no qibla bearing, no
+       load-shedding hours. Each row states the SCOPE of the section and links
+       to the single editor that owns it. A hub that re-printed those values
+       would become a second place they could drift.
+     WHERE A SHIPPED EDITOR EXISTS, THE ROW LINKS TO IT:
+       5 → HA-037 /cultural-attributes
+       6 → HA-038 /qibla · HA-039 /prayer-amenities
+       8 → HA-040 /load-shedding · HA-074 /backup-power · HA-075 /infrastructure
+       9 → HA-027 /photos
+      12 → HA-031 /pricing · HA-041 /host/calendar · HA-044 /seasonal-pricing
+           · HA-045 /availability · HA-078 /cancellation-policy
+     Lifecycle is HA-076's (/status); compliance is /compliance; the manager
+       above it is HA-035 (/host/listings).
+     Editor frame canon (§7.6a): app bar + listing identity + no wizard bars.
+       NO unsaved-changes bar — a hub holds no form, so nothing can diverge.
+     DATING: today in this design set is 24 July 2026, and Cantt View Residence
+       is snoozed until 1 Aug (HA-046). The Live panels are therefore dated
+       3 August 2026 — after its shipped reopening and inside the August week
+       ha-043 already prices. The paused panel is dated 15 November 2026 for
+       HA-073's stated reason (the Punjab license renews 14 Nov 2026).
+     =========================================================================== -->
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1360px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1010px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .datenote { font-size:12.5px; color:#5F676D; margin-top:10px; max-width:1010px; background:#fff; border:1px solid #E7E9EA; border-radius:12px; padding:11px 13px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1360px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:314px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1100px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — editor lineage; NO wizard bars, NO unsaved bar (a hub holds no form) */
+  .phone { width:314px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:1290px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.stchip,.stname,.stsub,.h-note,h2,.lead,.grp,.sec-t,.sec-d,.sub-t,.pv-t,.pv-d,.paused-t,.paused-d,.paused-lk,.foot,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+
+  /* listing identity header — ha-076 .stchip/.stname grammar, byte-for-byte */
+  .lhead { padding-bottom:13px; border-bottom:1px solid var(--border-hairline); margin-bottom:13px; }
+  .stchip { display:inline-flex; align-items:center; gap:6px; min-height:26px; padding:0 11px; border-radius:var(--radius-full); font-size:11.5px; font-weight:600; }
+  .stchip svg { width:12px; height:12px; stroke-width:2.4; flex:none; }
+  .stchip.live { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .stchip.hold { color:var(--error-fg); background:var(--error-bg); border:1px solid var(--error-border); }
+  .stname { display:block; font-size:19px; font-weight:600; color:var(--text-primary); margin-top:10px; letter-spacing:-0.005em; }
+  .stsub { display:block; font-size:12px; color:var(--text-secondary); margin-top:3px; }
+  .h-note { display:block; font-size:11.5px; color:var(--text-tertiary); margin-top:9px; line-height:1.5; }
+
+  .grp { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 8px; }
+  .grp:first-of-type { margin-top:0; }
+
+  /* section rows — number + scope, never a value */
+  .secs { display:flex; flex-direction:column; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); overflow:hidden; }
+  .sec { display:flex; align-items:center; gap:11px; min-height:56px; padding:9px 12px; text-decoration:none; border-bottom:1px solid var(--border-hairline); }
+  .secs > .sec:last-child, .secs > li:last-child > .sec { border-bottom:none; }
+  .sec-n { flex:none; width:24px; height:24px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .sec-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sec-b > span { display:block; }
+  .sec-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .sec-d { font-size:11px; color:var(--text-tertiary); line-height:1.4; }
+  .sec-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .sec-chev svg { width:17px; height:17px; stroke-width:2; }
+
+  /* grouped sections whose editors are separately owned */
+  .sec.group { border-bottom:none; padding-bottom:5px; min-height:48px; }
+  .subs { display:flex; flex-direction:column; padding:0 12px 9px 47px; border-bottom:1px solid var(--border-hairline); }
+  .phone.rtl .subs { padding:0 47px 9px 12px; }
+  .secs > li:last-child > .subs { border-bottom:none; }
+  .sub { display:flex; align-items:center; gap:9px; min-height:44px; text-decoration:none; }
+  .sub-dot { flex:none; width:5px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sub-t { flex:1; min-width:0; font-size:12.5px; color:var(--text-primary); }
+  .sub-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .sub-chev svg { width:15px; height:15px; stroke-width:2; }
+
+  /* preview-as-guest — offered only while the listing is live */
+  .pv { display:flex; align-items:center; gap:12px; min-height:62px; margin-top:16px; padding:11px 13px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); text-decoration:none; }
+  .pv-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--int-primary); }
+  .pv-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .pv-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .pv-b > span { display:block; }
+  .pv-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .pv-d { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+
+  /* paused replacement for the preview row — calm, with the one way back */
+  .paused { display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--error-bg); border:1px solid var(--error-border); }
+  .paused .pico { flex:none; margin-top:1px; color:var(--error-fg); }
+  .paused .pico svg { width:18px; height:18px; stroke-width:2; }
+  .paused > .pbody { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .paused-t { font-size:12.5px; font-weight:600; color:var(--error-fg); display:block; }
+  .paused-d { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .paused-lk { font-size:11.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  .spacer-fill { flex:1; min-height:12px; }
+  .foot { font-size:11px; color:var(--text-tertiary); line-height:1.5; margin-top:14px; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:344px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Edit listing, section hub (HA-036)</h1>
+    <p>The destination every shipped post-publish editor already points at: <code>ha-037</code>, <code>ha-038</code>, <code>ha-039</code>, <code>ha-040</code>, <code>ha-043</code>, <code>ha-044</code>, <code>ha-045</code>, <code>ha-074</code>, <code>ha-075</code>, <code>ha-076</code> and <code>ha-078</code> all carry <code>href="/host/listings/cantt-view-residence/edit"</code> — this screen is that href. It mirrors the wizard's <b><span class="num">12</span> sections</b> as editor entries, captions taken verbatim from <code>ha-019</code>–<code>ha-032</code>, and <b>every section whose editor has already shipped links straight to it</b>. The rule the hub is built around is <b>one fact, one owner</b>: it renders <b>no owned value</b> — no nightly rate, no capacity, no qibla bearing, no load-shedding hours — because a hub that re-printed them would become a second place they could drift out of sync. Each row states the section's <i>scope</i> and hands off. Editor frame canon: app bar + listing identity, <b>no wizard bars</b>, and <b>no unsaved-changes bar</b> — a hub holds no form, so nothing can diverge from a saved value. "Preview as guest" appears while the listing is live and is replaced, when a compliance pause is on, by the calm paused notice and the one way back (<code>HA-073</code>). Panels: Cantt View Residence, live (light) · Gulberg <span class="num">2</span> Residence, auto-paused (light) · dark · اردو / RTL.</p>
+    <p class="datenote"><b>Dating, stated plainly:</b> today in this design set is <span class="num">24</span> July <span class="num">2026</span>, and <b>Cantt View Residence is snoozed until <span class="num">1</span> Aug</b> (<code>ha-046</code>). The live panels are therefore dated <b><span class="num">3</span> August <span class="num">2026</span></b> — after its shipped reopening, inside the August week <code>ha-043</code> already prices. The paused panel is dated <b><span class="num">15</span> November <span class="num">2026</span></b> for the reason <code>ha-073</code> states: the Punjab tourism license renews <span class="num">14</span> Nov <span class="num">2026</span>, so a lapse can only be shown after it.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — live · auto-paused</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — LIVE · PAUSED ============================ -->
+    <section class="panel" aria-label="Light theme — the hub for a live listing, and for a listing held by a compliance pause">
+      <div class="panel-tag">Light — A live listing · B auto-paused listing</div>
+      <div class="rowflex">
+
+        <!-- A · LIVE -->
+        <div class="pcol">
+          <div class="pcap">A · Live — twelve sections, every value owned elsewhere</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings" aria-label="Back to Listings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Edit listing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="lhead">
+                <span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span>
+                <h2 class="stname" id="aH">Cantt View Residence</h2>
+                <span class="stsub">Rawalpindi Cantonment · Entire place</span>
+                <span class="h-note">Every change saves inside the section you open — nothing here is a draft waiting to be published.</span>
+              </div>
+
+              <h3 class="grp">Your home</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/property-type"><span class="sec-n num" aria-hidden="true">1</span><span class="sec-b"><span class="sec-t">Property type</span><span class="sec-d">What kind of place it is, and how much of it guests get</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/location"><span class="sec-n num" aria-hidden="true">2</span><span class="sec-b"><span class="sec-t">Location</span><span class="sec-d">Address, map pin, and how much of it guests see before booking</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/capacity"><span class="sec-n num" aria-hidden="true">3</span><span class="sec-b"><span class="sec-t">Capacity</span><span class="sec-d">Guests, bedrooms, beds and bathrooms</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/amenities"><span class="sec-n num" aria-hidden="true">4</span><span class="sec-b"><span class="sec-t">Amenities</span><span class="sec-d">What's in the home, from air conditioning to a washing machine</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">Cultural &amp; practical</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/cultural-attributes"><span class="sec-n num" aria-hidden="true">5</span><span class="sec-b"><span class="sec-t">Cultural attributes</span><span class="sec-d">Halal kitchen, no-alcohol, family-only, pardah-respectful and the rest</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">6</span><span class="sec-b"><span class="sec-t">Qibla &amp; prayer</span><span class="sec-d">Two editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/cantt-view-residence/qibla"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Qibla direction</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/prayer-amenities"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Prayer amenities</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/women-only"><span class="sec-n num" aria-hidden="true">7</span><span class="sec-b"><span class="sec-t">Women-only &amp; mahram</span><span class="sec-d">Who the home is open to, stated as your policy</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">8</span><span class="sec-b"><span class="sec-t">PK-practical infrastructure</span><span class="sec-d">Three editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/cantt-view-residence/load-shedding"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Load-shedding schedule</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/backup-power"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Backup power</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/infrastructure"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Water, gas, Wi-Fi &amp; parking</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <h3 class="grp">How it reads to guests</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/photos"><span class="sec-n num" aria-hidden="true">9</span><span class="sec-b"><span class="sec-t">Photos</span><span class="sec-d">Add, reorder, caption, and choose the cover</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/title-description"><span class="sec-n num" aria-hidden="true">10</span><span class="sec-b"><span class="sec-t">Title &amp; description</span><span class="sec-d">The headline and the full description, in English and Urdu</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/house-rules"><span class="sec-n num" aria-hidden="true">11</span><span class="sec-b"><span class="sec-t">House rules</span><span class="sec-d">Check-in windows, guest limits, and the rules of your home</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">Money &amp; dates</h3>
+              <ul class="secs">
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">12</span><span class="sec-b"><span class="sec-t">Pricing &amp; availability</span><span class="sec-d">Five editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/cantt-view-residence/pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Nightly price &amp; fees</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/calendar"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Calendar &amp; per-date prices</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/seasonal-pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Eid &amp; Ramadan pricing</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/availability"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Min-stay &amp; booking rules</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/cancellation-policy"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Cancellation policy</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <a class="pv" href="/host/listings/preview">
+                <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                <span class="pv-b"><span class="pv-t">Preview as guest</span><span class="pv-d">See the listing exactly the way a guest does.</span></span>
+                <span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <h3 class="grp">This listing</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/compliance"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span><span class="sec-b"><span class="sec-t">Licenses &amp; compliance</span><span class="sec-d">Tourism license and the cantonment NOC for this address</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/status"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M9 8v8M15 8v8"/></svg></span><span class="sec-b"><span class="sec-t">Listing status</span><span class="sec-d">Snooze, unpublish, or remove this listing</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <p class="foot">Each section is edited in one place only, so what a guest reads and what you set never drift apart.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · AUTO-PAUSED -->
+        <div class="pcol">
+          <div class="pcap">B · Auto-paused — every section still editable, preview withheld</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings" aria-label="Back to Listings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Edit listing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="lhead">
+                <span class="stchip hold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Paused</span>
+                <h2 class="stname" id="bH">Gulberg <span class="num">2</span> Residence</h2>
+                <span class="stsub">Lahore · Entire place</span>
+                <span class="h-note">Everything here is still yours to edit while the listing is paused — the pause is about one document, not your home.</span>
+              </div>
+
+              <h3 class="grp">Your home</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/property-type"><span class="sec-n num" aria-hidden="true">1</span><span class="sec-b"><span class="sec-t">Property type</span><span class="sec-d">What kind of place it is, and how much of it guests get</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/location"><span class="sec-n num" aria-hidden="true">2</span><span class="sec-b"><span class="sec-t">Location</span><span class="sec-d">Address, map pin, and how much of it guests see before booking</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/capacity"><span class="sec-n num" aria-hidden="true">3</span><span class="sec-b"><span class="sec-t">Capacity</span><span class="sec-d">Guests, bedrooms, beds and bathrooms</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/amenities"><span class="sec-n num" aria-hidden="true">4</span><span class="sec-b"><span class="sec-t">Amenities</span><span class="sec-d">What's in the home, from air conditioning to a washing machine</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">Cultural &amp; practical</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/cultural-attributes"><span class="sec-n num" aria-hidden="true">5</span><span class="sec-b"><span class="sec-t">Cultural attributes</span><span class="sec-d">Halal kitchen, no-alcohol, family-only, pardah-respectful and the rest</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">6</span><span class="sec-b"><span class="sec-t">Qibla &amp; prayer</span><span class="sec-d">Two editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/gulberg-2-residence/qibla"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Qibla direction</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/gulberg-2-residence/prayer-amenities"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Prayer amenities</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/women-only"><span class="sec-n num" aria-hidden="true">7</span><span class="sec-b"><span class="sec-t">Women-only &amp; mahram</span><span class="sec-d">Who the home is open to, stated as your policy</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">8</span><span class="sec-b"><span class="sec-t">PK-practical infrastructure</span><span class="sec-d">Three editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/gulberg-2-residence/load-shedding"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Load-shedding schedule</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/gulberg-2-residence/backup-power"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Backup power</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/gulberg-2-residence/infrastructure"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Water, gas, Wi-Fi &amp; parking</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <h3 class="grp">How it reads to guests</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/photos"><span class="sec-n num" aria-hidden="true">9</span><span class="sec-b"><span class="sec-t">Photos</span><span class="sec-d">Add, reorder, caption, and choose the cover</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/title-description"><span class="sec-n num" aria-hidden="true">10</span><span class="sec-b"><span class="sec-t">Title &amp; description</span><span class="sec-d">The headline and the full description, in English and Urdu</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/house-rules"><span class="sec-n num" aria-hidden="true">11</span><span class="sec-b"><span class="sec-t">House rules</span><span class="sec-d">Check-in windows, guest limits, and the rules of your home</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">Money &amp; dates</h3>
+              <ul class="secs">
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">12</span><span class="sec-b"><span class="sec-t">Pricing &amp; availability</span><span class="sec-d">Five editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/gulberg-2-residence/pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Nightly price &amp; fees</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/calendar"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Calendar &amp; per-date prices</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/gulberg-2-residence/seasonal-pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Eid &amp; Ramadan pricing</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/gulberg-2-residence/availability"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Min-stay &amp; booking rules</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/gulberg-2-residence/cancellation-policy"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Cancellation policy</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="paused" role="status">
+                <span class="pico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg></span>
+                <span class="pbody">
+                  <span class="paused-t">Guests can't see this listing right now</span>
+                  <span class="paused-d">Your Punjab tourism license expired on <span class="num">14</span> November <span class="num">2026</span>, so the guest preview is off until it's back. <b>It comes back the moment your renewal verifies.</b></span>
+                  <a class="paused-lk" href="/host/listings/gulberg-2-residence/compliance/renew">Upload your renewed license →</a>
+                </span>
+              </div>
+
+              <h3 class="grp">This listing</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/compliance"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span><span class="sec-b"><span class="sec-t">Licenses &amp; compliance</span><span class="sec-d">Tourism license for this address</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/gulberg-2-residence/status"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M9 8v8M15 8v8"/></svg></span><span class="sec-b"><span class="sec-t">Listing status</span><span class="sec-d">Snooze, unpublish, or remove this listing</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <p class="foot">Your other two homes are unaffected — only this listing needs the Punjab license.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The hub's discipline is what it <b>doesn't</b> print. Not one nightly rate, capacity number, qibla bearing or load-shedding hour appears on this screen — each row names the section's scope and hands off to the single editor that owns the value (<code>ha-040</code>'s one-fact-one-owner precedent, applied to the whole listing rather than one field). Sections <span class="num">6</span>, <span class="num">8</span> and <span class="num">12</span> are <b>groups</b>, not links, because their facts are owned by several shipped editors: the group row states how many, and the sub-rows go straight to <code>HA-038</code>/<code>HA-039</code>, <code>HA-040</code>/<code>HA-074</code>/<code>HA-075</code>, and <code>HA-031</code>/<code>HA-041</code>/<code>HA-044</code>/<code>HA-045</code>/<code>HA-078</code>. Cultural and PK-practical sections sit in the running order the wizard gave them, at the same visual weight as Capacity and Amenities — no elevation, no ornament (§10.1). Panel <b>B</b> shows the one thing a compliance pause changes here: the guest preview goes, because there is nothing for a guest to see; <b>every section stays editable</b>, and the notice names the single lapsed document and the one way back, carrying <code>ha-073</code>'s restoration promise verbatim.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the hub for a live listing">
+      <div class="panel-tag">Dark — C live listing</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Live — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings" aria-label="Back to Listings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Edit listing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="lhead">
+                <span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span>
+                <h2 class="stname" id="cH">Cantt View Residence</h2>
+                <span class="stsub">Rawalpindi Cantonment · Entire place</span>
+                <span class="h-note">Every change saves inside the section you open — nothing here is a draft waiting to be published.</span>
+              </div>
+
+              <h3 class="grp">Your home</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/property-type"><span class="sec-n num" aria-hidden="true">1</span><span class="sec-b"><span class="sec-t">Property type</span><span class="sec-d">What kind of place it is, and how much of it guests get</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/location"><span class="sec-n num" aria-hidden="true">2</span><span class="sec-b"><span class="sec-t">Location</span><span class="sec-d">Address, map pin, and how much of it guests see before booking</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/capacity"><span class="sec-n num" aria-hidden="true">3</span><span class="sec-b"><span class="sec-t">Capacity</span><span class="sec-d">Guests, bedrooms, beds and bathrooms</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/amenities"><span class="sec-n num" aria-hidden="true">4</span><span class="sec-b"><span class="sec-t">Amenities</span><span class="sec-d">What's in the home, from air conditioning to a washing machine</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">Cultural &amp; practical</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/cultural-attributes"><span class="sec-n num" aria-hidden="true">5</span><span class="sec-b"><span class="sec-t">Cultural attributes</span><span class="sec-d">Halal kitchen, no-alcohol, family-only, pardah-respectful and the rest</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">6</span><span class="sec-b"><span class="sec-t">Qibla &amp; prayer</span><span class="sec-d">Two editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/cantt-view-residence/qibla"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Qibla direction</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/prayer-amenities"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Prayer amenities</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/women-only"><span class="sec-n num" aria-hidden="true">7</span><span class="sec-b"><span class="sec-t">Women-only &amp; mahram</span><span class="sec-d">Who the home is open to, stated as your policy</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">8</span><span class="sec-b"><span class="sec-t">PK-practical infrastructure</span><span class="sec-d">Three editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/cantt-view-residence/load-shedding"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Load-shedding schedule</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/backup-power"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Backup power</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/infrastructure"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Water, gas, Wi-Fi &amp; parking</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <h3 class="grp">How it reads to guests</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/photos"><span class="sec-n num" aria-hidden="true">9</span><span class="sec-b"><span class="sec-t">Photos</span><span class="sec-d">Add, reorder, caption, and choose the cover</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/title-description"><span class="sec-n num" aria-hidden="true">10</span><span class="sec-b"><span class="sec-t">Title &amp; description</span><span class="sec-d">The headline and the full description, in English and Urdu</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/house-rules"><span class="sec-n num" aria-hidden="true">11</span><span class="sec-b"><span class="sec-t">House rules</span><span class="sec-d">Check-in windows, guest limits, and the rules of your home</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">Money &amp; dates</h3>
+              <ul class="secs">
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">12</span><span class="sec-b"><span class="sec-t">Pricing &amp; availability</span><span class="sec-d">Five editors, each owning its own fact</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/host/listings/cantt-view-residence/pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Nightly price &amp; fees</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/calendar"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Calendar &amp; per-date prices</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/seasonal-pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Eid &amp; Ramadan pricing</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/availability"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Min-stay &amp; booking rules</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                    <a class="sub" href="/host/listings/cantt-view-residence/cancellation-policy"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">Cancellation policy</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <a class="pv" href="/host/listings/preview">
+                <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                <span class="pv-b"><span class="pv-t">Preview as guest</span><span class="pv-d">See the listing exactly the way a guest does.</span></span>
+                <span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <h3 class="grp">This listing</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/host/listings/cantt-view-residence/compliance"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span><span class="sec-b"><span class="sec-t">Licenses &amp; compliance</span><span class="sec-d">Tourism license and the cantonment NOC for this address</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/host/listings/cantt-view-residence/status"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M9 8v8M15 8v8"/></svg></span><span class="sec-b"><span class="sec-t">Listing status</span><span class="sec-d">Snooze, unpublish, or remove this listing</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <p class="foot">Each section is edited in one place only, so what a guest reads and what you set never drift apart.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps the numbered markers on the neutral <code>sunken</code> chip rather than the brand tint, so the twelve sections read as an index, not a progress track — this is a hub a host returns to for years, not a wizard being completed once. The single brand-tinted surface on the screen is "Preview as guest," because seeing the listing the way a guest does is the one genuinely forward action here.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the hub for a live listing">
+      <div class="panel-tag">RTL · اردو — لسٹنگ میں ترمیم</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — لسٹنگ میں ترمیم</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings" aria-label="لسٹنگز پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">لسٹنگ میں ترمیم</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="lhead">
+                <span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>لائیو</span>
+                <h2 class="stname" id="dH">کینٹ ویو ریزیڈنس</h2>
+                <span class="stsub">راولپنڈی کینٹونمنٹ · پورا گھر</span>
+                <span class="h-note">ہر تبدیلی اُسی سیکشن میں محفوظ ہوتی ہے جو آپ کھولتے ہیں — یہاں کچھ بھی مسودے کی صورت میں شائع ہونے کا منتظر نہیں۔</span>
+              </div>
+
+              <h3 class="grp">آپ کا گھر</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/property-type"><span class="sec-n num" aria-hidden="true">1</span><span class="sec-b"><span class="sec-t">جائیداد کی قسم</span><span class="sec-d">یہ کس قسم کی جگہ ہے، اور مہمانوں کو کتنا حصہ ملتا ہے</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/location"><span class="sec-n num" aria-hidden="true">2</span><span class="sec-b"><span class="sec-t">مقام</span><span class="sec-d">پتہ، نقشے پر نشان، اور بکنگ سے پہلے مہمان کتنا دیکھتے ہیں</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/capacity"><span class="sec-n num" aria-hidden="true">3</span><span class="sec-b"><span class="sec-t">گنجائش</span><span class="sec-d">مہمان، بیڈ روم، بستر اور غسل خانے</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/amenities"><span class="sec-n num" aria-hidden="true">4</span><span class="sec-b"><span class="sec-t">سہولیات</span><span class="sec-d">گھر میں کیا کچھ موجود ہے، اے سی سے واشنگ مشین تک</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">ثقافتی اور عملی</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/cultural-attributes"><span class="sec-n num" aria-hidden="true">5</span><span class="sec-b"><span class="sec-t">ثقافتی خصوصیات</span><span class="sec-d">حلال کچن، الکحل سے پاک، صرف فیملی، پردے کا احترام اور باقی</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">6</span><span class="sec-b"><span class="sec-t">قبلہ اور نماز</span><span class="sec-d">دو ایڈیٹر، ہر ایک اپنی معلومات کا ذمہ دار</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/qibla"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">قبلہ کی سمت</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/prayer-amenities"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">نماز کی سہولیات</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                  </div>
+                </li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/women-only"><span class="sec-n num" aria-hidden="true">7</span><span class="sec-b"><span class="sec-t">صرف خواتین اور محرم</span><span class="sec-d">گھر کن کے لیے کھلا ہے، آپ کی پالیسی کے طور پر</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">8</span><span class="sec-b"><span class="sec-t">پاکستانی عملی سہولیات</span><span class="sec-d">تین ایڈیٹر، ہر ایک اپنی معلومات کا ذمہ دار</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/load-shedding"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">لوڈشیڈنگ کا شیڈول</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/backup-power"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">بیک اپ پاور</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/infrastructure"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">پانی، گیس، وائی فائی اور پارکنگ</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <h3 class="grp">مہمانوں کو کیسا لگتا ہے</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/photos"><span class="sec-n num" aria-hidden="true">9</span><span class="sec-b"><span class="sec-t">تصاویر</span><span class="sec-d">شامل کریں، ترتیب بدلیں، عنوان دیں، اور سرِورق چنیں</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/title-description"><span class="sec-n num" aria-hidden="true">10</span><span class="sec-b"><span class="sec-t">عنوان اور تفصیل</span><span class="sec-d">سرخی اور مکمل تفصیل، انگریزی اور اردو میں</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/house-rules"><span class="sec-n num" aria-hidden="true">11</span><span class="sec-b"><span class="sec-t">گھر کے اصول</span><span class="sec-d">آمد کے اوقات، مہمانوں کی حد، اور آپ کے گھر کے اصول</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+              </ul>
+
+              <h3 class="grp">قیمت اور تاریخیں</h3>
+              <ul class="secs">
+                <li>
+                  <span class="sec group"><span class="sec-n num" aria-hidden="true">12</span><span class="sec-b"><span class="sec-t">قیمت اور دستیابی</span><span class="sec-d">پانچ ایڈیٹر، ہر ایک اپنی معلومات کا ذمہ دار</span></span></span>
+                  <div class="subs">
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">فی رات قیمت اور فیسیں</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/calendar"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">کیلنڈر اور روزانہ کی قیمتیں</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/seasonal-pricing"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">عید اور رمضان کی قیمتیں</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/availability"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">کم از کم قیام اور بکنگ کے اصول</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                    <a class="sub" href="/ur/host/listings/cantt-view-residence/cancellation-policy"><span class="sub-dot" aria-hidden="true"></span><span class="sub-t">منسوخی کی پالیسی</span><span class="sub-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a>
+                  </div>
+                </li>
+              </ul>
+
+              <a class="pv" href="/ur/host/listings/preview">
+                <span class="pv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+                <span class="pv-b"><span class="pv-t">مہمان کی نظر سے دیکھیں</span><span class="pv-d">لسٹنگ بالکل ویسے دیکھیں جیسے مہمان دیکھتا ہے۔</span></span>
+                <span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+              </a>
+
+              <h3 class="grp">یہ لسٹنگ</h3>
+              <ul class="secs">
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/compliance"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span><span class="sec-b"><span class="sec-t">لائسنس اور ضوابط</span><span class="sec-d">اس پتے کے لیے سیاحتی لائسنس اور کینٹونمنٹ NOC</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+                <li><a class="sec" href="/ur/host/listings/cantt-view-residence/status"><span class="sec-n" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;stroke-width:1.9;"><path d="M9 8v8M15 8v8"/></svg></span><span class="sec-b"><span class="sec-t">لسٹنگ کی حالت</span><span class="sec-d">وقفہ لیں، کچھ عرصے کے لیے ہٹا دیں، یا لسٹنگ ختم کر دیں</span></span><span class="sec-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></a></li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <p class="foot">ہر سیکشن کی ترمیم صرف ایک ہی جگہ ہوتی ہے، تاکہ مہمان جو پڑھتا ہے اور آپ جو طے کرتے ہیں کبھی الگ نہ ہوں۔</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): every chevron flips to the reading direction, the sub-row indent moves to the right edge, and the section numbers stay inside <code>.num</code> — Western digits, <code>direction:ltr; unicode-bidi:isolate</code> — so <span class="num">1</span>–<span class="num">12</span> read in the same order in both scripts (Pass&nbsp;#31 ruling). Section names reuse the Urdu already shipped by the wizard and the editors — "قبلہ اور نماز" from <code>ha-024</code>/<code>ha-033</code>, "لوڈشیڈنگ کا شیڈول" from <code>ha-040</code>, "بیک اپ پاور" from <code>ha-074</code>, "وقفہ لیں" from <code>ha-076</code> — no new Urdu is coined for a screen that only routes.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,30 @@
+name: Deploy
+
+# Hosting target is an open ADR (ARCHITECTURE: AWS ap-south-1; Vercel candidate for Next.js).
+# This workflow is a gated skeleton: it builds and stops. Wire the deploy step once the
+# hosting ADR closes and environment secrets exist. Never put credentials inline.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Deploy (blocked on hosting ADR)
+        run: |
+          echo "TODO: wire Next.js deploy once the hosting decision closes."
+          echo "Checklist: environment secrets set - CDN/domain config - rollback runbook."
+          exit 1

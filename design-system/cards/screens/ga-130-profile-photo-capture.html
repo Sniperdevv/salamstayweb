@@ -1,0 +1,428 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Profile photo capture &amp; crop (GA-130)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:640px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .tbar-title, .phone.rtl .cam-title, .phone.rtl .cam-sub, .phone.rtl .intro-h, .phone.rtl .intro-lead, .phone.rtl .df-t, .phone.rtl .hb-t, .phone.rtl .hb-d, .phone.rtl .hint-line span, .phone.rtl .fallback-btn, .phone.rtl .btn, .phone.rtl .st, .phone.rtl .sd, .phone.rtl .crop-cap { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom.oncam { background:var(--scrim); border-top:none; }
+  .sa-bottom.oncam span { color:var(--text-on-inverse); opacity:.85; }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+  .sa-bottom.oncam .home-ind { background:var(--text-on-inverse); }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:18px 16px 16px; }
+
+  /* intro */
+  .intro-av { width:96px; height:96px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:38px; font-weight:700; margin:6px auto 16px; }
+  .intro-h { font-size:19px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); text-align:center; margin-bottom:8px; }
+  .intro-lead { font-size:13px; color:var(--text-secondary); text-align:center; max-width:250px; margin:0 auto 16px; line-height:1.55; }
+
+  /* dual-framing (optional for guests / required for hosts) */
+  .dualframe { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:16px; display:flex; flex-direction:column; gap:10px; }
+  .df-row { display:flex; gap:10px; align-items:flex-start; }
+  .df-ic { flex:none; margin-top:1px; }
+  .df-ic svg { width:16px; height:16px; stroke-width:2; }
+  .df-row.guest .df-ic svg { color:var(--success-fg); }
+  .df-row.host .df-ic svg { color:var(--info-fg); }
+  .df-t { font-size:12px; color:var(--text-secondary); display:block; line-height:1.45; }
+  .df-t b { color:var(--text-primary); font-weight:600; }
+
+  /* host-context banner variant */
+  .hostbanner { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:16px; }
+  .hostbanner .hb-ic { flex:none; margin-top:1px; color:var(--info-fg); }
+  .hostbanner .hb-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .hb-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .hb-t { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .hb-d { font-size:12px; color:var(--text-secondary); display:block; line-height:1.5; }
+
+  .spacer-fill { flex:1; }
+  .actions { display:flex; flex-direction:column; gap:10px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.ghost { background:transparent; color:var(--text-secondary); min-height:44px; }
+
+  /* camera surface */
+  .cam { flex:1; position:relative; background:var(--bg-sunken); display:flex; flex-direction:column; overflow:hidden; }
+  .cam-scrim-top { position:absolute; top:0; left:0; right:0; z-index:3; background:var(--scrim); display:flex; flex-direction:column; align-items:center; padding:4px 4px 10px; }
+  .cam-scrim-top .cam-bar { display:flex; align-items:center; width:100%; min-height:48px; }
+  .cam-scrim-top .ib svg { color:var(--text-on-inverse); }
+  .cam-title { flex:1; text-align:center; font-size:13.5px; font-weight:600; color:var(--text-on-inverse); padding:0 2px; }
+  .cam-sub { font-size:11.5px; color:var(--text-on-inverse); opacity:.85; text-align:center; margin-top:2px; }
+  .cam-stage { flex:1; position:relative; display:flex; align-items:center; justify-content:center; }
+  .guide.oval { position:relative; width:180px; height:230px; border-radius:50%; box-shadow:0 0 0 999px var(--scrim); }
+  .guide-ring { position:absolute; inset:0; border:2px solid rgba(255,255,255,.7); border-radius:50%; }
+  .guide-ring.brand { inset:-6px; border:2px solid var(--int-primary); opacity:.9; }
+  .hint-line { position:absolute; bottom:96px; left:50%; transform:translateX(-50%); z-index:3; display:inline-flex; align-items:center; gap:7px; background:var(--scrim); border-radius:var(--radius-full); padding:7px 13px; white-space:nowrap; }
+  .hint-line svg { width:15px; height:15px; stroke-width:2; color:var(--success-fg); flex:none; }
+  .hint-line span { font-size:12px; font-weight:600; color:var(--text-on-inverse); }
+  .cam-scrim-bot { position:absolute; bottom:0; left:0; right:0; z-index:3; background:var(--scrim); padding:12px 18px 16px; }
+  .capbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .ctrl { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; }
+  .ctrl svg { width:24px; height:24px; color:var(--text-on-inverse); stroke-width:1.75; }
+  .shutter { width:64px; height:64px; border-radius:var(--radius-full); background:var(--text-on-inverse); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-card); }
+  .shutter span { width:52px; height:52px; border-radius:var(--radius-full); border:3px solid var(--int-primary); display:block; }
+  .fallback-btn { width:100%; min-height:44px; border-radius:var(--radius-md); background:transparent; border:1px solid rgba(255,255,255,.5); color:var(--text-on-inverse); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+  .fallback-btn svg { width:17px; height:17px; stroke-width:2; }
+
+  /* crop step */
+  .crop-stage { position:relative; height:262px; background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; overflow:hidden; flex:none; }
+  .crop-photo { position:absolute; inset:0; background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); }
+  .crop-photo::after { content:""; position:absolute; width:120px; height:120px; border-radius:var(--radius-full); background:var(--border-default); opacity:.45; top:50%; left:50%; transform:translate(-50%,-58%); }
+  .crop-circle { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:188px; height:188px; border-radius:50%; box-shadow:0 0 0 999px var(--scrim); border:2px solid var(--text-on-inverse); z-index:2; }
+  .crop-grid { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:188px; height:188px; z-index:3; }
+  .crop-handle { position:absolute; width:14px; height:14px; z-index:4; border:2.5px solid var(--text-on-inverse); }
+  .crop-handle.tl { top:calc(50% - 94px); left:calc(50% - 94px); border-right:none; border-bottom:none; }
+  .crop-handle.tr { top:calc(50% - 94px); right:calc(50% - 94px); border-left:none; border-bottom:none; }
+  .crop-handle.bl { bottom:calc(50% - 94px); left:calc(50% - 94px); border-right:none; border-top:none; }
+  .crop-handle.br { bottom:calc(50% - 94px); right:calc(50% - 94px); border-left:none; border-top:none; }
+  .crop-body { padding:16px 16px 8px; }
+  .crop-foot { padding:0 16px 14px; flex:none; }
+  .crop-cap { font-size:12.5px; color:var(--text-secondary); text-align:center; display:flex; align-items:center; justify-content:center; gap:7px; margin-bottom:14px; }
+  .crop-cap svg { width:15px; height:15px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+  .zoom-row { display:flex; align-items:center; gap:12px; padding:0 2px; }
+  .zoom-ic { color:var(--text-tertiary); flex:none; display:inline-flex; }
+  .zoom-ic.sm svg { width:15px; height:15px; }
+  .zoom-ic.lg svg { width:21px; height:21px; }
+  .zoom-ic svg { stroke-width:1.9; }
+  .zoom-track { flex:1; height:4px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); position:relative; }
+  .zoom-fill { position:absolute; top:-1px; left:0; height:4px; width:56%; border-radius:var(--radius-full); background:var(--int-primary); }
+  .zoom-thumb { position:absolute; top:50%; left:56%; transform:translate(-50%,-50%); width:20px; height:20px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1.5px solid var(--int-primary); box-shadow:var(--el-hairline); }
+
+  /* quality-check preview */
+  .qc-av { width:120px; height:120px; border-radius:var(--radius-full); margin:8px auto 16px; background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); position:relative; overflow:hidden; border:1px solid var(--border-hairline); }
+  .qc-av::after { content:""; position:absolute; width:66px; height:66px; border-radius:var(--radius-full); background:var(--border-default); opacity:.5; top:22px; left:27px; }
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:16px; }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow .sico { flex:none; margin-top:1px; color:var(--success-fg); }
+  .statusrow .sico svg { width:19px; height:19px; stroke-width:2; }
+  .statusrow .sbody { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .statusrow .st { font-size:12.5px; font-weight:600; color:var(--success-fg); display:block; }
+  .statusrow .sd { font-size:12px; color:var(--text-secondary); display:block; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Profile photo capture &amp; crop (GA-130)</h1>
+    <p>The guided capture/crop flow over the §13 camera surface (DESIGN §8.8, ga-044 lineage) — shared by guests and hosts. Intro states the dual framing plainly: <strong>optional for guests, required for hosts</strong> (factual, never punitive). The camera draws a face-position oval with lighting/quality hints ("find even light", "just you in the frame") and an <strong>always-present gallery fallback</strong> — capture is a convenience, never a gate. Then crop-to-circle (drag/zoom affordance, rule-of-thirds grid), a "Looks clear" quality check, and a host-context banner variant. No real faces anywhere — occupied slots use a neutral abstract placeholder. Panels: intro &amp; camera (light) · crop &amp; quality (dark) · host-context · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Intro · camera (light)</span><span>Crop · quality (dark)</span><span>Host-context</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — INTRO + CAMERA ============================ -->
+    <section class="panel" aria-label="Light theme — the intro and the camera capture surface">
+      <div class="panel-tag">Light — intro (dual framing) · camera (face oval + hints)</div>
+      <div class="rowflex">
+
+        <!-- A · INTRO -->
+        <div class="pcol">
+          <div class="pcap">A · Intro — optional for guests</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile/edit" aria-label="Back to editor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Add a photo</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="intro-av" aria-hidden="true">F</span>
+              <h2 class="intro-h">Add a photo, or keep your initials</h2>
+              <p class="intro-lead">A clear photo of just you helps a host recognise you at the door. It's entirely your choice.</p>
+
+              <div class="dualframe" role="note">
+                <div class="df-row guest">
+                  <span class="df-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="df-t"><b>Guests — a photo is optional.</b> Your initials are a complete, dignified profile on their own.</span>
+                </div>
+                <div class="df-row host">
+                  <span class="df-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+                  <span class="df-t"><b>Hosts — a photo is required.</b> Guests trust a face when they book a stay.</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="actions">
+                <a class="btn primary" href="/account/profile/photo/camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</a>
+                <a class="btn secondary" href="/account/profile/photo/gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 18l5-5 4 3 3-2 4 4"/></svg>Choose from gallery</a>
+                <a class="btn ghost" href="/account/profile/edit">Keep my initials</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · CAMERA -->
+        <div class="pcol">
+          <div class="pcap">B · Camera — face oval + hints</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="cam">
+              <div class="cam-scrim-top">
+                <div class="cam-bar">
+                  <button class="ib" type="button" aria-label="Close camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                  <span class="cam-title" id="bH">Position your face</span>
+                  <span class="spacer" aria-hidden="true"></span>
+                </div>
+                <span class="cam-sub">Just you in the frame</span>
+              </div>
+              <div class="cam-stage" role="img" aria-label="Live camera preview. An oval guide shows where to place your face; the area outside the oval is dimmed. Keep just yourself in the frame.">
+                <p class="sr-only">Center your face in the oval and find even light. The gallery fallback below works if you prefer not to use the camera.</p>
+                <div class="guide oval" aria-hidden="true">
+                  <span class="guide-ring"></span>
+                  <span class="guide-ring brand"></span>
+                </div>
+                <span class="hint-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg><span>Find even light</span></span>
+              </div>
+              <div class="cam-scrim-bot">
+                <div class="capbar">
+                  <button class="ctrl" type="button" aria-label="Switch camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8a8 8 0 0 0-14-3M4 5v3h3M4 16a8 8 0 0 0 14 3M20 19v-3h-3"/></svg></button>
+                  <button class="shutter" type="button" aria-label="Take photo"><span></span></button>
+                  <button class="ctrl" type="button" aria-label="Open gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 18l5-5 4 3 3-2 4 4"/></svg></button>
+                </div>
+                <button class="fallback-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg>Upload from gallery instead</button>
+              </div>
+            </div>
+            <div class="sa-bottom oncam"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The intro states the dual framing as a plain fact — <b>optional for guests, required for hosts</b> — never a scolding (§8.8/§10 tone). The camera draws a face-position <b>oval</b> (a selfie, versus the document guides of ga-041/ga-044), with quality hints "just you in the frame" and "find even light". Both the shutter <b>and</b> a gallery path are present (two ways in), and a full <b>"Upload from gallery instead"</b> fallback sits below — capture is a convenience, never a gate. Every target is ≥44pt (shutter 64); the striped bands annotate <code>env(safe-area-inset-*)</code>, dimmed to the camera scrim on the live surface.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — CROP + QUALITY ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the crop step and the quality check">
+      <div class="panel-tag">Dark — crop-to-circle (drag / zoom) · quality check</div>
+      <div class="rowflex">
+
+        <!-- C · CROP -->
+        <div class="pcol">
+          <div class="pcap">C · Crop — drag &amp; zoom, grid</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="cH">Crop your photo</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="crop-stage" role="img" aria-label="Your photo, ready to crop. A circular crop area is centred; drag to reposition and use the slider to zoom. This is a neutral placeholder, not a real face.">
+              <div class="crop-photo" aria-hidden="true"></div>
+              <div class="crop-circle" aria-hidden="true"></div>
+              <svg class="crop-grid" viewBox="0 0 188 188" fill="none" aria-hidden="true"><path d="M62.7 0V188M125.3 0V188M0 62.7H188M0 125.3H188" stroke="rgba(255,255,255,.45)" stroke-width="1"/></svg>
+              <span class="crop-handle tl" aria-hidden="true"></span>
+              <span class="crop-handle tr" aria-hidden="true"></span>
+              <span class="crop-handle bl" aria-hidden="true"></span>
+              <span class="crop-handle br" aria-hidden="true"></span>
+            </div>
+            <div class="crop-body">
+              <div class="crop-cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l-2 3 2 3M19 9l2 3-2 3M9 5l3-2 3 2M9 19l3 2 3-2"/></svg>Drag to reposition · pinch or slide to zoom</div>
+              <div class="zoom-row">
+                <span class="zoom-ic sm" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+                <span class="zoom-track" role="slider" aria-label="Zoom" aria-valuemin="1" aria-valuemax="3" aria-valuenow="2" tabindex="0"><span class="zoom-fill" aria-hidden="true"></span><span class="zoom-thumb" aria-hidden="true"></span></span>
+                <span class="zoom-ic lg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+              </div>
+            </div>
+            <div class="spacer-fill"></div>
+            <div class="crop-foot">
+              <div class="actions">
+                <a class="btn primary" href="/account/profile/photo/check">Looks good</a>
+                <button class="btn secondary" type="button">Retake</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · QUALITY CHECK -->
+        <div class="pcol">
+          <div class="pcap">D · Quality check — "Looks clear"</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Back to crop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="dH">Your photo</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="qc-av" aria-hidden="true"></span>
+              <span class="sr-only">Cropped photo preview. This is a neutral placeholder, not a real face.</span>
+              <div class="statusrow ok" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="sbody"><span class="st">Looks clear</span><span class="sd">Good, even light and it's just you in the frame.</span></span>
+              </div>
+              <div class="spacer-fill"></div>
+              <div class="actions">
+                <a class="btn primary" href="/account/profile/edit">Use this photo</a>
+                <button class="btn secondary" type="button">Retake</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Crop-to-circle matches the avatar shape (§9-J): a centred circular mask, a rule-of-thirds grid, corner drag-handles, and a zoom slider (drawn static; a real <code>role="slider"</code> for keyboard/AT). The quality check is <b>encouraging, not a gate</b> — "Looks clear" confirms light + a single subject; a soft/dark frame would read as "worth a retake," never "rejected" (§8.8/§10 tone). The preview is a <b>neutral abstract placeholder</b>, never a rendered face on this fictional identity.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL — HOST CONTEXT ============================ -->
+    <section class="panel" aria-label="Light theme — the shared surface framed for a host, where a photo is required">
+      <div class="panel-tag">Host-context — same surface, photo required (stated factually)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · Host — a photo is required</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/profile/edit" aria-label="Back to host profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="eH">Add your photo</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="intro-av" aria-hidden="true">F</span>
+              <h2 class="intro-h">Add a photo of yourself</h2>
+              <p class="intro-lead">A clear photo of just you, so guests recognise their host.</p>
+
+              <div class="hostbanner" role="note">
+                <span class="hb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+                <div class="hb-b">
+                  <span class="hb-t">A photo is part of a host profile</span>
+                  <span class="hb-d">Hosts add a photo so guests know who they're staying with. You can still choose the exact shot you're comfortable with.</span>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="actions">
+                <a class="btn primary" href="/host/profile/photo/camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</a>
+                <a class="btn secondary" href="/host/profile/photo/gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 18l5-5 4 3 3-2 4 4"/></svg>Choose from gallery</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The same capture surface serves hosts — the only change is framing: the "Keep my initials" path is absent and a plain info banner states the requirement as a <b>fact of a host profile</b>, never a penalty ("You can still choose the exact shot you're comfortable with"). This is the shared <code>GA-130</code> flow referenced by the host-profile editor (DESIGN §9-K), kept dignified per §8.8/§10.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the camera capture surface">
+      <div class="panel-tag">RTL · اردو — "تصویر لیں", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">F · اردو — camera</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="cam">
+              <div class="cam-scrim-top">
+                <div class="cam-bar">
+                  <button class="ib" type="button" aria-label="کیمرہ بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                  <span class="cam-title" id="uH">اپنا چہرہ جمائیں</span>
+                  <span class="spacer" aria-hidden="true"></span>
+                </div>
+                <span class="cam-sub">فریم میں صرف آپ</span>
+              </div>
+              <div class="cam-stage" role="img" aria-label="لائیو کیمرہ پیش منظر۔ ایک بیضوی رہنما دکھاتا ہے کہ چہرہ کہاں رکھیں؛ باہر کا حصہ مدھم ہے۔">
+                <p class="sr-only">اپنا چہرہ بیضے میں درمیان رکھیں اور ہموار روشنی تلاش کریں۔ اگر کیمرہ استعمال نہ کرنا چاہیں تو نیچے گیلری کا متبادل موجود ہے۔</p>
+                <div class="guide oval" aria-hidden="true">
+                  <span class="guide-ring"></span>
+                  <span class="guide-ring brand"></span>
+                </div>
+                <span class="hint-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg><span>ہموار روشنی تلاش کریں</span></span>
+              </div>
+              <div class="cam-scrim-bot">
+                <div class="capbar">
+                  <button class="ctrl" type="button" aria-label="کیمرہ بدلیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8a8 8 0 0 0-14-3M4 5v3h3M4 16a8 8 0 0 0 14 3M20 19v-3h-3"/></svg></button>
+                  <button class="shutter" type="button" aria-label="تصویر لیں"><span></span></button>
+                  <button class="ctrl" type="button" aria-label="گیلری کھولیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 18l5-5 4 3 3-2 4 4"/></svg></button>
+                </div>
+                <button class="fallback-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg>اس کے بجائے گیلری سے منتخب کریں</button>
+              </div>
+            </div>
+            <div class="sa-bottom oncam"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored (§11): the close button and controls follow the reading direction; the face oval and shutter are non-directional and do not mirror. Copy localises — "فریم میں صرف آپ" (just you in the frame), "ہموار روشنی تلاش کریں" (find even light) — and the gallery fallback stays present, so capture is never the only path in Urdu either.</p>
+    </section>
+
+  </main>
+</body>
+</html>

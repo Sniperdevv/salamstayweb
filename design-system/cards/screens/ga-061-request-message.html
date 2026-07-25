@@ -1,0 +1,429 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-061 Request-to-book message</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:860px; }
+  .head .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+
+  .phone { background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+  .appbar { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; }
+  .iconbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .iconbtn:hover { background:var(--bg-raised); }
+  .iconbtn svg { width:22px; height:22px; stroke-width:2; }
+  .appbar .title { flex:1; font-size:17px; font-weight:600; color:var(--text-primary); }
+  .appbar .opt { font-size:12px; font-weight:600; color:var(--text-tertiary); }
+
+  .screen { flex:1; overflow-y:auto; padding:8px 20px 20px; display:flex; flex-direction:column; }
+  .screen .lede { font-size:13.5px; color:var(--text-secondary); line-height:1.55; }
+  .screen .lede b { color:var(--text-primary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* party-context card */
+  .party { display:flex; align-items:center; gap:12px; padding:13px 14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); margin-top:14px; }
+  .party .pav { width:44px; height:44px; border-radius:var(--radius-full); background:var(--int-subtle); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--int-primary); }
+  .party .pav svg { width:22px; height:22px; stroke-width:1.7; }
+  .party .pbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .party .pn { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .party .pchips { display:flex; flex-wrap:wrap; gap:6px; }
+  .vchip { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:2px 8px; }
+  .vchip svg { width:12px; height:12px; stroke-width:2.2; }
+  .pchip { display:inline-flex; align-items:center; font-size:11px; font-weight:600; color:var(--text-secondary); background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+
+  /* prompt guidance */
+  .guide { margin-top:18px; }
+  .guide .gl { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:9px; }
+  .gitem { display:flex; align-items:center; gap:9px; font-size:13px; color:var(--text-secondary); padding:5px 0; }
+  .gitem svg { width:16px; height:16px; stroke-width:1.9; color:var(--int-primary); flex:none; }
+
+  /* composer */
+  .composer { margin-top:16px; }
+  .composer .clabel { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:8px; }
+  .composer .clabel .lt { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); }
+  .composer .clabel .ct { font-size:12px; color:var(--text-tertiary); font-variant-numeric:tabular-nums; }
+  .composer .clabel .ct.near { color:var(--warning-fg); font-weight:600; }
+  .ta { width:100%; min-height:140px; resize:none; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); color:var(--text-primary); font-size:14.5px; font-family:inherit; line-height:1.55; padding:13px 14px; }
+  .ta::placeholder { color:var(--text-tertiary); }
+  .ta:focus-visible { outline:2px solid var(--int-primary); outline-offset:1px; border-color:var(--int-primary); }
+
+  /* privacy line */
+  .privacy { display:flex; gap:10px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-top:14px; }
+  .privacy .pi { color:var(--info-fg); flex:none; margin-top:1px; }
+  .privacy .pi svg { width:19px; height:19px; stroke-width:1.9; }
+  .privacy p { font-size:12.5px; color:var(--text-secondary); line-height:1.5; }
+  .privacy b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; min-height:10px; }
+
+  /* CTA bar */
+  .ctabar { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(14px + env(safe-area-inset-bottom)); }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .cta svg { width:18px; height:18px; stroke-width:2; }
+  .cta.ghost { background:var(--bg-canvas); color:var(--int-primary); border:1px solid var(--border-default); margin-top:10px; }
+  .cta.ghost:hover { background:var(--bg-raised); }
+  .cta-note { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.5; }
+  .cta-note b { color:var(--text-secondary); font-weight:600; }
+
+  /* request-sent confirmation */
+  .sent { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:26px; }
+  .sent .tick { width:76px; height:76px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .sent .tick svg { width:38px; height:38px; stroke-width:2.2; }
+  .sent h2 { font-size:20px; font-weight:600; color:var(--text-primary); margin-top:16px; letter-spacing:-0.01em; }
+  .sent .sp { font-size:13.5px; color:var(--text-secondary); margin-top:8px; line-height:1.55; max-width:300px; }
+  .sent .sp b { color:var(--text-primary); font-weight:600; }
+  .nextcard { width:100%; margin-top:20px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .nstep { display:flex; gap:11px; align-items:flex-start; padding:12px 14px; border-bottom:1px solid var(--border-hairline); }
+  .nstep:last-child { border-bottom:none; }
+  .nstep .ni { width:28px; height:28px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .nstep .ni svg { width:15px; height:15px; stroke-width:1.9; }
+  .nstep .nt { font-size:13px; font-weight:600; color:var(--text-primary); display:block; text-align:start; }
+  .nstep .nd { font-size:11.5px; color:var(--text-secondary); margin-top:1px; display:block; text-align:start; }
+
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL / Urdu */
+  .urdu .screen, .urdu .appbar .title, .urdu .party, .urdu .guide, .urdu .composer, .urdu .privacy, .urdu .cta, .urdu .cta-note, .urdu .sent, .urdu .nextcard { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu .screen .lede, .urdu .privacy p, .urdu .sent .sp { line-height:1.9; }
+  .urdu .ta { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Request-to-book message (GA-061)</h1>
+    <p>The optional note to the host on a request-to-book (§9-E). The guest's party type carries through as read-only context (Couple · docs verified), light guidance nudges a useful note, and a privacy line states the rule plainly: <strong>the phone number is never shared until the booking is confirmed</strong>. A live character count, and a "Send booking request" CTA that says the host has 24 hours and no charge lands until they accept. Panels: empty, written, dark (written), the request-sent confirmation, and Urdu / RTL.</p>
+    <div class="toggle"><span class="on">Empty</span><span>Written</span><span>Dark · written</span><span>Request sent</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ 1 · EMPTY (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Empty — prompt &amp; guidance</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="title">Message the host</span>
+            <span class="opt">Optional</span>
+          </div>
+
+          <div class="screen">
+            <p class="lede">Add a note with your request to <b>Ayesha</b> at <b>Margalla View Apartment</b>. It's optional, but a short hello often helps a host say yes.</p>
+
+            <div class="party">
+              <span class="pav" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10-4.3"/></svg></span>
+              <span class="pbd">
+                <span class="pn">Couple · 2 guests</span>
+                <span class="pchips">
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Documents verified</span>
+                  <span class="pchip">Fri 14 – Mon 17 Aug</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="guide">
+              <div class="gl">A good note usually</div>
+              <div class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>Introduces who's coming</div>
+              <div class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Shares your rough arrival time</div>
+              <div class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg>Asks anything you'd like to know</div>
+            </div>
+
+            <div class="composer">
+              <div class="clabel"><span class="lt">Your note</span><span class="ct num">0 / 500</span></div>
+              <textarea class="ta" placeholder="As-salamu alaikum! We're a couple travelling for a family event and expect to arrive around 4 pm. Is early check-in possible?" aria-label="Your note to the host"></textarea>
+            </div>
+
+            <div class="privacy">
+              <span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span>
+              <p><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</p>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Send booking request<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+            <p class="cta-note"><b>The host has 24 hours to accept.</b> You're not charged until they do.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 2 · WRITTEN (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Written — note added</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="title">Message the host</span>
+            <span class="opt">Optional</span>
+          </div>
+
+          <div class="screen">
+            <p class="lede">Add a note with your request to <b>Ayesha</b> at <b>Margalla View Apartment</b>. It's optional, but a short hello often helps a host say yes.</p>
+
+            <div class="party">
+              <span class="pav" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10-4.3"/></svg></span>
+              <span class="pbd">
+                <span class="pn">Couple · 2 guests</span>
+                <span class="pchips">
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Documents verified</span>
+                  <span class="pchip">Fri 14 – Mon 17 Aug</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="composer">
+              <div class="clabel"><span class="lt">Your note</span><span class="ct num">198 / 500</span></div>
+              <textarea class="ta" aria-label="Your note to the host">As-salamu alaikum Ayesha! We're a married couple visiting Islamabad for my cousin's wedding. We'd reach around 4 pm on Friday — is early check-in possible? Also, is parking available for one car? Shukriya.</textarea>
+            </div>
+
+            <div class="privacy">
+              <span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span>
+              <p><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</p>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Send booking request<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+            <p class="cta-note"><b>The host has 24 hours to accept.</b> You're not charged until they do.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 3 · DARK (written) ============ -->
+      <div class="device">
+        <p class="devlabel">Dark — note added</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="title">Message the host</span>
+            <span class="opt">Optional</span>
+          </div>
+
+          <div class="screen">
+            <p class="lede">Add a note with your request to <b>Ayesha</b> at <b>Margalla View Apartment</b>. It's optional, but a short hello often helps a host say yes.</p>
+
+            <div class="party">
+              <span class="pav" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10-4.3"/></svg></span>
+              <span class="pbd">
+                <span class="pn">Couple · 2 guests</span>
+                <span class="pchips">
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Documents verified</span>
+                  <span class="pchip">Fri 14 – Mon 17 Aug</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="composer">
+              <div class="clabel"><span class="lt">Your note</span><span class="ct near num">471 / 500</span></div>
+              <textarea class="ta" aria-label="Your note to the host">As-salamu alaikum Ayesha! We're a married couple visiting Islamabad for my cousin's wedding at a nearby hall. We'd reach around 4 pm on Friday — is early check-in possible, even by an hour? Parking for one car would help. We're quiet guests and will treat the home with care. Please let us know if you need anything from our side. Shukriya!</textarea>
+            </div>
+
+            <div class="privacy">
+              <span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span>
+              <p><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</p>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Send booking request<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+            <p class="cta-note"><b>The host has 24 hours to accept.</b> You're not charged until they do.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4 · REQUEST SENT (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Request sent — what happens next (→ GA-065)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <span class="title">Booking request</span>
+          </div>
+
+          <div class="screen">
+            <div class="sent">
+              <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l4 4L20 6"/></svg></span>
+              <h2>Request sent to Ayesha</h2>
+              <span class="sp">Your note is on its way. Nothing is charged yet — you'll pay only if <b>Ayesha</b> accepts.</span>
+
+              <div class="nextcard">
+                <div class="nstep">
+                  <span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+                  <span><span class="nt">The host replies within 24 hours</span><span class="nd">We'll notify you the moment Ayesha responds.</span></span>
+                </div>
+                <div class="nstep">
+                  <span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                  <span><span class="nt">If accepted, you confirm &amp; pay</span><span class="nd">Your price and dates are held until then.</span></span>
+                </div>
+                <div class="nstep">
+                  <span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                  <span><span class="nt">Chat opens once it's confirmed</span><span class="nd">Contact details are shared only after that.</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <a class="cta" href="/trips/requests/is-f7-2bed-aug2026" role="button">View your request<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="cta ghost" href="/rooms/is-f7-2bed" role="button">Keep browsing stays</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 5 · URDU / RTL — EMPTY ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — prompt &amp; guidance</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="جائزے پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="title">میزبان کو پیغام</span>
+            <span class="opt">اختیاری</span>
+          </div>
+
+          <div class="screen">
+            <p class="lede"><b>عائشہ</b> کو <b>مارگلہ ویو اپارٹمنٹ</b> کے لیے اپنی درخواست کے ساتھ ایک نوٹ لکھیں۔ یہ اختیاری ہے، مگر ایک مختصر سلام اکثر میزبان کو ہاں کہنے میں مدد دیتا ہے۔</p>
+
+            <div class="party">
+              <span class="pav" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10-4.3"/></svg></span>
+              <span class="pbd">
+                <span class="pn">جوڑا · <span class="num">2</span> مہمان</span>
+                <span class="pchips">
+                  <span class="vchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>دستاویزات تصدیق شدہ</span>
+                  <span class="pchip num">14 – 17 Aug</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="guide">
+              <div class="gl">اچھے نوٹ میں عموماً</div>
+              <div class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>کون آ رہا ہے، اس کا تعارف</div>
+              <div class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>پہنچنے کا تقریبی وقت</div>
+              <div class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg>جو کچھ پوچھنا ہو، پوچھیں</div>
+            </div>
+
+            <div class="composer">
+              <div class="clabel"><span class="lt">آپ کا نوٹ</span><span class="ct num">0 / 500</span></div>
+              <textarea class="ta" placeholder="السلام علیکم! ہم ایک جوڑا ہیں، ایک خاندانی تقریب کے لیے آ رہے ہیں اور تقریباً 4 بجے پہنچیں گے۔ کیا جلد چیک اِن ممکن ہے؟" aria-label="میزبان کے لیے آپ کا نوٹ"></textarea>
+            </div>
+
+            <div class="privacy">
+              <span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></span>
+              <p><b>آپ کا فون نمبر نجی رہتا ہے۔</b> یہ میزبان کے ساتھ صرف بکنگ کی تصدیق کے بعد شیئر ہوتا ہے — درخواست کے ساتھ کبھی نہیں۔</p>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">بکنگ کی درخواست بھیجیں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></button>
+            <p class="cta-note"><b>میزبان کے پاس قبول کرنے کے لیے 24 گھنٹے ہیں۔</b> اس سے پہلے کوئی رقم نہیں کٹے گی۔</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

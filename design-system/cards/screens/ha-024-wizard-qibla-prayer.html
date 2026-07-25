@@ -1,0 +1,554 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Wizard: Qibla &amp; prayer amenities (HA-024)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim + border-strong role (ga-031 lineage) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — host lineage; no checkout stepper (§7.6a) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.sh,.qbearing .deg,.qbearing .dir,.qhint p,.fld .flabel,.field-sub,.mrow .n,.mrow .m,.arow .t,.arow .d,.pv-t,.pv-d,.honestnote p,.wcap,.hc-a,.hc-now,.helplink,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — replaces the checkout stepper (§7.6a) */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 0; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  /* wizard progress — 12 thin bars, verify-family sub-progress grammar (§7.6a), bars = steps completed (ha-019 canonical convention) */
+  .wprog { padding:8px 18px 0; flex:none; }
+  .wprog .wbars { display:flex; gap:3px; margin-bottom:6px; }
+  .wprog .wbars i { display:block; height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); font-style:normal; }
+  .wprog .wbars i.done, .wprog .wbars i.now { background:var(--int-primary); }
+  .wprog .wbars i.now { opacity:.55; }
+  .wprog .wcap { font-size:11px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:12px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:16px 0 9px; }
+  .sh:first-of-type { margin-top:0; }
+
+  /* ===== Qibla bearing picker — host editor: dial + numeric degrees + auto-detect (§8.8 §15 inputs) ===== */
+  .qcard { padding:18px 15px; border-radius:var(--radius-xl); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .autobadge { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:4px 10px; margin-bottom:13px; }
+  .autobadge svg { width:12px; height:12px; stroke-width:2.4; flex:none; }
+  .autobadge.manual { color:var(--info-fg); background:var(--info-bg); border-color:var(--info-border); }
+  .compass-face { width:150px; height:150px; border-radius:50%; border:1.5px solid var(--border-default); background:var(--bg-canvas); position:relative; direction:ltr; }
+  .compass-face .card { position:absolute; font-size:11px; font-weight:600; color:var(--text-tertiary); }
+  .compass-face .cn { top:7px; left:50%; transform:translateX(-50%); }
+  .compass-face .cs { bottom:7px; left:50%; transform:translateX(-50%); }
+  .compass-face .ce { right:8px; top:50%; transform:translateY(-50%); }
+  .compass-face .cw { left:8px; top:50%; transform:translateY(-50%); }
+  .compass-face .ring { position:absolute; inset:19px; border-radius:50%; border:1px dashed var(--border-hairline); }
+  /* needle rotated to the real bearing; geometric-neutral, never ornamental; does NOT mirror under RTL */
+  .needle { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; transform:rotate(255deg); }
+  .needle svg { width:112px; height:112px; }
+  .needle .tip { color:var(--int-primary); }
+  .needle .tail { color:var(--text-tertiary); }
+  .compass-face .hub { position:absolute; top:50%; left:50%; width:12px; height:12px; border-radius:50%; background:var(--text-primary); transform:translate(-50%,-50%); border:2px solid var(--bg-canvas); }
+  .draghandle { position:absolute; top:50%; left:50%; width:22px; height:22px; border-radius:50%; background:var(--int-primary); border:2px solid var(--bg-canvas); box-shadow:var(--el-hairline); transform:translate(-50%,-50%) rotate(255deg) translateY(-58px); display:flex; align-items:center; justify-content:center; }
+  .draghandle svg { width:11px; height:11px; color:var(--text-on-brand); stroke-width:2.6; }
+  .qbearing { margin-top:14px; }
+  .qbearing .deg { font-size:24px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+  .qbearing .dir { font-size:12.5px; font-weight:600; color:var(--text-secondary); margin-top:2px; }
+  .qhint { display:flex; gap:9px; align-items:flex-start; margin-top:13px; padding:11px 12px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); text-align:start; width:100%; }
+  .qhint svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.75; }
+  .qhint p { font-size:12px; color:var(--text-secondary); line-height:1.45; }
+  .qhint p b { color:var(--text-primary); font-weight:600; }
+  .manualbtn { display:inline-flex; align-items:center; gap:6px; margin-top:12px; height:36px; padding:0 14px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:12.5px; font-weight:600; color:var(--text-primary); cursor:pointer; font-family:inherit; }
+  .manualbtn svg { width:14px; height:14px; stroke-width:1.9; }
+
+  /* manual numeric bearing field — keyboard/AT-settable alternative to the dial */
+  .fld { margin-top:14px; width:100%; text-align:start; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+  .degfield { display:flex; align-items:center; gap:8px; }
+  .txtinput { flex:1; min-width:0; min-height:46px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 13px; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .degunit { flex:none; font-size:13px; font-weight:600; color:var(--text-secondary); }
+  .resetbtn { flex:none; height:46px; padding:0 13px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:12px; font-weight:600; color:var(--int-primary); cursor:pointer; font-family:inherit; }
+
+  /* prayer amenities — stepper + detail rows */
+  .steprow { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-hairline); }
+  .steprow:last-child { border-bottom:none; }
+  .step-ic { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; }
+  .step-ic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.7; }
+  .step-b { flex:1; min-width:0; }
+  .step-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .step-d { font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+  .stepper { display:flex; align-items:center; gap:10px; flex:none; }
+  .stepbtn { width:32px; height:32px; border-radius:50%; border:1px solid var(--border-default); background:var(--bg-canvas); color:var(--text-primary); font-size:16px; font-weight:600; display:flex; align-items:center; justify-content:center; cursor:pointer; font-family:inherit; }
+  .stepval { font-size:14px; font-weight:600; color:var(--text-primary); min-width:14px; text-align:center; }
+
+  /* nearest masjid */
+  .mrow { display:flex; gap:12px; align-items:center; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-top:4px; }
+  .mrow .ic { width:36px; height:36px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .mrow .ic svg { width:18px; height:18px; color:var(--text-secondary); stroke-width:1.75; }
+  .mrow .mx { flex:1; min-width:0; }
+  .mrow .n { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .mrow .m { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* guest-preview block (ga-030/screen-listing-detail lineage) */
+  .pv { margin-top:6px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .pv-h { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  .pv-h svg { width:14px; height:14px; color:var(--int-primary); stroke-width:2; flex:none; }
+  .pv-ht { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); }
+  .pv-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .pv-d { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+
+  .spacer-fill { flex:1; }
+  .btnrow { display:flex; gap:10px; margin-top:16px; }
+  .btn { min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; flex:1; }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); flex:none; width:48px; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Wizard: Qibla &amp; prayer amenities (HA-024)</h1>
+    <p>Step 6 of the 12-step listing wizard (DESIGN §9-B, §8.8 §15 inputs; SCREENS row C1/MISSION §5): the <b>Qibla bearing picker</b> — a host editor distinct from the guest's read-only display compass — shown as a calm modern dial with a single needle + degree readout, <b>auto-detected from the location pin</b> (<code>HA-020</code>) with a manual-adjust affordance and a keyboard-settable numeric field for "if you know your home's exact bearing." Below it: prayer-mat count and a wudu-area note, the <b>nearest masjid</b> framed as practical travel info ("about a 4-minute walk") with an optional name field, and a live preview of the guest-facing Prayer &amp; Qibla block (<code>ga-030</code> lineage). Geometric-neutral throughout — the dial is a navigation instrument, never ornament. Case: host Aqib, new listing <b>Cantt View Residence, Rawalpindi Cantonment</b> (<code>ha-014</code>/<code>ha-018</code> lineage; same region as the shipped <code>ga-030</code> bearing). Panels: auto-detected (light) · manual-adjust (light) · dark · اردو / RTL.</p>
+    <div class="legend">
+      <span>Tokens only</span><span>Light · Dark · RTL/Urdu</span><span>≥44pt targets</span><span>Safe-area top+bottom</span>
+      <span>Step 6 of 12 · thin-bar progress</span><span>Compass = instrument, never ornament</span>
+      <span>Bearing never mirrors (§11)</span><span>Numeric bearing = keyboard/AT settable</span><span>No invented stats</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — AUTO-DETECTED · MANUAL-ADJUST ============================ -->
+    <section class="panel" aria-label="Light theme — auto-detected bearing, and the manual-adjust state">
+      <div class="panel-tag">Light — A auto-detected from the map pin · B manual-adjust open</div>
+      <div class="rowflex">
+
+        <!-- A · AUTO-DETECTED -->
+        <div class="pcol">
+          <div class="pcap">A · Auto-detected from your map pin</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/cultural-attributes" aria-label="Back to Cultural attributes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Qibla &amp; prayer</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">Step 6 of 12 · Qibla &amp; prayer</p>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Set your Qibla &amp; prayer amenities</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment.</p>
+
+              <h3 class="sh">Qibla bearing</h3>
+              <div class="qcard">
+                <span class="autobadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Auto-detected from your map pin</span>
+                <div class="compass-face" role="img" aria-label="Qibla bearing is 255 degrees, west-south-west, detected from this listing's map pin">
+                  <span class="ring" aria-hidden="true"></span>
+                  <span class="card cn">N</span><span class="card ce">E</span><span class="card cs">S</span><span class="card cw">W</span>
+                  <span class="needle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path class="tip" d="M12 3l3.4 8H8.6z" fill="currentColor"/><path class="tail" d="M12 21l3.4-8H8.6z" fill="currentColor" opacity=".45"/></svg>
+                  </span>
+                  <span class="hub" aria-hidden="true"></span>
+                </div>
+                <div class="qbearing">
+                  <div class="deg"><span class="num">255</span>°</div>
+                  <div class="dir">West-south-west</div>
+                </div>
+                <div class="qhint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 5.5h2"/></svg>
+                  <p>Calculated automatically from your listing's <b>location pin</b> (<code>Step 2</code>). Guests see this exact bearing on your listing page.</p>
+                </div>
+                <button class="manualbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Adjust manually — if you know your home's exact bearing</button>
+              </div>
+
+              <h3 class="sh">Prayer amenities</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">Prayer mats</div><div class="step-d">How many are kept ready in the home</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="Decrease prayer mat count">−</button>
+                  <span class="stepval num" aria-live="polite">2</span>
+                  <button class="stepbtn" type="button" aria-label="Increase prayer mat count">+</button>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="wa1">Wudu area — location note (optional)</label>
+                <input class="txtinput" id="wa1" type="text" value="Attached to the main bedroom bathroom" />
+                <span class="field-sub">Wudu-friendly bathroom was turned on in the previous step — this just tells guests where.</span>
+              </div>
+
+              <h3 class="sh">Nearest masjid</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">About a <span class="num">4</span>-minute walk</div>
+                  <div class="m">Detected from your map pin — <span class="num">~300</span> m</div>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="mn1">Masjid name (optional)</label>
+                <input class="txtinput" id="mn1" type="text" placeholder="e.g. Bilal Masjid, Cantt Bazaar" />
+                <span class="field-sub">Optional — leave it blank and guests still see the walking distance.</span>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t">Prayer &amp; Qibla</div>
+                <div class="pv-d">Qibla is roughly <b>west-south-west</b> from this property. The nearest masjid is about a <span class="num">4</span>-minute walk.</div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Only declare what's genuinely available — guests plan their prayers around these details.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <a class="btn secondary" href="/host/listings/new/cultural-attributes" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+                <a class="btn primary" href="/host/listings/new/women-only">Save &amp; continue</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · MANUAL-ADJUST -->
+        <div class="pcol">
+          <div class="pcap">B · Manual-adjust — draggable dial + numeric field</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/cultural-attributes" aria-label="Back to Cultural attributes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Qibla &amp; prayer</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">Step 6 of 12 · Qibla &amp; prayer</p>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Set your Qibla &amp; prayer amenities</h2>
+              <p class="lead">Adjusting the bearing by hand — for a host who has already measured or knows the exact direction.</p>
+
+              <h3 class="sh">Qibla bearing</h3>
+              <div class="qcard">
+                <span class="autobadge manual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Manually adjusted</span>
+                <div class="compass-face" role="img" aria-label="Draggable Qibla dial, currently set to 258 degrees, west-south-west">
+                  <span class="ring" aria-hidden="true"></span>
+                  <span class="card cn">N</span><span class="card ce">E</span><span class="card cs">S</span><span class="card cw">W</span>
+                  <span class="needle" style="transform:rotate(258deg)" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path class="tip" d="M12 3l3.4 8H8.6z" fill="currentColor"/><path class="tail" d="M12 21l3.4-8H8.6z" fill="currentColor" opacity=".45"/></svg>
+                  </span>
+                  <span class="hub" aria-hidden="true"></span>
+                  <span class="draghandle" style="transform:translate(-50%,-50%) rotate(258deg) translateY(-58px)" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span>
+                </div>
+                <div class="qbearing">
+                  <div class="deg"><span class="num">258</span>°</div>
+                  <div class="dir">West-south-west</div>
+                </div>
+                <div class="fld">
+                  <label class="flabel" for="deg1">Bearing (degrees from North)</label>
+                  <div class="degfield">
+                    <input class="txtinput num" id="deg1" type="number" min="0" max="359" value="258" inputmode="numeric" />
+                    <span class="degunit" aria-hidden="true">°</span>
+                    <button class="resetbtn" type="button">Use auto</button>
+                  </div>
+                  <span class="field-sub">Drag the handle on the dial, or type the exact degrees — either way updates the other.</span>
+                </div>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t">Prayer &amp; Qibla</div>
+                <div class="pv-d">Qibla is roughly <b>west-south-west</b> from this property, set by the host.</div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>A manual bearing overrides the auto-detected one — use it only if you've measured the exact direction yourself.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <a class="btn secondary" href="/host/listings/new/cultural-attributes" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+                <a class="btn primary" href="/host/listings/new/women-only">Save &amp; continue</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The dial is a <b>host editor</b> (§8.8 §15 inputs) — distinct from the guest's read-only display compass shipped on <code>ga-030</code> — with a draggable handle at the needle tip <em>and</em> a fully keyboard/AT-settable numeric degree field, so no interaction is drag-only. Both encode the same real bearing and <b>never mirror under RTL</b> (§11 — non-directional glyphs that point to a real bearing don't flip). "Use auto" restores the location-pin value without losing the manual entry's honesty about being a host override.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — auto-detected bearing with the full prayer-amenities set">
+      <div class="panel-tag">Dark — auto-detected, full form</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Auto-detected — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/new/cultural-attributes" aria-label="Back to Cultural attributes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Qibla &amp; prayer</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">Step 6 of 12 · Qibla &amp; prayer</p>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Set your Qibla &amp; prayer amenities</h2>
+              <p class="lead">Cantt View Residence — Rawalpindi Cantonment.</p>
+
+              <h3 class="sh">Qibla bearing</h3>
+              <div class="qcard">
+                <span class="autobadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Auto-detected from your map pin</span>
+                <div class="compass-face" role="img" aria-label="Qibla bearing is 255 degrees, west-south-west, detected from this listing's map pin">
+                  <span class="ring" aria-hidden="true"></span>
+                  <span class="card cn">N</span><span class="card ce">E</span><span class="card cs">S</span><span class="card cw">W</span>
+                  <span class="needle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path class="tip" d="M12 3l3.4 8H8.6z" fill="currentColor"/><path class="tail" d="M12 21l3.4-8H8.6z" fill="currentColor" opacity=".45"/></svg>
+                  </span>
+                  <span class="hub" aria-hidden="true"></span>
+                </div>
+                <div class="qbearing">
+                  <div class="deg"><span class="num">255</span>°</div>
+                  <div class="dir">West-south-west</div>
+                </div>
+                <button class="manualbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Adjust manually</button>
+              </div>
+
+              <h3 class="sh">Prayer amenities</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">Prayer mats</div><div class="step-d">How many are kept ready in the home</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="Decrease prayer mat count">−</button>
+                  <span class="stepval num" aria-live="polite">2</span>
+                  <button class="stepbtn" type="button" aria-label="Increase prayer mat count">+</button>
+                </div>
+              </div>
+
+              <h3 class="sh">Nearest masjid</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">About a <span class="num">4</span>-minute walk</div>
+                  <div class="m">Bilal Masjid, Cantt Bazaar · <span class="num">~300</span> m</div>
+                </div>
+              </div>
+
+              <h3 class="sh">Preview — what guests will see</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Listing preview</span></div>
+                <div class="pv-t">Prayer &amp; Qibla</div>
+                <div class="pv-d">Qibla is roughly <b>west-south-west</b> from this property. Bilal Masjid, Cantt Bazaar is about a <span class="num">4</span>-minute walk.</div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <a class="btn secondary" href="/host/listings/new/cultural-attributes" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+                <a class="btn primary" href="/host/listings/new/women-only">Save &amp; continue</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The masjid distance is stated as <b>practical travel info</b> — "about a 4-minute walk" — the same calm, factual register as check-in time or Wi-Fi speed, never a religiosity signal (§10.4). The guest-preview block reuses the exact phrasing pattern shipped on <code>screen-listing-detail.html</code>'s Prayer &amp; Qibla card ("Qibla is roughly [direction] from this property… is a [n]-minute walk"), so what the host sets here is <em>literally</em> what the guest reads later — never a paraphrase drift.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — auto-detected bearing with the full prayer-amenities set">
+      <div class="panel-tag">RTL · اردو — آٹو ڈیٹیکٹڈ زاویہ</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — قبلہ اور نماز</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/new/cultural-attributes" aria-label="ثقافتی خصوصیات پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">قبلہ اور نماز</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">لسٹنگ</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">مرحلہ <span class="num">6</span> از <span class="num">12</span> · قبلہ اور نماز</p>
+            </div>
+            <div class="screen">
+              <h2 id="dH">اپنا قبلہ اور نماز کی سہولیات طے کریں</h2>
+              <p class="lead">کینٹ ویو ریزیڈنس — راولپنڈی کینٹونمنٹ۔</p>
+
+              <h3 class="sh">قبلہ کا زاویہ</h3>
+              <div class="qcard">
+                <span class="autobadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>آپ کے میپ پن سے خودکار طور پر معلوم</span>
+                <div class="compass-face" role="img" aria-label="قبلہ کی سمت 255 درجے، مغرب-جنوب-مغرب، آپ کے میپ پن سے معلوم کی گئی">
+                  <span class="ring" aria-hidden="true"></span>
+                  <span class="card cn">N</span><span class="card ce">E</span><span class="card cs">S</span><span class="card cw">W</span>
+                  <span class="needle" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path class="tip" d="M12 3l3.4 8H8.6z" fill="currentColor"/><path class="tail" d="M12 21l3.4-8H8.6z" fill="currentColor" opacity=".45"/></svg>
+                  </span>
+                  <span class="hub" aria-hidden="true"></span>
+                </div>
+                <div class="qbearing">
+                  <div class="deg"><span class="num">255</span>°</div>
+                  <div class="dir">مغرب، جنوب کی جانب</div>
+                </div>
+                <div class="qhint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 5.5h2"/></svg>
+                  <p>آپ کی لسٹنگ کے <b>میپ پن</b> (مرحلہ <span class="num">2</span>) سے خودکار حساب لگایا گیا۔ مہمان آپ کی لسٹنگ پر یہی درست زاویہ دیکھتے ہیں۔</p>
+                </div>
+                <button class="manualbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>دستی طور پر ایڈجسٹ کریں — اگر آپ کو گھر کا صحیح زاویہ معلوم ہے</button>
+              </div>
+
+              <h3 class="sh">نماز کی سہولیات</h3>
+              <div class="steprow">
+                <span class="step-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 20v-3a3 3 0 0 1 6 0v3"/></svg></span>
+                <div class="step-b"><div class="step-t">جائے نماز</div><div class="step-d">گھر میں کتنی تیار رکھی گئی ہیں</div></div>
+                <div class="stepper">
+                  <button class="stepbtn" type="button" aria-label="جائے نماز کی تعداد کم کریں">−</button>
+                  <span class="stepval num" aria-live="polite">2</span>
+                  <button class="stepbtn" type="button" aria-label="جائے نماز کی تعداد بڑھائیں">+</button>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="wa2">وضو کی جگہ — تفصیل نوٹ (اختیاری)</label>
+                <input class="txtinput" id="wa2" type="text" value="مرکزی بیڈروم کے باتھ روم سے ملحق" />
+                <span class="field-sub">وضو کے لیے موزوں باتھ روم پچھلے مرحلے میں فعال کیا گیا — یہ صرف مہمان کو جگہ بتاتا ہے۔</span>
+              </div>
+
+              <h3 class="sh">قریب ترین مسجد</h3>
+              <div class="mrow">
+                <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <div class="mx">
+                  <div class="n">تقریباً <span class="num">4</span> منٹ پیدل</div>
+                  <div class="m">آپ کے میپ پن سے معلوم — <span class="num">~300</span> میٹر</div>
+                </div>
+              </div>
+              <div class="fld">
+                <label class="flabel" for="mn2">مسجد کا نام (اختیاری)</label>
+                <input class="txtinput" id="mn2" type="text" placeholder="مثلاً بلال مسجد، کینٹ بازار" />
+                <span class="field-sub">اختیاری — خالی چھوڑ دیں تو بھی مہمان پیدل فاصلہ دیکھیں گے۔</span>
+              </div>
+
+              <h3 class="sh">پیش منظر — مہمان کیا دیکھیں گے</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">لسٹنگ پیش منظر</span></div>
+                <div class="pv-t">نماز اور قبلہ</div>
+                <div class="pv-d">اس پراپرٹی سے قبلہ تقریباً <b>مغرب، جنوب کی جانب</b> ہے۔ قریب ترین مسجد تقریباً <span class="num">4</span> منٹ پیدل ہے۔</div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>صرف وہی بتائیں جو واقعی موجود ہے — مہمان انہی تفصیلات کے مطابق اپنی نماز کی منصوبہ بندی کرتے ہیں۔</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <a class="btn secondary" href="/ur/host/listings/new/cultural-attributes" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+                <a class="btn primary" href="/ur/host/listings/new/women-only">محفوظ کریں اور جاری رکھیں</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron flips to the leading (right) edge, form labels and helper text set in <code>Noto Nastaliq Urdu</code> with the line-height bump — but the <b>compass needle keeps its true screen-space rotation</b> and the degree readout stays Latin-numeral, LTR-isolated (<code>.num</code>), because both encode a real physical bearing that does not reverse with reading direction (the same rule that protects <code>ga-030</code>'s guest-facing dial).</p>
+    </section>
+
+  </main>
+</body>
+</html>

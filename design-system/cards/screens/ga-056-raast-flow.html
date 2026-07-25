@@ -1,0 +1,566 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-056 Raast instant-transfer flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:840px; }
+  .head .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+
+  .phone { background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+  .appbar { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; }
+  .iconbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .iconbtn:hover { background:var(--bg-raised); }
+  .iconbtn svg { width:22px; height:22px; stroke-width:2; }
+  .iconbtn.locked { opacity:.4; cursor:not-allowed; }
+  .appbar .spacer { flex:1; }
+  .appbar .step-of { font-size:12px; font-weight:600; color:var(--text-tertiary); }
+
+  .steps { display:flex; align-items:flex-start; list-style:none; padding:2px 24px 14px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:11px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .steps .dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .steps .dot svg { width:13px; height:13px; stroke-width:2.75; }
+  .steps .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:6px; }
+  .steps li.done .dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .dot { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+
+  .screen { flex:1; overflow-y:auto; padding:6px 22px 22px; display:flex; flex-direction:column; }
+  .screen h2 { font-size:22px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); text-align:center; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* compact stay context line */
+  .ctx { display:flex; gap:9px; align-items:center; justify-content:center; font-size:12px; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:6px 13px; align-self:center; margin-top:2px; }
+  .ctx svg { width:14px; height:14px; stroke-width:1.8; color:var(--text-tertiary); flex:none; }
+
+  /* section title + amount summary at top of picker */
+  .amtrow { display:flex; align-items:baseline; justify-content:space-between; margin-top:16px; padding-bottom:14px; border-bottom:1px solid var(--border-hairline); }
+  .amtrow .al { font-size:13px; color:var(--text-secondary); }
+  .amtrow .av { font-size:22px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .sech { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 0 10px; }
+
+  /* Raast rail explainer (factual — SBP instant rail; no invented claim) */
+  .raast { display:flex; gap:10px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-top:14px; }
+  .raast .ri { color:var(--info-fg); flex:none; margin-top:1px; }
+  .raast .ri svg { width:19px; height:19px; stroke-width:1.9; }
+  .raast .rh { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .raast p { font-size:12.5px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+  .raast b { color:var(--text-primary); font-weight:600; }
+
+  /* bank picker — text rows, neutral glyph, no invented logos */
+  .searchfield { display:flex; align-items:center; gap:9px; background:var(--bg-raised); border:1px solid var(--border-default); border-radius:var(--radius-md); padding:11px 13px; margin-bottom:12px; }
+  .searchfield svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+  .searchfield .ph { font-size:14px; color:var(--text-tertiary); }
+  .banklist { display:flex; flex-direction:column; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; }
+  .bankrow { display:flex; align-items:center; gap:12px; padding:14px 14px; background:var(--bg-canvas); border:none; border-bottom:1px solid var(--border-hairline); width:100%; text-align:inherit; cursor:pointer; font-family:inherit; color:var(--text-primary); }
+  .bankrow:last-child { border-bottom:none; }
+  .bankrow:hover { background:var(--bg-raised); }
+  .bankrow .bg { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); flex:none; }
+  .bankrow .bg svg { width:19px; height:19px; stroke-width:1.7; }
+  .bankrow .bbd { flex:1; display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .bankrow .bn { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .bankrow .bmeta { font-size:12px; color:var(--text-tertiary); }
+  .bankrow .chev { color:var(--text-tertiary); flex:none; }
+  .bankrow .chev svg { width:18px; height:18px; stroke-width:2; }
+  .bankrow.sel { background:var(--int-subtle); }
+  .bankrow.sel .bn { color:var(--int-active); }
+
+  /* Raast-ID vs IBAN entry options */
+  .opts { display:flex; flex-direction:column; gap:10px; }
+  .opt { display:flex; align-items:flex-start; gap:11px; padding:14px 14px; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); cursor:pointer; }
+  .opt.sel { border-color:var(--int-primary); background:var(--int-subtle); box-shadow:inset 0 0 0 1px var(--int-primary); }
+  .opt .rad { width:20px; height:20px; border-radius:var(--radius-full); border:2px solid var(--border-strong); flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .opt.sel .rad { border-color:var(--int-primary); }
+  .opt.sel .rad::after { content:""; width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); }
+  .opt .obd { flex:1; display:flex; flex-direction:column; gap:3px; }
+  .opt .on { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .opt .od { font-size:12.5px; color:var(--text-secondary); line-height:1.45; }
+
+  /* entry field (Raast ID / IBAN) */
+  .fld { margin-top:16px; }
+  .fld label { display:block; font-size:12.5px; font-weight:600; color:var(--text-secondary); margin-bottom:7px; }
+  .fld .inp { display:flex; align-items:center; gap:9px; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-md); padding:13px 13px; min-height:50px; }
+  .fld .inp.focus { border-color:var(--int-primary); box-shadow:0 0 0 3px var(--int-subtle); }
+  .fld .inp .val { font-size:15px; color:var(--text-primary); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  .fld .inp .caret { width:1.5px; height:19px; background:var(--int-primary); display:inline-block; }
+  .fld .hint { font-size:11.5px; color:var(--text-tertiary); margin-top:7px; line-height:1.45; }
+
+  /* resolved-account confirmation chip (name masked for privacy) */
+  .resolved { display:flex; align-items:center; gap:9px; margin-top:12px; background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-md); padding:10px 12px; }
+  .resolved svg { width:17px; height:17px; stroke-width:2; color:var(--success-fg); flex:none; }
+  .resolved .rt { font-size:12.5px; color:var(--text-primary); }
+  .resolved .rt b { font-weight:600; }
+
+  /* confirm summary (transfer detail rows) */
+  .sumrows { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); overflow:hidden; margin-top:16px; }
+  .sumrow { display:flex; align-items:center; gap:12px; padding:13px 14px; border-bottom:1px solid var(--border-hairline); }
+  .sumrow:last-child { border-bottom:none; }
+  .sumrow .si { width:20px; height:20px; color:var(--text-tertiary); flex:none; }
+  .sumrow .si svg { width:20px; height:20px; stroke-width:1.7; }
+  .sumrow .sbd { flex:1; display:flex; flex-direction:column; gap:2px; }
+  .sumrow .sl { font-size:11.5px; color:var(--text-tertiary); }
+  .sumrow .sv { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .sumrow.total .sv { font-size:16px; }
+
+  /* waiting / in-flight */
+  .hero { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:22px; }
+  .hero .mark { width:72px; height:72px; border-radius:var(--radius-2xl); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); position:relative; }
+  .hero .mark svg { width:34px; height:34px; stroke-width:1.6; }
+  .hero h2 { margin-top:18px; }
+  .hero .sub { font-size:13.5px; color:var(--text-secondary); margin-top:10px; line-height:1.55; max-width:300px; }
+  .hero .sub b { color:var(--text-primary); font-weight:600; }
+  .ring { position:absolute; inset:-8px; border-radius:var(--radius-2xl); border:2.5px solid var(--int-subtle); border-top-color:var(--int-primary); animation:ringrot 1s linear infinite; }
+  @keyframes ringrot { to { transform:rotate(360deg); } }
+
+  .wait { margin-top:20px; }
+  .proc-progress { height:3px; border-radius:var(--radius-full); background:var(--bg-sunken); overflow:hidden; }
+  .proc-progress span { display:block; height:100%; width:36%; border-radius:var(--radius-full); background:var(--int-primary); transform:translateX(-120%); animation:procbar 1.6s ease-in-out infinite; }
+  @keyframes procbar { 0% { transform:translateX(-120%); } 60% { transform:translateX(320%); } 100% { transform:translateX(320%); } }
+  .wait .wl { font-size:12.5px; color:var(--text-secondary); text-align:center; margin-top:12px; line-height:1.5; }
+  .wait .wl b { color:var(--text-primary); font-weight:600; }
+  .proc-rm { display:flex; align-items:flex-start; gap:7px; margin-top:12px; font-size:11px; font-weight:600; color:var(--text-tertiary); border:1px dashed var(--border-default); border-radius:var(--radius-md); padding:7px 9px; line-height:1.45; }
+  .proc-rm svg { width:13px; height:13px; stroke-width:1.9; flex:none; margin-top:1px; }
+  @media (prefers-reduced-motion: reduce) { .proc-progress span { animation:none; width:100%; transform:none; opacity:.5; } .spin { animation:none !important; } .ring { animation:none; } }
+
+  /* success block */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:30px; }
+  .success .tick { width:78px; height:78px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .success .tick svg { width:40px; height:40px; stroke-width:2.2; }
+  .success h2 { margin-top:18px; }
+  .success .sp { font-size:14px; color:var(--text-secondary); margin-top:8px; }
+  .success .sp b { color:var(--text-primary); font-weight:600; }
+  .success .paid { display:inline-flex; align-items:center; gap:7px; margin-top:16px; font-size:12.5px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:6px 13px; }
+  .success .paid svg { width:14px; height:14px; stroke-width:2.2; }
+  .success .going { font-size:12.5px; color:var(--text-tertiary); margin-top:16px; display:inline-flex; align-items:center; gap:7px; }
+  .success .going .dots { width:14px; height:14px; border-radius:var(--radius-full); border:2px solid var(--border-default); border-top-color:var(--text-tertiary); animation:ringrot 1s linear infinite; }
+
+  /* failure banner (bank-side reason honesty) */
+  .errbanner { border:1px solid var(--error-fg); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-top:6px; display:flex; gap:11px; align-items:flex-start; }
+  .errbanner .ei { color:var(--error-fg); flex:none; margin-top:1px; }
+  .errbanner .ei svg { width:20px; height:20px; stroke-width:1.9; }
+  .errbanner .eh { font-size:14px; font-weight:600; color:var(--error-fg); }
+  .errbanner .ed { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .errbanner .ed b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; }
+
+  /* CTA bar */
+  .ctabar { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(14px + env(safe-area-inset-bottom)); }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .cta svg { width:18px; height:18px; stroke-width:2; }
+  .cta[disabled] { background:var(--bg-sunken); color:var(--text-disabled); cursor:not-allowed; }
+  .cta.secondary { background:var(--bg-canvas); color:var(--int-primary); border:1px solid var(--border-default); margin-top:10px; }
+  .cta.secondary:hover { background:var(--bg-raised); }
+  .cta[aria-disabled="true"] { background:var(--int-primary); color:var(--text-on-brand); cursor:progress; }
+  .cta .spin { width:20px; height:20px; border-radius:var(--radius-full); border:2.5px solid color-mix(in srgb, var(--text-on-brand) 38%, transparent); border-top-color:var(--text-on-brand); animation:ringrot .8s linear infinite; }
+  .cta-note { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.5; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL / Urdu */
+  .urdu .screen, .urdu .steps .slab, .urdu .cta, .urdu .hero, .urdu .raast, .urdu .ctx, .urdu .wait, .urdu .success, .urdu .errbanner, .urdu .cta-note, .urdu .sech, .urdu .amtrow, .urdu .bankrow, .urdu .opt, .urdu .fld, .urdu .searchfield, .urdu .sumrow, .urdu .resolved { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu .screen h2 { line-height:1.75; }
+  .urdu .hero .sub, .urdu .raast p, .urdu .wait .wl, .urdu .opt .od { line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Raast instant-transfer flow (GA-056)</h1>
+    <p>The Raast rail — Pakistan's State Bank instant-payment system — as a bank-to-bank transfer inside checkout. The guest picks their bank (real PK banks as plain text rows, no invented logos), then pays either through their <strong>Raast ID</strong> (an alias linked to their account) or a full <strong>IBAN</strong>, confirms an instant transfer, and settles in seconds. Panels: the <strong>bank picker</strong>, the <strong>Raast-ID / IBAN entry</strong> with a resolved-account confirmation, the <strong>instant-transfer confirm → settling</strong> state (dark, "settles in seconds via the State Bank's Raast rail" — stated factually), a calm <strong>success</strong>, and a <strong>failure</strong> that names the bank-side reason honestly. Urdu / RTL on the picker.</p>
+    <div class="toggle"><span class="on">Bank picker</span><span>Raast-ID / IBAN</span><span>Settling · dark</span><span>Success</span><span>Failed · bank reason</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ 1 · BANK PICKER (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Bank picker — choose your bank (text rows, no logos)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to payment methods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>Margalla View Apartment · F-7 · 3 nights</span>
+
+            <div class="amtrow">
+              <span class="al">Pay with Raast</span>
+              <span class="av num">PKR 42,350</span>
+            </div>
+
+            <div class="raast" role="note">
+              <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>
+              <div>
+                <div class="rh">Instant bank transfer</div>
+                <p>Raast is the <b>State Bank of Pakistan's</b> instant-payment rail. The transfer <b>settles in seconds</b> — no card needed.</p>
+              </div>
+            </div>
+
+            <div class="sech">Choose your bank</div>
+            <div class="searchfield" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="ph">Search banks</span></div>
+
+            <div class="banklist" role="listbox" aria-label="Pakistani banks on Raast">
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">Meezan Bank</span><span class="bmeta">Linked · <span class="num">•••• 5567</span></span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">HBL — Habib Bank</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">United Bank — UBL</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">Bank Alfalah</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">MCB Bank</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">Allied Bank — ABL</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></button>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <p class="cta-note">Pick your bank to continue. You'll approve the transfer with your bank, never in SalamStay.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 2 · RAAST-ID / IBAN ENTRY (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Raast-ID / IBAN entry — resolved account confirmed</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to bank picker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="bankrow sel" style="border:1px solid var(--border-hairline);border-radius:var(--radius-lg)"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">Meezan Bank</span><span class="bmeta">Change bank</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></div>
+
+            <div class="sech">How would you like to pay?</div>
+            <div class="opts" role="radiogroup" aria-label="Raast payment reference">
+              <label class="opt sel"><span class="rad" aria-hidden="true"></span><span class="obd"><span class="on">Your Raast ID</span><span class="od">Pay from the account linked to your mobile number or CNIC. Fastest — no IBAN to type.</span></span></label>
+              <label class="opt"><span class="rad" aria-hidden="true"></span><span class="obd"><span class="on">Enter an IBAN</span><span class="od">Type your full <span class="num">24</span>-character Pakistani IBAN instead.</span></span></label>
+            </div>
+
+            <div class="fld">
+              <label>Your Raast ID</label>
+              <div class="inp focus"><span class="val num">0300 ••• 4021</span><span class="caret" aria-hidden="true"></span></div>
+              <p class="hint">This is the mobile number linked to your Meezan Bank account.</p>
+            </div>
+
+            <div class="resolved" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              <span class="rt">Account found — <b>A••• K•••</b> at Meezan Bank. We show only initials for your privacy.</span>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Review transfer<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <p class="cta-note">You'll confirm the amount before any money moves.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 3 · CONFIRM → SETTLING (dark) ============ -->
+      <div class="device">
+        <p class="devlabel">Settling — instant transfer in flight (dark · don't close)</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn locked" aria-label="Go back" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn locked" aria-label="Close checkout" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="hero">
+              <span class="mark" aria-hidden="true"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>
+              <h2>Settling your transfer</h2>
+              <span class="sub"><b class="num">PKR 42,350</b> is moving from Meezan Bank now. This <b>settles in seconds via the State Bank's Raast rail</b>.</span>
+            </div>
+
+            <div class="sumrows">
+              <div class="sumrow"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11"/></svg></span><span class="sbd"><span class="sl">From</span><span class="sv">Meezan Bank · <span class="num">•••• 5567</span></span></span></div>
+              <div class="sumrow total"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span class="sbd"><span class="sl">Transfer amount</span><span class="sv num">PKR 42,350</span></span></div>
+            </div>
+
+            <div class="wait">
+              <div class="proc-progress" aria-hidden="true"><span></span></div>
+              <p class="wl" role="status"><b>Please don't close this screen.</b> Your booking is held while Raast confirms — we'll finish the moment it settles.</p>
+              <p class="proc-rm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg><span>Reduced motion: the bar holds still and this reads a static "Confirming transfer…" — feedback is dampened, never removed.</span></p>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta" aria-disabled="true" aria-label="Confirming transfer with Raast"><span class="spin" aria-hidden="true"></span>Confirming…</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4 · SUCCESS (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Success — transfer settled (calm · → GA-064)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="success">
+              <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <h2>Transfer settled</h2>
+              <span class="sp">Your booking at <b>Margalla View Apartment</b> is confirmed.</span>
+              <span class="paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="num">PKR 42,350</span> paid via Raast</span>
+              <span class="going"><span class="dots" aria-hidden="true"></span>Taking you to your trip…</span>
+            </div>
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <a class="cta" href="/trips/is-f7-2bed-aug2026" role="button">View your booking<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <p class="cta-note">A receipt is on its way to your inbox. No confetti — just a confirmed stay.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 5 · FAILURE (light · bank-side reason honesty) ============ -->
+      <div class="device">
+        <p class="devlabel">Failed — bank-side reason, named honestly (GA-117)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="errbanner" role="alert">
+              <span class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+              <div>
+                <div class="eh">Meezan Bank declined the transfer</div>
+                <div class="ed">Your bank returned reason: <b>insufficient funds or a daily Raast limit reached</b>. <b>Nothing was deducted</b>, and your price and dates are still held. Try again, use another bank, or pay a different way.</div>
+              </div>
+            </div>
+
+            <div class="sumrows">
+              <div class="sumrow"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11"/></svg></span><span class="sbd"><span class="sl">Bank</span><span class="sv">Meezan Bank · <span class="num">•••• 5567</span></span></span></div>
+              <div class="sumrow total"><span class="si"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span class="sbd"><span class="sl">To transfer</span><span class="sv num">PKR 42,350</span></span></div>
+            </div>
+
+            <div class="raast" role="note">
+              <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="rh">Common fixes</div>
+                <p>Check your balance and your bank's daily Raast limit, then try again — or switch to a different bank account.</p>
+              </div>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg>Try Raast again</button>
+            <a class="cta secondary" href="/checkout/is-f7-2bed/payment" role="button">Pay another way</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 6 · URDU / RTL · BANK PICKER ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — bank picker</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="ادائیگی کے طریقوں پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of num">4 / 4</span>
+            <button class="iconbtn" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="چیک آؤٹ کی پیش رفت">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">پارٹی</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">شناخت</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">قیمت</span></li>
+            <li class="cur" aria-current="step"><span class="dot num">4</span><span class="slab">تصدیق</span></li>
+          </ol>
+
+          <div class="screen">
+            <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>مارگلہ ویو اپارٹمنٹ · F-7 · <span class="num">3</span> راتیں</span>
+
+            <div class="amtrow">
+              <span class="al">Raast سے ادائیگی</span>
+              <span class="av num">PKR 42,350</span>
+            </div>
+
+            <div class="raast" role="note">
+              <span class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>
+              <div>
+                <div class="rh">فوری بینک ٹرانسفر</div>
+                <p>Raast <b>اسٹیٹ بینک آف پاکستان</b> کا فوری ادائیگی نظام ہے۔ ٹرانسفر <b>سیکنڈوں میں مکمل</b> ہو جاتی ہے — کارڈ کی ضرورت نہیں۔</p>
+              </div>
+            </div>
+
+            <div class="sech">اپنا بینک منتخب کریں</div>
+            <div class="searchfield" role="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span class="ph">بینک تلاش کریں</span></div>
+
+            <div class="banklist" role="listbox" aria-label="Raast پر پاکستانی بینک">
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">Meezan Bank</span><span class="bmeta">منسلک · <span class="num">•••• 5567</span></span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">HBL — Habib Bank</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">United Bank — UBL</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></button>
+              <button class="bankrow" type="button" role="option"><span class="bg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V10l8-5 8 5v11M9 21v-6h6v6"/></svg></span><span class="bbd"><span class="bn">Bank Alfalah</span></span><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></button>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <p class="cta-note">جاری رکھنے کے لیے اپنا بینک منتخب کریں۔ آپ ٹرانسفر کی منظوری اپنے بینک میں دیں گے، سلام اسٹے میں کبھی نہیں۔</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

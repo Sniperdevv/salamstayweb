@@ -1,0 +1,640 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Publish / unpublish / delete listing (HA-076)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-040 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; background:#fff; border:1px solid #E7E9EA; border-radius:4px; padding:1px 5px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — editor lineage; NO wizard bars (handoff §7.6a) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.sh,.stchip,.stname,.stsub,.stmeta,.arow-t,.arow-d,.dchip,.conseq-t,.conseq-d,.gate-t,.gate-d,.gate-lk,.btn,.tzone-lk,.toast-t,.honestnote p) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { display:block; font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:18px 0 9px; }
+
+  /* status card — the listing's lifecycle state, stated plainly */
+  .stcard { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:14px 14px 15px; }
+  .stchip { display:inline-flex; align-items:center; gap:6px; min-height:26px; padding:0 11px; border-radius:var(--radius-full); font-size:11.5px; font-weight:600; }
+  .stchip svg { width:12px; height:12px; stroke-width:2.4; flex:none; }
+  .stchip.live { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .stchip.off { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .stname { display:block; font-size:16px; font-weight:600; color:var(--text-primary); margin-top:10px; letter-spacing:-0.005em; }
+  .stsub { display:block; font-size:12.5px; color:var(--text-secondary); margin-top:4px; line-height:1.5; }
+  .stmeta { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:11px; padding-top:11px; border-top:1px solid var(--border-hairline); font-size:11.5px; color:var(--text-tertiary); }
+  .stmeta b { color:var(--text-primary); font-weight:600; }
+
+  /* action rows */
+  .alist { display:flex; flex-direction:column; gap:9px; }
+  .arow { display:flex; gap:12px; align-items:center; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-canvas); border:1px solid var(--border-hairline); min-height:56px; text-decoration:none; }
+  .arow .aic { width:34px; height:34px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .arow .aic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.8; }
+  .arow .ax { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .arow-t { display:block; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .arow-d { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .arow .achev { flex:none; width:16px; height:16px; color:var(--text-tertiary); }
+  .dchip { flex:none; min-height:44px; padding:0 12px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-canvas); font-family:inherit; font-size:11.5px; font-weight:600; color:var(--int-primary); display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
+  .dchip svg { width:14px; height:14px; stroke-width:1.9; flex:none; }
+
+  /* quiet delete entry — plain text, never pre-emptively red (§10.8) */
+  .tzone { margin-top:18px; padding-top:14px; border-top:1px solid var(--border-hairline); }
+  .tzone-lk { display:inline-flex; align-items:center; min-height:44px; font-size:12.5px; font-weight:600; color:var(--text-secondary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* consequence list — plain, calm, never guilt-tripping (ga-080 grammar) */
+  .conseq { display:flex; flex-direction:column; gap:12px; margin-top:4px; }
+  .conseq li { display:flex; gap:11px; align-items:flex-start; }
+  .conseq .cic { width:26px; height:26px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .conseq .cic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.9; }
+  .conseq .cb { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .conseq-t { display:block; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .conseq-d { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .conseq li.keep .cic { background:var(--success-bg); border-color:var(--success-border); }
+  .conseq li.keep .cic svg { color:var(--success-fg); }
+
+  /* gate — the one blocking condition, stated as a task with its own way out */
+  .gate { display:flex; gap:11px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); background:var(--warning-bg); border:1px solid var(--warning-border); margin-bottom:14px; }
+  .gate svg.gic { width:17px; height:17px; flex:none; color:var(--warning-fg); stroke-width:1.9; margin-top:1px; }
+  .gate .gb { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .gate-t { display:block; font-size:12.5px; font-weight:600; color:var(--warning-fg); }
+  .gate-d { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .gate-lk { display:inline-flex; align-items:center; min-height:36px; font-size:11.5px; font-weight:600; color:var(--int-primary); }
+
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* toast */
+  .toast { display:flex; gap:9px; align-items:center; margin-top:14px; padding:11px 13px; border-radius:var(--radius-lg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .toast svg { width:16px; height:16px; color:var(--success-fg); flex:none; stroke-width:2.2; }
+  .toast-t { font-size:12px; font-weight:600; color:var(--success-fg); line-height:1.4; }
+
+  .spacer-fill { flex:1; }
+
+  .btnrow { display:flex; flex-direction:column; gap:9px; margin-top:16px; }
+  .btn { min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; width:100%; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.ghost { background:transparent; color:var(--text-secondary); }
+  .btn.destructive { background:var(--error-fg); color:var(--text-on-inverse); }
+  .btn[disabled] { background:var(--bg-sunken); color:var(--text-disabled); border-color:var(--border-hairline); cursor:default; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Publish / unpublish / delete listing (HA-076)</h1>
+    <p>The listing's lifecycle controls — reached from the Edit-listing hub (<code>HA-036</code>) in the same editor frame as <code>ha-038</code>/<code>ha-040</code>, and the counterpart to the publish moment <code>ha-033</code>/<code>ha-034</code> shipped. Three exits, deliberately unequal in weight. <b>Snooze</b> takes a reopen date and is the lightest — it comes back on its own. <b>Unpublish</b> is calm and explicitly reversible: guests can't find or book it, <b>existing bookings are honoured</b>, the calendar, prices and reviews are all kept, and it returns the moment the host republishes (the "comes back the moment…" grammar established by <code>ha-011</code>'s auto-pause). <b>Delete</b> is a dignified two-step: a plain consequences list, a stated <b>gate</b> — upcoming bookings must be resolved first, because a listing guests are still booked into cannot be removed — and only then a final confirm, where the destructive token appears <b>exactly once in this card</b> (the <code>ga-080</code> canon). Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b>, <b>PKR 12,000</b> per night.</p>
+    <div class="toggle" role="presentation"><span class="on">Live · unpublish confirm</span><span>Unpublished · delete gate</span><span>Dark — final confirm · restored</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — LIVE · UNPUBLISH CONFIRM ============================ -->
+    <section class="panel" aria-label="Light theme — the live listing status card and the unpublish confirmation">
+      <div class="panel-tag">Light — A live · B unpublish confirm</div>
+      <div class="rowflex">
+
+        <!-- A · LIVE -->
+        <div class="pcol">
+          <div class="pcap">A · Live — three exits, unequal in weight</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listing status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Listing status</h2>
+              <p class="lead">Take a break, step away for a while, or remove the listing altogether.</p>
+
+              <div class="stcard">
+                <span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span>
+                <span class="stname">Cantt View Residence</span>
+                <span class="stsub">Guests can find it in search and book it.</span>
+                <div class="stmeta">
+                  <span><b><span class="num">PKR 12,000</span></b> per night</span>
+                  <span><b><span class="num">2</span></b> upcoming bookings</span>
+                  <span>Live since <b><span class="num">18 July 2026</span></b></span>
+                </div>
+              </div>
+
+              <h3 class="sh">Take a break</h3>
+              <div class="alist">
+                <div class="arow">
+                  <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <span class="ax">
+                    <span class="arow-t">Snooze until a date</span>
+                    <span class="arow-d">Off search for a while. It reopens on its own — nothing else changes.</span>
+                  </span>
+                  <button class="dchip" type="button" aria-label="Pick a reopen date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Pick a date</button>
+                </div>
+                <a class="arow" href="/host/listings/cantt-view-residence/status/unpublish">
+                  <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8v8M15 8v8"/><circle cx="12" cy="12" r="9"/></svg></span>
+                  <span class="ax">
+                    <span class="arow-t">Unpublish</span>
+                    <span class="arow-d">Off search until you republish. Bookings you've already confirmed are honoured.</span>
+                  </span>
+                  <svg class="achev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Nothing here touches a stay a guest has already booked. Whatever you choose, those check-ins go ahead as agreed.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="tzone">
+                <a class="tzone-lk" href="/host/listings/cantt-view-residence/status/delete">Delete this listing</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · UNPUBLISH CONFIRM -->
+        <div class="pcol">
+          <div class="pcap">B · Unpublish — honest consequences, reversible framing</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/status" aria-label="Back to Listing status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Unpublish</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Unpublish this listing?</h2>
+              <p class="lead">Here's exactly what changes — and what doesn't.</p>
+
+              <ul class="conseq" role="list">
+                <li>
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.1A9 9 0 0 1 21 12a13 13 0 0 1-2.6 3.3M6.2 6.3A13 13 0 0 0 3 12a9 9 0 0 0 12.5 5.6"/></svg></span>
+                  <span class="cb"><span class="conseq-t">Guests can't find or book it</span><span class="conseq-d">It comes off search, and anyone with the link sees that it isn't taking bookings.</span></span>
+                </li>
+                <li class="keep">
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="cb"><span class="conseq-t">Your <span class="num">2</span> confirmed bookings are honoured</span><span class="conseq-d">Those guests check in exactly as agreed. Nothing about their stay changes.</span></span>
+                </li>
+                <li class="keep">
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="cb"><span class="conseq-t">Calendar, prices, photos and reviews are kept</span><span class="conseq-d">Everything stays exactly as you left it, ready for the day you come back.</span></span>
+                </li>
+                <li class="keep">
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/></svg></span>
+                  <span class="cb"><span class="conseq-t">You can republish any time</span><span class="conseq-d">It comes back the moment you're ready — one tap, no review, no waiting.</span></span>
+                </li>
+              </ul>
+
+              <div class="arow" style="margin-top:16px;">
+                <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="ax">
+                  <span class="arow-t">Know when you'll be back?</span>
+                  <span class="arow-d">Snooze with a reopen date instead, and it republishes itself.</span>
+                </span>
+                <button class="dchip" type="button" aria-label="Pick a reopen date instead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Pick a date</button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <button class="btn primary" type="button">Unpublish</button>
+                <a class="btn ghost" href="/host/listings/cantt-view-residence/status">Keep it live</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Unpublish is <b>reversible, so it is not styled as destructive</b> — a plain primary button, with "Keep it live" as the calm way out (§10.8: the muted error tone belongs only at a genuinely irreversible point of action). Three of the four consequence rows are <i>reassurances</i> carrying the success tick, because the honest answer to "what happens to my guests?" is "nothing" — and saying so plainly is what stops a host from cancelling real stays out of confusion. The snooze affordance is offered <b>inside</b> the unpublish flow too: a host who knows their return date should never have to manage the return by hand.</p>
+    </section>
+
+    <!-- ============================ LIGHT — UNPUBLISHED · DELETE GATE ============================ -->
+    <section class="panel" aria-label="Light theme — the unpublished state and the delete request blocked by its booking gate">
+      <div class="panel-tag">Light — C unpublished · D delete, gate not yet clear</div>
+      <div class="rowflex">
+
+        <!-- C · UNPUBLISHED -->
+        <div class="pcol">
+          <div class="pcap">C · Unpublished — calm, and one tap from back</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listing status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Listing status</h2>
+              <p class="lead">It's off search for now. Everything is kept, and it comes back the moment you republish.</p>
+
+              <div class="stcard">
+                <span class="stchip off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Unpublished</span>
+                <span class="stname">Cantt View Residence</span>
+                <span class="stsub">Guests can't find or book it. Your <span class="num">2</span> confirmed stays are going ahead as agreed.</span>
+                <div class="stmeta">
+                  <span><b><span class="num">PKR 12,000</span></b> per night, kept</span>
+                  <span>Unpublished <b><span class="num">24 July 2026</span></b></span>
+                </div>
+              </div>
+
+              <div class="btnrow">
+                <button class="btn primary" type="button">Republish</button>
+              </div>
+
+              <h3 class="sh">Or set a reopen date</h3>
+              <div class="arow">
+                <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <span class="ax">
+                  <span class="arow-t">Reopen automatically</span>
+                  <span class="arow-d">It republishes itself that morning — you don't have to remember.</span>
+                </span>
+                <button class="dchip" type="button" aria-label="Reopen date, 1 August 2026 — change it"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="num">1 Aug 2026</span></button>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Being unpublished costs you nothing but visibility. Your reviews, prices and calendar are untouched.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="tzone">
+                <a class="tzone-lk" href="/host/listings/cantt-view-residence/status/delete">Delete this listing</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · DELETE GATE -->
+        <div class="pcol">
+          <div class="pcap">D · Delete — step 1 of 2, gate stated, action not yet available</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/status" aria-label="Back to Listing status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Delete listing</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="dH">Delete this listing</h2>
+              <p class="lead">Removing a home is permanent. Here's what goes, what stays, and the one thing to sort out first.</p>
+
+              <div class="gate">
+                <svg class="gic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                <span class="gb">
+                  <span class="gate-t"><span class="num">2</span> upcoming bookings to resolve first</span>
+                  <span class="gate-d">A listing guests are still booked into can't be deleted. Let those stays finish, or cancel them with the guests, and this unlocks.</span>
+                  <a class="gate-lk" href="/host/reservations">See those bookings →</a>
+                </span>
+              </div>
+
+              <h3 class="sh" style="margin-top:4px;">What deleting does</h3>
+              <ul class="conseq" role="list">
+                <li>
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></span>
+                  <span class="cb"><span class="conseq-t">The listing, its photos, prices and calendar are removed</span><span class="conseq-d">The page goes for good, and the listing stops appearing anywhere on SalamStay.</span></span>
+                </li>
+                <li class="keep">
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="cb"><span class="conseq-t">Your past reviews stay on your host profile</span><span class="conseq-d">They're part of your hosting history, and you keep them for any home you list next.</span></span>
+                </li>
+                <li class="keep">
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="cb"><span class="conseq-t">Completed bookings and receipts are kept</span><span class="conseq-d">Your earnings records and your guests' receipts stay available, as tax records require.</span></span>
+                </li>
+                <li>
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+                  <span class="cb"><span class="conseq-t">This can't be undone</span><span class="conseq-d">If you only need a break, unpublishing keeps everything and takes one tap to reverse.</span></span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <button class="btn" type="button" disabled aria-disabled="true">Delete listing</button>
+                <a class="btn secondary" href="/host/listings/cantt-view-residence/status/unpublish">Unpublish instead</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The unpublished state is written as a <b>pause, not a penalty</b> — the grey chip, "everything is kept," and a single primary <b>Republish</b> above the fold, carrying <code>ha-011</code>'s "it comes back the moment…" grammar across from the license auto-pause. Delete's <b>gate is stated before the consequences</b>, in the calm warning register with its own way out ("See those bookings"), so the host never meets a disabled button without being told why it's disabled and what unlocks it (the no-dead-ends rule). Two of the four delete consequences are things the host <i>keeps</i>, including the load-bearing retention line — completed bookings and receipts are kept because tax records require it, the same honesty <code>ga-080</code> uses for account deletion.</p>
+    </section>
+
+    <!-- ============================ DARK — FINAL CONFIRM · RESTORED ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the final delete confirmation and the republished listing">
+      <div class="panel-tag">Dark — E delete, final confirm (destructive token, once) · F republished</div>
+      <div class="rowflex">
+
+        <!-- E · FINAL CONFIRM -->
+        <div class="pcol">
+          <div class="pcap">E · Step 2 of 2 — gate clear, the one destructive action</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/status/delete" aria-label="Back to Delete listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Confirm delete</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="eH">Delete Cantt View Residence?</h2>
+              <p class="lead">Every stay here has finished, so nothing is left to resolve. This is the last step.</p>
+
+              <div class="stcard">
+                <span class="stchip off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>No upcoming bookings</span>
+                <span class="stname">Cantt View Residence</span>
+                <span class="stsub">Rawalpindi Cantonment · listed since <span class="num">18 July 2026</span></span>
+              </div>
+
+              <h3 class="sh">Once you confirm</h3>
+              <ul class="conseq" role="list">
+                <li>
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></span>
+                  <span class="cb"><span class="conseq-t">The listing goes for good</span><span class="conseq-d">Photos, prices, calendar and its page are removed. There's no restore.</span></span>
+                </li>
+                <li class="keep">
+                  <span class="cic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="cb"><span class="conseq-t">Your reviews, earnings and receipts stay</span><span class="conseq-d">Your hosting history is yours, and the records tax filing needs remain available.</span></span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <div class="btnrow">
+                <button class="btn destructive" type="button">Delete this listing</button>
+                <a class="btn secondary" href="/host/listings/cantt-view-residence/status">Keep my listing</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · RESTORED -->
+        <div class="pcol">
+          <div class="pcap">F · Republished — back, with no residue</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/edit" aria-label="Back to Edit listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Listing status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="fH">Listing status</h2>
+              <p class="lead">Back in search, exactly as you left it.</p>
+
+              <div class="toast" role="status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                <span class="toast-t">Your listing is live again</span>
+              </div>
+
+              <div class="stcard" style="margin-top:14px;">
+                <span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Live</span>
+                <span class="stname">Cantt View Residence</span>
+                <span class="stsub">Guests can find it in search and book it.</span>
+                <div class="stmeta">
+                  <span><b><span class="num">PKR 12,000</span></b> per night</span>
+                  <span>Calendar and prices restored</span>
+                </div>
+              </div>
+
+              <h3 class="sh">Worth a look now you're back</h3>
+              <div class="alist">
+                <a class="arow" href="/host/calendar">
+                  <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <span class="ax">
+                    <span class="arow-t">Double-check your calendar</span>
+                    <span class="arow-d">Make sure the dates you're open are still right.</span>
+                  </span>
+                  <svg class="achev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+                <a class="arow" href="/host/listings/cantt-view-residence/infrastructure">
+                  <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5l-8 11h6l-1 8 8-11h-6z"/></svg></span>
+                  <span class="ax">
+                    <span class="arow-t">Refresh your home facts</span>
+                    <span class="arow-d">Load-shedding, backup power and Wi-Fi shift with the season.</span>
+                  </span>
+                  <svg class="achev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="tzone">
+                <a class="tzone-lk" href="/host/listings/cantt-view-residence/status/delete">Delete this listing</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The destructive token appears <b>exactly once in this entire card</b> — on "Delete this listing," at the final confirm, after the gate has cleared (<code>ga-080</code> canon, §10.8). Everything before it is neutral: the entry point is plain underlined text, step 1's button is simply disabled, and "Keep my listing" is the confident default. Coming back carries <b>no residue</b> — no "welcome back, you were away," no penalty note, just the live chip and two genuinely useful next steps (<code>ha-034</code>'s post-publish nudge grammar), because a host who paused did nothing wrong.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the live listing status card">
+      <div class="panel-tag">RTL · اردو — لسٹنگ کی حیثیت</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">G · اردو — لائیو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="gH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence/edit" aria-label="لسٹنگ میں ترمیم پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">لسٹنگ کی حیثیت</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="gH">لسٹنگ کی حیثیت</h2>
+              <p class="lead">تھوڑا وقفہ لیں، کچھ عرصے کے لیے ہٹا دیں، یا لسٹنگ مکمل طور پر ختم کر دیں۔</p>
+
+              <div class="stcard">
+                <span class="stchip live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>لائیو</span>
+                <span class="stname">کینٹ ویو ریزیڈنس</span>
+                <span class="stsub">مہمان اسے تلاش میں دیکھ سکتے اور بک کر سکتے ہیں۔</span>
+                <div class="stmeta">
+                  <span>فی رات <b><span class="num">PKR 12,000</span></b></span>
+                  <span><b><span class="num">2</span></b> آنے والی بکنگ</span>
+                  <span><b><span class="num">18 July 2026</span></b> سے لائیو</span>
+                </div>
+              </div>
+
+              <h3 class="sh">وقفہ لیں</h3>
+              <div class="alist">
+                <div class="arow">
+                  <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <span class="ax">
+                    <span class="arow-t">کسی تاریخ تک وقفہ</span>
+                    <span class="arow-d">کچھ عرصے کے لیے تلاش سے ہٹ جائے گی۔ مقررہ دن خود واپس آ جائے گی — اور کچھ نہیں بدلتا۔</span>
+                  </span>
+                  <button class="dchip" type="button" aria-label="واپسی کی تاریخ منتخب کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>تاریخ چنیں</button>
+                </div>
+                <a class="arow" href="/ur/host/listings/cantt-view-residence/status/unpublish">
+                  <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8v8M15 8v8"/><circle cx="12" cy="12" r="9"/></svg></span>
+                  <span class="ax">
+                    <span class="arow-t">غیر شائع کریں</span>
+                    <span class="arow-d">جب تک آپ دوبارہ شائع نہ کریں، تلاش سے باہر۔ پہلے سے تصدیق شدہ بکنگ کا احترام کیا جائے گا۔</span>
+                  </span>
+                  <svg class="achev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                </a>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>ان میں سے کوئی بھی قدم اُس قیام کو نہیں چھیڑتا جو کوئی مہمان پہلے ہی بک کر چکا ہے۔ وہ چیک اِن طے شدہ طریقے سے ہوں گے۔</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="tzone">
+                <a class="tzone-lk" href="/ur/host/listings/cantt-view-residence/status/delete">یہ لسٹنگ حذف کریں</a>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron, the action-row chevrons and the calendar chip flip toward the reading direction. Prices, dates and booking counts stay in LTR-isolated <code>.num</code> spans in Western digits — <b>PKR spelled out</b>, never a rupee glyph — with <code>aria-label</code> numerals matching the visible ones (Pass #31 ruling). The RTL panel deliberately shows the <b>live</b> state: the destructive token is never duplicated across a translation panel, so it stays a single instance on the dark final confirm.</p>
+    </section>
+
+  </main>
+</body>
+</html>

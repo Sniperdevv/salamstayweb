@@ -1,0 +1,531 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Write a review (GA-099)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:320px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ga-064 flat-frame lineage */
+  .phone { width:320px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:760px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.85; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:5px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+
+  /* context chip — who/what is being reviewed */
+  .ctx { display:flex; align-items:center; gap:11px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 12px; margin-bottom:18px; }
+  .ctx-av { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+  .ctx-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ctx-name { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .ctx-sub { font-size:12px; color:var(--text-secondary); display:block; }
+
+  .grouplbl { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:2px 2px 10px; }
+
+  /* category star pickers — full 5-star track, muted amber, never brand green */
+  .cats { display:flex; flex-direction:column; gap:2px; margin-bottom:6px; }
+  .catrow { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:44px; padding:6px 2px; border-bottom:1px solid var(--border-hairline); }
+  .catrow:last-child { border-bottom:none; }
+  .cat-b { display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .cat-label { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .cat-opt { font-size:11px; font-weight:400; color:var(--text-tertiary); display:block; }
+  .starpicker { flex:none; display:inline-flex; gap:1px; }
+  .star { width:30px; height:30px; border:none; background:none; padding:0; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--border-strong); }
+  .star.on { color:var(--warning-fg); }
+  .star svg { width:20px; height:20px; }
+
+  /* cultural-fit block — respectful, optional, accuracy-framed */
+  .culfit { margin:6px 0 18px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .culfit-h { display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:5px; }
+  .culfit-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .culfit-opt { font-size:11px; font-weight:400; color:var(--text-tertiary); }
+  .culfit-d { font-size:12px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px; }
+  .culfit .starpicker { margin-top:2px; }
+
+  /* textarea input */
+  .field { margin-bottom:18px; }
+  .flabel { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:4px; display:block; }
+  .fhint { font-size:12px; color:var(--text-tertiary); margin-bottom:7px; display:block; }
+  .ta { width:100%; min-height:92px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:11px 13px; font-family:inherit; font-size:13.5px; color:var(--text-primary); line-height:1.55; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); background:var(--bg-canvas); }
+  .count { font-size:11.5px; color:var(--text-tertiary); text-align:end; margin-top:5px; }
+
+  /* private-note channel — clearly separated */
+  .priv { margin-bottom:18px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .priv-h { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .priv-h svg { width:16px; height:16px; color:var(--info-fg); stroke-width:1.9; flex:none; }
+  .priv-t { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .priv-d { font-size:11.5px; color:var(--text-secondary); margin-bottom:9px; display:block; }
+  .priv .ta { background:var(--bg-canvas); min-height:64px; }
+
+  /* photo attach — CSS placeholder tiles, no image assets */
+  .photos { margin-bottom:18px; }
+  .photos-h { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:2px; display:flex; align-items:baseline; gap:6px; }
+  .photos-opt { font-size:11px; font-weight:400; color:var(--text-tertiary); }
+  .photos-sub { font-size:11.5px; color:var(--text-tertiary); margin-bottom:9px; display:block; }
+  .prow { display:flex; gap:9px; flex-wrap:wrap; }
+  .ptile { width:64px; height:64px; border-radius:var(--radius-md); flex:none; }
+  .ptile.fill { background:linear-gradient(150deg,var(--int-subtle),var(--bg-sunken)); border:1px solid var(--border-hairline); position:relative; display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .ptile.fill svg { width:22px; height:22px; stroke-width:1.5; }
+  .ptile.fill .px { position:absolute; top:3px; inset-inline-end:3px; width:18px; height:18px; border-radius:var(--radius-full); background:var(--scrim); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .ptile.fill .px svg { width:11px; height:11px; color:#fff; stroke-width:2.4; }
+  .ptile.add { border:1.5px dashed var(--border-default); background:var(--bg-sunken); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:var(--text-secondary); font-family:inherit; }
+  .ptile.add svg { width:19px; height:19px; }
+  .ptile.add span { font-size:9.5px; font-weight:600; }
+
+  /* both-sides honesty banner (info register) */
+  .twoway { display:flex; gap:10px; align-items:flex-start; margin-top:2px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .twoway svg { width:17px; height:17px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.9; }
+  .twoway span { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+
+  .foot { padding-top:14px; margin-top:14px; border-top:1px solid var(--border-hairline); flex:none; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn[disabled] { background:var(--bg-sunken); color:var(--text-disabled); border:1px solid var(--border-default); cursor:not-allowed; }
+  .helper { font-size:12px; color:var(--text-secondary); text-align:center; margin-top:9px; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Write a review (GA-099)</h1>
+    <p>The two-way review composer at trip end — Fatima reviewing her stay at Margalla View Apartment with host Ayesha. Five required category star-tracks (cleanliness, accuracy, communication, location, value) sit above one <strong>optional, respectfully framed cultural-fit dimension</strong> — accuracy of what was described (prayer space, privacy), never a rating of the host's personal religiosity. A guided review Textarea, a clearly separated <strong>private note</strong> channel only Ayesha can see, optional CSS-placeholder photo tiles, and an honest both-sides note close the form. Stars are muted amber (<code>--warning-fg</code>) throughout, never brand green (§1.7). No journey stepper — this is a post-stay screen. Panels: filled &amp; ready to submit (light) · pristine, submit gated (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Filled · ready · light</span><span>Pristine · gated · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — FILLED, READY TO SUBMIT ============================ -->
+    <section class="panel" aria-label="Light theme — the review form filled in and ready to submit">
+      <div class="panel-tag">Light — filled · ready to submit</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">A · Filled in — ready to submit</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Close review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <div class="tbar-title">Write a review</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">How was your stay?</h2>
+              <p class="lead">Your review helps other guests, and helps Ayesha too. Take your time.</p>
+
+              <div class="ctx">
+                <span class="ctx-av" aria-hidden="true">A</span>
+                <span class="ctx-b"><span class="ctx-name">Ayesha · Margalla View Apartment</span><span class="ctx-sub">F-7, Islamabad · Fri 14 – Mon 17 Aug 2026</span></span>
+              </div>
+
+              <div class="grouplbl">Rate your stay</div>
+              <div class="cats">
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Cleanliness</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Cleanliness rating, 5 out of 5">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Accuracy</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Accuracy rating, 5 out of 5">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Communication</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Communication rating, 5 out of 5">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Location</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Location rating, 4 out of 5">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Value</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Value rating, 5 out of 5">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="culfit">
+                <div class="culfit-h"><span class="culfit-t">Cultural fit</span><span class="culfit-opt">Optional</span></div>
+                <p class="culfit-d">How well did the stay match what was described for your needs — prayer space, privacy, and similar details? This is about accuracy, not your host's personal practice.</p>
+                <span class="starpicker" role="radiogroup" aria-label="Cultural fit rating, 5 out of 5">
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="true" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                </span>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="rv-text">Your review</label>
+                <span class="fhint">What would help the next guest?</span>
+                <textarea class="ta" id="rv-text">Quiet, spotless, and exactly as described. The marked Qibla direction and prayer space were a thoughtful touch, and Ayesha was quick and kind in messages. Perfect for a family visiting Margalla Hills.</textarea>
+                <div class="count">241 / 1000</div>
+              </div>
+
+              <div class="priv">
+                <div class="priv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="priv-t">Private note to Ayesha</span></div>
+                <span class="priv-d">Only Ayesha sees this — it won't appear in your public review.</span>
+                <textarea class="ta" placeholder="Anything you'd rather share just with your host?">The spare key box code was a little hard to find in the dark — a small light there would help future guests.</textarea>
+              </div>
+
+              <div class="photos">
+                <div class="photos-h"><span>Add photos</span> <span class="photos-opt">Optional</span></div>
+                <span class="photos-sub">Show future guests what the stay was really like.</span>
+                <div class="prow">
+                  <div class="ptile fill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></svg><button class="px" type="button" aria-label="Remove photo 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+                  <div class="ptile fill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></svg><button class="px" type="button" aria-label="Remove photo 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+                  <button class="ptile add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span>Add</span></button>
+                </div>
+              </div>
+
+              <div class="twoway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 4V6a3 3 0 0 1 3-3z"/></svg>
+                <span>Reviews appear once both sides have written theirs, or after <span class="num">14</span> days — whichever comes first. This keeps reviews honest on both sides.</span>
+              </div>
+
+              <div class="foot"><button class="btn primary" type="submit">Submit review</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The star tracks are the interactive input variant of the §8-inputs Rating component — cumulative fill up to the chosen value, always <b>muted amber</b> (<code>--warning-fg</code>), never brand green, and the off-stars render as a distinct outline glyph so state never rides on color alone. The <b>cultural-fit dimension is optional and last</b>, framed around accuracy of what was described — never the host's personal religiosity (§10.7). The private note sits in a visually distinct <b>info-toned channel</b> with "Only Ayesha sees this" stated plainly. Photo tiles are pure CSS placeholders — no image assets. The honesty banner names the <b>14-day</b> both-sides window, matching the existing <code>GA-032</code> precedent, not an invented figure.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — PRISTINE, GATED ============================ -->
+    <section class="panel dark" aria-label="Dark theme — a pristine review form with submit gated until categories are rated">
+      <div class="panel-tag">Dark — pristine · nothing rated yet · submit gated</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">B · Nothing rated yet — submit gated</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="Close review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <div class="tbar-title">Write a review</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">How was your stay?</h2>
+              <p class="lead">Your review helps other guests, and helps Ayesha too. Take your time.</p>
+
+              <div class="ctx">
+                <span class="ctx-av" aria-hidden="true">A</span>
+                <span class="ctx-b"><span class="ctx-name">Ayesha · Margalla View Apartment</span><span class="ctx-sub">F-7, Islamabad · Fri 14 – Mon 17 Aug 2026</span></span>
+              </div>
+
+              <div class="grouplbl">Rate your stay</div>
+              <div class="cats">
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Cleanliness</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Cleanliness rating, not yet rated">
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Accuracy</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Accuracy rating, not yet rated">
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Communication</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Communication rating, not yet rated">
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Location</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Location rating, not yet rated">
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label">Value</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="Value rating, not yet rated">
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="culfit">
+                <div class="culfit-h"><span class="culfit-t">Cultural fit</span><span class="culfit-opt">Optional</span></div>
+                <p class="culfit-d">How well did the stay match what was described for your needs — prayer space, privacy, and similar details? This is about accuracy, not your host's personal practice.</p>
+                <span class="starpicker" role="radiogroup" aria-label="Cultural fit rating, not yet rated">
+                  <button type="button" class="star" role="radio" aria-checked="false" aria-label="1 star"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  <button type="button" class="star" role="radio" aria-checked="false" aria-label="2 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  <button type="button" class="star" role="radio" aria-checked="false" aria-label="3 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  <button type="button" class="star" role="radio" aria-checked="false" aria-label="4 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  <button type="button" class="star" role="radio" aria-checked="false" aria-label="5 stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                </span>
+              </div>
+
+              <div class="field">
+                <label class="flabel" for="rv-text-b">Your review</label>
+                <span class="fhint">What would help the next guest?</span>
+                <textarea class="ta" id="rv-text-b" placeholder="Share what stood out — the good and the honest rest."></textarea>
+                <div class="count">0 / 1000</div>
+              </div>
+
+              <div class="twoway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 4V6a3 3 0 0 1 3-3z"/></svg>
+                <span>Reviews appear once both sides have written theirs, or after <span class="num">14</span> days — whichever comes first.</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="foot"><button class="btn primary" type="submit" disabled aria-disabled="true">Submit review</button><p class="helper">Rate each category above to continue.</p></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every role AA-proven (§11). Submit stays <b>disabled until every required category is rated</b> — cultural fit and photos remain optional, never blocking. The gated helper text is plain, never scolding (§10.6 tone extended to review composition).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the review composer">
+      <div class="panel-tag">RTL · اردو — "آپ کا قیام کیسا رہا؟", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" type="button" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <div class="tbar-title ur">جائزہ لکھیں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="ur" id="uH">آپ کا قیام کیسا رہا؟</h2>
+              <p class="lead ur">آپ کا جائزہ دوسرے مہمانوں کی مدد کرتا ہے، اور عائشہ کی بھی۔ اطمینان سے لکھیں۔</p>
+
+              <div class="ctx">
+                <span class="ctx-av" aria-hidden="true">ع</span>
+                <span class="ctx-b"><span class="ctx-name ur">عائشہ · مارگلہ ویو اپارٹمنٹ</span><span class="ctx-sub ur">F-7، اسلام آباد · <span class="num">14 – 17 Aug 2026</span></span></span>
+              </div>
+
+              <div class="grouplbl ur">اپنے قیام کو درجہ دیں</div>
+              <div class="cats">
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label ur">صفائی</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="صفائی کی درجہ بندی، پانچ میں سے پانچ">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="ایک ستارہ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="دو ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="تین ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="چار ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="پانچ ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label ur">درستگی</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="درستگی کی درجہ بندی، پانچ میں سے پانچ">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="ایک ستارہ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="دو ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="تین ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="چار ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="پانچ ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label ur">رابطہ</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="رابطے کی درجہ بندی، پانچ میں سے پانچ">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="ایک ستارہ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="دو ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="تین ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="چار ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="پانچ ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label ur">محل وقوع</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="محل وقوع کی درجہ بندی، پانچ میں سے چار">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="ایک ستارہ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="دو ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="تین ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="چار ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star" role="radio" aria-checked="false" aria-label="پانچ ستارے"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></button>
+                  </span>
+                </div>
+                <div class="catrow">
+                  <span class="cat-b"><span class="cat-label ur">قدر</span></span>
+                  <span class="starpicker" role="radiogroup" aria-label="قدر کی درجہ بندی، پانچ میں سے پانچ">
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="ایک ستارہ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="دو ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="تین ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="false" aria-label="چار ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                    <button type="button" class="star on" role="radio" aria-checked="true" aria-label="پانچ ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="culfit">
+                <div class="culfit-h"><span class="culfit-t ur">ثقافتی ہم آہنگی</span><span class="culfit-opt ur">اختیاری</span></div>
+                <p class="culfit-d ur">قیام تفصیل کے مطابق کتنا درست تھا — جائے نماز، رازداری، اور ایسی دیگر تفصیلات؟ یہ درستگی کے بارے میں ہے، آپ کے میزبان کی ذاتی مذہبی عادات کے بارے میں نہیں۔</p>
+                <span class="starpicker" role="radiogroup" aria-label="ثقافتی ہم آہنگی کی درجہ بندی، پانچ میں سے پانچ">
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="ایک ستارہ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="دو ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="تین ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="false" aria-label="چار ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                  <button type="button" class="star on" role="radio" aria-checked="true" aria-label="پانچ ستارے"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 6 20.4l1.4-6.8L2.3 9l6.9-.7z"/></svg></button>
+                </span>
+              </div>
+
+              <div class="field">
+                <label class="flabel ur" for="rv-text-u">آپ کا جائزہ</label>
+                <span class="fhint ur">اگلے مہمان کے لیے کیا مددگار ہوگا؟</span>
+                <textarea class="ta ur" id="rv-text-u">پرسکون، صاف ستھرا، اور بالکل تفصیل کے مطابق۔ قبلہ کی نشاندہی اور نماز کی جگہ ایک اچھا اضافہ تھی، اور عائشہ کے پیغامات ہمیشہ مہربان اور فوری تھے۔</textarea>
+              </div>
+
+              <div class="priv">
+                <div class="priv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="priv-t ur">عائشہ کے لیے نجی نوٹ</span></div>
+                <span class="priv-d ur">صرف عائشہ یہ دیکھ سکتی ہیں — یہ آپ کے عوامی جائزے میں شامل نہیں ہوگا۔</span>
+                <textarea class="ta ur" placeholder="کچھ ایسا جو آپ صرف میزبان کے ساتھ شیئر کرنا چاہیں؟"></textarea>
+              </div>
+
+              <div class="twoway">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 4V6a3 3 0 0 1 3-3z"/></svg>
+                <span class="ur">جائزے اس وقت ظاہر ہوتے ہیں جب دونوں طرف سے لکھے جائیں، یا <span class="num">14</span> دن بعد — جو بھی پہلے ہو۔</span>
+              </div>
+
+              <div class="foot"><button class="btn primary ur" type="submit">جائزہ جمع کریں</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): star tracks fill from the reading-start, the context chip and category rows flow right-to-left, and every digit (star counts, the 14-day window) keeps <code>direction:ltr</code> isolation via <code>.num</code>. The cultural-fit explainer keeps the exact same respectful framing in Urdu — accuracy, never religiosity.</p>
+    </section>
+
+  </main>
+</body>
+</html>

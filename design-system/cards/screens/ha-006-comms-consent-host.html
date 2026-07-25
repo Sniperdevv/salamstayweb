@@ -1,0 +1,400 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Comms consent (PECA), host (HA-006)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:340px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* onboarding auth frame — ga-076 lineage (statusbar + authbar + wordmark) */
+  .phone { max-width:340px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-hairline); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.hc-a,.hc-now,.h-title,.h-sub,.scap,.chn,.chd,.chsw-lb,.mn,.md,.saveline,.footlink,.brandmark) { font-family:'Noto Nastaliq Urdu',serif; line-height:1.85; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark .dot { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 2px; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+  .screen { flex:1; display:flex; flex-direction:column; padding:6px 20px 18px; overflow-y:auto; }
+  .h-title { font-size:22px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:4px; }
+  .h-sub { font-size:13px; color:var(--text-secondary); margin-top:7px; line-height:1.5; }
+
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 8px; }
+
+  /* channel row with real switch */
+  .chn-card { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); margin-bottom:9px; overflow:hidden; }
+  .chn-row { display:flex; align-items:center; gap:11px; padding:11px 12px; }
+  .chn-ic { width:36px; height:36px; border-radius:var(--radius-full); flex:none; background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .chn-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .chn-bd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .chn { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .chd { font-size:11.5px; color:var(--text-secondary); display:block; line-height:1.4; }
+  .switch-hit { width:48px; height:44px; display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; padding:0; cursor:pointer; }
+  .switch { width:48px; height:30px; border-radius:var(--radius-full); border:none; background:var(--border-default); position:relative; cursor:pointer; flex:none; padding:0; display:block; }
+  .switch::after { content:""; position:absolute; top:3px; inset-inline-start:3px; width:24px; height:24px; border-radius:50%; background:var(--bg-canvas); box-shadow:var(--el-hairline); }
+  .switch[aria-checked="true"] { background:var(--int-primary); }
+  .switch[aria-checked="true"]::after { transform:translateX(18px); }
+  .phone.rtl .switch[aria-checked="true"]::after { transform:translateX(-18px); }
+  .switch[aria-disabled="true"] { background:var(--int-subtle); cursor:default; }
+  .switch[aria-disabled="true"]::after { background:var(--int-primary); opacity:.55; }
+  .chn-note { display:flex; gap:8px; align-items:flex-start; padding:0 12px 12px 12px; }
+  .chn-note svg { flex:none; width:14px; height:14px; stroke-width:1.85; color:var(--text-tertiary); margin-top:1px; }
+  .chn-note span { font-size:11px; color:var(--text-secondary); line-height:1.4; }
+
+  .scap-marketing { display:flex; align-items:baseline; justify-content:space-between; margin:18px 2px 8px; }
+  .scap-marketing .scap { margin:0; }
+  .offbadge { font-size:10.5px; font-weight:700; letter-spacing:.03em; color:var(--text-tertiary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 9px; }
+
+  .banner { display:flex; gap:9px; align-items:flex-start; padding:11px 12px; border-radius:var(--radius-lg); font-size:12px; line-height:1.5; margin-top:14px; }
+  .banner svg { width:16px; height:16px; flex:none; margin-top:1px; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .banner.info span { color:var(--text-secondary); display:block; }
+
+  .grow { flex:1; min-height:8px; }
+  .foot { padding-top:10px; }
+  .primary { width:100%; min-height:50px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .footlink { text-align:center; margin-top:11px; font-size:12px; color:var(--text-secondary); }
+  .footlink a { color:var(--int-primary); font-weight:600; }
+  .footlink a:hover { text-decoration:underline; }
+
+  /* recorded confirmation state */
+  .confirm-wrap { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; padding:30px 16px 0; }
+  .confirm-seal { width:64px; height:64px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); display:flex; align-items:center; justify-content:center; }
+  .confirm-seal svg { width:30px; height:30px; stroke-width:2; }
+  .confirm-h { font-size:19px; font-weight:600; color:var(--text-primary); margin-top:16px; letter-spacing:-0.01em; }
+  .saveline { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:8px; max-width:260px; }
+  .summary-card { margin-top:20px; width:100%; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); overflow:hidden; text-align:start; }
+  .mrow { display:flex; align-items:center; gap:10px; min-height:46px; padding:9px 13px; border-top:1px solid var(--border-hairline); }
+  .mrow:first-child { border-top:none; }
+  .mrow-ic { flex:none; width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; }
+  .mrow-ic svg { width:14px; height:14px; stroke-width:2.2; }
+  .mrow.on .mrow-ic { background:var(--success-bg); color:var(--success-fg); }
+  .mrow.off .mrow-ic { background:var(--bg-sunken); color:var(--text-tertiary); }
+  .mn { flex:1; font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .md { font-size:11px; color:var(--text-secondary); }
+  .mrow.off .mn, .mrow.off .md { color:var(--text-secondary); }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+
+  @media (max-width:1080px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Comms consent (PECA), host (HA-006)</h1>
+    <p>The host sibling of <code>GA-076</code> — the onboarding gate capturing per-channel communications consent under the Pakistan Electronic Crime Act (PECA), reached from the checklist hub (<code>HA-004</code>). <b>Transactional</b> channels (WhatsApp, SMS) are explained as needed to host: <b>booking requests, guest messages, and payout alerts</b>. <b>Marketing</b> is a separate, clearly labelled section that ships <b>off by default</b> — never pre-ticked. Saving shows a plain consent-recorded confirmation; the change-anytime note routes to the same shared notification-preferences surface guests use (<code>/account/settings/notifications</code>, <code>GA-069</code>) — one account, one settings surface, both modes — rather than inventing a separate host-only screen. No checkout stepper.</p>
+    <div class="legend">
+      <span>Light · default — transactional explained, marketing off</span>
+      <span>Dark · consent recorded confirmation</span>
+      <span>RTL · اردو</span>
+      <span>Marketing never pre-ticked · ≥44pt · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — DEFAULT ============================ -->
+    <section class="panel" aria-label="Light theme — transactional channels explained, marketing off by default, host">
+      <div class="panel-tag">Light — default · transactional explained · marketing off</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">How can we reach you as a host?</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+            <div class="statusbar" aria-hidden="true">
+              <span class="time">9:41</span>
+              <span class="sysic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+              </span>
+            </div>
+            <header class="authbar">
+              <span class="ib-spacer" aria-hidden="true"></span>
+              <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+              <span class="ib-spacer" aria-hidden="true"></span>
+            </header>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Notifications</span></div>
+            <div class="screen">
+              <h2 class="h-title" id="aH">How can we reach you as a host?</h2>
+              <p class="h-sub">A quick, one-time choice — you can change it anytime.</p>
+
+              <div class="scap">Needed to host</div>
+              <div class="chn-card">
+                <div class="chn-row">
+                  <span class="chn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                  <span class="chn-bd"><span class="chn">WhatsApp</span><span class="chd">Booking requests, guest messages, payout alerts</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-disabled="true" aria-label="WhatsApp — needed to host, always on"><span class="switch" aria-checked="true" aria-disabled="true" aria-hidden="true"></span></button>
+                </div>
+              </div>
+              <div class="chn-card">
+                <div class="chn-row">
+                  <span class="chn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
+                  <span class="chn-bd"><span class="chn">SMS</span><span class="chd">A backup channel if WhatsApp can't reach you</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-disabled="true" aria-label="SMS — needed to host, always on"><span class="switch" aria-checked="true" aria-disabled="true" aria-hidden="true"></span></button>
+                </div>
+                <div class="chn-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>These two stay on — they carry the messages every booking and payout needs, and you'll always be told why before one arrives.</span>
+                </div>
+              </div>
+
+              <div class="scap-marketing">
+                <div class="scap">Marketing (optional)</div>
+                <span class="offbadge">OFF</span>
+              </div>
+              <div class="chn-card">
+                <div class="chn-row">
+                  <span class="chn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8l7-4 9 5-7 4z"/><path d="M4 8v6l9 5 7-4V9"/></svg></span>
+                  <span class="chn-bd"><span class="chn">Offers &amp; tips</span><span class="chd">Occasional hosting tips and platform updates, by WhatsApp or SMS</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="Marketing messages, currently off"><span class="switch" aria-checked="false" aria-hidden="true"></span></button>
+                </div>
+                <div class="chn-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>Off unless you turn it on. Turning it on is entirely your choice, and never needed to host.</span>
+                </div>
+              </div>
+
+              <div class="banner info" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+                <span>This meets Pakistan's Electronic Crime Act (PECA) rules for consent: transactional messages are disclosed plainly, and marketing is opt-in only.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot">
+                <button class="primary" type="button">Save my choices</button>
+                <p class="footlink">Change this anytime in <a href="/account/settings/notifications">Notification &amp; channel preferences</a>.</p>
+              </div>
+            </div>
+            <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Transactional switches (WhatsApp, SMS) are shown <b>on and explained</b>, not hidden — a real <code>role="switch"</code> in its disabled-but-informative state (<code>aria-disabled</code>, not simply omitted), because a host should see plainly what's needed to run bookings and get paid. <b>Marketing is a separate, clearly labelled section</b> with a visible <b>OFF</b> badge and a real, independently interactive switch — nothing here is pre-ticked (§10.9).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — CONFIRMATION ============================ -->
+    <section class="panel dark" aria-label="Dark theme — consent recorded confirmation, host">
+      <div class="panel-tag">Dark — consent recorded confirmation</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Saved — consent recorded</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+            <div class="statusbar" aria-hidden="true">
+              <span class="time">9:41</span>
+              <span class="sysic">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+              </span>
+            </div>
+            <header class="authbar">
+              <span class="ib-spacer" aria-hidden="true"></span>
+              <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+              <span class="ib-spacer" aria-hidden="true"></span>
+            </header>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Notifications</span></div>
+            <div class="screen">
+              <div class="confirm-wrap">
+                <div class="confirm-seal" aria-hidden="true" role="status">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                </div>
+                <h2 class="confirm-h" id="bH">Saved</h2>
+                <p class="saveline">Your choices are recorded. <span class="num">WhatsApp</span> and <span class="num">SMS</span> are on for hosting — marketing is off.</p>
+
+                <div class="summary-card" role="list" aria-label="Your saved channel choices">
+                  <div class="mrow on" role="listitem"><span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span><span class="mn">WhatsApp</span> <span class="md">— hosting, on</span></span></div>
+                  <div class="mrow on" role="listitem"><span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span><span class="mn">SMS</span> <span class="md">— hosting, on</span></span></div>
+                  <div class="mrow off" role="listitem"><span class="mrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg></span><span><span class="mn">Marketing</span> <span class="md">— off</span></span></div>
+                </div>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot">
+                <a class="primary" href="/host/onboarding">Continue</a>
+                <p class="footlink">Change this anytime in <a href="/account/settings/notifications">Notification &amp; channel preferences</a>.</p>
+              </div>
+            </div>
+            <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">The confirmation is plain and unremarkable — a quiet success tick (<code>role="status"</code>), a one-line restatement, and a real summary list (state by glyph <b>and</b> text, never colour alone). <b>Continue</b> routes back to the checklist hub <code>/host/onboarding</code> (<code>HA-004</code>) — this gate is one step in that sequence, not a dead end.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the host comms consent screen">
+      <div class="panel-tag">RTL · اردو — "رابطے کی رضامندی", mirrored</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">بطور میزبان آپ سے کیسے رابطہ کریں؟ — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+            <div class="statusbar" aria-hidden="true">
+              <span class="time">9:41</span>
+              <span class="sysic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+              </span>
+            </div>
+            <header class="authbar">
+              <span class="ib-spacer" aria-hidden="true"></span>
+              <div class="brandmark">Salam<span class="dot">.</span>Stay</div>
+              <span class="ib-spacer" aria-hidden="true"></span>
+            </header>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">اطلاعات</span></div>
+            <div class="screen">
+              <h2 class="h-title" id="uH">بطور میزبان آپ سے کیسے رابطہ کریں؟</h2>
+              <p class="h-sub">ایک مختصر، ایک بار کا انتخاب — آپ اسے کبھی بھی بدل سکتے ہیں۔</p>
+
+              <div class="scap">میزبانی کے لیے ضروری</div>
+              <div class="chn-card">
+                <div class="chn-row">
+                  <span class="chn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                  <span class="chn-bd"><span class="chn">واٹس ایپ</span><span class="chd">بکنگ کی درخواستیں، مہمانوں کے پیغامات، ادائیگی کی اطلاعات</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-disabled="true" aria-label="واٹس ایپ — ہمیشہ آن"><span class="switch" aria-checked="true" aria-disabled="true" aria-hidden="true"></span></button>
+                </div>
+              </div>
+              <div class="chn-card">
+                <div class="chn-row">
+                  <span class="chn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
+                  <span class="chn-bd"><span class="chn">SMS</span><span class="chd">اگر واٹس ایپ آپ تک نہ پہنچ سکے تو متبادل ذریعہ</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="true" aria-disabled="true" aria-label="SMS — ہمیشہ آن"><span class="switch" aria-checked="true" aria-disabled="true" aria-hidden="true"></span></button>
+                </div>
+                <div class="chn-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>یہ دونوں ہمیشہ آن رہتے ہیں — یہ ہر بکنگ اور ادائیگی کے لیے ضروری پیغامات پہنچاتے ہیں، اور پیغام آنے سے پہلے آپ کو ہمیشہ بتایا جائے گا کہ کیوں۔</span>
+                </div>
+              </div>
+
+              <div class="scap-marketing">
+                <div class="scap">مارکیٹنگ (اختیاری)</div>
+                <span class="offbadge">بند</span>
+              </div>
+              <div class="chn-card">
+                <div class="chn-row">
+                  <span class="chn-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8l7-4 9 5-7 4z"/><path d="M4 8v6l9 5 7-4V9"/></svg></span>
+                  <span class="chn-bd"><span class="chn">آفرز اور تجاویز</span><span class="chd">کبھی کبھار میزبانی کے مشورے اور پلیٹ فارم کی تازہ کاریاں</span></span>
+                  <button class="switch-hit" type="button" role="switch" aria-checked="false" aria-label="مارکیٹنگ پیغامات، فی الحال بند"><span class="switch" aria-checked="false" aria-hidden="true"></span></button>
+                </div>
+                <div class="chn-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>جب تک آپ آن نہ کریں یہ بند رہتا ہے۔ اسے آن کرنا مکمل طور پر آپ کی مرضی ہے، اور میزبانی کے لیے کبھی ضروری نہیں۔</span>
+                </div>
+              </div>
+
+              <div class="banner info" role="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+                <span>یہ پاکستان کے پیکا (PECA) قانون کے مطابق ہے: ضروری پیغامات واضح طور پر بتائے جاتے ہیں، اور مارکیٹنگ صرف آپ کی اجازت سے۔</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot">
+                <button class="primary" type="button">میرا انتخاب محفوظ کریں</button>
+                <p class="footlink">اسے کبھی بھی <a href="/account/settings/notifications">اطلاعات اور چینل ترجیحات</a> میں بدلیں۔</p>
+              </div>
+            </div>
+            <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored: the switch thumb travel reverses, disclosure rows align trailing. Proper-noun channel names (WhatsApp, SMS) stay Latin; everything else is real Urdu Nastaliq with the line-height bump. The PECA/opt-in distinction and the change-anytime note carry across both scripts.</p>
+    </section>
+
+    <!-- ============================ NOTES ============================ -->
+    <section class="panel notes">
+      <div class="panel-tag">Rules, states &amp; rationale</div>
+      <ul>
+        <li><b>Transactional vs marketing, clearly separated — exactly as GA-076.</b> WhatsApp/SMS sit under "Needed to host" with a plain, host-specific explanation (booking requests, guest messages, payout alerts); Marketing is its own section with a visible <code>OFF</code> badge — never blended into one list (PECA §COMPLIANCE F6-7).</li>
+        <li><b>Marketing is never pre-ticked.</b> The marketing switch ships <code>aria-checked="false"</code> in every panel, including after "Save" — the confirmation states it explicitly ("marketing is off").</li>
+        <li><b>Transactional channels are explained, not hidden.</b> Their switches render in an informative <code>aria-disabled</code> on-state with a note explaining why — a host sees exactly what's required to receive booking- and payout-critical messages, never a silently-forced toggle.</li>
+        <li><b>One account, one settings surface.</b> Change-anytime routes to <code>/account/settings/notifications</code> — the same shared <code>GA-069</code> preferences screen guests use, since <code>HA-003</code> establishes that one SalamStay account carries both modes. No separate host-only notification screen exists in the registry, so none is invented here.</li>
+        <li><b>Consent recorded, plainly.</b> A quiet success state restates the exact choice in a real list (glyph + text) — no confetti, no oversell — then routes forward to the checklist hub <code>/host/onboarding</code>.</li>
+        <li><b>No checkout stepper.</b> A host-onboarding auth-frame screen (<code>HA-003</code>/<code>HA-004</code> lineage), not a checkout step (§7.6a).</li>
+      </ul>
+      <p class="note">Registry: <code>SCREENS.md</code> HA-006 (onboard, app+web) · reuses <code>GA-076</code> switch grammar verbatim + <code>GA-069</code> settings route · components: Switch, Button, banner · gate <code>COMPLIANCE F6-7</code>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

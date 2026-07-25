@@ -1,0 +1,495 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Biometric liveness, host (HA-008)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ---- phone frame ---- */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:620px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.cam-title,.cam-sub,.hc-a,.hc-now,h2,.lead,li,.btn,.st,.sd,.claim,.at-t,.at-d,.path-t,.path-s,.path-tag,.pv-t,.reassure,.suprow-t,.suprow-s) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom.oncam { background:var(--scrim); border-top:none; }
+  .sa-bottom.oncam span { color:var(--text-on-inverse); opacity:.85; }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+  .sa-bottom.oncam .home-ind { background:var(--text-on-inverse); }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — no checkout stepper on host onboarding (§7.6a) */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 2px; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:8px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:16px; }
+  .hero-ic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .hero-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .hero-ic.info { background:var(--info-bg); color:var(--info-fg); }
+  .hero-ic svg { width:28px; height:28px; stroke-width:1.6; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.ghost { background:transparent; color:var(--int-primary); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:14px; font-size:13px; color:var(--int-primary); font-weight:600; text-decoration:none; }
+  .helplink:hover { text-decoration:underline; }
+
+  /* ---- face-oval camera surface (ga-130 lineage) ---- */
+  .cam { flex:1; position:relative; background:var(--bg-sunken); display:flex; flex-direction:column; overflow:hidden; }
+  .cam-scrim-top { position:absolute; top:0; left:0; right:0; z-index:3; background:var(--scrim); display:flex; flex-direction:column; align-items:center; padding:4px 4px 10px; }
+  .cam-scrim-top .cam-bar { display:flex; align-items:center; width:100%; min-height:48px; }
+  .cam-scrim-top .ib svg { color:var(--text-on-inverse); }
+  .cam-title { flex:1; text-align:center; font-size:13.5px; font-weight:600; color:var(--text-on-inverse); padding:0 2px; }
+  .cam-sub { font-size:11.5px; color:var(--text-on-inverse); opacity:.85; text-align:center; margin-top:2px; }
+  .cam-stage { flex:1; position:relative; display:flex; align-items:center; justify-content:center; }
+  .guide.oval { position:relative; width:180px; height:230px; border-radius:50%; box-shadow:0 0 0 999px var(--scrim); }
+  .guide-ring { position:absolute; inset:0; border:2px solid rgba(255,255,255,.7); border-radius:50%; }
+  .guide-ring.brand { inset:-6px; border:2px solid var(--int-primary); opacity:.9; }
+  .turn-arrow { position:absolute; left:-30px; top:50%; transform:translateY(-50%); color:var(--text-on-inverse); opacity:.9; }
+  .turn-arrow svg { width:26px; height:26px; stroke-width:2; }
+  .hint-line { position:absolute; bottom:96px; left:50%; transform:translateX(-50%); z-index:3; display:inline-flex; align-items:center; gap:7px; background:var(--scrim); border-radius:var(--radius-full); padding:7px 13px; white-space:nowrap; }
+  .hint-line svg { width:15px; height:15px; stroke-width:2; color:var(--success-fg); flex:none; }
+  .hint-line span { font-size:12px; font-weight:600; color:var(--text-on-inverse); }
+  .cam-scrim-bot { position:absolute; bottom:0; left:0; right:0; z-index:3; background:var(--scrim); padding:12px 18px 16px; }
+  .fallback-btn { width:100%; min-height:44px; border-radius:var(--radius-md); background:transparent; border:1px solid rgba(255,255,255,.5); color:var(--text-on-inverse); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+  .fallback-btn svg { width:17px; height:17px; stroke-width:2; }
+
+  /* ---- privacy assurance panel (concept-level, no invented retention promise) ---- */
+  .privacy { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .privacy-hd { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+  .privacy-hd svg { width:18px; height:18px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .privacy-hd .ph-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .privacy-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin:0; }
+  .privacy-list li { display:flex; gap:9px; align-items:flex-start; font-size:12px; color:var(--text-secondary); }
+  .privacy-list li svg { width:15px; height:15px; stroke-width:2; color:var(--int-primary); flex:none; margin-top:1px; }
+  .claim { color:var(--text-primary); font-weight:600; }
+
+  /* ---- attempt-caps honesty chip + what-happens-after ---- */
+  .attemptcap { border:1px solid var(--info-border); background:var(--info-bg); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; display:flex; gap:11px; align-items:flex-start; }
+  .attemptcap svg { width:19px; height:19px; stroke-width:1.9; color:var(--info-fg); flex:none; margin-top:1px; }
+  .at-t { font-size:12.5px; font-weight:600; color:var(--info-fg); }
+  .at-d { font-size:12px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .statusrow .sico { flex:none; margin-top:1px; }
+  .statusrow .sico svg { width:19px; height:19px; stroke-width:2; }
+  .statusrow.ok .sico svg { color:var(--success-fg); }
+  .statusrow.info .sico svg { color:var(--info-fg); }
+  .statusrow .sbody .st { font-size:12.5px; font-weight:600; }
+  .statusrow.ok .st { color:var(--success-fg); }
+  .statusrow.info .st { color:var(--info-fg); }
+  .statusrow .sbody .sd { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+  /* ---- fallback ladder — equal-dignity paths, ga-044 lineage ---- */
+  .choose-lb { font-size:12px; font-weight:600; color:var(--text-secondary); margin:2px 0 10px; }
+  .path-list { display:flex; flex-direction:column; gap:11px; margin-bottom:14px; }
+  .path-card { display:flex; gap:12px; align-items:flex-start; border:1px solid var(--border-default); border-radius:var(--radius-lg); padding:13px; background:var(--bg-canvas); }
+  .path-ic { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .path-ic svg { width:19px; height:19px; stroke-width:1.7; }
+  .path-body { flex:1; }
+  .path-t { font-size:13.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .path-tag { font-size:10px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+  .path-s { font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.5; }
+  .path-act { display:block; margin-top:8px; font-size:12.5px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .path-act:hover { text-decoration:underline; }
+
+  /* ---- queued-for-review preview strip ---- */
+  .pv { display:flex; gap:11px; align-items:center; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; }
+  .pv-thumb { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--bg-sunken),var(--int-subtle)); flex:none; border:1px solid var(--border-hairline); }
+  .pv-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .pv-s { font-size:11.5px; color:var(--text-secondary); margin-top:1px; }
+
+  .byperson { display:inline-flex; align-items:center; gap:8px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; font-size:11.5px; font-weight:600; color:var(--text-secondary); margin-bottom:14px; }
+  .byperson svg { width:15px; height:15px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+
+  .reassure { font-size:12px; color:var(--text-tertiary); margin-top:14px; text-align:center; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Biometric liveness, host (HA-008)</h1>
+    <p>The selfie/liveness challenge that follows CNIC capture (<code>HA-007</code>) in the identity step of Host setup. The face-oval camera is the shared <code>GA-130</code> surface, with a <strong>plain, one-at-a-time challenge instruction</strong> ("turn your head slowly to the left") rather than a multi-step sequence. Attempt caps are stated with calm honesty — a count, never a countdown to failure — and always paired with <strong>what happens after</strong>: a two-rung <strong>fallback ladder</strong> for low-end cameras (a well-lit photo, then a manual-review path), each rung equal in dignity and none a dead end. The privacy line stays at concept level, reusing the shipped §9-D data-handling phrasing — no invented retention promise. No real face is rendered anywhere; the camera preview and avatar previews are abstract neutral placeholders.</p>
+    <div class="legend">
+      <span>Light — camera challenge · privacy assurance · success</span>
+      <span>Dark — attempt caps · fallback ladder · queued for review</span>
+      <span>RTL · اردو</span>
+      <span>No checkout stepper — hub-context breadcrumb only (§7.6a)</span>
+      <span>≥44pt · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — camera challenge, privacy assurance and success states">
+      <div class="panel-tag">Light — camera challenge · privacy assurance · success</div>
+      <div class="rowflex">
+
+        <!-- A — CAMERA CHALLENGE -->
+        <div class="pcol">
+          <div class="pcap">A · Camera — one plain instruction at a time</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="cam">
+              <div class="cam-scrim-top">
+                <div class="cam-bar">
+                  <a class="ib" href="/host/verify/cnic/status" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+                  <span class="cam-title" id="aH">Turn your head slowly to the left</span>
+                  <span class="spacer" aria-hidden="true"></span>
+                </div>
+                <span class="cam-sub">Just one simple movement</span>
+              </div>
+              <div class="cam-stage" role="img" aria-label="Live camera preview. An oval guide shows where to place your face; the area outside the oval is dimmed. An arrow indicates turning slowly to the left.">
+                <p class="sr-only">Center your face in the oval and turn your head slowly to the left when ready. No sudden movements are needed.</p>
+                <div class="guide oval" aria-hidden="true">
+                  <span class="guide-ring"></span>
+                  <span class="guide-ring brand"></span>
+                  <span class="turn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5l-7 7 7 7M4 12h16"/></svg></span>
+                </div>
+                <span class="hint-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg><span>Good light — hold there a moment</span></span>
+              </div>
+              <div class="cam-scrim-bot">
+                <a class="fallback-btn" href="/host/verify/liveness/fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg>Trouble with the camera? See other ways</a>
+              </div>
+            </div>
+            <div class="sa-bottom oncam"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B — PRIVACY ASSURANCE -->
+        <div class="pcol">
+          <div class="pcap">B · Privacy assurance — plain, concept-level</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/verify/cnic/status" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">One quick selfie</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Identity</span></div>
+            <div class="screen">
+              <div class="hero-ic info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3.4"/><path d="M5.5 20c1-3.5 12-3.5 13 0"/><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></div>
+              <h2 id="bH">A short check that it's really you</h2>
+              <p class="lead">One quick selfie confirms you match your CNIC photo — the last part of identity verification.</p>
+
+              <div class="privacy">
+                <div class="privacy-hd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="ph-t">Handled privately</span></div>
+                <ul class="privacy-list">
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Your selfie is compared to your CNIC photo once, for this match only</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Then handled per our data policy — never shown to guests or other hosts</li>
+                </ul>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/verify/liveness">Start</a>
+              <a class="helplink" href="/legal/data-handling">How we handle your data</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- C — SUCCESS -->
+        <div class="pcol">
+          <div class="pcap">C · Success — quiet, no celebration</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Verification status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="cH">That's a match</h2>
+              <p class="lead">Your selfie matched your CNIC photo. Identity verification is complete — you won't be asked for this again.</p>
+
+              <div class="statusrow ok" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="sbody"><div class="st">Identity verified</div><div class="sd">CNIC-verified via NADRA Verisys.</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/onboarding">Continue: Host setup</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The challenge instruction is deliberately singular — <b>one plain movement</b>, stated in the camera title itself, never a multi-step sequence to memorise (DESIGN §9-D dignity). The privacy line (B) stays at <b>concept level</b>: "compared once… then handled per our data policy," reusing the shipped §9-D phrasing pattern from <code>GA-041</code>/<code>HA-005</code> rather than inventing a retention window or deletion date. Success (C) is a quiet tick and one sentence — never a confetti moment (§10.6).</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — attempt caps, fallback ladder and queued-for-review states">
+      <div class="panel-tag">Dark — attempt caps · fallback ladder · queued for manual review</div>
+      <div class="rowflex">
+
+        <!-- D — ATTEMPT CAPS, CALM -->
+        <div class="pcol">
+          <div class="pcap">D · Attempt caps — calm, with what happens after</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/verify/cnic/status" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Let's try once more</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Identity</span></div>
+            <div class="screen">
+              <h2 id="dH">The match wasn't clear that time</h2>
+              <p class="lead">Nothing's wrong — lighting or movement can affect the match. One more try in good light usually works.</p>
+
+              <div class="attemptcap" role="status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+                <div>
+                  <div class="at-t"><span class="num">2</span> of <span class="num">3</span> attempts used</div>
+                  <div class="at-d">If the next try doesn't match, we'll move you straight to a well-lit photo and a manual review — never a dead end.</div>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/verify/liveness">Try again</a>
+              <a class="btn ghost" href="/host/verify/liveness/fallback">See other ways to verify</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- E — FALLBACK LADDER -->
+        <div class="pcol">
+          <div class="pcap">E · Fallback ladder — equal-dignity paths</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/verify/liveness" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Other ways to verify</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Identity</span></div>
+            <div class="screen">
+              <p class="choose-lb">Either path finishes your identity check — pick whichever works on your phone.</p>
+              <ul class="path-list" role="list">
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg></span>
+                  <div class="path-body">
+                    <div class="path-t">A well-lit photo<span class="path-tag">Faster</span></div>
+                    <div class="path-s">Works well on any camera — a single still photo, checked the same way as a live selfie.</div>
+                    <a class="path-act" href="/host/verify/liveness/photo">Take a photo instead</a>
+                  </div>
+                </li>
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg></span>
+                  <div class="path-body">
+                    <div class="path-t">Send to manual review<span class="path-tag">A person looks at it</span></div>
+                    <div class="path-s">A member of our team matches your CNIC and photo by hand — no camera trouble needed.</div>
+                    <a class="path-act" href="/host/verify/liveness/manual">Request manual review</a>
+                  </div>
+                </li>
+              </ul>
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/help/verification">Need help choosing?</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F — QUEUED FOR MANUAL REVIEW -->
+        <div class="pcol">
+          <div class="pcap">F · Queued for manual review</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Verification status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="fH">Your photo is with our team</h2>
+              <p class="lead">Thanks — no more attempts needed on this screen. A person will match it to your CNIC directly.</p>
+
+              <span class="byperson"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg>Reviewed by a person, not automatically</span>
+
+              <div class="pv">
+                <span class="pv-thumb" aria-hidden="true"></span>
+                <div>
+                  <div class="pv-t">Selfie photo · queued</div>
+                  <div class="pv-s">Usually within a few hours</div>
+                </div>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+                <div class="sbody"><div class="st">In manual review</div><div class="sd">We'll message you the moment it's done — you don't need to wait here.</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/onboarding">Back to Host setup</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark is first-class — every role AA-proven (§11). Attempt caps (D) state a plain count — never a red countdown — and immediately name <b>what happens next</b>, so a third miss is never a surprise dead end. The fallback ladder (E) presents both rungs at <b>equal visual weight</b>, same card size and hierarchy — a well-lit photo is "Faster," manual review is "A person looks at it," neither is framed as the lesser or punished option. Queued (F) reuses the honest "usually within a few hours" figure shipped in <code>GA-044</code>'s track, never inventing a new promise.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — camera challenge and fallback ladder">
+      <div class="panel-tag">RTL · اردو — camera challenge &amp; fallback ladder, mirrored</div>
+      <div class="rowflex">
+
+        <!-- RTL CAMERA -->
+        <div class="pcol">
+          <div class="pcap">G · Camera — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="gH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="cam">
+              <div class="cam-scrim-top">
+                <div class="cam-bar">
+                  <a class="ib" href="/ur/host/verify/cnic/status" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+                  <span class="cam-title" id="gH">اپنا سر آہستہ سے بائیں طرف موڑیں</span>
+                  <span class="spacer" aria-hidden="true"></span>
+                </div>
+                <span class="cam-sub">صرف ایک آسان حرکت</span>
+              </div>
+              <div class="cam-stage" role="img" aria-label="لائیو کیمرہ پیش منظر۔ ایک بیضوی رہنما دکھاتا ہے کہ چہرہ کہاں رکھیں؛ ایک تیر آہستہ سے بائیں طرف مڑنے کی نشاندہی کرتا ہے۔">
+                <p class="sr-only">اپنا چہرہ بیضے میں درمیان رکھیں اور تیار ہونے پر آہستہ سے بائیں طرف موڑیں۔ کسی اچانک حرکت کی ضرورت نہیں۔</p>
+                <div class="guide oval" aria-hidden="true">
+                  <span class="guide-ring"></span>
+                  <span class="guide-ring brand"></span>
+                  <span class="turn-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5l-7 7 7 7M4 12h16"/></svg></span>
+                </div>
+                <span class="hint-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/></svg><span>روشنی اچھی ہے — ایک لمحہ رکیں</span></span>
+              </div>
+              <div class="cam-scrim-bot">
+                <a class="fallback-btn" href="/ur/host/verify/liveness/fallback"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 4v12M8 8l4-4 4 4"/></svg>کیمرے میں مشکل ہے؟ دوسرے طریقے دیکھیں</a>
+              </div>
+            </div>
+            <div class="sa-bottom oncam"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- RTL FALLBACK LADDER -->
+        <div class="pcol">
+          <div class="pcap">H · Fallback ladder — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="hH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/verify/liveness" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">تصدیق کے دوسرے طریقے</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">شناخت</span></div>
+            <div class="screen">
+              <p class="choose-lb">دونوں طریقے آپ کی شناختی جانچ مکمل کرتے ہیں — جو آپ کے فون پر بہتر کام کرے وہ منتخب کریں۔</p>
+              <ul class="path-list" role="list">
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg></span>
+                  <div class="path-body">
+                    <div class="path-t">ایک اچھی روشنی والی تصویر<span class="path-tag">تیز تر</span></div>
+                    <div class="path-s">کسی بھی کیمرے پر اچھا کام کرتا ہے — ایک ہی تصویر، لائیو سیلفی جیسا جائزہ۔</div>
+                    <a class="path-act" href="/ur/host/verify/liveness/photo">اس کے بجائے تصویر لیں</a>
+                  </div>
+                </li>
+                <li class="path-card">
+                  <span class="path-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg></span>
+                  <div class="path-body">
+                    <div class="path-t">دستی جائزے کے لیے بھیجیں<span class="path-tag">ایک شخص دیکھتا ہے</span></div>
+                    <div class="path-s">ہماری ٹیم کا ایک رکن آپ کے شناختی کارڈ اور تصویر کا دستی موازنہ کرتا ہے — کیمرے کی کوئی پریشانی نہیں۔</div>
+                    <a class="path-act" href="/ur/host/verify/liveness/manual">دستی جائزے کی درخواست دیں</a>
+                  </div>
+                </li>
+              </ul>
+              <div class="spacer-fill"></div>
+              <a class="helplink" href="/ur/help/verification">انتخاب میں مدد چاہیے؟</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored (§11): the close button and controls follow the reading direction; the face oval, its guide rings, and the turn-direction arrow are treated as camera-real (they describe a physical head movement, not UI chrome) and do not mirror. The fallback ladder keeps both path cards at equal weight in Urdu too — neither reads as the fallback of last resort. Digits stay LTR-isolated (<code>.num</code>) inside the Urdu attempt count.</p>
+    </section>
+
+  </main>
+</body>
+</html>

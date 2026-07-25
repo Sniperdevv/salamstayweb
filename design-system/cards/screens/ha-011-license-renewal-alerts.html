@@ -1,0 +1,494 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Tourism license renewal alerts (HA-011)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:940px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage; NO checkout stepper */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:640px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.bnr-h,.bnr-d,.bnr-a,.vt,.vs,.vstate,.st,.sd,.byp-t,.tk-t,.tk-d,.tk-when,.pref-t,.pref-s,.helplink,.btn,a,.toast-t) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+
+  /* inline banners — the ladder (§8.5 nav) */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; border:1px solid transparent; }
+  .bnr.warn { background:var(--warning-bg); border-color:var(--warning-border); }
+  .bnr.error { background:var(--error-bg); border-color:var(--error-border); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:18px; height:18px; stroke-width:2; }
+  .bnr.warn .bnr-ic svg { color:var(--warning-fg); }
+  .bnr.error .bnr-ic svg { color:var(--error-fg); }
+  .bnr .bnr-b { flex:1; min-width:0; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .bnr .bnr-a { display:inline-block; margin-top:9px; font-size:12.5px; font-weight:600; color:var(--int-primary); }
+
+  /* verification-status row (§8.3) — single "Tourism license" row */
+  .vrow { display:flex; gap:11px; align-items:flex-start; min-height:60px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 12px; margin-bottom:14px; }
+  .vbubble { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; border:1px solid transparent; }
+  .vbubble svg { width:18px; height:18px; stroke-width:2; }
+  .vbubble.warn { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+  .vbubble.error { background:var(--error-bg); border-color:var(--error-border); color:var(--error-fg); }
+  .vbubble.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .vmeta { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .vt { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .vs { font-size:11.5px; color:var(--text-secondary); }
+  .vstate { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:var(--radius-full); border:1px solid transparent; white-space:nowrap; }
+  .vstate svg { width:11px; height:11px; stroke-width:2.4; }
+  .vstate.warn { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+  .vstate.error { background:var(--error-bg); border-color:var(--error-border); color:var(--error-fg); }
+  .vstate.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+
+  /* paused hero (expired) — muted error, never an X */
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic.pause { background:var(--error-bg); color:var(--error-fg); }
+  .hero-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.6; }
+
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:13px; }
+  .statusrow.error { background:var(--error-bg); border:1px solid var(--error-border); }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow .sico { flex:none; margin-top:1px; }
+  .statusrow .sico svg { width:18px; height:18px; stroke-width:2; }
+  .statusrow.error .sico svg { color:var(--error-fg); }
+  .statusrow.ok .sico svg { color:var(--success-fg); }
+  .statusrow .sbody .st { font-size:12.5px; font-weight:600; }
+  .statusrow.error .st { color:var(--error-fg); }
+  .statusrow.ok .st { color:var(--success-fg); }
+  .statusrow .sbody .sd { font-size:11.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+
+  .byp { display:inline-flex; align-items:center; gap:8px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:14px; }
+  .byp svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .byp-t { display:inline; }
+
+  .track { display:flex; flex-direction:column; margin:2px 0 14px; }
+  .track li { display:flex; gap:12px; align-items:stretch; }
+  .tk-rail { display:flex; flex-direction:column; align-items:center; flex:none; width:24px; }
+  .tk-dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; border:2px solid var(--border-default); background:var(--bg-canvas); color:var(--text-tertiary); }
+  .tk-dot svg { width:13px; height:13px; stroke-width:2.4; }
+  .tk-line { display:block; width:2px; flex:1; background:var(--border-hairline); min-height:16px; margin:3px 0; }
+  .track li:last-child .tk-line { display:none; }
+  .track li.done .tk-dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .track li.done .tk-line { background:var(--int-primary); }
+  .track li.now .tk-dot { border-color:var(--int-primary); color:var(--int-primary); box-shadow:0 0 0 3px var(--int-subtle); }
+  .tk-body { flex:1; padding-bottom:14px; }
+  .tk-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .track li.upcoming .tk-t { color:var(--text-tertiary); }
+  .tk-d { font-size:11.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .tk-when { font-size:10.5px; color:var(--text-tertiary); margin-top:3px; }
+
+  /* notification-prefs link row — GA-069 shared surface */
+  .preflink { display:flex; align-items:center; gap:11px; margin-top:2px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; }
+  .pref-ic { flex:none; color:var(--text-secondary); display:inline-flex; }
+  .pref-ic svg { width:17px; height:17px; stroke-width:1.8; }
+  .pref-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .pref-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .pref-s { font-size:11px; color:var(--text-secondary); }
+  .pref-chev { flex:none; color:var(--text-tertiary); display:inline-flex; }
+  .pref-chev svg { width:15px; height:15px; stroke-width:2; }
+
+  /* toast (§8.5) */
+  .toast { position:absolute; inset-inline:16px; bottom:calc(78px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:12px 14px; }
+  .toast-ic { flex:none; color:var(--success-fg); display:inline-flex; }
+  .toast-ic svg { width:19px; height:19px; stroke-width:2.2; }
+  .toast-t { flex:1; font-size:12.5px; font-weight:600; color:var(--text-primary); }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:12px; font-size:12.5px; color:var(--int-primary); font-weight:600; }
+  .helplink:hover { text-decoration:underline; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Tourism license renewal alerts (HA-011)</h1>
+    <p>The −60/−30/−7-day renewal ladder for the tourism license captured in <code>HA-010</code>, plus the expired auto-pause notice and the renewal-submitted → restored recovery (host-verify, ARCH §11.5.4). The ladder stays in the <b>calm amber</b> register the whole way — never panic red — escalating only in how direct the copy is, extending <code>GA-049</code>'s "no rush" grammar at −60 days through a plainer "renew now" at −7. Only the auto-pause itself, once the license has actually lapsed, moves to a muted, factual paused state — stated plainly, never punitively: the listing pauses to keep the host compliant, and returns the moment the renewal is in. Case continues Aqib's Gulberg 2 Residence listing in Lahore, Punjab from <code>HA-010</code>/<code>HA-046</code>. A notification-preferences link row (the <code>GA-069</code> shared surface) sits on every state.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — −60d · −30d</span><span>Dark — −7d · expired</span><span>Light — submitted · restored</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — −60d, −30d ============================ -->
+    <section class="panel" aria-label="Light theme — 60-day and 30-day renewal reminders">
+      <div class="panel-tag">Light — −60 days (no rush) · −30 days (a reminder)</div>
+      <div class="rowflex">
+
+        <!-- A · −60 DAYS -->
+        <div class="pcol">
+          <div class="pcap">A · −60 days — calm heads-up</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence/compliance" aria-label="Back to compliance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">License renewal</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Your tourism license renews in <span class="num">60</span> days</h2>
+              <p class="lead">Gulberg 2 Residence, Lahore.</p>
+
+              <div class="bnr warn" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v3"/></svg></span>
+                <div class="bnr-b">
+                  <div class="bnr-h">Renews 14 Nov 2026</div>
+                  <div class="bnr-d">No rush — this is just an early heads-up. Renewing anytime before then keeps your listing live without a pause.</div>
+                  <a class="bnr-a" href="/host/listings/gulberg-2-residence/compliance/renew">Start renewal</a>
+                </div>
+              </div>
+
+              <div class="vrow">
+                <span class="vbubble warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · expires 14 Nov 2026</div></div>
+                <span class="vstate warn" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span><span class="num">60</span> days left</span></span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="preflink" href="/account/settings/notifications">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">Manage renewal reminders</span><span class="pref-s">Choose how we notify you</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · −30 DAYS -->
+        <div class="pcol">
+          <div class="pcap">B · −30 days — a reminder</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence/compliance" aria-label="Back to compliance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">License renewal</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Your tourism license renews in <span class="num">30</span> days</h2>
+              <p class="lead">Gulberg 2 Residence, Lahore.</p>
+
+              <div class="bnr warn" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v3"/></svg></span>
+                <div class="bnr-b">
+                  <div class="bnr-h">Renews 14 Nov 2026 — <span class="num">30</span> days left</div>
+                  <div class="bnr-d">A reminder to start when you're ready. Nothing changes yet, and your listing stays live while you do.</div>
+                  <a class="bnr-a" href="/host/listings/gulberg-2-residence/compliance/renew">Start renewal</a>
+                </div>
+              </div>
+
+              <div class="vrow">
+                <span class="vbubble warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · expires 14 Nov 2026</div></div>
+                <span class="vstate warn" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span><span class="num">30</span> days left</span></span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn secondary" type="button">Start renewal</button>
+              <a class="preflink" href="/account/settings/notifications" style="margin-top:10px;">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">Manage renewal reminders</span><span class="pref-s">Choose how we notify you</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Both early rungs share the identical <b>muted amber</b> banner register (§10.6/§10) — the escalation is entirely in how direct the copy is, never in a hotter color. −60 days opens with <code>GA-049</code>'s exact "no rush" grammar; −30 days drops the reassurance-first framing but keeps the tone even. The notification-preferences link row reuses <code>GA-069</code>'s shared <code>.preflink</code> surface and route verbatim.</p>
+    </section>
+
+    <!-- ============================ DARK — −7d, EXPIRED ============================ -->
+    <section class="panel dark" aria-label="Dark theme — 7-day reminder and the expired auto-pause notice">
+      <div class="panel-tag">Dark — −7 days (renew now) · expired (listing paused)</div>
+      <div class="rowflex">
+
+        <!-- C · −7 DAYS -->
+        <div class="pcol">
+          <div class="pcap">C · −7 days — direct, still calm</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence/compliance" aria-label="Back to compliance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">License renewal</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Your tourism license renews in <span class="num">7</span> days</h2>
+              <p class="lead">Gulberg 2 Residence, Lahore.</p>
+
+              <div class="bnr warn" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v3"/></svg></span>
+                <div class="bnr-b">
+                  <div class="bnr-h">Renews 14 Nov 2026 — <span class="num">7</span> days left</div>
+                  <div class="bnr-d">Time to renew. If it lapses, your listing pauses automatically until the new one is in — renew now to avoid any gap.</div>
+                  <a class="bnr-a" href="/host/listings/gulberg-2-residence/compliance/renew">Renew now</a>
+                </div>
+              </div>
+
+              <div class="vrow">
+                <span class="vbubble warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · expires 14 Nov 2026</div></div>
+                <span class="vstate warn" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span><span class="num">7</span> days left</span></span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/gulberg-2-residence/compliance/renew">Renew now</a>
+              <a class="preflink" href="/account/settings/notifications" style="margin-top:10px;">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">Manage renewal reminders</span><span class="pref-s">Choose how we notify you</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · EXPIRED / AUTO-PAUSED -->
+        <div class="pcol">
+          <div class="pcap">D · Expired — listing paused</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="dH">License renewal</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic pause" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg></div>
+              <h2>Your license has expired</h2>
+              <p class="lead">Your listing is paused so you stay compliant — it comes back the moment your renewal is in. Nothing else about your account changes.</p>
+
+              <div class="statusrow error" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+                <div class="sbody"><div class="st">Gulberg 2 Residence is paused</div><div class="sd">Guests can't book while your license is renewing.</div></div>
+              </div>
+
+              <div class="vrow">
+                <span class="vbubble error" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Expired 14 Nov 2026</div></div>
+                <span class="vstate error" role="status">Renew to restore</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/gulberg-2-residence/compliance/renew">Renew now</a>
+              <a class="helplink" href="/help/tourism-registration">How renewal works</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">−7 days is the most direct rung and still holds the amber register — panic red is reserved for nothing in this ladder. Only the <b>expired</b> state moves off amber, to a <b>muted</b> error tone (never saturated, never an X) because the listing has genuinely paused (ARCH §11.5.4/HA-073 concept) — the copy names the pause plainly, states the one fix, and promises immediate restoration, matching §10.6's "process, not alarm" law.</p>
+    </section>
+
+    <!-- ============================ LIGHT — SUBMITTED, RESTORED ============================ -->
+    <section class="panel" aria-label="Light theme — renewal submitted for review, and the restored listing">
+      <div class="panel-tag">Light — renewal submitted · restored, listing live again</div>
+      <div class="rowflex">
+
+        <!-- E · RENEWAL SUBMITTED -->
+        <div class="pcol">
+          <div class="pcap">E · Renewal submitted — in review</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence/compliance" aria-label="Back to compliance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="eH">License renewal</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Your renewal is with our team</h2>
+              <p class="lead">Thanks — we received it. Your listing stays paused until it's verified, so there's nothing else to do.</p>
+
+              <span class="byp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg><span class="byp-t">Reviewed by our team, not automatically</span></span>
+
+              <ol class="track">
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Submitted</div><div class="tk-d">Your renewed license was received.</div><div class="tk-when">Today, <span class="num">9:12</span> AM</div></div>
+                </li>
+                <li class="now" aria-current="step">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">In review</div><div class="tk-d">Usually within a day or two.</div></div>
+                </li>
+                <li class="upcoming">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Verified &amp; restored</div><div class="tk-d">Gulberg 2 Residence goes live again immediately.</div></div>
+                </li>
+              </ol>
+
+              <div class="spacer-fill"></div>
+              <button class="btn secondary" type="button">Back to dashboard</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · RESTORED -->
+        <div class="pcol">
+          <div class="pcap">F · Restored — listing live again</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="fH">License renewal</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2>You're licensed again</h2>
+              <p class="lead">Your renewal was verified and Gulberg 2 Residence is live again immediately. Thanks for staying compliant.</p>
+
+              <div class="vrow">
+                <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="vmeta"><div class="vt">Tourism license</div><div class="vs">Verified · renews 14 Nov 2028</div></div>
+                <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Restored</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/today">Continue to dashboard</a>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="toast-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="toast-t">Listing restored — Gulberg 2 Residence is live</span>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The recovery arc mirrors <code>GA-045</code>'s honest <b>Submitted → In review → Verified</b> track, "reviewed by a person, not automatically." Restoration confirms with a low-stakes <code>aria-live="polite"</code> toast (§8.5) that never steals focus, exactly like <code>GA-129</code>'s save toast — the same quiet-approval grammar used everywhere a pause lifts.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the expired auto-pause notice">
+      <div class="panel-tag">RTL · اردو — expired / auto-paused, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">G · اردو — میعاد ختم، لسٹنگ رکی ہوئی</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="gH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="gH">لائسنس کی تجدید</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero-ic pause" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg></div>
+              <h2>آپ کے لائسنس کی میعاد ختم ہو گئی</h2>
+              <p class="lead">آپ کی لسٹنگ تعمیل برقرار رکھنے کے لیے روک دی گئی ہے — تجدید مکمل ہوتے ہی یہ فوراً بحال ہو جائے گی۔ آپ کے اکاؤنٹ میں کچھ اور تبدیل نہیں ہوتا۔</p>
+
+              <div class="statusrow error" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+                <div class="sbody"><div class="st">گلبرگ 2 ریزیڈنس روکی گئی ہے</div><div class="sd">تجدید تک مہمان بکنگ نہیں کر سکتے۔</div></div>
+              </div>
+
+              <div class="vrow">
+                <span class="vbubble error" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                <div class="vmeta"><div class="vt">سیاحتی لائسنس</div><div class="vs">میعاد <span class="num">14</span> نومبر <span class="num">2026</span> کو ختم ہوئی</div></div>
+                <span class="vstate error" role="status">بحالی کے لیے تجدید کریں</span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/host/listings/gulberg-2-residence/compliance/renew">ابھی تجدید کریں</a>
+              <a class="helplink" href="/ur/help/tourism-registration">تجدید کیسے کام کرتی ہے</a>
+              <a class="preflink" href="/ur/account/settings/notifications" style="margin-top:10px;">
+                <span class="pref-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 2h-4l-.5 2.4a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 22h4l.5-2.4a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 19 12z"/></svg></span>
+                <span class="pref-b"><span class="pref-t">تجدید یاد دہانیوں کا انتظام کریں</span><span class="pref-s">اطلاع کا طریقہ منتخب کریں</span></span>
+                <span class="pref-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9l-6 6-6-6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The most sensitive rung of the ladder is exactly the one proven in Urdu here: the pause is named plainly ("روکی گئی ہے"), the fix is a single next step, and the promise of immediate restoration survives translation intact (§10.6). Digits stay LTR-isolated (<code>.num</code>); the preferences chevron mirrors to point toward reading-start.</p>
+    </section>
+
+  </main>
+</body>
+</html>

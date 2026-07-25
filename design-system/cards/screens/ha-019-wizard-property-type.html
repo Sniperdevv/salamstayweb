@@ -1,0 +1,487 @@
+<!-- @dsCard group="Screens" -->
+<!-- WIZARD PROGRESS CONVENTION — established here (HA-019), iteration #19 batch A. 12-step map for
+     the create-listing wizard (SCREENS.md line 93 order, grouped into 12 user-facing steps):
+     1 Property type (HA-019) · 2 Location (HA-020) · 3 Capacity (HA-021) · 4 Amenities (HA-022) ·
+     5 Cultural attributes (HA-023) · 6 Qibla & prayer (HA-024) · 7 Women-only / mahram (HA-025) ·
+     8 PK-practical infrastructure (HA-026) · 9 Photos (HA-027) · 10 Title & description (HA-028+HA-029) ·
+     11 House rules (HA-030) · 12 Pricing & availability (HA-031+HA-032).
+     Publish preview (HA-033) and Published success (HA-034) render AFTER 12/12 with NO wizard
+     stepper — same "post-flow, no stepper" rule §7.6a already sets for guest post-book screens.
+     Markup (render identically on every wizard step): .hubctx breadcrumb ("Host setup · Listing",
+     ha-004/ha-009/ha-014 lineage) + .wprog — 12 thin bars (verify-family §7.6a grammar: bars =
+     wizard steps completed, advancing; done/now/upcoming) + caption "Step N of 12 · {step name}"
+     (اردو: "مرحلہ N از 12 · {نام}", digits .num LTR-isolated). NEVER the guest checkout
+     named-circles stepper (ga-039/ga-055/ga-057) — host wizard screens never carry that. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Wizard: Property type, host (HA-019)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-primary-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-primary-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  fieldset { border:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { max-width:960px; font-size:14px; color:#5F676D; margin-top:8px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:308px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage (ha-004/ha-009/ha-010/ha-014); NEVER the guest checkout stepper */
+  .phone { width:308px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.hc-a,.hc-now,.wcap,h2,.lead,.seclab,.t,.d,.segopt span,.lprev-t,.lprev-s,.lprev-cap,.reassure,.btn) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  /* hub-context breadcrumb — the wizard-progress convention's macro half (§7.6a lineage) */
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 0; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+
+  /* wizard progress — 12 thin bars, verify-family sub-progress grammar (§7.6a), bars = steps completed */
+  .wprog { padding:8px 18px 0; flex:none; }
+  .wprog .wbars { display:flex; gap:3px; margin-bottom:6px; }
+  .wprog .wbars i { display:block; height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); font-style:normal; }
+  .wprog .wbars i.done, .wprog .wbars i.now { background:var(--int-primary); }
+  .wprog .wbars i.now { opacity:.55; }
+  .wprog .wcap { font-size:11px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .seclab { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 9px; }
+  .seclab:first-of-type { margin-top:0; }
+
+  /* property/space type list — radio rows, generous tappable cards */
+  .opts { display:flex; flex-direction:column; gap:8px; }
+  .opt { display:flex; align-items:flex-start; gap:12px; min-height:60px; padding:12px 13px; border:1.5px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); cursor:pointer; position:relative; }
+  .opt input { position:absolute; opacity:0; width:1px; height:1px; }
+  .opt .radio { width:20px; height:20px; margin-top:1px; border-radius:var(--radius-full); border:1.5px solid var(--border-default); flex:none; display:flex; align-items:center; justify-content:center; }
+  .opt .radio::after { content:""; width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); transform:scale(0); transition:transform .12s ease; }
+  .opt .ic { width:36px; height:36px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .opt .ic svg { width:18px; height:18px; stroke-width:1.7; }
+  .opt .body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .opt .t { display:block; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .opt .d { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .opt:has(input:checked) { border-color:var(--int-primary); background:var(--int-subtle); }
+  .opt:has(input:checked) .radio { border-color:var(--int-primary); }
+  .opt:has(input:checked) .radio::after { transform:scale(1); }
+  .opt:has(input:focus-visible) { outline:2px solid var(--int-primary); outline-offset:2px; }
+
+  /* entire place vs a room — segmented (≤4 segments, §8.1) */
+  .segwrap { margin:4px 0 4px; }
+  .seg { display:flex; gap:4px; background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-md); padding:4px; }
+  .segopt { flex:1; position:relative; }
+  .segopt input { position:absolute; opacity:0; inset:0; width:100%; height:100%; margin:0; cursor:pointer; }
+  .segopt span { display:block; text-align:center; min-height:40px; line-height:40px; border-radius:6px; font-size:13px; font-weight:600; color:var(--text-secondary); padding:0 6px; }
+  .segopt:has(input:checked) span { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-hairline); }
+  .segopt:has(input:focus-visible) span { outline:2px solid var(--int-primary); outline-offset:2px; }
+  .seg-hint { font-size:11.5px; color:var(--text-tertiary); margin-top:8px; line-height:1.4; }
+
+  /* listing preview strip — appears once a type is chosen */
+  .lprev { display:flex; align-items:center; gap:11px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:12px 13px; margin:16px 0 6px; }
+  .lprev-ic { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); flex:none; }
+  .lprev-ic svg { width:19px; height:19px; stroke-width:1.7; }
+  .lprev-b { display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .lprev-t { display:block; font-size:13.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lprev-s { display:block; font-size:11.5px; color:var(--text-secondary); }
+  .lprev-cap { font-size:11px; color:var(--text-tertiary); margin:6px 2px 0; line-height:1.4; }
+
+  .spacer-fill { flex:1; }
+  .reassure { font-size:11px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.4; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.primary[disabled] { background:var(--border-default); color:var(--text-disabled); cursor:not-allowed; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Wizard: Property type, host (HA-019)</h1>
+    <p>Step <b>1 of 12</b> in the create-listing wizard (<code>create-listing</code>, SCREENS §2) — the screen that <b>establishes the wizard-progress convention</b> a parallel batch continues: the existing <code>.hubctx</code> breadcrumb ("Host setup · Listing," ha-004/ha-009/ha-014 lineage) paired with a new <b>thin-bar sub-progress caption</b>, "Step N of 12 · {step name}," reusing the verify-family grammar (§7.6a) where bars mark wizard steps completed — never the guest checkout named-circles stepper. Seven PK space types sit at <b>equal visual weight</b> — house, apartment, portion, room, guesthouse, farmhouse, hujra/guest-annexe — each a one-line, honest description (no ornament lexicon for "hujra"), plus the entire-place/a-room segmented choice and a live listing-preview strip. Host Aqib is creating his <b>second listing, Cantt View Residence, Rawalpindi Cantonment</b> (the ha-014/ha-018 case whose wizard explains the NOC detection landing on <code>HA-020</code>). Panels: empty/unselected + selected &amp; ready (light) · selected, different combo (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — unselected · selected &amp; ready</span><span>Dark — selected, room combo</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — UNSELECTED · SELECTED & READY ============================ -->
+    <section class="panel" aria-label="Light theme — the empty, unselected wizard step and the selected, ready-to-continue state">
+      <div class="panel-tag">Light — unselected, continue disabled · House + entire place selected, ready</div>
+      <div class="rowflex">
+
+        <!-- A · UNSELECTED -->
+        <div class="pcol">
+          <div class="pcap">A · Unselected — continue disabled</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/onboarding" aria-label="Back to Host setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Property type</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">Step 1 of 12 · Property type</p>
+            </div>
+            <div class="screen">
+              <h2 id="aH">What kind of place is it?</h2>
+              <p class="lead">Pick the type that best describes your new listing — every option here gets the same weight.</p>
+
+              <fieldset class="opts">
+                <legend class="sr-only">Property or space type</legend>
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+                  <span class="body"><span class="t">House</span><span class="d">A standalone home, just for your guests</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1"/><path d="M10 21v-3h4v3"/></svg></span>
+                  <span class="body"><span class="t">Apartment</span><span class="d">A unit in a shared building</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M12 5v15"/><path d="M9 15.5h1.5"/></svg></span>
+                  <span class="body"><span class="t">Portion</span><span class="d">Part of a house with its own entrance — common in Pakistani cities</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M15 12v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M3 15h18"/><path d="M3 18v2M21 18v2"/></svg></span>
+                  <span class="body"><span class="t">Room</span><span class="d">A private room inside a shared home</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20V10.5l5-4 5 4V20a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1z"/><path d="M12 21v-4h2v4"/><path d="M3 21V14l3-2.4"/></svg></span>
+                  <span class="body"><span class="t">Guesthouse</span><span class="d">A separate guest building, apart from the main home</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V12l4-3 4 3v8"/><path d="M5 20v-3h4v3"/><circle cx="17" cy="9" r="3"/><path d="M17 12v8"/></svg></span>
+                  <span class="body"><span class="t">Farmhouse</span><span class="d">A rural property with open land, outside the city</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-a" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="1"/><path d="M4 13h16"/><rect x="7" y="15.5" width="4" height="3" rx="0.5"/><rect x="13" y="15.5" width="4" height="3" rx="0.5"/><path d="M9 6V3h6v3"/></svg></span>
+                  <span class="body"><span class="t">Hujra / guest-annexe</span><span class="d">A separate guest sitting room, apart from the family home — common in northern and rural areas</span></span></label>
+              </fieldset>
+
+              <p class="seclab">Entire place or a room?</p>
+              <div class="segwrap">
+                <fieldset class="seg" role="radiogroup" aria-label="Entire place or a room">
+                  <label class="segopt"><input type="radio" name="unit-a" /><span>Entire place</span></label>
+                  <label class="segopt"><input type="radio" name="unit-a" /><span>A room</span></label>
+                </fieldset>
+                <p class="seg-hint">Choose to see how it changes what guests can expect.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button" disabled aria-disabled="true">Continue</button>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · SELECTED & READY -->
+        <div class="pcol">
+          <div class="pcap">B · House + entire place — ready</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/onboarding" aria-label="Back to Host setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Property type</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">Step 1 of 12 · Property type</p>
+            </div>
+            <div class="screen">
+              <h2 id="bH">What kind of place is it?</h2>
+              <p class="lead">Pick the type that best describes your new listing — every option here gets the same weight.</p>
+
+              <fieldset class="opts">
+                <legend class="sr-only">Property or space type</legend>
+                <label class="opt"><input type="radio" name="ptype-b" checked /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+                  <span class="body"><span class="t">House</span><span class="d">A standalone home, just for your guests</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-b" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1"/><path d="M10 21v-3h4v3"/></svg></span>
+                  <span class="body"><span class="t">Apartment</span><span class="d">A unit in a shared building</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-b" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M12 5v15"/><path d="M9 15.5h1.5"/></svg></span>
+                  <span class="body"><span class="t">Portion</span><span class="d">Part of a house with its own entrance — common in Pakistani cities</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-b" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M15 12v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M3 15h18"/><path d="M3 18v2M21 18v2"/></svg></span>
+                  <span class="body"><span class="t">Room</span><span class="d">A private room inside a shared home</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-b" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20V10.5l5-4 5 4V20a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1z"/><path d="M12 21v-4h2v4"/><path d="M3 21V14l3-2.4"/></svg></span>
+                  <span class="body"><span class="t">Guesthouse</span><span class="d">A separate guest building, apart from the main home</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-b" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V12l4-3 4 3v8"/><path d="M5 20v-3h4v3"/><circle cx="17" cy="9" r="3"/><path d="M17 12v8"/></svg></span>
+                  <span class="body"><span class="t">Farmhouse</span><span class="d">A rural property with open land, outside the city</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-b" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="1"/><path d="M4 13h16"/><rect x="7" y="15.5" width="4" height="3" rx="0.5"/><rect x="13" y="15.5" width="4" height="3" rx="0.5"/><path d="M9 6V3h6v3"/></svg></span>
+                  <span class="body"><span class="t">Hujra / guest-annexe</span><span class="d">A separate guest sitting room, apart from the family home — common in northern and rural areas</span></span></label>
+              </fieldset>
+
+              <p class="seclab">Entire place or a room?</p>
+              <div class="segwrap">
+                <fieldset class="seg" role="radiogroup" aria-label="Entire place or a room">
+                  <label class="segopt"><input type="radio" name="unit-b" checked /><span>Entire place</span></label>
+                  <label class="segopt"><input type="radio" name="unit-b" /><span>A room</span></label>
+                </fieldset>
+                <p class="seg-hint">Guests will have the whole property to themselves.</p>
+              </div>
+
+              <div class="lprev">
+                <span class="lprev-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+                <div class="lprev-b"><span class="lprev-t">Cantt View Residence</span><span class="lprev-s">House · Entire place</span></div>
+              </div>
+              <p class="lprev-cap">A quick look at how this will read to guests — you'll add photos and details next.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/location">Continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">All <b>seven PK space types render at identical visual weight</b> — same card size, icon treatment and description length — including <b>Portion</b> and <b>Hujra/guest-annexe</b>, described plainly and honestly rather than glossed over: a portion is "part of a house with its own entrance," a hujra is "a separate guest sitting room, apart from the family home," both with no ornament lexicon (§8 R8) and no folkloric framing. The <b>Entire place / A room</b> segmented choice (§8.1, ≤4 segments) is independent of type — any of the seven can be listed either way. The <b>listing-preview strip</b> only appears once a type is picked, tying this step to the marketplace Listing card grammar (§8.2) without pre-empting the photos step. Continue is <b>genuinely disabled</b> (not a dead-end link) until a type is chosen — panel A shows this state explicitly rather than hiding it.</p>
+    </section>
+
+    <!-- ============================ DARK — SELECTED, ROOM COMBO ============================ -->
+    <section class="panel dark" aria-label="Dark theme — Room type selected with the a-room segmented choice">
+      <div class="panel-tag">Dark — Room + a room selected, ready</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Room + a room — ready</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/onboarding" aria-label="Back to Host setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Property type</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Listing</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">Step 1 of 12 · Property type</p>
+            </div>
+            <div class="screen">
+              <h2 id="cH">What kind of place is it?</h2>
+              <p class="lead">Pick the type that best describes your new listing — every option here gets the same weight.</p>
+
+              <fieldset class="opts">
+                <legend class="sr-only">Property or space type</legend>
+                <label class="opt"><input type="radio" name="ptype-c" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+                  <span class="body"><span class="t">House</span><span class="d">A standalone home, just for your guests</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-c" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1"/><path d="M10 21v-3h4v3"/></svg></span>
+                  <span class="body"><span class="t">Apartment</span><span class="d">A unit in a shared building</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-c" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M12 5v15"/><path d="M9 15.5h1.5"/></svg></span>
+                  <span class="body"><span class="t">Portion</span><span class="d">Part of a house with its own entrance — common in Pakistani cities</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-c" checked /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M15 12v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M3 15h18"/><path d="M3 18v2M21 18v2"/></svg></span>
+                  <span class="body"><span class="t">Room</span><span class="d">A private room inside a shared home</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-c" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20V10.5l5-4 5 4V20a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1z"/><path d="M12 21v-4h2v4"/><path d="M3 21V14l3-2.4"/></svg></span>
+                  <span class="body"><span class="t">Guesthouse</span><span class="d">A separate guest building, apart from the main home</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-c" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V12l4-3 4 3v8"/><path d="M5 20v-3h4v3"/><circle cx="17" cy="9" r="3"/><path d="M17 12v8"/></svg></span>
+                  <span class="body"><span class="t">Farmhouse</span><span class="d">A rural property with open land, outside the city</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-c" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="1"/><path d="M4 13h16"/><rect x="7" y="15.5" width="4" height="3" rx="0.5"/><rect x="13" y="15.5" width="4" height="3" rx="0.5"/><path d="M9 6V3h6v3"/></svg></span>
+                  <span class="body"><span class="t">Hujra / guest-annexe</span><span class="d">A separate guest sitting room, apart from the family home — common in northern and rural areas</span></span></label>
+              </fieldset>
+
+              <p class="seclab">Entire place or a room?</p>
+              <div class="segwrap">
+                <fieldset class="seg" role="radiogroup" aria-label="Entire place or a room">
+                  <label class="segopt"><input type="radio" name="unit-c" /><span>Entire place</span></label>
+                  <label class="segopt"><input type="radio" name="unit-c" checked /><span>A room</span></label>
+                </fieldset>
+                <p class="seg-hint">Guests will have a private room; you or others may share common areas.</p>
+              </div>
+
+              <div class="lprev">
+                <span class="lprev-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M15 12v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M3 15h18"/><path d="M3 18v2M21 18v2"/></svg></span>
+                <div class="lprev-b"><span class="lprev-t">Cantt View Residence</span><span class="lprev-s">Room · A room</span></div>
+              </div>
+              <p class="lprev-cap">A quick look at how this will read to guests — you'll add photos and details next.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/host/listings/new/location">Continue</a>
+              <p class="reassure">Your progress saves automatically — pick back up anytime from Host setup.</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">A second, independent combination — <b>Room + A room</b> — to show the segmented choice actually varies with type rather than being cosmetically tied to it; the preview strip and hint line both update to match. Dark tokens re-resolve every role (§1.5); the radio fill and segmented thumb stay legible at AA on the dark canvas.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — House and entire place selected">
+      <div class="panel-tag">RTL · اردو — "جائیداد کی قسم", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — گھر، پوری جگہ منتخب</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="rH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/onboarding" aria-label="میزبان سیٹ اپ پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">جائیداد کی قسم</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">لسٹنگ</span></div>
+            <div class="wprog">
+              <div class="wbars" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <p class="wcap">مرحلہ <span class="num">1</span> از <span class="num">12</span> · جائیداد کی قسم</p>
+            </div>
+            <div class="screen">
+              <h2 id="rH">جگہ کی قسم کیا ہے؟</h2>
+              <p class="lead">وہ قسم منتخب کریں جو آپ کی نئی لسٹنگ کو بہترین انداز میں بیان کرے — یہاں ہر آپشن کو یکساں اہمیت حاصل ہے۔</p>
+
+              <fieldset class="opts">
+                <legend class="sr-only">جائیداد یا جگہ کی قسم</legend>
+                <label class="opt"><input type="radio" name="ptype-r" checked /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+                  <span class="body"><span class="t">گھر</span><span class="d">الگ مکمل گھر، صرف مہمانوں کے لیے</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-r" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1"/><path d="M10 21v-3h4v3"/></svg></span>
+                  <span class="body"><span class="t">اپارٹمنٹ</span><span class="d">مشترکہ عمارت میں ایک یونٹ</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-r" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M12 5v15"/><path d="M9 15.5h1.5"/></svg></span>
+                  <span class="body"><span class="t">پورشن</span><span class="d">گھر کا حصہ، اپنے الگ دروازے کے ساتھ — پاکستانی شہروں میں عام</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-r" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M15 12v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/><path d="M3 15h18"/><path d="M3 18v2M21 18v2"/></svg></span>
+                  <span class="body"><span class="t">کمرہ</span><span class="d">مشترکہ گھر کے اندر ایک نجی کمرہ</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-r" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20V10.5l5-4 5 4V20a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1z"/><path d="M12 21v-4h2v4"/><path d="M3 21V14l3-2.4"/></svg></span>
+                  <span class="body"><span class="t">گیسٹ ہاؤس</span><span class="d">مرکزی گھر سے الگ، مہمانوں کے لیے مخصوص عمارت</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-r" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V12l4-3 4 3v8"/><path d="M5 20v-3h4v3"/><circle cx="17" cy="9" r="3"/><path d="M17 12v8"/></svg></span>
+                  <span class="body"><span class="t">فارم ہاؤس</span><span class="d">شہر سے باہر، کھلی زمین والی دیہی جائیداد</span></span></label>
+
+                <label class="opt"><input type="radio" name="ptype-r" /><span class="radio"></span>
+                  <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="1"/><path d="M4 13h16"/><rect x="7" y="15.5" width="4" height="3" rx="0.5"/><rect x="13" y="15.5" width="4" height="3" rx="0.5"/><path d="M9 6V3h6v3"/></svg></span>
+                  <span class="body"><span class="t">حجرہ</span><span class="d">خاندانی گھر سے الگ، مہمانوں کی نشست کے لیے مخصوص کمرہ — شمالی و دیہی علاقوں میں عام</span></span></label>
+              </fieldset>
+
+              <p class="seclab">پوری جگہ یا ایک کمرہ؟</p>
+              <div class="segwrap">
+                <fieldset class="seg" role="radiogroup" aria-label="پوری جگہ یا ایک کمرہ">
+                  <label class="segopt"><input type="radio" name="unit-r" checked /><span>پوری جگہ</span></label>
+                  <label class="segopt"><input type="radio" name="unit-r" /><span>ایک کمرہ</span></label>
+                </fieldset>
+                <p class="seg-hint">مہمانوں کو پوری جائیداد دستیاب ہوگی۔</p>
+              </div>
+
+              <div class="lprev">
+                <span class="lprev-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+                <div class="lprev-b"><span class="lprev-t">کینٹ ویو ریزیڈنس</span><span class="lprev-s">گھر · پوری جگہ</span></div>
+              </div>
+              <p class="lprev-cap">مہمانوں کو یہ ایسے نظر آئے گا — اگلے مرحلے میں آپ تصاویر اور تفصیلات شامل کریں گے۔</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/ur/host/listings/new/location">جاری رکھیں</a>
+              <p class="reassure">آپ کی پیش رفت خودکار طور پر محفوظ ہوتی ہے — کسی بھی وقت میزبان سیٹ اپ سے دوبارہ شروع کریں۔</p>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron flips to the leading (right) edge, the breadcrumb separator "·" stays non-directional, and the wizard-progress bars fill from the reading-start (right) edge under RTL. Step digits in the caption stay Latin and LTR-isolated (<code>.num</code>) inside the right-to-left sentence, matching the convention already set on <code>HA-010</code>/<code>HA-014</code>. "Portion" and "Hujra" use the everyday Urdu terms (پورشن transliterated, حجرہ native) rather than an invented translation.</p>
+    </section>
+
+  </main>
+</body>
+</html>

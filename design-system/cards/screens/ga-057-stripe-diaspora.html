@@ -1,0 +1,577 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-057 Stripe diaspora flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:840px; }
+  .head .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .head .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .head .toggle span.on { background:#16191B; color:#fff; }
+
+  main { max-width:1240px; margin:0 auto; }
+  .rowframes { display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:flex-start; }
+  .device { width:390px; }
+  .devlabel { font-size:12px; font-weight:600; color:#5F676D; margin:0 0 10px 6px; letter-spacing:.02em; }
+
+  .phone { position:relative; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:42px; overflow:hidden; box-shadow:var(--el-popover); display:flex; flex-direction:column; height:816px; }
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + env(safe-area-inset-top)) 26px 6px; font-size:13px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .statusbar .ic { display:inline-flex; gap:5px; align-items:center; }
+  .statusbar svg { width:15px; height:15px; }
+  .appbar { display:flex; align-items:center; gap:8px; padding:4px 12px 8px; }
+  .iconbtn { width:44px; height:44px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .iconbtn:hover { background:var(--bg-raised); }
+  .iconbtn svg { width:22px; height:22px; stroke-width:2; }
+  .iconbtn.locked { opacity:.4; cursor:not-allowed; }
+  .appbar .spacer { flex:1; }
+  .appbar .step-of { font-size:12px; font-weight:600; color:var(--text-tertiary); }
+
+  .steps { display:flex; align-items:flex-start; list-style:none; padding:2px 24px 14px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:11px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .steps .dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .steps .dot svg { width:13px; height:13px; stroke-width:2.75; }
+  .steps .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:6px; }
+  .steps li.done .dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .dot { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+
+  .screen { flex:1; overflow-y:auto; padding:6px 22px 22px; display:flex; flex-direction:column; }
+  .screen h2 { font-size:22px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); text-align:center; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .ctx { display:flex; gap:9px; align-items:center; justify-content:center; font-size:12px; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:6px 13px; align-self:center; margin-top:2px; }
+  .ctx svg { width:14px; height:14px; stroke-width:1.8; color:var(--text-tertiary); flex:none; }
+
+  /* FX-lock banner (from GA-051 · info tokens · warn variant on expiry) */
+  .fx { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:13px 14px; margin-top:16px; }
+  .fx .lk { color:var(--info-fg); flex:none; margin-top:1px; }
+  .fx .lk svg { width:20px; height:20px; stroke-width:1.9; }
+  .fx .fh { font-size:13px; font-weight:600; color:var(--info-fg); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .fx .fh .cd { font-variant-numeric:tabular-nums; }
+  .fx .fd { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .fx .fd b { color:var(--text-primary); font-weight:600; }
+  .fx.warn { background:var(--warning-bg); border-color:var(--warning-border); }
+  .fx.warn .lk, .fx.warn .fh { color:var(--warning-fg); }
+
+  /* currency context chip row */
+  .curctx { display:flex; align-items:center; gap:8px; margin-top:10px; font-size:11.5px; color:var(--text-tertiary); }
+  .curctx .chip { display:inline-flex; align-items:center; gap:5px; font-weight:600; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:3px 10px; }
+
+  /* amount summary */
+  .amtrow { display:flex; align-items:baseline; justify-content:space-between; margin-top:16px; padding-bottom:14px; border-bottom:1px solid var(--border-hairline); }
+  .amtrow .al { font-size:13px; color:var(--text-secondary); }
+  .amtrow .al small { display:block; font-size:11px; color:var(--text-tertiary); font-weight:400; margin-top:2px; }
+  .amtrow .av { font-size:22px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; text-align:end; }
+  .amtrow .av small { display:block; font-size:12px; color:var(--text-secondary); font-weight:600; margin-top:2px; }
+  .sech { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 0 10px; }
+
+  /* card form fields */
+  .fld { margin-top:14px; }
+  .fld label { display:block; font-size:12.5px; font-weight:600; color:var(--text-secondary); margin-bottom:7px; }
+  .fld .inp { display:flex; align-items:center; gap:10px; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-md); padding:13px 13px; min-height:50px; }
+  .fld .inp.focus { border-color:var(--int-primary); box-shadow:0 0 0 3px var(--int-subtle); }
+  .fld .inp .cardglyph { color:var(--text-tertiary); flex:none; }
+  .fld .inp .cardglyph svg { width:22px; height:22px; stroke-width:1.7; }
+  .fld .inp .val { font-size:15px; color:var(--text-primary); font-variant-numeric:tabular-nums; letter-spacing:.06em; flex:1; }
+  .fld .inp .val.dim { color:var(--text-tertiary); letter-spacing:.02em; }
+  .fld .inp .brandtag { font-size:11px; font-weight:700; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-sm); padding:3px 7px; flex:none; }
+  .fld .hint { font-size:11.5px; color:var(--text-tertiary); margin-top:7px; line-height:1.45; }
+  .frow { display:flex; gap:12px; }
+  .frow .fld { flex:1; margin-top:14px; }
+
+  /* bank-conversion honesty line */
+  .conv { display:flex; gap:8px; align-items:flex-start; margin-top:14px; font-size:12px; color:var(--text-secondary); line-height:1.5; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-md); padding:11px 12px; }
+  .conv svg { width:16px; height:16px; stroke-width:1.9; flex:none; margin-top:1px; color:var(--text-tertiary); }
+  .conv b { color:var(--text-primary); font-weight:600; }
+
+  /* card summary row */
+  .cardrow { display:flex; align-items:center; gap:12px; padding:13px 14px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); margin-top:16px; }
+  .cardrow .cg { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); flex:none; }
+  .cardrow .cg svg { width:19px; height:19px; stroke-width:1.7; }
+  .cardrow .cbd { flex:1; display:flex; flex-direction:column; gap:2px; }
+  .cardrow .cn { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .cardrow .cm { font-size:12px; color:var(--text-tertiary); }
+
+  /* ===== payment-in-flight processing overlay (§9-C-add) + 3DS state ref ===== */
+  .procwrap { position:relative; flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .procscrim { position:absolute; inset:0; background:var(--scrim); z-index:1; }
+  .proc-note { position:absolute; z-index:2; left:18px; right:18px; top:50%; transform:translateY(-50%); display:flex; gap:11px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:14px 15px; box-shadow:var(--el-popover); }
+  .proc-note .pi { color:var(--info-fg); flex:none; margin-top:1px; }
+  .proc-note .pi svg { width:20px; height:20px; stroke-width:1.9; }
+  .proc-note .ph { font-size:13px; font-weight:600; color:var(--info-fg); }
+  .proc-note p { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .frictionless { position:absolute; z-index:2; left:18px; right:18px; top:18px; display:flex; gap:9px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-md); padding:11px 12px; }
+  .frictionless svg { width:17px; height:17px; stroke-width:2; color:var(--info-fg); flex:none; margin-top:1px; }
+  .frictionless span { font-size:12px; color:var(--text-primary); line-height:1.45; }
+  .frictionless b { font-weight:600; }
+  .proc-progress { height:3px; border-radius:var(--radius-full); background:var(--bg-sunken); overflow:hidden; margin-bottom:12px; }
+  .proc-progress span { display:block; height:100%; width:36%; border-radius:var(--radius-full); background:var(--int-primary); transform:translateX(-120%); animation:procbar 1.6s ease-in-out infinite; }
+  @keyframes procbar { 0% { transform:translateX(-120%); } 60% { transform:translateX(320%); } 100% { transform:translateX(320%); } }
+  .proc-line { font-size:12.5px; color:var(--text-secondary); text-align:center; margin-top:10px; line-height:1.5; }
+  .proc-line b { color:var(--text-primary); font-weight:600; }
+  .proc-rm { display:flex; align-items:flex-start; gap:7px; margin-top:9px; font-size:11px; font-weight:600; color:var(--text-tertiary); border:1px dashed var(--border-default); border-radius:var(--radius-md); padding:7px 9px; line-height:1.45; }
+  .proc-rm svg { width:13px; height:13px; stroke-width:1.9; flex:none; margin-top:1px; }
+  @keyframes ringrot { to { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .proc-progress span { animation:none; width:100%; transform:none; opacity:.5; } .spin { animation:none !important; } .dots { animation:none !important; } }
+
+  /* success block */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin-top:30px; }
+  .success .tick { width:78px; height:78px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .success .tick svg { width:40px; height:40px; stroke-width:2.2; }
+  .success h2 { margin-top:18px; }
+  .success .sp { font-size:14px; color:var(--text-secondary); margin-top:8px; }
+  .success .sp b { color:var(--text-primary); font-weight:600; }
+  .success .paid { display:inline-flex; align-items:center; gap:7px; margin-top:16px; font-size:12.5px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:6px 13px; }
+  .success .paid svg { width:14px; height:14px; stroke-width:2.2; }
+  .success .going { font-size:12.5px; color:var(--text-tertiary); margin-top:16px; display:inline-flex; align-items:center; gap:7px; }
+  .success .going .dots { width:14px; height:14px; border-radius:var(--radius-full); border:2px solid var(--border-default); border-top-color:var(--text-tertiary); animation:ringrot 1s linear infinite; }
+
+  /* failure banner (inline recoverable) */
+  .errbanner { border:1px solid var(--error-fg); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 14px; margin-top:6px; display:flex; gap:11px; align-items:flex-start; }
+  .errbanner .ei { color:var(--error-fg); flex:none; margin-top:1px; }
+  .errbanner .ei svg { width:20px; height:20px; stroke-width:1.9; }
+  .errbanner .eh { font-size:14px; font-weight:600; color:var(--error-fg); }
+  .errbanner .ed { font-size:12.5px; color:var(--text-secondary); margin-top:3px; line-height:1.5; }
+  .errbanner .ed b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; }
+
+  /* CTA bar */
+  .ctabar { border-top:1px solid var(--border-hairline); background:var(--bg-canvas); padding:12px 20px calc(14px + env(safe-area-inset-bottom)); }
+  .cta { width:100%; min-height:52px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .cta:hover { background:var(--int-primary-hover); }
+  .cta svg { width:18px; height:18px; stroke-width:2; }
+  .cta.secondary { background:var(--bg-canvas); color:var(--int-primary); border:1px solid var(--border-default); margin-top:10px; }
+  .cta.secondary:hover { background:var(--bg-raised); }
+  .cta[aria-disabled="true"] { background:var(--int-primary); color:var(--text-on-brand); cursor:progress; }
+  .cta .spin { width:20px; height:20px; border-radius:var(--radius-full); border:2.5px solid color-mix(in srgb, var(--text-on-brand) 38%, transparent); border-top-color:var(--text-on-brand); animation:ringrot .8s linear infinite; }
+  .cta-note { font-size:11.5px; color:var(--text-tertiary); text-align:center; margin-top:10px; line-height:1.5; }
+  .cta-note svg { width:12px; height:12px; stroke-width:2; vertical-align:-1px; margin-inline-end:3px; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* RTL / Urdu */
+  .urdu .screen, .urdu .steps .slab, .urdu .cta, .urdu .fx, .urdu .ctx, .urdu .success, .urdu .errbanner, .urdu .cta-note, .urdu .sech, .urdu .amtrow, .urdu .fld, .urdu .conv, .urdu .cardrow, .urdu .curctx { font-family:'Noto Nastaliq Urdu', serif; }
+  .urdu .screen h2 { line-height:1.75; }
+  .urdu .fx .fd, .urdu .conv, .urdu .fld .hint { line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:900px){ .rowframes{ gap:20px; } .device{ width:100%; max-width:390px; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Stripe diaspora flow (GA-057)</h1>
+    <p>The overseas-card rail for the Pakistani diaspora — international cards through Stripe, paired with the FX-lock from GA-051. The card entry shows the guest's currency <strong>with</strong> the locked PKR total (the price they're really booking), the lock countdown, and an honest line that their <strong>bank may convert at a slightly different rate</strong>. On submit it becomes a state over the confirm step; a 3-D Secure check appears only if the bank asks (frictionless otherwise). Panels: card entry with the FX-lock banner, the processing / 3DS state, a calm success (charged amount + locked PKR), an inline recoverable decline, and the honest <strong>rate-expired re-quote</strong> (the lock ran out, so we refreshed the rate — never silently). Dark on processing, Urdu / RTL on card entry.</p>
+    <div class="toggle"><span class="on">Card entry · FX-lock</span><span>Processing · 3DS ref · dark</span><span>Success</span><span>Declined · inline</span><span>Rate expired · re-quote</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main>
+    <div class="rowframes">
+
+      <!-- ============ 1 · CARD ENTRY + FX-LOCK (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Card entry — overseas card, FX-lock banner, currency context</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to payment methods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>Margalla View Apartment · F-7 · 3 nights</span>
+
+            <div class="fx" role="status">
+              <span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="fh"><span>Rate locked ·</span><span class="cd num">14:52</span><span>left</span></div>
+                <div class="fd">Your card will be charged <b class="num">≈ USD 152.30</b> for this <b class="num">PKR 42,350</b> booking, at today's locked rate.</div>
+              </div>
+            </div>
+
+            <div class="curctx">
+              <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 2.5-2.5 2-2.5 3.5M12 16.5h.01"/></svg>Shown in USD</span>
+              <span>Your card's currency. The booking price is always in PKR.</span>
+            </div>
+
+            <div class="amtrow">
+              <span class="al">You pay now<small>Booking total, locked</small></span>
+              <span class="av num">≈ USD 152.30<small>PKR 42,350</small></span>
+            </div>
+
+            <div class="fld">
+              <label>Card number</label>
+              <div class="inp focus">
+                <span class="cardglyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="val"><span class="num">•••• •••• •••• 4487</span></span>
+                <span class="brandtag">MC</span>
+              </div>
+              <p class="hint">Mastercard issued outside Pakistan — accepted for overseas guests.</p>
+            </div>
+
+            <div class="frow">
+              <div class="fld">
+                <label>Expiry</label>
+                <div class="inp"><span class="val num">11 / 27</span></div>
+              </div>
+              <div class="fld">
+                <label>CVC</label>
+                <div class="inp"><span class="val dim num">•••</span></div>
+              </div>
+            </div>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span><b>Your bank may convert differently.</b> The <span class="num">≈ USD</span> figure is today's locked estimate; your card issuer may use a slightly different rate or add a foreign-transaction fee — that's between you and them.</span>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Pay <span class="num">≈ USD 152.30</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></button>
+            <p class="cta-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Charged in PKR at the locked rate. Your bank may ask a quick security check.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 2 · PROCESSING · 3DS STATE REF (dark) ============ -->
+      <div class="device">
+        <p class="devlabel">Processing — 3-D Secure state ref (dark · don't close)</p>
+        <div class="phone dark">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn locked" aria-label="Go back" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn locked" aria-label="Close checkout" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="procwrap">
+            <div class="screen" aria-hidden="true" inert>
+              <div class="cardrow"><span class="cg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span class="cbd"><span class="cn">Mastercard · overseas</span><span class="cm"><span class="num">•••• 4487</span> · ≈ USD 152.30</span></span></div>
+            </div>
+            <div class="procscrim" aria-hidden="true"></div>
+            <div class="frictionless" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              <span><b>If your bank asks</b>, a quick 3-D Secure check opens here. Most overseas cards clear without one — you don't need to do anything.</span>
+            </div>
+            <div class="proc-note" role="note">
+              <span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="ph">Leaving is guarded</div>
+                <p>Back or swipe-away asks "Leave payment? Your booking isn't confirmed yet." Your details are saved as a draft — returning won't charge you twice, and the locked rate is held.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctabar">
+            <div class="proc-progress" aria-hidden="true"><span></span></div>
+            <button class="cta" aria-busy="true" aria-disabled="true" aria-label="Confirming payment with your bank"><span class="spin" aria-hidden="true"></span></button>
+            <p class="proc-line" role="status">Confirming with your bank — <b>please don't close this screen</b>.</p>
+            <p class="proc-rm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg><span>Reduced motion: the bar holds still and this reads a static "Confirming payment…" — the spinner stops, feedback is dampened, never removed.</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 3 · SUCCESS (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Success — paid at the locked rate (calm · → GA-064)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="success">
+              <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <h2>Payment confirmed</h2>
+              <span class="sp">Your booking at <b>Margalla View Apartment</b> is confirmed.</span>
+              <span class="paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="num">≈ USD 152.30</span> charged · <span class="num">PKR 42,350</span> locked</span>
+              <span class="going"><span class="dots" aria-hidden="true"></span>Taking you to your trip…</span>
+            </div>
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <a class="cta" href="/trips/is-f7-2bed-aug2026" role="button">View your booking<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <p class="cta-note">Your receipt shows the exact PKR total and the USD amount charged. No confetti — just a confirmed stay.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 4 · DECLINED · INLINE RECOVERABLE (light) ============ -->
+      <div class="device">
+        <p class="devlabel">Declined — inline recoverable (overseas card · alternatives)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="errbanner" role="alert">
+              <span class="ei"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span>
+              <div>
+                <div class="eh">Your bank declined this card</div>
+                <div class="ed">The overseas card wasn't approved — often a bank block on international charges. <b>Nothing was charged</b>, and your locked rate and dates are still held. Try another card, or ask your bank to allow the charge.</div>
+              </div>
+            </div>
+
+            <div class="fx" role="status">
+              <span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="fh"><span>Rate still locked ·</span><span class="cd num">11:20</span><span>left</span></div>
+                <div class="fd">Your <b class="num">≈ USD 152.30</b> for <b class="num">PKR 42,350</b> is held. Retry before the timer runs out and you keep this rate.</div>
+              </div>
+            </div>
+
+            <div class="cardrow">
+              <span class="cg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+              <span class="cbd"><span class="cn">Mastercard · overseas</span><span class="cm"><span class="num">•••• 4487</span> · declined</span></span>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Try another card</button>
+            <a class="cta secondary" href="/checkout/is-f7-2bed/payment" role="button">Choose a different way to pay</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 5 · RATE EXPIRED · RE-QUOTE (light · honest) ============ -->
+      <div class="device">
+        <p class="devlabel">Rate expired — re-quoted, never silent (GA-051 honesty)</p>
+        <div class="phone">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="Back to review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of">Step 4 of 4</span>
+            <button class="iconbtn" aria-label="Close checkout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="Checkout progress">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+            <li class="cur" aria-current="step"><span class="dot">4</span><span class="slab">Confirm</span></li>
+          </ol>
+
+          <div class="screen">
+            <div class="fx warn" role="status">
+              <span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+              <div>
+                <div class="fh">Rate expired — we re-quoted</div>
+                <div class="fd">The <span class="num">15</span>-minute lock ran out, so we refreshed today's rate before you pay. Your <b class="num">PKR 42,350</b> booking is unchanged; the USD estimate below is new. <b>We never change a price silently.</b></div>
+              </div>
+            </div>
+
+            <div class="amtrow">
+              <span class="al">New locked estimate<small>Booking total unchanged</small></span>
+              <span class="av num">≈ USD 153.10<small>PKR 42,350</small></span>
+            </div>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span>Only the <span class="num">USD</span> estimate moved with the market — the rupee price you're booking is exactly the same. Confirm to lock this new rate for another <span class="num">15</span> minutes.</span>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta">Accept new rate · pay <span class="num">≈ USD 153.10</span></button>
+            <a class="cta secondary" href="/checkout/is-f7-2bed/payment" role="button">Choose a different way to pay</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 6 · URDU / RTL · CARD ENTRY + FX ============ -->
+      <div class="device">
+        <p class="devlabel">اردو · RTL — card entry, FX-lock</p>
+        <div class="phone urdu" dir="rtl" lang="ur">
+          <div class="statusbar">
+            <span class="num">9:41</span>
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 20h4v-6H2zM9 20h4V8H9zM16 20h4V4h-4z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 9.5a15 15 0 0 1 20 0"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="18" height="10" rx="2.5"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/><path d="M22 10v4"/></svg>
+            </span>
+          </div>
+          <div class="appbar">
+            <button class="iconbtn" aria-label="ادائیگی کے طریقوں پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <span class="spacer"></span>
+            <span class="step-of num">4 / 4</span>
+            <button class="iconbtn" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          </div>
+
+          <ol class="steps" aria-label="چیک آؤٹ کی پیش رفت">
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">پارٹی</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">شناخت</span></li>
+            <li class="done"><span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">قیمت</span></li>
+            <li class="cur" aria-current="step"><span class="dot num">4</span><span class="slab">تصدیق</span></li>
+          </ol>
+
+          <div class="screen">
+            <span class="ctx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg>مارگلہ ویو اپارٹمنٹ · F-7 · <span class="num">3</span> راتیں</span>
+
+            <div class="fx" role="status">
+              <span class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <div>
+                <div class="fh"><span>ریٹ لاک ·</span><span class="cd num">14:52</span><span>باقی</span></div>
+                <div class="fd">آپ کے کارڈ سے اس <b class="num">PKR 42,350</b> بکنگ کے لیے آج کے مقفل ریٹ پر <b class="num">≈ USD 152.30</b> وصول ہوں گے۔</div>
+              </div>
+            </div>
+
+            <div class="amtrow">
+              <span class="al">اب ادائیگی<small>بکنگ کا کل، مقفل</small></span>
+              <span class="av num">≈ USD 152.30<small>PKR 42,350</small></span>
+            </div>
+
+            <div class="fld">
+              <label>کارڈ نمبر</label>
+              <div class="inp focus">
+                <span class="cardglyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="val"><span class="num">•••• •••• •••• 4487</span></span>
+                <span class="brandtag">MC</span>
+              </div>
+              <p class="hint">پاکستان سے باہر جاری کردہ Mastercard — بیرونِ ملک مہمانوں کے لیے قابلِ قبول۔</p>
+            </div>
+
+            <div class="conv" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+              <span><b>آپ کا بینک مختلف ریٹ پر تبدیل کر سکتا ہے۔</b> <span class="num">≈ USD</span> رقم آج کا مقفل تخمینہ ہے؛ آپ کا کارڈ جاری کنندہ قدرے مختلف ریٹ یا غیر ملکی ٹرانزیکشن فیس لگا سکتا ہے — یہ آپ کے اور اُن کے درمیان ہے۔</span>
+            </div>
+
+            <div class="grow"></div>
+          </div>
+
+          <div class="ctabar">
+            <button class="cta"><span class="num">≈ USD 152.30</span> ادا کریں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></button>
+            <p class="cta-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>مقفل ریٹ پر PKR میں وصولی۔ آپ کا بینک ایک مختصر سیکیورٹی چیک پوچھ سکتا ہے۔</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

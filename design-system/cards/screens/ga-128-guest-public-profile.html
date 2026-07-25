@@ -1,0 +1,562 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Guest public profile (GA-128)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:880px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .tbar-title, .phone.rtl .ph-name, .phone.rtl .ph-verified, .phone.rtl .pstat, .phone.rtl .sec-lb, .phone.rtl .bio, .phone.rtl .chip, .phone.rtl .drow-k, .phone.rtl .drow-v, .phone.rtl .stamp-city, .phone.rtl .stamp-date, .phone.rtl .rev-name, .phone.rtl .rev-text, .phone.rtl .rev-ctx, .phone.rtl .rev-all, .phone.rtl .pnote-t, .phone.rtl .sheet-h, .phone.rtl .sheet-sub, .phone.rtl .sheet-item, .phone.rtl .sheet-since, .phone.rtl .mutual, .phone.rtl .sheet-btn { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .ib.edit { font-size:14px; font-weight:600; color:var(--int-primary); width:auto; padding:0 10px; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow:hidden; }
+
+  /* privacy-first truth line */
+  .pnote { display:flex; gap:9px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:11px 12px; margin-bottom:16px; }
+  .pnote-ic { flex:none; color:var(--text-secondary); margin-top:1px; }
+  .pnote-ic svg { width:17px; height:17px; stroke-width:1.9; }
+  .pnote-t { font-size:12px; color:var(--text-secondary); display:block; }
+
+  /* profile header */
+  .phdr { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:16px; }
+  .ph-av { position:relative; width:88px; height:88px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:34px; font-weight:700; margin-bottom:12px; }
+  .ph-tick { position:absolute; right:-2px; bottom:-2px; width:26px; height:26px; border-radius:var(--radius-full); background:var(--success-bg); border:2px solid var(--bg-canvas); display:flex; align-items:center; justify-content:center; }
+  .ph-tick svg { width:14px; height:14px; stroke-width:2.8; color:var(--success-fg); }
+  .ph-name { font-size:22px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); display:block; margin-bottom:8px; }
+  .ph-verified { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:5px 12px 5px 10px; cursor:pointer; font-family:inherit; min-height:32px; }
+  .ph-verified svg { width:14px; height:14px; stroke-width:2.6; flex:none; }
+  .ph-verified .cta-ic { width:13px; height:13px; stroke-width:2; opacity:.7; }
+
+  .pstats { display:flex; gap:9px; margin-bottom:18px; }
+  .pstat { flex:1; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 12px; display:flex; flex-direction:column; gap:2px; text-align:center; align-items:center; }
+  .pstat .sv { font-size:16px; font-weight:700; color:var(--text-primary); display:block; }
+  .pstat .sl { font-size:11px; color:var(--text-secondary); display:block; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  .sec { margin-bottom:18px; }
+  .sec-lb { font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin:0 2px 10px; }
+  .bio { font-size:13.5px; color:var(--text-primary); line-height:1.6; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { font-size:12.5px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-full); padding:6px 13px; }
+
+  .drows { list-style:none; display:flex; flex-direction:column; gap:2px; }
+  .drow { display:flex; align-items:center; gap:11px; min-height:44px; padding:5px 2px; }
+  .drow-ic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .drow-ic svg { width:17px; height:17px; stroke-width:1.8; }
+  .drow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .drow-k { font-size:11px; color:var(--text-tertiary); display:block; }
+  .drow-v { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+
+  /* travel stamps — passport-style, geometric neutral */
+  .stamps { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stamp { border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:13px 13px 12px; display:flex; flex-direction:column; gap:5px; box-shadow:var(--el-hairline); }
+  .stamp-pin { color:var(--text-tertiary); }
+  .stamp-pin svg { width:18px; height:18px; stroke-width:1.6; }
+  .stamp-city { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .stamp-date { font-size:11.5px; color:var(--text-secondary); display:block; }
+
+  /* reviews */
+  .rev-head { display:flex; align-items:baseline; justify-content:space-between; margin:0 2px 10px; gap:8px; }
+  .rev-head .sec-lb { margin:0; }
+  .rev-all { font-size:12.5px; font-weight:600; color:var(--int-primary); text-decoration:none; flex:none; }
+  .rev-all:hover { text-decoration:underline; }
+  .revs { list-style:none; display:flex; flex-direction:column; gap:11px; }
+  .rev { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:12px 13px; }
+  .rev-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .rev-av { flex:none; width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+  .rev-idb { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .rev-name { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .rev-meta { font-size:11px; color:var(--text-tertiary); display:block; }
+  .rev-stars { flex:none; display:inline-flex; align-items:center; gap:4px; color:var(--warning-fg); font-size:12px; font-weight:700; }
+  .rev-stars svg { width:14px; height:14px; }
+  .rev-text { font-size:13px; color:var(--text-primary); line-height:1.55; display:block; }
+  .rev-ctx { font-size:11px; color:var(--text-tertiary); display:block; margin-top:7px; }
+
+  /* verified-badge detail sheet (reuses §8.5 bottom sheet) */
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:6; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:7; background:var(--bg-canvas); border-top-left-radius:var(--radius-2xl); border-top-right-radius:var(--radius-2xl); box-shadow:var(--el-popover); padding:8px 18px calc(18px + env(safe-area-inset-bottom)); }
+  .sheet-grab { width:36px; height:4px; border-radius:var(--radius-full); background:var(--border-default); margin:0 auto 14px; }
+  .sheet-icwrap { width:48px; height:48px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; }
+  .sheet-icwrap svg { width:24px; height:24px; stroke-width:2.4; color:var(--success-fg); }
+  .sheet-h { font-size:17px; font-weight:700; color:var(--text-primary); text-align:center; display:block; margin-bottom:6px; }
+  .sheet-sub { font-size:12.5px; color:var(--text-secondary); text-align:center; display:block; margin-bottom:14px; line-height:1.55; }
+  .sheet-list { list-style:none; display:flex; flex-direction:column; gap:11px; margin-bottom:14px; }
+  .sheet-list li { display:flex; gap:10px; align-items:flex-start; }
+  .sheet-list li .lic { flex:none; margin-top:1px; color:var(--int-primary); }
+  .sheet-list li .lic svg { width:16px; height:16px; stroke-width:2.2; }
+  .sheet-item { font-size:12.5px; color:var(--text-primary); display:block; line-height:1.5; }
+  .sheet-since { display:flex; align-items:center; justify-content:center; gap:7px; font-size:12px; font-weight:600; color:var(--text-secondary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; margin:0 auto 12px; width:fit-content; }
+  .sheet-since svg { width:14px; height:14px; stroke-width:1.9; flex:none; }
+  .mutual { font-size:11.5px; color:var(--text-tertiary); text-align:center; display:block; line-height:1.5; margin-bottom:16px; }
+  .sheet-btn { display:flex; align-items:center; justify-content:center; min-height:48px; width:100%; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:15px; font-weight:600; border:none; cursor:pointer; font-family:inherit; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Guest public profile (GA-128)</h1>
+    <p>The rich public profile a host sees — and the guest's own "review what others see" preview (DESIGN §9-J). The anatomy: an initials-first header (first name only, a tap-through verified badge), two calm reliability stats, opt-in about-prompts (intro, interests, lives-in, languages, work, school), passport-style travel stamps (city + month/year, geometric-neutral — no ornament, §8.3/§10.2), and a reviews-about-you preview into <code>GA-131</code>. The privacy-first truth line is load-bearing: <strong>only fields Fatima chose to share appear</strong>, and her decade-born stays private (default off). Panels: full profile (light) · verified-badge detail sheet open · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Full profile · light</span><span>Verified sheet open</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the full public profile">
+      <div class="panel-tag">Light — full public profile</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">A · What a host sees</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Profile</div>
+              <a class="ib edit" href="/account/profile/edit">Edit</a>
+            </div>
+            <div class="screen">
+              <div class="pnote" role="note">
+                <span class="pnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="pnote-t">Only what Fatima chose to share is shown here.</span>
+              </div>
+
+              <div class="phdr">
+                <span class="ph-av" aria-hidden="true">F<span class="ph-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                <span class="ph-name">Fatima</span>
+                <button class="ph-verified" type="button" aria-haspopup="dialog" aria-label="Verified. What does verified mean?">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                  Verified
+                  <svg class="cta-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </button>
+              </div>
+
+              <div class="pstats" role="group" aria-label="Reliability">
+                <span class="pstat"><span class="sv">Since <span class="num">2026</span></span><span class="sl">On SalamStay</span></span>
+                <span class="pstat"><span class="sv"><span class="num">3</span> trips</span><span class="sl">Completed</span></span>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">About Fatima</div>
+                <p class="bio">Assalam-o-alaikum. I travel with my family and look for calm, clean homes close to good food and a place to pray. I keep things tidy and always let hosts know our plans.</p>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">Interests</div>
+                <div class="chips">
+                  <span class="chip">Home cooking</span>
+                  <span class="chip">Urdu literature</span>
+                  <span class="chip">Hiking up north</span>
+                  <span class="chip">Photography</span>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">Details</div>
+                <ul class="drows">
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">Lives in</span><span class="drow-v">Lahore</span></span>
+                  </li>
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">Speaks</span><span class="drow-v">Urdu, English, Punjabi</span></span>
+                  </li>
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">Work</span><span class="drow-v">Schoolteacher</span></span>
+                  </li>
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">School</span><span class="drow-v">University of the Punjab</span></span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">Travel stamps</div>
+                <div class="stamps">
+                  <div class="stamp">
+                    <span class="stamp-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="stamp-city">Islamabad</span>
+                    <span class="stamp-date">March 2026</span>
+                  </div>
+                  <div class="stamp">
+                    <span class="stamp-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="stamp-city">Lahore</span>
+                    <span class="stamp-date">May 2026</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="rev-head">
+                  <div class="sec-lb">Reviews about Fatima</div>
+                  <a class="rev-all" href="/account/profile/reviews">Show all</a>
+                </div>
+                <ul class="revs">
+                  <li class="rev">
+                    <div class="rev-top">
+                      <span class="rev-av" aria-hidden="true">Y</span>
+                      <span class="rev-idb"><span class="rev-name">Yusuf</span><span class="rev-meta">Host in Islamabad</span></span>
+                      <span class="rev-stars" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><span class="num">5.0</span></span>
+                    </div>
+                    <span class="rev-text">Fatima and her family kept the home spotless and always let us know their plans. A calm, easy guest.</span>
+                    <span class="rev-ctx">Islamabad · March 2026</span>
+                  </li>
+                  <li class="rev">
+                    <div class="rev-top">
+                      <span class="rev-av" aria-hidden="true">A</span>
+                      <span class="rev-idb"><span class="rev-name">Ayesha</span><span class="rev-meta">Host in Lahore</span></span>
+                      <span class="rev-stars" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><span class="num">5.0</span></span>
+                    </div>
+                    <span class="rev-text">Respectful and tidy, and easy to reach throughout. Would gladly host again.</span>
+                    <span class="rev-ctx">Lahore · May 2026</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The header is the §9-J anatomy: the <b>initials avatar is first-class</b> (never a "missing photo" silhouette), first name only, a small success tick, and a tappable <b>Verified</b> badge (panel B). The two stats are calm reliability, not a scoreboard — "Since 2026" is honest for a 2026 joiner, and "3 trips" is a plain fact of this profile, never a platform stat (SEO §5/§6). Decade-born is deliberately absent (default off; §9-J/§10 women's-safety) — the truth line at the top explains why only some fields appear. Stamps are geometric neutral: city + month/year + a schematic pin line-glyph, no passport-kitsch (§8.3). Review ratings use the muted-amber star (§1.7), never brand green.</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL — VERIFIED SHEET OPEN ============================ -->
+    <section class="panel" aria-label="Light theme — the verified-badge detail sheet open over the profile">
+      <div class="panel-tag">Light — verified-badge detail sheet</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">B · What "Verified" means</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Profile</div>
+              <a class="ib edit" href="/account/profile/edit">Edit</a>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <div class="phdr">
+                <span class="ph-av">F<span class="ph-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                <span class="ph-name">Fatima</span>
+                <button class="ph-verified" type="button" tabindex="-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  Verified
+                  <svg class="cta-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </button>
+              </div>
+              <div class="pstats">
+                <span class="pstat"><span class="sv">Since <span class="num">2026</span></span><span class="sl">On SalamStay</span></span>
+                <span class="pstat"><span class="sv"><span class="num">3</span> trips</span><span class="sl">Completed</span></span>
+              </div>
+              <div class="sec"><div class="sec-lb">About Fatima</div><p class="bio">Assalam-o-alaikum. I travel with my family and look for calm, clean homes close to good food and a place to pray.</p></div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="vsH">
+              <div class="sheet-grab" aria-hidden="true"></div>
+              <div class="sheet-icwrap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <span class="sheet-h" id="vsH">What "Verified" means</span>
+              <span class="sheet-sub">A short formality every guest and host completes — so both sides know who they're staying with.</span>
+              <div class="sheet-since"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg>Verified since March 2026</div>
+              <ul class="sheet-list">
+                <li>
+                  <span class="lic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="sheet-item">Fatima's CNIC was checked with NADRA Verisys — confirming she is a real, identified person.</span>
+                </li>
+                <li>
+                  <span class="lic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="sheet-item">We confirm the person, never the document — her CNIC number is never shown to you.</span>
+                </li>
+              </ul>
+              <span class="mutual">Verification is a mutual formality — it protects both the guest and the host.</span>
+              <button class="sheet-btn" type="button">Got it</button>
+            </div>
+
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Tapping the verified badge opens the detail sheet (§8.3 — a §8.5 bottom-sheet variant), <code>role="dialog"</code>, focus trapped and restored, the profile behind it <code>aria-hidden</code>. It states the honesty behind the tick: the month/year verified, that the CNIC was checked with <b>NADRA Verisys</b> (SEO §5 claim 1), and — critically — that the <b>document and number are never shown</b> (privacy). The mutual-formality line keeps verification non-accusatory (§10.6): a shared step, never an interrogation.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the public profile">
+      <div class="panel-tag">Dark — full public profile</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/account/profile" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Profile</div>
+              <a class="ib edit" href="/account/profile/edit">Edit</a>
+            </div>
+            <div class="screen">
+              <div class="pnote" role="note">
+                <span class="pnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="pnote-t">Only what Fatima chose to share is shown here.</span>
+              </div>
+
+              <div class="phdr">
+                <span class="ph-av" aria-hidden="true">F<span class="ph-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                <span class="ph-name">Fatima</span>
+                <button class="ph-verified" type="button" aria-haspopup="dialog" aria-label="Verified. What does verified mean?">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                  Verified
+                  <svg class="cta-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </button>
+              </div>
+
+              <div class="pstats" role="group" aria-label="Reliability">
+                <span class="pstat"><span class="sv">Since <span class="num">2026</span></span><span class="sl">On SalamStay</span></span>
+                <span class="pstat"><span class="sv"><span class="num">3</span> trips</span><span class="sl">Completed</span></span>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">About Fatima</div>
+                <p class="bio">Assalam-o-alaikum. I travel with my family and look for calm, clean homes close to good food and a place to pray. I keep things tidy and always let hosts know our plans.</p>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">Interests</div>
+                <div class="chips">
+                  <span class="chip">Home cooking</span>
+                  <span class="chip">Urdu literature</span>
+                  <span class="chip">Hiking up north</span>
+                  <span class="chip">Photography</span>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">Travel stamps</div>
+                <div class="stamps">
+                  <div class="stamp">
+                    <span class="stamp-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="stamp-city">Islamabad</span>
+                    <span class="stamp-date">March 2026</span>
+                  </div>
+                  <div class="stamp">
+                    <span class="stamp-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="stamp-city">Lahore</span>
+                    <span class="stamp-date">May 2026</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="rev-head">
+                  <div class="sec-lb">Reviews about Fatima</div>
+                  <a class="rev-all" href="/account/profile/reviews">Show all</a>
+                </div>
+                <ul class="revs">
+                  <li class="rev">
+                    <div class="rev-top">
+                      <span class="rev-av" aria-hidden="true">Y</span>
+                      <span class="rev-idb"><span class="rev-name">Yusuf</span><span class="rev-meta">Host in Islamabad</span></span>
+                      <span class="rev-stars" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><span class="num">5.0</span></span>
+                    </div>
+                    <span class="rev-text">Fatima and her family kept the home spotless and always let us know their plans. A calm, easy guest.</span>
+                    <span class="rev-ctx">Islamabad · March 2026</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every role AA-proven (§11); the amber star and the success-green tick both read cleanly against the green-charcoal canvas without shifting hue or meaning.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the public profile">
+      <div class="panel-tag">RTL · اردو — "پروفائل", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/account/profile" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">پروفائل</div>
+              <a class="ib edit" href="/ur/account/profile/edit">ترمیم</a>
+            </div>
+            <div class="screen">
+              <div class="pnote" role="note">
+                <span class="pnote-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="pnote-t">یہاں صرف وہی دکھایا گیا ہے جو فاطمہ نے شیئر کرنے کا انتخاب کیا۔</span>
+              </div>
+
+              <div class="phdr">
+                <span class="ph-av" aria-hidden="true">ف<span class="ph-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></span>
+                <span class="ph-name">فاطمہ</span>
+                <button class="ph-verified" type="button" aria-haspopup="dialog" aria-label="تصدیق شدہ۔ تصدیق کا کیا مطلب ہے؟">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                  تصدیق شدہ
+                  <svg class="cta-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </button>
+              </div>
+
+              <div class="pstats" role="group" aria-label="قابلِ اعتماد">
+                <span class="pstat"><span class="sv"><span class="num">2026</span> سے</span><span class="sl">سلام سٹے پر</span></span>
+                <span class="pstat"><span class="sv"><span class="num">3</span> سفر</span><span class="sl">مکمل</span></span>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">فاطمہ کے بارے میں</div>
+                <p class="bio">السلام علیکم۔ میں اپنے خاندان کے ساتھ سفر کرتی ہوں اور ایسے صاف ستھرے گھر تلاش کرتی ہوں جو اچھے کھانے اور نماز کی جگہ کے قریب ہوں۔ میں صفائی کا خیال رکھتی ہوں اور میزبانوں کو اپنے پروگرام سے آگاہ رکھتی ہوں۔</p>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">دلچسپیاں</div>
+                <div class="chips">
+                  <span class="chip">گھر کا کھانا</span>
+                  <span class="chip">اردو ادب</span>
+                  <span class="chip">شمال کی سیر</span>
+                  <span class="chip">فوٹوگرافی</span>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">تفصیلات</div>
+                <ul class="drows">
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">رہائش</span><span class="drow-v">لاہور</span></span>
+                  </li>
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">زبانیں</span><span class="drow-v">اردو، انگریزی، پنجابی</span></span>
+                  </li>
+                  <li class="drow">
+                    <span class="drow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+                    <span class="drow-b"><span class="drow-k">کام</span><span class="drow-v">اسکول ٹیچر</span></span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="sec">
+                <div class="sec-lb">سفری مہریں</div>
+                <div class="stamps">
+                  <div class="stamp">
+                    <span class="stamp-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="stamp-city">اسلام آباد</span>
+                    <span class="stamp-date"><span class="num">2026</span> مارچ</span>
+                  </div>
+                  <div class="stamp">
+                    <span class="stamp-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="stamp-city">لاہور</span>
+                    <span class="stamp-date"><span class="num">2026</span> مئی</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sec">
+                <div class="rev-head">
+                  <div class="sec-lb">فاطمہ کے بارے میں جائزے</div>
+                  <a class="rev-all" href="/ur/account/profile/reviews">سب دیکھیں</a>
+                </div>
+                <ul class="revs">
+                  <li class="rev">
+                    <div class="rev-top">
+                      <span class="rev-av" aria-hidden="true">ی</span>
+                      <span class="rev-idb"><span class="rev-name">یوسف</span><span class="rev-meta">اسلام آباد میں میزبان</span></span>
+                      <span class="rev-stars" aria-label="پانچ میں سے پانچ"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><span class="num">5.0</span></span>
+                    </div>
+                    <span class="rev-text">فاطمہ اور ان کا خاندان گھر کو صاف ستھرا رکھتے اور بروقت اطلاع دیتے رہے۔ ایک پُرسکون، آسان مہمان۔</span>
+                    <span class="rev-ctx">اسلام آباد · <span class="num">2026</span> مارچ</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): the back chevron and Edit action swap edges, the stamp grid and detail rows flow right-to-left, and the avatar shows <b>ف</b> from فاطمہ. Numbers (2026, 3, 5.0) keep <code>direction:ltr</code> isolation. The star and tick are non-directional and do not mirror.</p>
+    </section>
+
+  </main>
+</body>
+</html>

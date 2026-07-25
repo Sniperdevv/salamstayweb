@@ -1,0 +1,481 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Host resolution / dispute case (HA-072)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1000px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+  .ur-inline { font-family:'Noto Nastaliq Urdu', serif; unicode-bidi:isolate; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:312px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1080px; line-height:1.55; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* host chrome — flat phone frame, host app bar; NO journey stepper (§7.6a) */
+  .phone { width:312px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:686px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 15px 16px; overflow-y:auto; }
+  .screen h2 { font-size:18px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:13px; color:var(--text-secondary); margin-bottom:14px; line-height:1.55; }
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 9px; }
+  .sec-label:first-child { margin-top:0; }
+
+  /* booking context card */
+  .bkg { display:flex; gap:12px; align-items:center; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px; margin-bottom:14px; }
+  .bkg-ic { flex:none; width:42px; height:42px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .bkg-ic svg { width:20px; height:20px; stroke-width:1.7; }
+  .bkg-av { flex:none; width:42px; height:42px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; }
+  .bkg-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .bkg-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .bkg-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* what-this-is-for list — mirrors the issue Select options one-for-one */
+  .forlist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:4px; }
+  .forrow { display:flex; gap:10px; align-items:flex-start; }
+  .forrow svg { width:16px; height:16px; stroke-width:2; color:var(--text-secondary); flex:none; margin-top:2px; }
+  .forrow span { font-size:12.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* status pill — Verification-status semantic map (§8.3 inputs) */
+  .statuspill { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; border-radius:var(--radius-full); padding:6px 13px; margin-bottom:14px; white-space:nowrap; min-width:max-content; }
+  .statuspill svg { width:14px; height:14px; stroke-width:2.3; flex:none; }
+  .statuspill.warn { background:var(--warning-bg); border:1px solid var(--warning-border); color:var(--warning-fg); }
+  .statuspill.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .statuspill.good { background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); }
+
+  /* deposit-hold tie-in — HA-051 honest hold language, GA-059 amanah lineage */
+  .escrow { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:14px; }
+  .escrow svg { width:18px; height:18px; stroke-width:1.85; color:var(--info-fg); flex:none; margin-top:1px; }
+  .escrow span { font-size:12px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .escrow .term { font-style:italic; color:var(--text-primary); font-weight:600; }
+  .escrow b { color:var(--text-primary); font-weight:600; }
+
+  /* Select — trigger reuses the Input shell exactly (§8.1 inputs) */
+  .fld { margin-bottom:14px; }
+  .flabel { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .select-trig { width:100%; min-height:48px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 13px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv { flex:1; min-width:0; text-align:start; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .select-trig svg { width:18px; height:18px; stroke-width:2; color:var(--text-secondary); flex:none; }
+  .select-trig:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); }
+
+  /* Textarea */
+  .ta { width:100%; min-height:92px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:11px 13px; font-family:inherit; font-size:13.5px; color:var(--text-primary); line-height:1.5; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); background:var(--bg-canvas); }
+  .count { font-size:11.5px; color:var(--text-tertiary); text-align:end; margin-top:5px; }
+
+  /* evidence rows — CSS placeholder tiles */
+  .ev-h { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:3px; display:flex; align-items:baseline; gap:6px; }
+  .ev-h .opt { font-size:12px; font-weight:400; color:var(--text-tertiary); }
+  .ev-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:9px; }
+  .ev-row { display:flex; align-items:center; gap:11px; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:8px 10px; }
+  .ev-thumb { flex:none; width:38px; height:38px; border-radius:var(--radius-md); background:linear-gradient(158deg,var(--int-subtle),var(--bg-sunken)); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .ev-thumb svg { width:17px; height:17px; stroke-width:1.7; }
+  .ev-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .ev-name { font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ev-meta { font-size:11px; color:var(--text-secondary); }
+  .ev-x { flex:none; width:44px; height:44px; border-radius:var(--radius-full); background:transparent; border:none; cursor:pointer; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .ev-x svg { width:17px; height:17px; stroke-width:2; }
+  .addev { width:100%; min-height:46px; border-radius:var(--radius-md); border:1.5px dashed var(--border-default); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; color:var(--text-secondary); font-family:inherit; font-size:13px; font-weight:600; margin-bottom:14px; }
+  .addev svg { width:17px; height:17px; stroke-width:2; }
+
+  /* both-sides-heard honesty panel — symmetric respect, identical to GA-107 */
+  .bothsides { display:flex; gap:10px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:6px; }
+  .bothsides svg { width:18px; height:18px; stroke-width:1.85; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .bothsides span { font-size:12px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .bothsides b { color:var(--text-primary); font-weight:600; }
+
+  /* mediation track — case opened → both sides share → SalamStay mediates → resolution (§8.7) */
+  .track { list-style:none; display:flex; flex-direction:column; margin-top:2px; }
+  .trk { display:flex; gap:12px; padding-bottom:18px; position:relative; }
+  .trk:last-child { padding-bottom:2px; }
+  .trk:not(:last-child)::before { content:""; position:absolute; inset-inline-start:11px; top:26px; bottom:0; width:2px; background:var(--border-default); }
+  .trk-dot { width:24px; height:24px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .trk.done .trk-dot { background:var(--success-fg); color:var(--text-on-brand); }
+  .trk.done .trk-dot svg { width:14px; height:14px; stroke-width:2.6; }
+  .trk.current .trk-dot { background:var(--bg-canvas); border:2px solid var(--info-fg); box-shadow:0 0 0 4px var(--info-bg); }
+  .trk.current .trk-dot i { width:8px; height:8px; border-radius:50%; background:var(--info-fg); }
+  .trk.upcoming .trk-dot { background:var(--bg-canvas); border:2px solid var(--border-default); }
+  .trk-body { display:flex; flex-direction:column; gap:1px; padding-top:2px; }
+  .trk-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .trk.upcoming .trk-t { color:var(--text-secondary); }
+  .trk-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* case ref chip */
+  .refchip { display:inline-block; font-size:12px; color:var(--text-tertiary); background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:5px 12px; margin:2px 0 14px; }
+
+  /* resolution outcome card — stated plainly, never a scoreboard */
+  .outcome { border:1px solid var(--success-border); background:var(--success-bg); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:14px; }
+  .outcome-h { font-size:13px; font-weight:600; color:var(--success-fg); display:flex; align-items:center; gap:7px; }
+  .outcome-h svg { width:16px; height:16px; stroke-width:2.2; flex:none; }
+  .outcome-d { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-top:6px; }
+  .outcome-d b { color:var(--text-primary); font-weight:600; }
+
+  .grow { flex:1; min-height:8px; }
+  .foot { padding-top:12px; border-top:1px solid var(--border-hairline); margin-top:8px; flex:none; }
+  .foot.noborder { border-top:none; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+  a:focus-visible, button:focus-visible, textarea:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  /* support row */
+  .suprow { display:flex; align-items:center; gap:12px; min-height:56px; margin-top:14px; padding:10px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; }
+  .suprow-ic { width:34px; height:34px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-sunken); color:var(--text-secondary); }
+  .suprow-ic svg { width:17px; height:17px; stroke-width:1.9; }
+  .suprow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .suprow-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .suprow-s { font-size:11px; color:var(--text-secondary); }
+  .suprow-chev { flex:none; color:var(--text-tertiary); }
+  .suprow-chev svg { width:17px; height:17px; stroke-width:2; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Host resolution / dispute case (HA-072)</h1>
+    <p>The <strong>host side of the same case</strong> <code>GA-107</code> renders for the guest — one case grammar, two symmetric doors (ARCH §14.4). The entry is non-adversarial by construction: "when you and your guest see something differently and need help resolving it," never "claim against your guest." The summary collects a booking-scoped issue Select (property damage · house-rules breach · payment disagreement · something else about the stay), a statement, and evidence rows. The <strong>four-stage mediation track is verbatim from <code>GA-107</code></strong> — case opened → both sides share their view → SalamStay mediates → resolution — paired with the same both-sides-heard panel, now naming <strong>Fatima</strong>: she shares her side too. Because Gulberg 2 Residence holds a deposit (<code>HA-051</code>), the deposit tie-in states the hold honestly in <code>HA-051</code>'s own words — held in <span class="ur-inline">امانت</span> custody, not spent, not lent out, no interest earned — and nothing moves until the case resolves. Three statuses in context: <em>awaiting your evidence</em>, <em>under mediation</em>, <em>resolved</em> (outcome stated plainly, no winner). No journey stepper (§7.6a). Panels: open a case + case summary (light) · under mediation + resolved (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Open a case · light</span><span>Case summary</span><span>Mediation + resolved · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — the open-a-case entry screen, and the case summary compose form">
+      <div class="panel-tag">Light — open a case · case summary (awaiting your evidence)</div>
+      <div class="rowflex">
+
+        <!-- A · OPEN A CASE — ENTRY -->
+        <div class="pcol">
+          <div class="pcap">A · Open a case — what this is for</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reservations/fatima-gulberg2-aug2026" aria-label="Back to the reservation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Get help with this booking</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2>Need help sorting something out?</h2>
+              <p class="lead">This is for when you and your guest see something differently and need help resolving it.</p>
+
+              <div class="bkg">
+                <span class="bkg-av" aria-hidden="true">F</span>
+                <span class="bkg-b"><span class="bkg-t">Fatima · Gulberg 2 Residence</span><span class="bkg-s"><span class="num">7 – 10 Aug 2026</span> · Booking <span class="num">SS-4T8B2N</span></span></span>
+              </div>
+
+              <div class="sec-label">What this is for</div>
+              <ul class="forlist">
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Property damage during the stay</span></li>
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>A house rule that wasn't followed</span></li>
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>A disagreement about a charge or a refund</span></li>
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span>Something else about the stay you'd like SalamStay to look into</span></li>
+              </ul>
+
+              <div class="escrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <span>A refundable deposit of <b>PKR <span class="num">15,000</span></b> is held on this booking. It sits in the <span class="term">amanah</span> custody arrangement at Meezan Bank — not spent, not lent out, no interest earned on it — and nothing is released or charged while a case is open.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot"><button class="btn primary" type="button">Start a case</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · CASE SUMMARY — COMPOSE -->
+        <div class="pcol">
+          <div class="pcap">B · Case summary — awaiting your evidence</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reservations/fatima-gulberg2-aug2026/case" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Tell us what happened</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="statuspill warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Awaiting your evidence</span>
+
+              <div class="bkg">
+                <span class="bkg-av" aria-hidden="true">F</span>
+                <span class="bkg-b"><span class="bkg-t">Fatima · Gulberg 2 Residence</span><span class="bkg-s">Booking <span class="num">SS-4T8B2N</span> · checked out <span class="num">10 Aug</span></span></span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" id="issue-lbl">What's this about?</label>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="issue-lbl"><span class="stv">Property damage</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="stmt-b">Describe what happened</label>
+                <textarea class="ta" id="stmt-b" placeholder="Explain it in your own words — there's no wrong way to describe it.">The glass side table in the living room was broken during the stay. I'm not sure how it happened — I'd like help agreeing on a fair repair cost.</textarea>
+                <div class="count"><span class="num">146 / 1500</span></div>
+              </div>
+
+              <div class="ev-h">Add evidence <span class="opt">Optional</span></div>
+              <ul class="ev-list">
+                <li class="ev-row">
+                  <span class="ev-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></svg></span>
+                  <span class="ev-b"><span class="ev-name">side-table-damage.jpg</span><span class="ev-meta">Added just now</span></span>
+                  <button class="ev-x" type="button" aria-label="Remove side-table-damage.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                </li>
+                <li class="ev-row">
+                  <span class="ev-thumb" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
+                  <span class="ev-b"><span class="ev-name">repair-quote.pdf</span><span class="ev-meta">Added just now</span></span>
+                  <button class="ev-x" type="button" aria-label="Remove repair-quote.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+                </li>
+              </ul>
+              <button class="addev" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add a photo or document</button>
+
+              <div class="bothsides">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20c0-3-2.5-5-5-5s-5 2-5 5M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 9a2.5 2.5 0 1 1 3.5 2.3M21 9a2.5 2.5 0 1 0-3.5 2.3"/></svg>
+                <span><b>Fatima will share her side too</b> — we look at both before deciding anything.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot"><button class="btn primary" type="submit">Send to SalamStay</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The entry framing mirrors <code>GA-107</code> word-for-word with only the counterparty swapped — "when you and your <b>guest</b> see something differently and need help resolving it" — so a host and a guest opening the same case read the same sentence. The four "what this is for" rows are the <strong>issue Select's options, one for one</strong>, so the host sees the full vocabulary before committing to a category. The status pill reads <b>Awaiting your evidence</b> in the Verification-status "more info needed" tint (warning, muted, never alarm, §8.3/§10.6). Guest identity is an <strong>initials avatar</strong>, never a face.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the case under mediation, and the resolved state with the outcome stated plainly">
+      <div class="panel-tag">Dark — under mediation · resolved</div>
+      <div class="rowflex">
+
+        <!-- C · UNDER MEDIATION -->
+        <div class="pcol">
+          <div class="pcap">C · Under mediation — both sides heard</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reservations" aria-label="Back to reservations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Your case</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <span class="statuspill info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>Under mediation</span>
+              <div class="refchip">Case <span class="num">CASE-2026-0818-114</span></div>
+
+              <div class="sec-label">Status</div>
+              <ol class="track" aria-label="Case progress: case opened, done; both sides share their view, done; SalamStay mediates, current; resolution, upcoming">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Case opened</span><span class="trk-s"><span class="num">11 Aug 2026</span></span></span>
+                </li>
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Both sides share their view</span><span class="trk-s">You and Fatima have both responded</span></span>
+                </li>
+                <li class="trk current" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><i></i></span>
+                  <span class="trk-body"><span class="trk-t">SalamStay mediates</span><span class="trk-s">Our team is reviewing both statements</span></span>
+                </li>
+                <li class="trk upcoming">
+                  <span class="trk-dot" aria-hidden="true"></span>
+                  <span class="trk-body"><span class="trk-t">Resolution</span><span class="trk-s">You'll see the outcome here</span></span>
+                </li>
+              </ol>
+
+              <div class="bothsides">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20c0-3-2.5-5-5-5s-5 2-5 5M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 9a2.5 2.5 0 1 1 3.5 2.3M21 9a2.5 2.5 0 1 0-3.5 2.3"/></svg>
+                <span><b>Fatima's side is on record too.</b> We weigh both statements and any evidence before deciding — never just one side.</span>
+              </div>
+
+              <div class="escrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <span>The <b>PKR <span class="num">15,000</span></b> deposit stays in the <span class="term">amanah</span> hold until the case resolves — none of it is charged to Fatima or paid to you while this is open.</span>
+              </div>
+
+              <a class="suprow" href="/host/help/contact">
+                <span class="suprow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                <span class="suprow-b"><span class="suprow-t">Questions about your case?</span><span class="suprow-s">Talk to host support, in Urdu or English</span></span>
+                <span class="suprow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · RESOLVED -->
+        <div class="pcol">
+          <div class="pcap">D · Resolved — outcome stated plainly</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="dH">Your case</div>
+              <a class="ib" href="/host/reservations" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+            </div>
+            <div class="screen">
+              <span class="statuspill good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Resolved</span>
+              <div class="refchip">Case <span class="num">CASE-2026-0818-114</span></div>
+
+              <div class="outcome">
+                <div class="outcome-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Resolution</div>
+                <div class="outcome-d">SalamStay reviewed both statements, your photo and the repair quote. <b>PKR <span class="num">6,500</span></b> from the held deposit has been released to you for the side-table repair, and the remaining <b>PKR <span class="num">8,500</span></b> returned to Fatima.</div>
+              </div>
+
+              <div class="sec-label">Status</div>
+              <ol class="track" aria-label="Case progress: all four stages done">
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Case opened</span><span class="trk-s"><span class="num">11 Aug 2026</span></span></span>
+                </li>
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Both sides share their view</span><span class="trk-s"><span class="num">12 Aug 2026</span></span></span>
+                </li>
+                <li class="trk done">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">SalamStay mediates</span><span class="trk-s"><span class="num">13 Aug 2026</span></span></span>
+                </li>
+                <li class="trk done" aria-current="step">
+                  <span class="trk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="trk-body"><span class="trk-t">Resolution</span><span class="trk-s"><span class="num">13 Aug 2026</span></span></span>
+                </li>
+              </ol>
+
+              <div class="escrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <span>The <span class="term">amanah</span> hold on this deposit has now been released, split exactly as the resolution above states. It will appear in your next payout.</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot noborder"><a class="btn secondary" href="/host/reservations">Back to reservations</a></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">"Under mediation" and "Resolved" reuse the Verification-status semantic map (§8.3): info for a live, non-judgmental process; success for a settled outcome — <strong>never a scoreboard and never a "winner."</strong> The outcome is stated plainly — two amounts and where each one went, summing exactly to the held deposit (<span class="num">6,500</span> + <span class="num">8,500</span> = <span class="num">15,000</span>) — with no editorialising about who was right and <strong>no invented remedy beyond the deposit that already exists</strong> (<code>HA-051</code>). The deposit language is <code>HA-051</code>'s own, so a host reading it here and at setup is told the identical trust story, and <code>GA-107</code>'s guest tells the same one. The support row hands off to <code>HA-071</code> rather than dead-ending.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the open-a-case entry screen">
+      <div class="panel-tag">RTL · اردو — open a case, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">کیس کھولیں — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/reservations/fatima-gulberg2-aug2026" aria-label="بکنگ پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur" id="uH">اس بکنگ میں مدد لیں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="ur">کچھ حل کرنے میں مدد چاہیے؟</h2>
+              <p class="lead ur">یہ اس وقت کے لیے ہے جب آپ اور آپ کے مہمان کسی بات کو مختلف انداز میں دیکھ رہے ہوں اور حل کے لیے مدد درکار ہو۔</p>
+
+              <div class="bkg">
+                <span class="bkg-av" aria-hidden="true">F</span>
+                <span class="bkg-b"><span class="bkg-t ur">فاطمہ · Gulberg 2 Residence</span><span class="bkg-s ur"><span class="num">7 – 10 Aug 2026</span> · بکنگ <span class="num">SS-4T8B2N</span></span></span>
+              </div>
+
+              <div class="sec-label ur">یہ کس لیے ہے</div>
+              <ul class="forlist">
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ur">قیام کے دوران جائیداد کو نقصان</span></li>
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ur">گھر کے کسی اصول پر عمل نہ ہونا</span></li>
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ur">کسی چارج یا رقم کی واپسی پر اختلاف</span></li>
+                <li class="forrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span class="ur">قیام سے متعلق کوئی اور بات جس پر سلام سٹے کو دیکھنا چاہیے</span></li>
+              </ul>
+
+              <div class="escrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <span class="ur">اس بکنگ پر <b>PKR <span class="num">15,000</span></b> کی قابلِ واپسی ڈپازٹ محفوظ ہے۔ یہ میزان بینک میں <span class="term">امانت</span> کے طور پر رکھی جاتی ہے — نہ خرچ ہوتی ہے، نہ قرض دی جاتی ہے، نہ اس پر سود ملتا ہے — اور کیس کھلا رہنے تک نہ کچھ جاری کیا جاتا ہے نہ وصول کیا جاتا ہے۔</span>
+              </div>
+
+              <div class="grow"></div>
+              <div class="foot"><button class="btn primary ur" type="button">کیس شروع کریں</button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored (§11): the back chevron moves to the reading-start edge and the checklist glyphs sit at the reading-start of each row. The framing sentence keeps the identical non-adversarial meaning — "جب آپ اور آپ کے مہمان کسی بات کو مختلف انداز میں دیکھ رہے ہوں" (when you and your guest see something differently) — never "مہمان کے خلاف دعویٰ" (a claim against the guest). Every numeral stays <strong>Western and LTR-isolated</strong> in <code>.num</code> — the deposit amount, the stay dates, the booking reference — with Urdu prose around them (Pass #31 ruling); "Gulberg 2 Residence" stays Latin as a proper noun while the guest's name localises to فاطمہ.</p>
+    </section>
+
+  </main>
+</body>
+</html>

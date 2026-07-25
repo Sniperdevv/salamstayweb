@@ -1,0 +1,384 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — NADRA consent, host (HA-005)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --brand-400:#579D8B; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-700:#454C51;
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:920px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone + bottom-sheet-over-app scaffold — ga-075 lineage */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-hairline); display:flex; flex-direction:column; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.sheet h2,.sheet .why,.ctext,.btn,.it-t,.pop-h,.pop-item .pt,.pop-item .pd,.pop-note,.banner span,.hardh2,.hardbody,.hardnote,.footlink) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+
+  .sa-top, .sa-bottom { height:24px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; position:relative; z-index:4; flex:none; }
+  .sa-bottom { border-top:1px dashed var(--border-default); background-color:var(--bg-canvas); }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+
+  .scr { min-height:640px; position:relative; display:flex; flex-direction:column; justify-content:flex-end; background:var(--bg-sunken); overflow:hidden; }
+  .behind { position:absolute; inset:0; padding:16px 16px 0; opacity:.45; }
+  .behind .bbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .behind .btitle { font-size:26px; font-weight:700; color:var(--text-primary); display:inline-flex; align-items:baseline; gap:6px; }
+  .behind .hc-sep { font-size:11px; font-weight:600; color:var(--text-tertiary); }
+  .behind .hc-now { font-size:11.5px; font-weight:600; color:var(--text-secondary); }
+  .behind .bround { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); }
+  .behind .bpill { height:52px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-bottom:16px; }
+  .behind .brow { display:flex; gap:12px; }
+  .behind .btile { flex:1; height:96px; border-radius:var(--radius-lg); }
+  .scrim-layer { position:absolute; inset:0; background:var(--scrim); z-index:1; }
+
+  .sheet { position:relative; z-index:2; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; padding:8px 20px 18px; box-shadow:var(--el-popover); }
+  .grab { width:36px; height:5px; border-radius:var(--radius-full); background:var(--border-default); margin:6px auto 16px; }
+  .sheet-ic { width:52px; height:52px; border-radius:var(--radius-lg); background:var(--int-subtle); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .sheet-ic svg { width:26px; height:26px; color:var(--int-primary); stroke-width:1.75; }
+  .sheet-ic.muted { background:var(--bg-raised); }
+  .sheet-ic.muted svg { color:var(--text-secondary); }
+  .sheet h2 { font-size:19px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .sheet .why { font-size:13.5px; color:var(--text-secondary); line-height:1.5; margin-top:8px; }
+  .claim { color:var(--text-primary); font-weight:600; }
+
+  .banner { display:flex; gap:9px; align-items:flex-start; padding:11px 12px; border-radius:var(--radius-lg); font-size:12px; line-height:1.5; margin-top:14px; }
+  .banner svg { width:16px; height:16px; flex:none; margin-top:1px; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .banner.info span { color:var(--text-secondary); display:block; }
+
+  /* info trigger + floating popover */
+  .infowrap { position:relative; margin-top:14px; }
+  .infotrig { display:flex; align-items:center; gap:9px; width:100%; min-height:44px; padding:0 4px; background:transparent; border:none; border-top:1px solid var(--border-hairline); border-bottom:1px solid var(--border-hairline); font-family:inherit; cursor:pointer; }
+  .infotrig .it-ic { flex:none; width:22px; height:22px; border-radius:var(--radius-full); background:var(--bg-raised); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .infotrig .it-ic svg { width:13px; height:13px; stroke-width:2.2; }
+  .infotrig .it-t { flex:1; text-align:start; font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .infotrig .it-chev { flex:none; color:var(--text-tertiary); display:flex; transition:transform .15s; }
+  .infotrig .it-chev svg { width:16px; height:16px; stroke-width:2; }
+  .infotrig[aria-expanded="true"] .it-chev { transform:rotate(180deg); }
+  .popover { position:absolute; left:4px; right:4px; top:calc(100% + 8px); z-index:5; background:var(--bg-elevated); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:12px 14px 13px; }
+  .popover .care { position:absolute; top:-6px; left:26px; width:12px; height:12px; background:var(--bg-elevated); border-left:1px solid var(--border-hairline); border-top:1px solid var(--border-hairline); transform:rotate(45deg); }
+  .phone.rtl .popover .care { left:auto; right:26px; }
+  .pop-h { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:9px; }
+  .pop-item { display:flex; flex-direction:column; gap:1px; padding:6px 0; border-top:1px solid var(--border-hairline); }
+  .pop-item:first-of-type { border-top:none; padding-top:0; }
+  .pop-item .pt { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .pop-item .pd { font-size:11.5px; color:var(--text-secondary); }
+  .pop-note { display:flex; gap:7px; align-items:flex-start; margin-top:9px; padding-top:9px; border-top:1px solid var(--border-hairline); font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .pop-note svg { flex:none; width:14px; height:14px; stroke-width:1.9; color:var(--text-tertiary); margin-top:1px; }
+
+  /* explicit consent checkbox — square, never pre-ticked */
+  .consentrow { display:flex; align-items:flex-start; gap:11px; min-height:44px; margin-top:16px; cursor:pointer; }
+  .cchk { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .cbox { flex:none; width:20px; height:20px; margin-top:2px; border-radius:var(--radius-sm); border:1.5px solid var(--border-strong); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; }
+  .cbox svg { width:13px; height:13px; stroke-width:3; color:var(--text-on-brand); display:none; }
+  .cchk:checked + .cbox { background:var(--int-primary); border-color:var(--int-primary); }
+  .cchk:checked + .cbox svg { display:block; }
+  .cchk:focus-visible + .cbox { outline:2px solid var(--int-primary); outline-offset:2px; }
+  .ctext { font-size:12.5px; color:var(--text-primary); line-height:1.45; }
+
+  .sheet-actions { margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; padding:0 20px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; border:1px solid transparent; letter-spacing:-0.01em; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn-primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-disabled); }
+  .btn-secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .footlink { display:block; text-align:center; margin-top:12px; font-size:12px; color:var(--text-secondary); }
+  .footlink a { color:var(--int-primary); font-weight:600; text-decoration:none; }
+  .footlink a:hover { text-decoration:underline; }
+
+  /* decline hard-stop */
+  .hardsheet { position:relative; z-index:2; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; padding:8px 20px 18px; box-shadow:var(--el-popover); display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .hardsheet .grab { align-self:center; }
+  .hardic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin:6px 0 14px; }
+  .hardic svg { width:26px; height:26px; stroke-width:1.7; }
+  .hardh2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .hardbody { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:9px; max-width:280px; }
+  .hardnote { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-top:8px; max-width:280px; }
+  .hardnote b { color:var(--text-primary); font-weight:600; }
+  .hardactions { margin-top:18px; display:flex; flex-direction:column; gap:10px; width:100%; }
+
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:14px; padding:0 2px; line-height:1.55; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .cap b { color:var(--text-secondary); }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — NADRA consent, host (HA-005)</h1>
+    <p>The host sibling of <code>GA-075</code>, opened from the checklist hub (<code>HA-004</code>) ahead of the CNIC capture flow (<code>HA-007</code>). Sheet grammar and consent ethics carried over verbatim: an explicit, <b>unchecked-by-default</b> checkbox — never pre-ticked — a "What's shared" popover naming the exact NADRA Verisys fields, and a dignified, non-shaming decline hard-stop. The mutual-formality line is flipped to the host's perspective — <i>"guests are verified the same way — it protects your home"</i> — and the decline copy states plainly that <b>a host's guest account is unaffected</b>, with a working exit. No checkout stepper (§7.6a).</p>
+    <div class="legend">
+      <span>Light · consent, unchecked</span>
+      <span>Decline · hard-stop, guest account unaffected</span>
+      <span>Dark · consent checked + "what's shared" popover open</span>
+      <span>RTL · اردو</span>
+      <span>Consent never pre-ticked · ≥44pt · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== A · LIGHT — DEFAULT, UNCHECKED ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — default, unchecked</div>
+      <section class="phone" aria-label="Your consent for CNIC verification — before NADRA Verisys check, host">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Host setup<span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Identity</span></span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="c-t" aria-describedby="c-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <h2 id="c-t">Your consent for CNIC verification</h2>
+            <p class="why" id="c-w">SalamStay runs on <span class="claim">CNIC-verified guests and hosts via NADRA Verisys</span> — guests are verified the same way, and it protects your home.</p>
+
+            <div class="banner info" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              <span>Your details are encrypted and used only for this one-time match — guests and other hosts never see them.</span>
+            </div>
+
+            <div class="infowrap">
+              <button class="infotrig" type="button" aria-expanded="false" aria-controls="shared-a">
+                <span class="it-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="it-t">What's shared with NADRA Verisys</span>
+                <span class="it-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              </button>
+            </div>
+
+            <label class="consentrow">
+              <input type="checkbox" class="cchk" id="agree-a" aria-describedby="c-w" />
+              <span class="cbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="ctext">I agree to share these details with NADRA Verisys to verify my identity.</span>
+            </label>
+
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary" aria-disabled="true">Agree &amp; continue</button>
+              <button type="button" class="btn btn-secondary">I don't consent</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The checkbox ships <b>unchecked</b> — a real, explicit affirmative action, never pre-ticked. <b>Agree &amp; continue</b> is a disabled affordance (<code>aria-disabled</code>) until it's checked; <b>I don't consent</b> is the equal-weight decline, routing to the hard-stop panel (B).</p>
+    </div>
+
+    <!-- ============================== B · LIGHT — DECLINE HARD-STOP ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Decline</b> — hard-stop, guest account unaffected, exit to browse</div>
+      <section class="phone" aria-label="Without this check, hosting isn't possible">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Host setup<span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Identity</span></span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-900),var(--slate-500))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="hardsheet" role="dialog" aria-modal="true" aria-labelledby="h-t" aria-describedby="h-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="hardic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/></svg>
+            </div>
+            <h2 class="hardh2" id="h-t">Without this check, hosting isn't possible</h2>
+            <p class="hardbody" id="h-w">SalamStay verifies every host through NADRA Verisys, so guests can trust who they're staying with — it's how the whole marketplace stays trustworthy. Without your consent, we can't take this step further.</p>
+            <p class="hardnote"><b>Your guest account is unaffected</b> — you can keep browsing and booking stays.</p>
+            <div class="hardactions">
+              <a class="btn btn-primary" href="/home">Browse stays</a>
+              <button type="button" class="btn btn-secondary">Give consent</button>
+            </div>
+            <p class="footlink">You can consent anytime from <a href="/host/onboarding">Host setup</a>.</p>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">A specific, factual reason — never a verdict on the person — with a neutral (not error-red) icon (§10.6). <b>Browse stays</b> keeps the guest side of the account moving with no dead end; <b>Give consent</b> returns to panel A; the footline keeps the door open permanently, not just for this session.</p>
+    </div>
+
+    <!-- ============================== C · DARK — CHECKED + POPOVER OPEN ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — checked, Agree enabled · "what's shared" popover open</div>
+      <section class="phone dark" aria-label="Your consent for CNIC verification — checked, popover open, host">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Host setup<span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Identity</span></span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-600))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-500))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="c2-t" aria-describedby="c2-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <h2 id="c2-t">Your consent for CNIC verification</h2>
+            <p class="why" id="c2-w">SalamStay runs on <span class="claim">CNIC-verified guests and hosts via NADRA Verisys</span> — guests are verified the same way, and it protects your home.</p>
+
+            <div class="banner info" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              <span>Your details are encrypted and used only for this one-time match — guests and other hosts never see them.</span>
+            </div>
+
+            <div class="infowrap">
+              <button class="infotrig" type="button" aria-expanded="true" aria-controls="shared-c">
+                <span class="it-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="it-t">What's shared with NADRA Verisys</span>
+                <span class="it-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              </button>
+              <div class="popover" id="shared-c" role="dialog" aria-label="What's shared with NADRA Verisys">
+                <span class="care" aria-hidden="true"></span>
+                <div class="pop-h">Sent for this one-time match</div>
+                <div class="pop-item"><span class="pt">Name</span><span class="pd">As it appears on your CNIC</span></div>
+                <div class="pop-item"><span class="pt">CNIC number</span><span class="pd">Your 13-digit identity number</span></div>
+                <div class="pop-item"><span class="pt">Date of birth</span><span class="pd">Confirms the match against NADRA's record</span></div>
+                <div class="pop-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+                  <span>Nothing beyond this — never shared with guests or other hosts.</span>
+                </div>
+              </div>
+            </div>
+
+            <label class="consentrow">
+              <input type="checkbox" class="cchk" id="agree-c" checked aria-describedby="c2-w" />
+              <span class="cbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="ctext">I agree to share these details with NADRA Verisys to verify my identity.</span>
+            </label>
+
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary">Agree &amp; continue</button>
+              <button type="button" class="btn btn-secondary">I don't consent</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Popover (§8.5) floats above the sheet content on a raised surface with a caret, dismissible by outside tap/Esc — short, rich, non-interactive content, not a focus trap. With the box checked, <b>Agree &amp; continue</b> resolves to its active brand-fill state (the one sanctioned checked-control use of green here).</p>
+    </div>
+
+    <!-- ============================== D · RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — consent sheet, mirrored</div>
+      <section class="phone rtl" lang="ur" dir="rtl" aria-label="میزبان کی شناختی کارڈ تصدیق کے لیے رضامندی">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">میزبان سیٹ اپ<span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">شناخت</span></span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="r-t" aria-describedby="r-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="sheet-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <h2 id="r-t">شناختی کارڈ کی تصدیق کے لیے آپ کی رضامندی</h2>
+            <p class="why" id="r-w">سلام اسٹے پر <span class="claim">مہمان اور میزبان دونوں کی تصدیق نادرا ویری سِس کے ذریعے کی جاتی ہے</span> — مہمانوں کی تصدیق بھی اسی طرح ہوتی ہے، اور یہ آپ کے گھر کی حفاظت کرتا ہے۔</p>
+
+            <div class="banner info" role="note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              <span>آپ کی تفصیلات محفوظ رکھی جاتی ہیں اور صرف اس ایک بار کی تصدیق کے لیے استعمال ہوتی ہیں — کوئی مہمان یا دوسرا میزبان انہیں نہیں دیکھتا۔</span>
+            </div>
+
+            <div class="infowrap">
+              <button class="infotrig" type="button" aria-expanded="false" aria-controls="shared-r">
+                <span class="it-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="it-t">نادرا ویری سِس کے ساتھ کیا شیئر ہوتا ہے</span>
+                <span class="it-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              </button>
+            </div>
+
+            <label class="consentrow">
+              <input type="checkbox" class="cchk" id="agree-r" aria-describedby="r-w" />
+              <span class="cbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="ctext">میں اپنی شناخت کی تصدیق کے لیے یہ تفصیلات نادرا ویری سِس کے ساتھ شیئر کرنے پر رضامند ہوں۔</span>
+            </label>
+
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary" aria-disabled="true">رضامند ہوں اور جاری رکھیں</button>
+              <button type="button" class="btn btn-secondary">میں رضامند نہیں ہوں</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Full mirror: sheet content, checkbox row and action stack flow right-to-left; the checkbox glyph itself (non-directional) does not flip. Real Nastaliq Urdu throughout with the line-height bump; the claim wording matches <code>GA-075</code>'s shipped Urdu translation verbatim, flipped to the host's perspective.</p>
+    </div>
+
+    <!-- ============================== NOTES ============================== -->
+    <div class="panel notes" style="align-self:start">
+      <div class="panel-tag">Rules, states &amp; rationale</div>
+      <ul>
+        <li><b>Consent is explicit, exactly as GA-075.</b> The checkbox ships unchecked; <b>Agree &amp; continue</b> is a disabled affordance until it's checked — never a pre-ticked box, never an implied consent from merely opening the sheet (§10.9 optionality is explicit).</li>
+        <li><b>Mutual formality, flipped to the host.</b> Where <code>GA-075</code> tells a guest "it keeps every stay trustworthy, for you and your host," this card tells the host "guests are verified the same way — it protects your home" — same claim, same honesty, the other side of the relationship.</li>
+        <li><b>Decline is dignified and scoped correctly.</b> The hard-stop states plainly that <b>hosting</b> isn't possible without consent, but the host's <b>guest account is unaffected</b> — browsing and booking keep working. This is the one line this card cannot get wrong: it must never suggest the whole account is at risk.</li>
+        <li><b>What's shared, plainly.</b> A popover names the exact fields (name, CNIC number, date of birth) sent for a one-time match — never the full record, never shown to guests or other hosts.</li>
+        <li><b>No checkout stepper.</b> This is a host-onboarding/verification-entry sheet (<code>HA-003</code>/<code>HA-004</code> lineage), not a checkout step — it carries no numbered stepper (§7.6a).</li>
+        <li><b>Real routes only.</b> <code>/home</code> (browse, guest side) and <code>/host/onboarding</code> (the checklist hub, <code>HA-004</code>) — no <code>href="#"</code>, no clickable divs.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> HA-005 (onboard, app+web) · reuses <code>GA-075</code> sheet grammar + consent ethics verbatim · components: bottom sheet, Button, banner, tooltip/popover · cultural law <code>DESIGN §10.6</code> · gate <code>COMPLIANCE F8</code>.</p>
+    </div>
+  </main>
+</body>
+</html>

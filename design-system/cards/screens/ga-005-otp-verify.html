@@ -1,0 +1,446 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-005 OTP verify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:680px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.h-title,.h-sub,.chan,.waic,.resend,.count,.qlink,.primary,.banner,.otperr,.brandmark,.altline) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:10px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:25px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:8px; }
+  .h-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; line-height:1.55; }
+  .h-sub b { color:var(--text-primary); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  .chan { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px 10px; margin-top:16px; font-size:12.5px; color:var(--text-secondary); }
+  .waic { display:inline-flex; align-items:center; gap:6px; font-weight:600; color:var(--text-primary); }
+  .waic svg { width:15px; height:15px; color:var(--int-primary); }
+  .chan .sep { color:var(--text-tertiary); }
+  .chan a { color:var(--int-link); font-weight:700; }
+
+  .otp { display:flex; gap:9px; margin-top:22px; direction:ltr; unicode-bidi:isolate; }
+  .obox { flex:1; height:56px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); display:flex; align-items:center; justify-content:center; font-size:23px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .obox.active { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .obox .ocaret { width:2px; height:26px; background:var(--int-primary); }
+  .otp.err .obox { border-color:var(--error-fg); }
+  .otp.ok .obox { border-color:var(--success-fg); }
+  .otperr { display:flex; align-items:flex-start; gap:6px; font-size:12.5px; color:var(--error-fg); font-weight:500; margin-top:12px; line-height:1.5; }
+  .otperr svg { width:14px; height:14px; flex:none; margin-top:1px; color:var(--error-fg); }
+
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:16px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner.success { background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); }
+  .banner.success b { font-weight:700; }
+
+  .resend { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; margin-top:18px; font-size:13.5px; color:var(--text-secondary); }
+  .resend .count { color:var(--text-tertiary); font-variant-numeric:tabular-nums; font-weight:700; }
+  .resend a { color:var(--int-link); font-weight:700; }
+  .resend svg { width:15px; height:15px; color:var(--text-tertiary); stroke-width:2; }
+
+  .qlink { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; margin-top:2px; font-size:13.5px; font-weight:600; color:var(--int-link); }
+  .qlink svg { width:15px; height:15px; stroke-width:2; }
+
+  .primary { width:100%; min-height:52px; margin-top:16px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-tertiary); cursor:default; }
+  .spin { width:19px; height:19px; border-radius:50%; border:2px solid var(--text-on-brand); border-top-color:transparent; animation:rot .7s linear infinite; }
+  @keyframes rot { 100% { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation:none; } }
+
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:15px 20px calc(4px + env(safe-area-inset-bottom)); font-size:13px; color:var(--text-tertiary); flex:none; line-height:1.5; }
+  .altline a { color:var(--text-secondary); font-weight:600; text-decoration:underline; }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-005 — OTP verify (mobile app)</h1>
+    <p>Confirm the phone number from <code>GA-004</code> with a 6-digit one-time code (<code>/verify-phone</code>). WhatsApp-first per ARCH, SMS as the fallback channel. The §14 segmented code input auto-advances; resend runs a calm countdown; a wrong code is answered with attempt guidance and a clear next step — never a shaming dead end. Quiet Modern: no ornament, registry-only copy.</p>
+    <div class="legend">
+      <span>Light · countdown running</span>
+      <span>Dark · default</span>
+      <span>Error · wrong code + attempts</span>
+      <span>Success · verified transition</span>
+      <span>RTL · اردو</span>
+      <span>≥44pt targets · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · COUNTDOWN RUNNING ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — default, entering the code</div>
+      <section class="phone" aria-label="OTP verify — light, entering the code">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="Back to sign up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Enter the code</h2>
+          <p class="h-sub">We sent a 6-digit code to <b dir="ltr">+92 300 ••• ••67</b>.</p>
+
+          <p class="chan">
+            <span class="waic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 10c.4 2.4 2.6 4.6 5 5l1.4-1.6 2 .8v2c-4.4.6-8.6-3.6-8.2-8l2-.2z"/></svg>Sent on WhatsApp</span>
+            <span class="sep" aria-hidden="true">·</span>
+            <a href="/verify-phone?channel=sms">Get it by SMS instead</a>
+          </p>
+
+          <div class="otp" role="group" aria-label="Enter the 6-digit code">
+            <span class="obox" aria-label="digit 1: 4">4</span>
+            <span class="obox" aria-label="digit 2: 2">2</span>
+            <span class="obox" aria-label="digit 3: 7">7</span>
+            <span class="obox active" aria-label="digit 4, empty, active"><span class="ocaret" aria-hidden="true"></span></span>
+            <span class="obox" aria-label="digit 5, empty"></span>
+            <span class="obox" aria-label="digit 6, empty"></span>
+          </div>
+
+          <p class="resend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+            Resend code in <span class="count">0:28</span>
+          </p>
+
+          <a class="qlink" href="/signup">Change number</a>
+
+          <button class="primary" type="button" aria-disabled="true">Verify</button>
+        </div>
+
+        <div class="altline">Trouble receiving codes? <a href="/help/verification">Get help</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Six §14 boxes, one digit each, <b>auto-advance</b> on entry / auto-backspace on delete, numeric keypad, and native SMS/WhatsApp autofill (<code>oneTimeCode</code>). The active box carries <code>border.brand</code> + ring; <b>Verify</b> stays disabled until all six are filled (autofill submits on its own).</p>
+    </div>
+
+    <!-- ============================== DARK · DEFAULT ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — default</div>
+      <section class="phone dark" aria-label="OTP verify — dark, default">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="Back to sign up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Enter the code</h2>
+          <p class="h-sub">We sent a 6-digit code to <b dir="ltr">+92 300 ••• ••67</b>.</p>
+
+          <p class="chan">
+            <span class="waic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 10c.4 2.4 2.6 4.6 5 5l1.4-1.6 2 .8v2c-4.4.6-8.6-3.6-8.2-8l2-.2z"/></svg>Sent on WhatsApp</span>
+            <span class="sep" aria-hidden="true">·</span>
+            <a href="/verify-phone?channel=sms">Get it by SMS instead</a>
+          </p>
+
+          <div class="otp" role="group" aria-label="Enter the 6-digit code">
+            <span class="obox active" aria-label="digit 1, empty, active"><span class="ocaret" aria-hidden="true"></span></span>
+            <span class="obox" aria-label="digit 2, empty"></span>
+            <span class="obox" aria-label="digit 3, empty"></span>
+            <span class="obox" aria-label="digit 4, empty"></span>
+            <span class="obox" aria-label="digit 5, empty"></span>
+            <span class="obox" aria-label="digit 6, empty"></span>
+          </div>
+
+          <p class="resend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+            Resend code in <span class="count">0:45</span>
+          </p>
+
+          <a class="qlink" href="/signup">Change number</a>
+
+          <button class="primary" type="button" aria-disabled="true">Verify</button>
+        </div>
+
+        <div class="altline">Trouble receiving codes? <a href="/help/verification">Get help</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Fresh arrival: all boxes empty, first box active. Dark surfaces resolve through <code>.dark</code> tokens; the WhatsApp glyph is a neutral <code>interactive.primary</code> mark — never brand-green filled, never ornamented.</p>
+    </div>
+
+    <!-- ============================== ERROR · WRONG CODE ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — error · wrong code</div>
+      <section class="phone" aria-label="OTP verify — error, wrong code">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="Back to sign up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Enter the code</h2>
+          <p class="h-sub">We sent a 6-digit code to <b dir="ltr">+92 300 ••• ••67</b>.</p>
+
+          <p class="chan">
+            <span class="waic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 10c.4 2.4 2.6 4.6 5 5l1.4-1.6 2 .8v2c-4.4.6-8.6-3.6-8.2-8l2-.2z"/></svg>Sent on WhatsApp</span>
+            <span class="sep" aria-hidden="true">·</span>
+            <a href="/verify-phone?channel=sms">Get it by SMS instead</a>
+          </p>
+
+          <div class="otp err" role="group" aria-label="Enter the 6-digit code, incorrect">
+            <span class="obox" aria-label="digit 1: 4">4</span>
+            <span class="obox" aria-label="digit 2: 2">2</span>
+            <span class="obox" aria-label="digit 3: 7">7</span>
+            <span class="obox" aria-label="digit 4: 1">1</span>
+            <span class="obox" aria-label="digit 5: 9">9</span>
+            <span class="obox" aria-label="digit 6: 0">0</span>
+          </div>
+
+          <p class="otperr" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            That code didn't match. 2 tries left — check the latest WhatsApp message, or resend below.
+          </p>
+
+          <p class="resend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v4h-4"/></svg>
+            Didn't get it? <a href="/verify-phone/resend">Resend code</a>
+          </p>
+
+          <a class="qlink" href="/signup">Change number</a>
+
+          <button class="primary" type="button">Verify</button>
+        </div>
+
+        <div class="altline">Trouble receiving codes? <a href="/help/verification">Get help</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Calm error: all boxes recolour to <code>border.error</code> with a <code>role="alert"</code> message (never colour alone), a shake-free cross-fade, an <b>attempts-left count</b>, and two next steps — recheck the message or resend. The countdown flips to an active "Resend code" link.</p>
+    </div>
+
+    <!-- ============================== SUCCESS · VERIFIED TRANSITION ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — success · verified</div>
+      <section class="phone" aria-label="OTP verify — success, verified">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <span class="ib-spacer" aria-hidden="true"></span>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Enter the code</h2>
+          <p class="h-sub">We sent a 6-digit code to <b dir="ltr">+92 300 ••• ••67</b>.</p>
+
+          <p class="chan">
+            <span class="waic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 10c.4 2.4 2.6 4.6 5 5l1.4-1.6 2 .8v2c-4.4.6-8.6-3.6-8.2-8l2-.2z"/></svg>Sent on WhatsApp</span>
+          </p>
+
+          <div class="otp ok" role="group" aria-label="Code entered, verified">
+            <span class="obox" aria-label="digit 1: 4">4</span>
+            <span class="obox" aria-label="digit 2: 2">2</span>
+            <span class="obox" aria-label="digit 3: 7">7</span>
+            <span class="obox" aria-label="digit 4: 8">8</span>
+            <span class="obox" aria-label="digit 5: 1">1</span>
+            <span class="obox" aria-label="digit 6: 5">5</span>
+          </div>
+
+          <div class="banner success" role="status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3L16 9.5"/></svg>
+            <span><b>Number verified.</b> Taking you to finish your profile…</span>
+          </div>
+
+          <button class="primary" type="button" aria-busy="true" aria-label="Continuing">
+            <span class="spin" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">On the sixth digit the boxes flash <code>border.success</code>, a <code>role="status"</code> banner confirms, and the button holds a spinner while it routes forward to <code>GA-009</code> (profile completion). Back is retired at this point so the user can't fall back into an already-verified state — no dead end, no loop.</p>
+    </div>
+
+    <!-- ============================== RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — default</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="OTP verify — Urdu, right to left">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/signup" aria-label="سائن اپ پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">کوڈ درج کریں</h2>
+          <p class="h-sub">ہم نے <b dir="ltr">+92 300 ••• ••67</b> پر 6 ہندسوں کا کوڈ بھیجا ہے۔</p>
+
+          <p class="chan">
+            <span class="waic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 9 19.2z"/><path d="M9 10c.4 2.4 2.6 4.6 5 5l1.4-1.6 2 .8v2c-4.4.6-8.6-3.6-8.2-8l2-.2z"/></svg>واٹس ایپ پر بھیجا گیا</span>
+            <span class="sep" aria-hidden="true">·</span>
+            <a href="/verify-phone?channel=sms">اس کے بجائے SMS پر منگوائیں</a>
+          </p>
+
+          <div class="otp" role="group" aria-label="6 ہندسوں کا کوڈ درج کریں">
+            <span class="obox" aria-label="ہندسہ 1: 4">4</span>
+            <span class="obox" aria-label="ہندسہ 2: 2">2</span>
+            <span class="obox active" aria-label="ہندسہ 3، خالی، فعال"><span class="ocaret" aria-hidden="true"></span></span>
+            <span class="obox" aria-label="ہندسہ 4، خالی"></span>
+            <span class="obox" aria-label="ہندسہ 5، خالی"></span>
+            <span class="obox" aria-label="ہندسہ 6، خالی"></span>
+          </div>
+
+          <p class="resend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+            کوڈ دوبارہ بھیجیں <span class="count" dir="ltr">0:28</span> میں
+          </p>
+
+          <a class="qlink" href="/signup">نمبر تبدیل کریں</a>
+
+          <button class="primary" type="button" aria-disabled="true">تصدیق کریں</button>
+        </div>
+
+        <div class="altline">کوڈ موصول نہیں ہو رہا؟ <a href="/help/verification">مدد حاصل کریں</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The layout mirrors (back chevron, chan row, resend) but the <b>code grid stays LTR</b> — a 6-digit code is not reading-order text, so digit 1 stays on the left in both directions (§14). Countdown value is bidi-isolated LTR.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, channel &amp; S1 gate compliance · web-variant note</div>
+      <ul>
+        <li><b>WhatsApp-first, SMS fallback (ARCH).</b> The header states the channel plainly ("Sent on WhatsApp") with a one-tap "Get it by SMS instead" to <code>/verify-phone?channel=sms</code>. Channel choice respects the PECA consent captured at sign-up.</li>
+        <li><b>§14 segmented input, done right.</b> Six boxes, one digit each, auto-advance / auto-backspace, numeric keypad, paste-fills-all, native one-time-code autofill; the group is one labelled field, each box announces "digit n of 6".</li>
+        <li><b>Resend is a behaviour constant, not a motion token.</b> "Resend in 0:28" is a plain text countdown (banner variant, inputs §17) that becomes an active "Resend code" link at zero — no animation, no spinner.</li>
+        <li><b>No dead ends on failure.</b> A wrong code recolours the boxes (border + <code>role="alert"</code> message, never colour alone), shows the <b>attempts left</b>, and names two next steps: recheck the message or resend. Expiry/too-many-attempts escalate to <code>/help/verification</code>.</li>
+        <li><b>Success is a status, then a route.</b> A brief <code>border.success</code> flash + <code>role="status"</code> banner, then forward to <code>GA-009</code>; back is retired so there's no re-entry into a verified step.</li>
+        <li><b>On-palette, dignified copy.</b> Every colour is a <code>var()</code> token; the WhatsApp mark is monochrome <code>interactive.primary</code>, not brand-green; no ornament. Copy is neutral descriptive — no invented stats or social proof.</li>
+        <li><b>Web variant (<code>/verify-email</code> · <code>/verify-phone</code>, SPA).</b> Same six boxes centred in a ~440px card; desktop supports paste + arrow-key nav between boxes; the countdown/resend and "Change number"/"Get help" links are identical; email verification swaps the header target and channel note to email.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-005 (verify, app+web) · component <code>OTP §14</code> · resend banner <code>§17</code> · a11y <code>DESIGN §11</code>. Inbound <code>GA-004</code> → outbound <code>GA-009</code>; fallback <code>/help/verification</code>.</p>
+    </div>
+  </main>
+</body>
+</html>

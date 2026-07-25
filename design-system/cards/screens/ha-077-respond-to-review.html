@@ -1,0 +1,429 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Respond to a review (HA-077)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:320px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ga-064 flat-frame lineage */
+  .phone { width:320px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:770px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.85; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+
+  /* the guest review, in full */
+  .review { border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:14px 15px; box-shadow:var(--el-hairline); }
+  .rv-top { display:flex; align-items:flex-start; gap:10px; }
+  .rv-av { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+  .rv-id { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .rv-n { font-size:13.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .rv-meta { font-size:11.5px; color:var(--text-tertiary); display:block; }
+  .rv-stars { display:inline-flex; gap:2px; color:var(--warning-fg); margin-top:3px; }
+  .rv-stars svg { width:14px; height:14px; }
+  .rv-stars svg.off { color:var(--border-strong); }
+  .rv-text { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:10px; }
+  .cattrack { display:flex; flex-direction:column; gap:6px; margin-top:11px; padding-top:11px; border-top:1px solid var(--border-hairline); }
+  .catln { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .cl { font-size:11.5px; color:var(--text-secondary); }
+  .cs { flex:none; display:inline-flex; gap:1.5px; color:var(--warning-fg); }
+  .cs svg { width:11px; height:11px; }
+  .cs svg.off { color:var(--border-strong); }
+  .rv-foot { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:11px; }
+  .lchip { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:3px 9px; }
+  .lchip svg { width:11px; height:11px; stroke-width:2; flex:none; }
+  .rv-date { font-size:11px; color:var(--text-tertiary); }
+
+  /* dignity guidance — how to answer well */
+  .guide { margin-top:16px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .guide-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:8px; display:block; }
+  .guide-l { list-style:none; display:flex; flex-direction:column; gap:7px; }
+  .gitem { display:flex; align-items:flex-start; gap:8px; }
+  .gitem svg { width:14px; height:14px; color:var(--text-tertiary); flex:none; margin-top:2px; stroke-width:2; }
+  .gitem span { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* public reply composer */
+  .composer { margin-top:16px; }
+  .composer-h { font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:4px; display:block; }
+  .composer-window { display:flex; gap:8px; align-items:flex-start; margin-bottom:9px; }
+  .composer-window svg { width:14px; height:14px; color:var(--text-tertiary); flex:none; margin-top:2px; stroke-width:1.9; }
+  .composer-window span { font-size:11.5px; color:var(--text-tertiary); line-height:1.5; }
+  .ta { width:100%; min-height:96px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:11px 13px; font-family:inherit; font-size:13px; color:var(--text-primary); line-height:1.55; resize:none; }
+  .ta::placeholder { color:var(--text-secondary); }
+  .ta:focus-visible { outline:none; border-color:var(--border-brand); box-shadow:0 0 0 2px var(--int-primary); background:var(--bg-canvas); }
+  .count { font-size:11.5px; color:var(--text-tertiary); text-align:end; margin-top:5px; }
+
+  /* posted reply, beneath the review it answers */
+  .pubreply { margin-top:12px; padding:12px 13px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-md); }
+  .pr-h { display:flex; align-items:center; gap:8px; }
+  .pr-av { width:24px; height:24px; flex:none; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+  .pr-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .pr-tag { display:inline-flex; align-items:center; height:18px; padding:0 7px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); font-size:10px; font-weight:600; color:var(--text-secondary); }
+  .pr-d { font-size:11px; color:var(--text-tertiary); margin-inline-start:auto; }
+  .pr-b { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-top:7px; }
+  .postednote { display:flex; gap:8px; align-items:flex-start; margin-top:12px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .postednote svg { width:16px; height:16px; color:var(--success-fg); flex:none; margin-top:1px; stroke-width:2; }
+  .postednote span { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  /* quiet flag affordance — equal weight, never emphasised */
+  .actions { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px; }
+  .flaglink { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 4px; font-size:12px; font-weight:600; color:var(--text-tertiary); background:none; border:none; cursor:pointer; font-family:inherit; }
+  .flaglink svg { width:14px; height:14px; flex:none; }
+  .editlink { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 4px; font-size:12px; font-weight:600; color:var(--int-primary); background:none; border:none; cursor:pointer; font-family:inherit; }
+  .editlink svg { width:14px; height:14px; flex:none; }
+
+  .spacer-fill { flex:1; min-height:10px; }
+  .foot { padding-top:14px; margin-top:14px; border-top:1px solid var(--border-hairline); flex:none; display:flex; gap:9px; }
+  .btn { flex:1; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.ghost { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  /* flag/dispute bottom sheet — ga-036 / ga-132 reason grammar */
+  .backdrop { position:absolute; inset:0; background:var(--scrim); z-index:6; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:7; background:var(--bg-canvas); border-top-left-radius:var(--radius-2xl); border-top-right-radius:var(--radius-2xl); box-shadow:var(--el-popover); padding:0 0 calc(14px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:9px 0 4px; }
+  .grabi { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); display:block; }
+  .shead { padding:6px 18px 12px; border-bottom:1px solid var(--border-hairline); }
+  .shead h2 { font-size:17px; font-weight:600; color:var(--text-primary); }
+  .shead p { font-size:12px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .sbody { padding:14px 18px 4px; }
+  .reasons { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .reason { display:flex; gap:11px; align-items:flex-start; min-height:44px; padding:11px 12px; border-radius:var(--radius-lg); border:1px solid var(--border-default); background:var(--bg-canvas); cursor:pointer; text-align:start; width:100%; font-family:inherit; }
+  .radio { width:20px; height:20px; flex:none; border-radius:var(--radius-full); border:1.5px solid var(--border-strong); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .radioi { width:10px; height:10px; border-radius:var(--radius-full); background:var(--int-primary); opacity:0; display:block; }
+  .rx { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .rxt { font-size:13.5px; font-weight:600; color:var(--text-primary); line-height:1.3; display:block; }
+  .rxd { font-size:12px; color:var(--text-secondary); line-height:1.4; display:block; }
+  .reason.on { border-color:var(--border-brand); background:var(--int-subtle); }
+  .reason.on .radio { border-color:var(--int-primary); }
+  .reason.on .radioi { opacity:1; }
+  .sfoot { padding:0 18px 4px; }
+  .sbtn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; background:var(--int-primary); color:var(--text-on-brand); }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Respond to a review (HA-077)</h1>
+    <p>The host mirror of <code>GA-131</code>'s public-response composer, reached from <code>HA-062</code>'s Respond action. Fatima's review of Gulberg 2 Residence is shown <strong>in full — categories and text, nothing trimmed</strong> — above a reply Textarea. Three lines of dignity guidance set the register: <strong>thank her, clarify facts calmly, never argue</strong>. The window is stated with the shipped figure verbatim — <strong>"You can reply publicly for <span class="num">14</span> days"</strong> (<code>DESIGN.md</code> §9-J) — never an invented number. A responded state shows the posted reply as its own quiet sub-card beneath the review it answers, and a <strong>flag affordance</strong> reuses the <code>GA-036</code>/<code>GA-132</code> reason-list grammar at equal weight to the reply, never emphasised. Host chrome, no stepper — post-stay. Panels: composing (light) · responded (light) · flag sheet (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Composing · light</span><span>Responded</span><span>Flag sheet · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL — COMPOSING · RESPONDED ============================ -->
+    <section class="panel" aria-label="Light theme — composing a public reply, and the state after it is posted">
+      <div class="panel-tag">Light — composing · responded</div>
+      <div class="rowflex">
+
+        <!-- A · COMPOSING -->
+        <div class="pcol">
+          <div class="pcap">A · Composing — window stated honestly</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reviews" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Respond to review</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="review">
+                <div class="rv-top">
+                  <span class="rv-av" aria-hidden="true">F</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Fatima</span>
+                    <span class="rv-meta">Couple · <span class="num">3</span> nights</span>
+                    <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-text">Quiet, spotless, and exactly as described. The marked Qibla direction and prayer space were a thoughtful touch, and Aqib was quick and kind in messages. The lift was out on our last morning, which made the stairs with luggage a bit of work.</p>
+                <div class="cattrack">
+                  <div class="catln"><span class="cl">Cleanliness</span><span class="cs" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                  <div class="catln"><span class="cl">Accuracy</span><span class="cs" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                  <div class="catln"><span class="cl">Communication</span><span class="cs" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                  <div class="catln"><span class="cl">Location</span><span class="cs" role="img" aria-label="Rated 4 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></span></div>
+                </div>
+                <div class="rv-foot">
+                  <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span>Gulberg <span class="num">2</span> Residence</span></span>
+                  <span class="rv-date num">Aug 2026</span>
+                </div>
+              </div>
+
+              <div class="guide">
+                <span class="guide-h">A good public reply</span>
+                <ul class="guide-l">
+                  <li class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>Thank the guest first — they took the time to write.</span></li>
+                  <li class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>Clarify facts calmly, and say what you have changed since.</span></li>
+                  <li class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span>Never argue, and never bring up anything private about the guest. Future guests are reading.</span></li>
+                </ul>
+              </div>
+
+              <div class="composer">
+                <label class="composer-h" for="reply-a">Your public reply</label>
+                <div class="composer-window"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span>You can reply publicly for <span class="num">14</span> days. Your reply appears under Fatima's review for anyone who sees the listing.</span></div>
+                <textarea class="ta" id="reply-a" placeholder="Thank Fatima, or add context for future guests.">Thank you for the kind words, Fatima — you were a wonderful guest. You are right about the lift: the building replaced its controller the week after your stay, so it is running normally again.</textarea>
+                <div class="count"><span class="num">198</span> / <span class="num">700</span></div>
+              </div>
+
+              <div class="actions">
+                <button class="flaglink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg><span>Flag this review</span></button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="foot"><a class="btn ghost" href="/host/reviews"><span>Cancel</span></a><button class="btn primary" type="submit"><span>Post reply</span></button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · RESPONDED -->
+        <div class="pcol">
+          <div class="pcap">B · Responded — your reply sits under the review</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reviews" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Review &amp; your reply</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="review">
+                <div class="rv-top">
+                  <span class="rv-av" aria-hidden="true">F</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Fatima</span>
+                    <span class="rv-meta">Couple · <span class="num">3</span> nights</span>
+                    <span class="rv-stars" role="img" aria-label="Rated 5 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-text">Quiet, spotless, and exactly as described. The marked Qibla direction and prayer space were a thoughtful touch, and Aqib was quick and kind in messages. The lift was out on our last morning, which made the stairs with luggage a bit of work.</p>
+                <div class="rv-foot">
+                  <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span>Gulberg <span class="num">2</span> Residence</span></span>
+                  <span class="rv-date num">Aug 2026</span>
+                </div>
+                <div class="pubreply">
+                  <div class="pr-h"><span class="pr-av" aria-hidden="true">A</span><span class="pr-t">Aqib</span><span class="pr-tag">Host reply</span><span class="pr-d num">Aug 2026</span></div>
+                  <p class="pr-b">Thank you for the kind words, Fatima — you were a wonderful guest. You are right about the lift: the building replaced its controller the week after your stay, so it is running normally again.</p>
+                </div>
+              </div>
+
+              <div class="postednote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Your reply is public under Fatima's review. You can edit it for the rest of the <span class="num">14</span>-day window.</span>
+              </div>
+
+              <div class="actions">
+                <button class="flaglink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1.5 4H20l-1.5 4H5"/></svg><span>Flag this review</span></button>
+                <button class="editlink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M14 6l4 4"/></svg><span>Edit reply</span></button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="foot"><a class="btn ghost" href="/host/reviews"><span>All reviews</span></a><a class="btn primary" href="/host/reservations"><span>Back to reservations</span></a></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The guest review is shown <b>in full</b> — every category, the whole text, including the part that is not flattering — because a composer that hides the criticism it is answering would be dishonest by construction. The window figure is the shipped one, <b>verbatim from <code>DESIGN.md</code> §9-J</b>: "You can reply publicly for <span class="num">14</span> days." Guidance is three plain lines in the §10.6 register — thank, clarify calmly, never argue — with the concrete reason attached ("future guests are reading") rather than a scolding rule. Once posted, the reply renders as its own quiet sub-card <b>beneath the review it answers</b>, the same grammar <code>GA-032</code> and <code>GA-131</code> already use, and the composer is replaced by an edit affordance that names the same <span class="num">14</span>-day window.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — FLAG SHEET ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the flag reason sheet open over the review">
+      <div class="panel-tag">Dark — flag this review · reason sheet</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Flag this review — reasons</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/reviews" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Respond to review</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <div class="review">
+                <div class="rv-top">
+                  <span class="rv-av" aria-hidden="true">AR</span>
+                  <span class="rv-id">
+                    <span class="rv-n">Ali Raza</span>
+                    <span class="rv-meta">Business · <span class="num">2</span> nights</span>
+                    <span class="rv-stars" role="img" aria-label="Rated 2 out of 5"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-text">The pool was closed the whole time and the breakfast was poor.</p>
+                <div class="rv-foot">
+                  <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span>Cantt View Residence</span></span>
+                  <span class="rv-date num">Jul 2026</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="backdrop" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="flagH">
+              <div class="grab" aria-hidden="true"><span class="grabi"></span></div>
+              <div class="shead">
+                <h2 id="flagH">Flag this review</h2>
+                <p>Tell us what's wrong — our safety team will take a look. Flagging does not remove the review on its own.</p>
+              </div>
+              <div class="sbody">
+                <div class="reasons" role="radiogroup" aria-label="Reason for flagging">
+                  <button type="button" class="reason on" role="radio" aria-checked="true"><span class="radio" aria-hidden="true"><span class="radioi"></span></span><span class="rx"><span class="rxt">Inaccurate</span><span class="rxd">Something in this review doesn't match what happened.</span></span></button>
+                  <button type="button" class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><span class="radioi"></span></span><span class="rx"><span class="rxt">Violates guidelines</span><span class="rxd">Discriminatory, abusive, or otherwise against our content rules.</span></span></button>
+                  <button type="button" class="reason" role="radio" aria-checked="false"><span class="radio" aria-hidden="true"><span class="radioi"></span></span><span class="rx"><span class="rxt">Not about this stay</span><span class="rxd">This review seems to be about a different home or booking.</span></span></button>
+                </div>
+              </div>
+              <div class="sfoot"><button class="sbtn" type="button">Send to our safety team</button></div>
+            </div>
+
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps every role AA-proven (§11). The sheet reuses the exact reason-list grammar from <code>GA-036</code>/<code>GA-132</code> — plain radio rows, one clear label plus one calm description each — with the three reasons this row calls for: <b>inaccurate, violates guidelines, not about this stay</b>. Tone stays non-accusatory (§10.6): "tell us what's wrong," and the sheet states plainly that <b>flagging does not remove the review</b>, so a host is never sold a false remedy. The example behind the sheet is a genuinely low review shown at full weight — this product does not hide bad ratings from the host who received them.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the public reply composer">
+      <div class="panel-tag">RTL · اردو — "جائزے کا جواب دیں", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/reviews" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur" id="uH">جائزے کا جواب دیں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="review">
+                <div class="rv-top">
+                  <span class="rv-av" aria-hidden="true">F</span>
+                  <span class="rv-id">
+                    <span class="rv-n ur">فاطمہ</span>
+                    <span class="rv-meta ur">جوڑا · <span class="num">3</span> راتیں</span>
+                    <span class="rv-stars" role="img" aria-label="پانچ میں سے پانچ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+                  </span>
+                </div>
+                <p class="rv-text ur">پرسکون، صاف ستھرا، اور بالکل تفصیل کے مطابق۔ قبلہ کی نشاندہی اور نماز کی جگہ ایک اچھا اضافہ تھی۔ آخری صبح لفٹ بند تھی، جس سے سامان کے ساتھ سیڑھیاں کچھ مشکل رہیں۔</p>
+                <div class="cattrack">
+                  <div class="catln"><span class="cl ur">صفائی</span><span class="cs" role="img" aria-label="پانچ میں سے پانچ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                  <div class="catln"><span class="cl ur">رابطہ</span><span class="cs" role="img" aria-label="پانچ میں سے پانچ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg></span></div>
+                  <div class="catln"><span class="cl ur">محل وقوع</span><span class="cs" role="img" aria-label="پانچ میں سے چار"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.2l5.9-.9z"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.9 1.2 5.8L12 16.9 6.8 19.3l1.2-5.8L3.6 9.6l5.9-.6z"/></svg></span></div>
+                </div>
+                <div class="rv-foot">
+                  <span class="lchip ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span>گلبرگ <span class="num">2</span> ریزیڈنس</span></span>
+                  <span class="rv-date num">Aug 2026</span>
+                </div>
+              </div>
+
+              <div class="guide">
+                <span class="guide-h ur">اچھا عوامی جواب</span>
+                <ul class="guide-l">
+                  <li class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="ur">پہلے مہمان کا شکریہ ادا کریں — انہوں نے وقت نکال کر لکھا۔</span></li>
+                  <li class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="ur">حقائق اطمینان سے واضح کریں، اور بتائیں کہ اس کے بعد آپ نے کیا بہتر کیا۔</span></li>
+                  <li class="gitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="ur">بحث کبھی نہ کریں، اور مہمان کی کوئی نجی بات نہ لکھیں۔ آنے والے مہمان یہ پڑھیں گے۔</span></li>
+                </ul>
+              </div>
+
+              <div class="composer">
+                <label class="composer-h ur" for="reply-u">آپ کا عوامی جواب</label>
+                <div class="composer-window"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span class="ur">آپ <span class="num">14</span> دن تک عوامی جواب دے سکتے ہیں۔ آپ کا جواب فاطمہ کے جائزے کے نیچے سب کو نظر آئے گا۔</span></div>
+                <textarea class="ta ur" id="reply-u" placeholder="فاطمہ کا شکریہ ادا کریں، یا آنے والے مہمانوں کے لیے وضاحت لکھیں۔">فاطمہ، آپ کے مہربان الفاظ کا شکریہ — آپ بہترین مہمان رہیں۔ لفٹ کے بارے میں آپ درست ہیں: آپ کے قیام کے اگلے ہی ہفتے عمارت نے اس کا کنٹرولر تبدیل کر دیا، اب وہ معمول کے مطابق چل رہی ہے۔</textarea>
+              </div>
+
+              <div class="actions">
+                <button class="flaglink ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21V4H9l1.5 4H4l1.5 4H19"/></svg><span>اس جائزے کو نشان زد کریں</span></button>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <div class="foot"><a class="btn ghost ur" href="/ur/host/reviews"><span>منسوخ کریں</span></a><button class="btn primary ur" type="submit"><span>جواب شائع کریں</span></button></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): the back chevron and the flag glyph flip to the reading direction, the review card, guidance list and composer all flow right-to-left, and Cancel/Post keep their reading-order relationship rather than being visually swapped by accident. Every digit run — the star counts, the night count, the date, the <span class="num">14</span>-day window, and the <span class="num">2</span> in "گلبرگ <span class="num">2</span> ریزیڈنس" — sits inside <code>.num</code> with <code>direction:ltr; unicode-bidi:isolate</code> and <b>Western numerals</b> (Pass #31), and every <code>aria-label</code> states the same rating the stars show.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Inbox (GA-097)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b, .note strong { color:var(--text-secondary); font-weight:600; }
+
+  /* guest phone frame — ga-070 lineage: bottom tab bar, NO checkout stepper (§7.6a) */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:680px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.segtab,.priv-t,.tname,.tsnip,.lchip,.schip,.emh,.emb,.btn,.shn,.shs,.mact,.ttime,.mfoot,.off-t,.off-d,.tab-lb) { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl :is(.tsnip,.priv-t,.emb,.off-d,.mfoot) { line-height:1.95; }
+  .phone.rtl :is(.tname,.mact,.shn) { line-height:1.85; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:16px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:0 0 8px; overflow:hidden; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .grow { flex:1; }
+
+  /* filter strip */
+  .segtabs { display:flex; gap:2px; padding:8px 12px 10px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .segtab { flex:1; display:flex; align-items:center; justify-content:center; min-height:44px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; color:var(--text-secondary); background:transparent; border:none; font-family:inherit; cursor:pointer; }
+  .segtab .cnt { font-size:10.5px; font-weight:700; color:var(--text-on-brand); background:var(--int-primary); border-radius:var(--radius-full); min-width:16px; height:16px; padding:0 4px; margin-inline-start:5px; display:inline-flex; align-items:center; justify-content:center; }
+  .segtab[aria-selected="true"] { background:var(--int-subtle); color:var(--int-primary); }
+
+  /* the privacy truth — GA-061 verbatim, guest side */
+  .priv { display:flex; align-items:flex-start; gap:9px; margin:12px 14px 4px; padding:10px 11px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); }
+  .priv-ic { flex:none; color:var(--text-secondary); display:flex; }
+  .priv-ic svg { width:15px; height:15px; stroke-width:1.9; }
+  .priv-t { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+  .priv-t b { color:var(--text-primary); font-weight:600; }
+
+  /* offline banner — ga-088 register: a state, never an error */
+  .offline { display:flex; align-items:flex-start; gap:9px; padding:10px 14px; background:var(--bg-raised); border-bottom:1px solid var(--border-default); flex:none; }
+  .off-ic { flex:none; color:var(--text-secondary); display:flex; margin-top:1px; }
+  .off-ic svg { width:16px; height:16px; stroke-width:1.85; }
+  .off-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .off-t { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .off-d { font-size:11px; color:var(--text-secondary); line-height:1.5; }
+
+  /* thread list */
+  .tlist { list-style:none; display:flex; flex-direction:column; gap:8px; padding:12px 14px 0; }
+  .trow { display:flex; align-items:flex-start; gap:2px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:2px; }
+  .trow.unread { background:var(--bg-raised); border-color:var(--border-default); }
+  .th-main { flex:1; min-width:0; display:flex; align-items:flex-start; gap:10px; min-height:64px; padding:10px 4px 10px 10px; text-decoration:none; }
+  .phone.rtl .th-main { padding:10px 10px 10px 4px; }
+  .av { width:40px; height:40px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); flex:none; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; }
+  .av.support { background:var(--bg-sunken); color:var(--text-secondary); border:1px solid var(--border-hairline); }
+  .tb { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .tline { display:flex; align-items:center; gap:8px; }
+  .tname { flex:1; min-width:0; font-size:13.5px; font-weight:500; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .trow.unread .tname { font-weight:700; }
+  .ttime { flex:none; font-size:11px; color:var(--text-tertiary); }
+  .udot { flex:none; width:8px; height:8px; border-radius:var(--radius-full); background:var(--int-primary); }
+  .tsnip { font-size:12px; color:var(--text-secondary); line-height:1.45; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .tsnip.urdu { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .phone.rtl .tsnip.eng { font-family:'Inter',sans-serif; line-height:1.45; }
+  .trow.unread .tsnip { color:var(--text-primary); }
+  .tmeta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:2px; }
+  .lchip { display:inline-flex; align-items:center; font-size:10.5px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 8px; }
+  .lchip svg { width:10px; height:10px; stroke-width:2; flex:none; margin-inline-end:4px; }
+  .schip { display:inline-flex; align-items:center; font-size:10.5px; font-weight:600; border-radius:var(--radius-full); padding:2px 8px; white-space:nowrap; }
+  .schip svg { width:10px; height:10px; stroke-width:2.2; flex:none; margin-inline-end:4px; }
+  .schip.request { color:var(--int-primary); background:var(--int-subtle); border:1px solid var(--border-brand); }
+  .schip.confirmed { color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); }
+  .schip.current { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .schip.past { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .kebab { width:44px; height:44px; flex:none; margin-top:8px; border-radius:var(--radius-full); border:none; background:transparent; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .kebab:hover { background:var(--bg-sunken); color:var(--text-secondary); }
+  .kebab svg { width:19px; height:19px; }
+  .brandmark { font-weight:600; letter-spacing:-0.01em; }
+  .brandmark .dot { color:var(--int-primary); }
+
+  /* skeleton — holds the row geometry exactly, zero shift on load */
+  .sk { display:flex; align-items:flex-start; gap:10px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:12px 12px; min-height:68px; }
+  .sk-av { width:40px; height:40px; border-radius:var(--radius-full); background:var(--bg-sunken); flex:none; }
+  .sk-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:7px; padding-top:3px; }
+  .sk-l { height:9px; border-radius:var(--radius-full); background:var(--bg-sunken); }
+  .sk-l.w70 { width:70%; } .sk-l.w95 { width:95%; } .sk-l.w45 { width:45%; }
+
+  /* ⋯ menu — ga-062 sheet grammar, ga-132/133 report + block entries */
+  .scrim { position:absolute; inset:0; background:var(--scrim); z-index:5; }
+  .sheet { position:absolute; left:0; right:0; bottom:0; z-index:6; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; box-shadow:var(--el-popover); padding:8px 16px calc(14px + env(safe-area-inset-bottom)); }
+  .grab { display:flex; justify-content:center; padding:6px 0 4px; }
+  .grab i { width:38px; height:5px; border-radius:var(--radius-full); background:var(--border-default); }
+  .sh-row { display:flex; align-items:center; gap:11px; padding:8px 4px 12px; border-bottom:1px solid var(--border-hairline); }
+  .shb { min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .shn { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .shs { font-size:12px; color:var(--text-secondary); }
+  .menu { list-style:none; display:flex; flex-direction:column; padding-top:6px; }
+  .menu li { display:block; }
+  .mact { display:flex; align-items:center; width:100%; min-height:52px; background:transparent; border:none; font-family:inherit; font-size:14px; font-weight:600; color:var(--text-primary); cursor:pointer; padding:0 4px; text-align:start; text-decoration:none; }
+  .mact:hover { color:var(--int-primary); }
+  .mact .mi { width:24px; height:24px; flex:none; color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin-inline-end:12px; }
+  .mact .mi svg { width:20px; height:20px; stroke-width:1.85; }
+  .ml { flex:1; min-width:0; }
+  .mact.quiet { color:var(--text-secondary); justify-content:center; border-top:1px solid var(--border-hairline); margin-top:4px; }
+  .mfoot { font-size:11px; color:var(--text-tertiary); line-height:1.5; padding:2px 4px 6px; }
+
+  /* empty state */
+  .emptybox { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; padding:36px 22px; }
+  .eg { width:48px; height:48px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .eg svg { width:24px; height:24px; stroke-width:1.6; }
+  .emh { font-size:15px; font-weight:600; color:var(--text-primary); display:block; }
+  .emb { font-size:12.5px; color:var(--text-secondary); max-width:230px; line-height:1.55; display:block; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:0 16px; border-radius:var(--radius-md); font-size:13px; font-weight:600; text-decoration:none; border:1px solid var(--border-default); color:var(--text-primary); background:var(--bg-canvas); font-family:inherit; margin-top:4px; }
+
+  /* bottom tab bar — Inbox active (ga-070 grammar) */
+  .tabbar { display:flex; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); box-shadow:var(--el-hairline); flex:none; }
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:56px; padding:8px 0; position:relative; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .tab svg { width:23px; height:23px; color:var(--text-secondary); stroke-width:1.75; }
+  .tab-lb { font-size:11px; color:var(--text-secondary); font-weight:400; }
+  .tab.active svg { color:var(--int-primary); }
+  .tab.active .tab-lb { color:var(--int-primary); font-weight:600; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Inbox (GA-097)</h1>
+    <p>Fatima's conversation list at <strong>/messages</strong> — the guest mirror of <code>HA-052</code>, and a bottom-tab destination (Inbox active, <code>aria-current="page"</code>). Each row carries an initials avatar, the host's name, a two-line snippet in <em>its own script</em>, a <strong>listing chip</strong> naming the stay the thread belongs to, and a status chip — <em>Request sent</em> · <em>Confirmed</em> · <em>Current stay</em> · <em>Past stay</em>. Unread is never colour-alone: bold name <em>plus</em> a dot <em>plus</em> the word "Unread" leading the accessible name. The privacy truth sits above the list, <code>GA-061</code> verbatim: <strong>your phone number is shared with the host only after the booking is confirmed — never with the request</strong>. Every row's <code>⋯</code> menu reaches <strong>Report a problem</strong> (<code>GA-132</code>) and <strong>Block</strong> (<code>GA-133</code>) with their shipped grammar — reporting is private, and they aren't notified. Panels: all + unread filter (light) · ⋯ menu + skeleton (light) · dark list offline + empty (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">All threads · light</span><span>Filtered · unread</span><span>Row ⋯ menu</span><span>Loading skeleton</span><span>Offline · dark</span><span>Empty</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 — POPULATED · FILTERED UNREAD ============================ -->
+    <section class="panel" aria-label="Light theme — the full inbox and the unread filter">
+      <div class="panel-tag">Light — all threads · filtered to unread</div>
+      <div class="rowflex">
+
+        <!-- A · ALL THREADS -->
+        <div class="pcol">
+          <div class="pcap">A · All — every host, one list</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="aH">Messages</div>
+              <a class="ib" href="/messages/search" aria-label="Search messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Filter conversations">
+                <button class="segtab" type="button" role="tab" aria-selected="true">All</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Unread <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests <span class="cnt num">1</span></button>
+              </div>
+
+              <div class="priv">
+                <span class="priv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="priv-t"><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</span>
+              </div>
+
+              <ul class="tlist">
+                <li class="trow unread">
+                  <a class="th-main" href="/messages/host-ayesha-margalla-view" aria-label="Unread. Ayesha Khan. Confirmed booking, Margalla View Apartment. 2:44 PM.">
+                    <span class="av" aria-hidden="true">AK</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Ayesha Khan</span><span class="ttime num">2:44 PM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip urdu" dir="rtl" lang="ur">جی بالکل — جمعہ کو جلد چیک اِن ہو سکتا ہے، اور گیٹ کے اندر پارکنگ بھی موجود ہے۔</span>
+                      <span class="tmeta">
+                        <span class="schip confirmed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Confirmed</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Margalla View Apartment</span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with Ayesha Khan"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow unread">
+                  <a class="th-main" href="/messages/salamstay-support" aria-label="Unread. SalamStay Support. 11:20 AM.">
+                    <span class="av support" aria-hidden="true">SS</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname"><span class="brandmark">Salam<span class="dot" aria-hidden="true">.</span>Stay</span> Support</span><span class="ttime num">11:20 AM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip">"Your guest-registration question is with the team — the reply will come here, in Urdu or English."</span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with SalamStay Support"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow">
+                  <a class="th-main" href="/messages/host-nadia-s" aria-label="Nadia S. Request sent, Blue Area Serviced Flat. Yesterday.">
+                    <span class="av" aria-hidden="true">NS</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Nadia S.</span><span class="ttime">Yesterday</span></span>
+                      <span class="tsnip">"Assalam-o-alaikum — I've sent a request for the September dates. Is the family floor available then?"</span>
+                      <span class="tmeta">
+                        <span class="schip request"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Request sent</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Blue Area Serviced Flat</span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with Nadia S."><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow">
+                  <a class="th-main" href="/messages/host-imran-a" aria-label="Imran A. Past stay, Gulberg Studio. 2 weeks ago.">
+                    <span class="av" aria-hidden="true">IA</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Imran A.</span><span class="ttime"><span class="num">2</span> weeks ago</span></span>
+                      <span class="tsnip">"Check-in is anytime after 3 PM — I'll send the door code that morning."</span>
+                      <span class="tmeta">
+                        <span class="schip past"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Past stay</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Gulberg Studio</span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with Imran A."><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="grow"></div>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab active" href="/messages" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · FILTERED — UNREAD -->
+        <div class="pcol">
+          <div class="pcap">B · Unread filter — two threads waiting</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="bH">Messages</div>
+              <a class="ib" href="/messages/search" aria-label="Search messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Filter conversations">
+                <button class="segtab" type="button" role="tab" aria-selected="false">All</button>
+                <button class="segtab" type="button" role="tab" aria-selected="true">Unread <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests <span class="cnt num">1</span></button>
+              </div>
+
+              <div class="priv">
+                <span class="priv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="priv-t"><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</span>
+              </div>
+
+              <ul class="tlist">
+                <li class="trow unread">
+                  <a class="th-main" href="/messages/host-ayesha-margalla-view" aria-label="Unread. Ayesha Khan. Confirmed booking, Margalla View Apartment. 2:44 PM.">
+                    <span class="av" aria-hidden="true">AK</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Ayesha Khan</span><span class="ttime num">2:44 PM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip urdu" dir="rtl" lang="ur">جی بالکل — جمعہ کو جلد چیک اِن ہو سکتا ہے، اور گیٹ کے اندر پارکنگ بھی موجود ہے۔</span>
+                      <span class="tmeta">
+                        <span class="schip confirmed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Confirmed</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Margalla View Apartment</span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with Ayesha Khan"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow unread">
+                  <a class="th-main" href="/messages/salamstay-support" aria-label="Unread. SalamStay Support. 11:20 AM.">
+                    <span class="av support" aria-hidden="true">SS</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname"><span class="brandmark">Salam<span class="dot" aria-hidden="true">.</span>Stay</span> Support</span><span class="ttime num">11:20 AM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip">"Your guest-registration question is with the team — the reply will come here, in Urdu or English."</span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with SalamStay Support"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="grow"></div>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab active" href="/messages" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Rows are a <strong>non-interactive <code>&lt;li&gt;</code> holding one anchor plus one sibling <code>&lt;button&gt;</code></strong> — the whole row navigates, the <code>⋯</code> opens the menu, and no button is ever nested inside an anchor. Unread is carried three ways at once (bolder name, a brand dot, and the word "Unread" leading the accessible name) so it survives colour-blindness and screen readers alike (§11, never colour-only). The <strong>listing chip</strong> mirrors <code>HA-052</code>'s row grammar, inverted: a host needs to know <em>which home</em>, a guest needs to know <em>which stay</em>. Ayesha's preview is rendered <strong>natively RTL in Nastaliq inside an LTR list</strong> — each snippet aligns to its own script (§9-E), so a guest never sees Urdu flattened into a Latin row. Times and the "<span class="num">2</span> weeks ago" figure use Western digits inside <code>.num</code>, and every <code>aria-label</code> repeats those same digits (Pass #31).</p>
+    </section>
+
+    <!-- ============================ LIGHT PANEL 2 — ROW MENU · SKELETON ============================ -->
+    <section class="panel" aria-label="Light theme — the per-thread menu and the loading skeleton">
+      <div class="panel-tag">Light — thread ⋯ menu (report / block) · loading skeleton</div>
+      <div class="rowflex">
+
+        <!-- C · ROW MENU -->
+        <div class="pcol">
+          <div class="pcap">C · ⋯ menu — report and block, one tap away</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="cH">Messages</div>
+              <a class="ib" href="/messages/search" aria-label="Search messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen" aria-hidden="true">
+              <div class="segtabs">
+                <span class="segtab" aria-selected="true">All</span>
+                <span class="segtab">Unread <span class="cnt num">2</span></span>
+                <span class="segtab">Requests <span class="cnt num">1</span></span>
+              </div>
+              <ul class="tlist">
+                <li class="trow unread">
+                  <span class="th-main">
+                    <span class="av">AK</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Ayesha Khan</span><span class="ttime num">2:44 PM</span><span class="udot"></span></span>
+                      <span class="tsnip urdu" dir="rtl" lang="ur">جی بالکل — جمعہ کو جلد چیک اِن ہو سکتا ہے۔</span>
+                      <span class="tmeta">
+                        <span class="schip confirmed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Confirmed</span>
+                      </span>
+                    </span>
+                  </span>
+                </li>
+                <li class="trow">
+                  <span class="th-main">
+                    <span class="av">NS</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Nadia S.</span><span class="ttime">Yesterday</span></span>
+                      <span class="tsnip">"Assalam-o-alaikum — I've sent a request for the September dates."</span>
+                    </span>
+                  </span>
+                </li>
+              </ul>
+              <div class="grow"></div>
+            </div>
+
+            <div class="scrim" aria-hidden="true"></div>
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetName">
+              <div class="grab" aria-hidden="true"><i></i></div>
+              <div class="sh-row">
+                <span class="av" aria-hidden="true">AK</span>
+                <span class="shb"><span class="shn" id="sheetName">Ayesha Khan</span><span class="shs">Confirmed · Margalla View Apartment</span></span>
+              </div>
+              <ul class="menu">
+                <li><a class="mact" href="/trips/is-f7-2bed-aug2026"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><span class="ml">View the stay</span></a></li>
+                <li><button class="mact" type="button"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span><span class="ml">Mark as unread</span></button></li>
+                <li><a class="mact" href="/messages/host-ayesha-margalla-view/report"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4h11l-1 3h6v9h-7l-1-3H4"/></svg></span><span class="ml">Report a problem</span></a></li>
+                <li><a class="mact" href="/messages/host-ayesha-margalla-view/block"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></span><span class="ml">Block Ayesha Khan</span></a></li>
+              </ul>
+              <p class="mfoot">Reporting is private, and blocking is a boundary, not an accusation — either way, <b>they aren't notified</b>.</p>
+              <ul class="menu"><li><button class="mact quiet" type="button">Cancel</button></li></ul>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · SKELETON -->
+        <div class="pcol">
+          <div class="pcap">D · Loading — the skeleton holds the geometry</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="dH">Messages</div>
+              <a class="ib" href="/messages/search" aria-label="Search messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Filter conversations">
+                <button class="segtab" type="button" role="tab" aria-selected="true">All</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Unread</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests</button>
+              </div>
+
+              <div class="priv">
+                <span class="priv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="priv-t"><b>Your phone number stays private.</b> It's shared with the host only after your booking is confirmed — never with the request.</span>
+              </div>
+
+              <div class="tlist" role="status" aria-live="polite" aria-label="Loading your conversations">
+                <div class="sk" aria-hidden="true"><span class="sk-av"></span><span class="sk-b"><span class="sk-l w45"></span><span class="sk-l w95"></span><span class="sk-l w70"></span></span></div>
+                <div class="sk" aria-hidden="true"><span class="sk-av"></span><span class="sk-b"><span class="sk-l w70"></span><span class="sk-l w95"></span><span class="sk-l w45"></span></span></div>
+                <div class="sk" aria-hidden="true"><span class="sk-av"></span><span class="sk-b"><span class="sk-l w45"></span><span class="sk-l w70"></span></span></div>
+                <div class="sk" aria-hidden="true"><span class="sk-av"></span><span class="sk-b"><span class="sk-l w70"></span><span class="sk-l w95"></span></span></div>
+              </div>
+
+              <div class="grow"></div>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab active" href="/messages" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The <code>⋯</code> sheet is the safety entry point from the list, before the thread is ever opened: <strong>Report a problem</strong> routes to <code>GA-132</code>, <strong>Block</strong> to <code>GA-133</code> — neither styled as a red danger action, because <em>blocking is a boundary, not a verdict</em>. Its foot line carries both shipped truths in one sentence — <strong>reporting is private</strong> (<code>GA-132</code>) and <strong>they aren't notified</strong> (<code>GA-133</code>) — so the guest learns the consequence before choosing, not after. The list behind the sheet is <code>aria-hidden</code> while the dialog is open. The skeleton reuses the exact row box (avatar circle + three lines) so the real list lands with <strong>zero layout shift</strong>, and it announces itself once via <code>role="status"</code> rather than looping.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the inbox offline, and the empty inbox">
+      <div class="panel-tag">Dark — offline (cached threads) · empty inbox</div>
+      <div class="rowflex">
+
+        <!-- E · DARK OFFLINE LIST -->
+        <div class="pcol">
+          <div class="pcap">E · Offline — the last messages are still here</div>
+          <section class="phone" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="eH">Messages</div>
+              <a class="ib" href="/messages/search" aria-label="Search messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="offline" role="status">
+                <span class="off-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M5 12.5a11 11 0 0 1 4-2.6M2 8.8a16 16 0 0 1 5-3M9.5 16a5 5 0 0 1 5-.6M12 20h.01M15.5 10.2A11 11 0 0 1 19 12.5M13 5.2a16 16 0 0 1 9 3.6"/></svg></span>
+                <span class="off-b"><span class="off-t">You're offline</span><span class="off-d">These are your saved conversations. New messages arrive the moment you're back online — you don't have to do anything.</span></span>
+              </div>
+
+              <ul class="tlist">
+                <li class="trow unread">
+                  <a class="th-main" href="/messages/host-ayesha-margalla-view" aria-label="Unread. Ayesha Khan. Confirmed booking, Margalla View Apartment. 2:44 PM.">
+                    <span class="av" aria-hidden="true">AK</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Ayesha Khan</span><span class="ttime num">2:44 PM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip urdu" dir="rtl" lang="ur">جی بالکل — جمعہ کو جلد چیک اِن ہو سکتا ہے، اور گیٹ کے اندر پارکنگ بھی موجود ہے۔</span>
+                      <span class="tmeta">
+                        <span class="schip confirmed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Confirmed</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Margalla View Apartment</span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with Ayesha Khan"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow">
+                  <a class="th-main" href="/messages/host-nadia-s" aria-label="Nadia S. Request sent, Blue Area Serviced Flat. Yesterday.">
+                    <span class="av" aria-hidden="true">NS</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">Nadia S.</span><span class="ttime">Yesterday</span></span>
+                      <span class="tsnip">"Assalam-o-alaikum — I've sent a request for the September dates. Is the family floor available then?"</span>
+                      <span class="tmeta">
+                        <span class="schip request"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Request sent</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg>Blue Area Serviced Flat</span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="Options for the conversation with Nadia S."><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="grow"></div>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab active" href="/messages" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- F · EMPTY -->
+        <div class="pcol">
+          <div class="pcap">F · Empty — oriented, never a blank list</div>
+          <section class="phone" aria-labelledby="fH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="fH">Messages</div>
+              <a class="ib" href="/messages/search" aria-label="Search messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="Filter conversations">
+                <button class="segtab" type="button" role="tab" aria-selected="true">All</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Unread</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Requests</button>
+              </div>
+              <div class="emptybox">
+                <span class="eg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></span>
+                <span class="emh">No messages yet</span>
+                <span class="emb">When you ask a host about their home, the conversation starts here — and your phone number stays private until the booking is confirmed.</span>
+                <a class="btn" href="/explore">Find a place to stay</a>
+              </div>
+            </div>
+            <nav class="tabbar" aria-label="Primary">
+              <a class="tab" href="/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">Explore</span></a>
+              <a class="tab" href="/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">Wishlists</span></a>
+              <a class="tab" href="/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">Trips</span></a>
+              <a class="tab active" href="/messages" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">Inbox</span></a>
+              <a class="tab" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">Profile</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set, AA-proven (DESIGN §1.6): unread rows lift to <code>bg.raised</code> rather than glowing, and the status chips keep their register in both themes — <em>Request sent</em> the brand-subtle "waiting on them" accent, <em>Confirmed</em> the muted info tint, <em>Past stay</em> a plain neutral. Offline is a <strong>state, not a failure</strong> (<code>GA-088</code> register): a muted <code>bg.raised</code> banner with a wifi-off glyph — never <code>semantic.error</code> — and the cached threads stay readable rather than being replaced by an error page. The empty state names one next step and restates the privacy boundary in plain words, so it reads intentional rather than broken (§8.5, no dead ends).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the guest inbox">
+      <div class="panel-tag">RTL · اردو — the inbox, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">پیغامات — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title" id="uH">پیغامات</div>
+              <a class="ib" href="/ur/messages/search" aria-label="پیغامات میں تلاش کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></a>
+            </div>
+            <div class="screen">
+              <div class="segtabs" role="tablist" aria-label="گفتگو چھانٹیں">
+                <button class="segtab" type="button" role="tab" aria-selected="true">سب</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">اَن پڑھے <span class="cnt num">2</span></button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">درخواستیں <span class="cnt num">1</span></button>
+              </div>
+
+              <div class="priv">
+                <span class="priv-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="priv-t"><b>آپ کا فون نمبر نجی رہتا ہے۔</b> یہ میزبان کے ساتھ صرف بکنگ کی تصدیق کے بعد شیئر ہوتا ہے — درخواست کے ساتھ کبھی نہیں۔</span>
+              </div>
+
+              <ul class="tlist">
+                <li class="trow unread">
+                  <a class="th-main" href="/ur/messages/host-ayesha-margalla-view" aria-label="اَن پڑھا۔ عائشہ خان۔ تصدیق شدہ بکنگ، Margalla View Apartment۔ 2:44 PM۔">
+                    <span class="av" aria-hidden="true">ع</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">عائشہ خان</span><span class="ttime num">2:44 PM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip">”جی بالکل — جمعہ کو جلد چیک اِن ہو سکتا ہے، اور گیٹ کے اندر پارکنگ بھی موجود ہے۔“</span>
+                      <span class="tmeta">
+                        <span class="schip confirmed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>تصدیق شدہ</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span dir="ltr">Margalla View Apartment</span></span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="عائشہ خان کے ساتھ گفتگو کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow unread">
+                  <a class="th-main" href="/ur/messages/salamstay-support" aria-label="اَن پڑھا۔ SalamStay سپورٹ۔ 11:20 AM۔">
+                    <span class="av support" aria-hidden="true">SS</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname"><span class="brandmark" dir="ltr">Salam<span class="dot" aria-hidden="true">.</span>Stay</span> سپورٹ</span><span class="ttime num">11:20 AM</span><span class="udot" aria-hidden="true"></span></span>
+                      <span class="tsnip">”مہمان رجسٹریشن سے متعلق آپ کا سوال ٹیم کے پاس ہے — جواب یہیں آئے گا، اردو یا انگریزی میں۔“</span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="سپورٹ کے ساتھ گفتگو کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow">
+                  <a class="th-main" href="/ur/messages/host-nadia-s" aria-label="نادیہ ایس۔ درخواست بھیجی گئی، Blue Area Serviced Flat۔ کل۔">
+                    <span class="av" aria-hidden="true">ن</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">نادیہ ایس۔</span><span class="ttime">کل</span></span>
+                      <span class="tsnip">”السلام علیکم — میں نے ستمبر کی تاریخوں کے لیے درخواست بھیج دی ہے۔ کیا اُس وقت فیملی فلور دستیاب ہوگا؟“</span>
+                      <span class="tmeta">
+                        <span class="schip request"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>درخواست بھیجی گئی</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span dir="ltr">Blue Area Serviced Flat</span></span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="نادیہ ایس۔ کے ساتھ گفتگو کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+
+                <li class="trow">
+                  <a class="th-main" href="/ur/messages/host-imran-a" aria-label="عمران اے۔ گزشتہ قیام، Gulberg Studio۔ 2 ہفتے پہلے۔">
+                    <span class="av" aria-hidden="true">ع‍م</span>
+                    <span class="tb">
+                      <span class="tline"><span class="tname">عمران اے۔</span><span class="ttime"><span class="num">2</span> ہفتے پہلے</span></span>
+                      <span class="tsnip eng" dir="ltr" lang="en">"Check-in is anytime after 3 PM — I'll send the door code that morning."</span>
+                      <span class="tmeta">
+                        <span class="schip past"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>گزشتہ قیام</span>
+                        <span class="lchip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg><span dir="ltr">Gulberg Studio</span></span>
+                      </span>
+                    </span>
+                  </a>
+                  <button class="kebab" type="button" aria-label="عمران اے۔ کے ساتھ گفتگو کے اختیارات"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></button>
+                </li>
+              </ul>
+
+              <div class="grow"></div>
+            </div>
+            <nav class="tabbar" aria-label="بنیادی">
+              <a class="tab" href="/ur/explore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span class="tab-lb">دریافت</span></a>
+              <a class="tab" href="/ur/wishlists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="tab-lb">پسندیدہ</span></a>
+              <a class="tab" href="/ur/trips"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 11h16"/></svg><span class="tab-lb">سفر</span></a>
+              <a class="tab active" href="/ur/messages" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v12H8l-4 4z"/></svg><span class="tab-lb">پیغامات</span></a>
+              <a class="tab" href="/ur/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span class="tab-lb">پروفائل</span></a>
+            </nav>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the avatar leads from the right, the search action moves to the leading edge, the filter strip and the tab bar reverse. The symmetry proves itself in the fourth row — with the UI in Urdu, <strong>Imran's English preview stays LTR in Inter on its own side of the row</strong>, the exact inverse of Ayesha's Nastaliq preview inside the English list (§9-E). Urdu avatars take the first Urdu letter of the name (ع · ن), with عمران disambiguated as <span lang="ur">ع‍م</span> because عائشہ already holds ع in this list (the <code>GA-096</code> collision rule). Listing names are English proper nouns and stay <code>dir="ltr"</code>-isolated rather than being transliterated. Every numeral — clock times, the unread counts, "<span class="num">2</span> ہفتے پہلے" — is a <strong>Western digit inside <code>.num</code></strong> (<code>direction:ltr; unicode-bidi:isolate</code>) with Urdu prose around it, and every <code>aria-label</code> repeats those same digits (Pass #31).</p>
+    </section>
+
+  </main>
+</body>
+</html>

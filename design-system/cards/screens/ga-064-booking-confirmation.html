@@ -1,0 +1,427 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Booking confirmation (GA-064)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:840px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1000px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title, .phone.rtl h2, .phone.rtl p, .phone.rtl .trip-title, .phone.rtl .trip-loc, .phone.rtl .tdt, .phone.rtl .tdd, .phone.rtl .nsec-h, .phone.rtl .nrow-t, .phone.rtl .nrow-s, .phone.rtl .reg-h, .phone.rtl .reg-d, .phone.rtl .paid, .phone.rtl .th, .phone.rtl .td, .phone.rtl .btn, .phone.rtl a { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:18px 16px 18px; }
+
+  /* success block — calm, no confetti */
+  .success { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; }
+  .success .tick { width:64px; height:64px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); display:flex; align-items:center; justify-content:center; color:var(--success-fg); }
+  .success .tick svg { width:34px; height:34px; stroke-width:2.2; }
+  .success h2 { font-size:22px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:14px; }
+  .success .sp { font-size:13.5px; color:var(--text-secondary); margin-top:6px; }
+  .success .sp b { color:var(--text-primary); font-weight:600; }
+  .paid { display:inline-flex; align-items:center; gap:7px; margin-top:14px; font-size:12.5px; font-weight:600; color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-full); padding:6px 13px; }
+  .paid svg { width:14px; height:14px; stroke-width:2.2; flex:none; }
+  .paid .num { font-variant-numeric:tabular-nums; }
+
+  /* trip summary card — the hero */
+  .trip { border:1px solid var(--border-hairline); border-radius:var(--radius-xl); overflow:hidden; background:var(--bg-raised); margin-bottom:18px; box-shadow:var(--el-hairline); }
+  .trip-media { height:118px; position:relative; background:linear-gradient(150deg,var(--int-subtle),var(--bg-sunken)); display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); border-bottom:1px solid var(--border-hairline); }
+  .trip-media svg { width:38px; height:38px; stroke-width:1.4; opacity:.7; }
+  .trip-media .area { position:absolute; inset-block-end:10px; inset-inline-start:10px; font-size:11px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:4px 10px; box-shadow:var(--el-hairline); }
+  .trip-body { padding:14px 15px 15px; }
+  .trip-title { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .trip-loc { font-size:12.5px; color:var(--text-secondary); margin-top:2px; margin-bottom:12px; display:flex; align-items:center; gap:5px; }
+  .trip-loc svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+  .trip-rows { display:flex; flex-direction:column; gap:9px; }
+  .trip-drow { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .tdt { font-size:12.5px; color:var(--text-secondary); flex:none; }
+  .tdd { font-size:12.5px; font-weight:600; color:var(--text-primary); text-align:end; font-variant-numeric:tabular-nums; }
+  .tdd.code { letter-spacing:.06em; }
+
+  /* next-step list rows */
+  .nsec-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin:4px 2px 10px; }
+  .nlist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .nrow { display:flex; gap:12px; align-items:center; min-height:56px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 13px; text-decoration:none; }
+  .nrow-ic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .nrow-ic svg { width:19px; height:19px; stroke-width:1.9; }
+  .nrow-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .nrow-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .nrow-s { font-size:12px; color:var(--text-secondary); }
+  .nrow-chev { flex:none; color:var(--text-tertiary); }
+  .nrow-chev svg { width:19px; height:19px; stroke-width:2; }
+
+  /* police / stay-registration note — foreign guests, factual & calm */
+  .reg { display:flex; gap:11px; align-items:flex-start; background:var(--info-bg); border:1px solid var(--info-border); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:16px; }
+  .reg-ic { flex:none; color:var(--info-fg); margin-top:1px; }
+  .reg-ic svg { width:20px; height:20px; stroke-width:1.85; }
+  .reg-b { flex:1; min-width:0; }
+  .reg-h { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .reg-d { font-size:12px; color:var(--text-secondary); margin-top:3px; }
+  .reg-a { display:inline-block; margin-top:8px; font-size:12.5px; font-weight:600; }
+
+  /* toast variant */
+  .toast { position:absolute; inset-inline:16px; bottom:calc(30px + env(safe-area-inset-bottom)); z-index:8; display:flex; align-items:center; gap:11px; background:var(--success-bg); border:1px solid var(--success-border); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:13px 14px; }
+  .toast .ti { color:var(--success-fg); flex:none; }
+  .toast .ti svg { width:22px; height:22px; stroke-width:2.1; }
+  .toast .tbd { flex:1; min-width:0; }
+  .toast .th { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .toast .td { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:14px; font-size:13px; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Booking confirmation (GA-064)</h1>
+    <p>The emotional peak of the guest journey — confirmed and paid. It is deliberately <strong>calm: no confetti, no counting spinner</strong> (DESIGN §9-C success, §6.4). The trip is the hero, not the UI: a quiet tick, then a trip-summary card, then real next-step rows — message the host (GA-097), getting there &amp; arrival (GA-072), add to calendar (an iCal file), and the receipt (GA-134). For a foreign guest the <strong>stay-registration note surfaces conditionally</strong> in its own panel — factual and reassuring, never alarmist — since the stay is registered with local police and filed to FRRO on the guest's behalf (GA-077 / GA-078, ARCH §11.5). Panels: Pakistani-guest confirmation (light) · foreign-guest confirmation with the registration note + success toast (dark) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Confirmed &amp; paid · light</span><span>Foreign guest · registration note</span><span>Success toast</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — confirmed-and-paid booking for a Pakistani guest">
+      <div class="panel-tag">Light — confirmed &amp; paid · trip summary · next steps</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Confirmation — the trip is the hero</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Booking confirmed</div>
+              <button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="aH">You're booked</h2>
+                <span class="sp">Your stay at <b>Margalla View Apartment</b> is confirmed. We've let your host know.</span>
+                <span class="paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="num">PKR 42,350</span><span>paid</span></span>
+              </div>
+
+              <div class="trip">
+                <div class="trip-media" role="img" aria-label="Margalla View Apartment, F-7, Islamabad">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M15 10h.01M12 10h.01"/></svg>
+                  <span class="area">F-7 · Islamabad</span>
+                </div>
+                <div class="trip-body">
+                  <div class="trip-title">Margalla View Apartment</div>
+                  <div class="trip-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</div>
+                  <dl class="trip-rows">
+                    <div class="trip-drow"><dt class="tdt">Dates</dt><dd class="tdd">Fri 14 – Mon 17 Aug 2026 · 3 nights</dd></div>
+                    <div class="trip-drow"><dt class="tdt">Guests</dt><dd class="tdd">2 guests · Couple</dd></div>
+                    <div class="trip-drow"><dt class="tdt">Confirmation</dt><dd class="tdd code">SS-7F3K9Q</dd></div>
+                    <div class="trip-drow"><dt class="tdt">Total paid</dt><dd class="tdd">PKR 42,350</dd></div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="nsec-h">Next steps</div>
+              <ul class="nlist">
+                <li>
+                  <a class="nrow" href="/messages/host-margalla-view">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">Message your host</span><span class="nrow-s">Say salam, ask about check-in</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/arrival">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">Getting there &amp; arrival</span><span class="nrow-s">Directions, check-in time &amp; house rules</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/booking.ics" download>
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v4M10 16h4"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">Add to calendar</span><span class="nrow-s">Save Aug 14–17 to your calendar</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M4 20h16"/></svg></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/receipt">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">View receipt</span><span class="nrow-s">Transparent fees and tax — every rupee shown before you book or earn</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/is-f7-2bed-aug2026">View your trip</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Calm by design (§9-C, §6.4): a quiet success tick, no confetti, no slot-machine total. The <strong>trip-summary card is the hero</strong> — its facts are a real <code>&lt;dl&gt;</code> (dates, guests, confirmation code, total paid), read fully by assistive tech. Next steps are genuine list-row links to messaging (GA-097), arrival (GA-072), an iCal <code>download</code>, and the receipt (GA-134) — the "transparent fees and tax" promise carried into the receipt row. Every row is a single <code>&lt;a&gt;</code>, ≥44pt.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — foreign-guest confirmation with the stay-registration note and a success toast">
+      <div class="panel-tag">Dark — foreign guest · registration note · success toast</div>
+      <div class="rowflex">
+
+        <!-- C · FOREIGN GUEST + POLICE-REGISTRATION NOTE -->
+        <div class="pcol">
+          <div class="pcap">C · Foreign guest — registration note surfaces</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Booking confirmed</div>
+              <button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="cH">You're booked</h2>
+                <span class="sp">Your stay at <b>Margalla View Apartment</b> is confirmed.</span>
+                <span class="paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="num">PKR 42,350</span><span>paid</span></span>
+              </div>
+
+              <div class="trip">
+                <div class="trip-body">
+                  <div class="trip-title">Margalla View Apartment</div>
+                  <div class="trip-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</div>
+                  <dl class="trip-rows">
+                    <div class="trip-drow"><dt class="tdt">Dates</dt><dd class="tdd">Fri 14 – Mon 17 Aug 2026 · 3 nights</dd></div>
+                    <div class="trip-drow"><dt class="tdt">Confirmation</dt><dd class="tdd code">SS-7F3K9Q</dd></div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="reg" role="note">
+                <span class="reg-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <div class="reg-b">
+                  <div class="reg-h">About registering your stay</div>
+                  <div class="reg-d">As a visitor to Pakistan, your stay is registered with the local police and reported to FRRO — a standard requirement for foreign guests. SalamStay files this for you, and you'll get a confirmation with a reference number. Nothing more is needed from you now.</div>
+                  <a class="reg-a" href="/help/foreign-guests">How stay registration works</a>
+                </div>
+              </div>
+
+              <ul class="nlist">
+                <li>
+                  <a class="nrow" href="/messages/host-margalla-view">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">Message your host</span><span class="nrow-s">Ask about arrival &amp; directions</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/receipt">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">View receipt</span><span class="nrow-s">Transparent fees and tax — every rupee shown before you book or earn</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/is-f7-2bed-aug2026">View your trip</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · SUCCESS TOAST VARIANT -->
+        <div class="pcol">
+          <div class="pcap">D · Success toast — after "Add to calendar"</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Your trip</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="trip">
+                <div class="trip-media" role="img" aria-label="Margalla View Apartment, F-7, Islamabad">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M15 10h.01M12 10h.01"/></svg>
+                  <span class="area">F-7 · Islamabad</span>
+                </div>
+                <div class="trip-body">
+                  <div class="trip-title">Margalla View Apartment</div>
+                  <div class="trip-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</div>
+                  <dl class="trip-rows">
+                    <div class="trip-drow"><dt class="tdt">Dates</dt><dd class="tdd">Fri 14 – Mon 17 Aug 2026</dd></div>
+                    <div class="trip-drow"><dt class="tdt">Status</dt><dd class="tdd">Confirmed</dd></div>
+                  </dl>
+                </div>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span>
+              <div class="tbd">
+                <div class="th">Added to your calendar</div>
+                <div class="td">Margalla View Apartment · Aug 14–17</div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The registration note is a factual <code>role="note"</code> in the muted <strong>info</strong> register — it states plainly that SalamStay files the police / FRRO registration for the guest (GA-077 / GA-078, ARCH §11.5) and that nothing more is needed; it never alarms. It is <strong>conditional</strong>: it appears only for foreign-guest bookings and is absent from the Pakistani-guest panel. The success toast is the standard variant — a <code>role="status"</code> live region, success hue + tick, auto-dismissing, non-blocking.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the booking confirmation">
+      <div class="panel-tag">RTL · اردو — "آپ کی بکنگ ہو گئی", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Confirmation — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">بکنگ مکمل</div>
+              <button class="ib" aria-label="بند کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <div class="screen">
+              <div class="success">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <h2 id="uH">آپ کی بکنگ ہو گئی</h2>
+                <span class="sp"><b>Margalla View Apartment</b> میں آپ کا قیام تصدیق شدہ ہے۔ ہم نے آپ کے میزبان کو مطلع کر دیا ہے۔</span>
+                <span class="paid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="num">PKR 42,350</span><span>ادا</span></span>
+              </div>
+
+              <div class="trip">
+                <div class="trip-media" role="img" aria-label="Margalla View Apartment, F-7, اسلام آباد">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M15 10h.01M12 10h.01"/></svg>
+                  <span class="area">F-7 · اسلام آباد</span>
+                </div>
+                <div class="trip-body">
+                  <div class="trip-title">Margalla View Apartment</div>
+                  <div class="trip-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7، اسلام آباد</div>
+                  <dl class="trip-rows">
+                    <div class="trip-drow"><dt class="tdt">تاریخیں</dt><dd class="tdd"><span class="num">14 – 17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</dd></div>
+                    <div class="trip-drow"><dt class="tdt">مہمان</dt><dd class="tdd"><span class="num">2</span> مہمان · جوڑا</dd></div>
+                    <div class="trip-drow"><dt class="tdt">تصدیقی نمبر</dt><dd class="tdd code">SS-7F3K9Q</dd></div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="nsec-h">اگلے اقدامات</div>
+              <ul class="nlist">
+                <li>
+                  <a class="nrow" href="/messages/host-margalla-view">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">اپنے میزبان کو پیغام بھیجیں</span><span class="nrow-s">سلام کہیں، چیک اِن کا پوچھیں</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/booking.ics" download>
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v4M10 16h4"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">کیلنڈر میں شامل کریں</span><span class="nrow-s"><span class="num">14–17</span> اگست محفوظ کریں</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M4 20h16"/></svg></span>
+                  </a>
+                </li>
+                <li>
+                  <a class="nrow" href="/trips/is-f7-2bed-aug2026/receipt">
+                    <span class="nrow-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg></span>
+                    <span class="nrow-b"><span class="nrow-t">رسید دیکھیں</span><span class="nrow-s">شفاف فیس اور ٹیکس — بکنگ سے پہلے ہر روپیہ ظاہر</span></span>
+                    <span class="nrow-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+                  </a>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/is-f7-2bed-aug2026">اپنا سفر دیکھیں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: the close control moves to the leading (right) edge, the next-step chevrons flip to point in the reading direction, and label/value pairs in the trip <code>&lt;dl&gt;</code> swap sides while the amount keeps tabular figures (prices are never digit-order-mirrored, §11). The venue name stays in Latin as a proper noun; everything else is real Urdu. Quiet joy carries across both scripts.</p>
+    </section>
+
+  </main>
+</body>
+</html>

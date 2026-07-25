@@ -1,0 +1,603 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Per-booking earnings breakdown (HA-056)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<!-- ===========================================================================
+     HA-056 · Per-booking earnings breakdown — /host/earnings/bookings/{id}
+     ---------------------------------------------------------------------------
+     THIS IS THE ROUTE HA-057 ALREADY LINKS TO, TWICE, LABELLED
+       "Full payout breakdown · PKR 35,325". This screen is that destination.
+     THE FEE CHAIN IS REPRODUCED EXACTLY — every figure is derived from the
+       shipped rates, none is authored here:
+       PKR 12,500 × 3 nights            = PKR 37,500  gross (HA-057)
+       Service fee (wakala)   −3%       = −PKR 1,125  (HA-055 rate, verbatim label)
+       Payment processing (MDR) −1.8%   = −PKR   675  (HA-055, at cost)
+       Withholding tax · ATL filer −1%  = −PKR   375  (HA-057, shipped exactly)
+       Total deductions                 = −PKR 2,175
+       Net payout                       =  PKR 35,325 = 94.2% of gross (HA-055)
+     Booking: Fatima at Gulberg 2 Residence, Fri 7 – Mon 10 Aug 2026, 3 nights,
+       paid out Sat 8 Aug 2026 to Meezan Bank ••••4821 (HA-057).
+     LABELS ARE VERBATIM: "Service fee (wakala)", "Payment processing (MDR)",
+       "Withholding tax", the "ATL filer" chip.
+     ONE-FACT-ONE-OWNER vs HA-057: this card is the LINE-ITEM BREAKDOWN. The
+       withholding EXPLANATION belongs to HA-057 — the row links there instead
+       of re-explaining base × rate. The only withholding sentence repeated
+       here is the filer/non-filer one, and it carries "roughly double" with
+       NO figure and NO percentage, because that is the only thing SalamStay
+       has ever said. Inventing "2%" or a doubled rupee amount would be a
+       fabricated rate.
+     TAX BOUNDARY (HA-061, verbatim): "SalamStay provides the documents, not
+       tax advice. Your tax consultant or the FBR portal can help."
+     No SLA. No invented stats. Host chrome, no checkout stepper (§7.6a).
+     =========================================================================== -->
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1400px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:1010px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .mathnote { font-size:12.5px; color:#5F676D; margin-top:10px; max-width:1010px; background:#fff; border:1px solid #E7E9EA; border-radius:12px; padding:11px 13px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1400px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:318px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-inline-start:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1160px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host operational lineage (ha-055/ha-057 family); NO checkout stepper */
+  .phone { width:318px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:930px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,h2,.lead,.bk-t,.bk-s,.led-k,.led-sub,.led-foot,.grpk,.exp-sum,.exp-dt,.exp-dd,.filer-t,.filer-d,.filer-lk,.adv-t,.adv-p,.sup-t,.sup-s,.btn,.helplink,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; inset-inline-start:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:5px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:13px; line-height:1.5; }
+
+  .tag { font-size:10.5px; font-weight:700; border-radius:var(--radius-full); padding:2px 9px; white-space:nowrap; }
+  .tag-filer { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+
+  /* booking context card — ha-057 grammar, byte-for-byte */
+  .bkctx { display:flex; gap:11px; align-items:flex-start; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:13px; }
+  .bk-ic { width:38px; height:38px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); flex:none; display:flex; align-items:center; justify-content:center; }
+  .bk-ic svg { width:18px; height:18px; stroke-width:1.7; }
+  .bk-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .bk-b > span { display:block; }
+  .bk-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .bk-s { font-size:11.5px; color:var(--text-secondary); }
+
+  /* the ledger — a real description list, read fully by AT (DESIGN §9-C) */
+  .led { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); overflow:hidden; margin-bottom:13px; }
+  .grpk { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); padding:10px 13px 6px; background:var(--bg-raised); border-bottom:1px solid var(--border-hairline); display:block; }
+  .led-rows { display:block; margin:0; }
+  .led-row { display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:11px 13px; border-bottom:1px solid var(--border-hairline); }
+  .led-row > dt { flex:1; min-width:0; }
+  .led-row > dd { flex:none; }
+  .led-k { font-size:12.5px; color:var(--text-primary); display:block; }
+  .led-sub { font-size:11px; color:var(--text-tertiary); display:block; margin-top:2px; line-height:1.4; }
+  .led-v { font-size:13.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; text-align:end; }
+  .led-row.ded .led-v { color:var(--text-secondary); }
+  .led-row.sum { background:var(--bg-sunken); }
+  .led-row.sum .led-k { font-weight:600; }
+  .led-row.total { background:var(--int-subtle); border-top:2px solid var(--border-default); border-bottom:none; }
+  .led-row.total .led-k { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .led-row.total .led-v { font-size:19px; font-weight:700; color:var(--int-primary); }
+  .rate { display:inline-flex; align-items:center; min-height:20px; padding:0 7px; margin-inline-start:7px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); font-size:10.5px; font-weight:700; color:var(--text-secondary); }
+  .led-foot { font-size:11.5px; color:var(--text-tertiary); line-height:1.5; padding:10px 13px; background:var(--bg-raised); border-top:1px solid var(--border-hairline); }
+  .led-foot b { color:var(--text-secondary); font-weight:600; }
+  .rowlink { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:var(--int-primary); margin-top:4px; min-height:44px; }
+  .rowlink svg { width:12px; height:12px; stroke-width:2.2; }
+
+  /* deductions explainer — a real <details>, closed by default (ha-055 grammar) */
+  .exp { border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); overflow:hidden; margin-bottom:13px; }
+  .exp-sum { display:flex; align-items:center; gap:9px; min-height:48px; padding:0 13px; font-size:12.5px; font-weight:600; color:var(--text-primary); cursor:pointer; list-style:none; }
+  .exp-sum::-webkit-details-marker { display:none; }
+  .exp-sum .chev { margin-inline-start:auto; width:16px; height:16px; color:var(--text-tertiary); flex:none; transition:none; }
+  .exp[open] .exp-sum .chev { transform:rotate(180deg); }
+  .exp-sum > svg:first-child { width:16px; height:16px; color:var(--text-secondary); flex:none; stroke-width:1.9; }
+  .exp-body { padding:0 13px 12px; border-top:1px solid var(--border-hairline); }
+  .exp-dl { display:block; margin:0; }
+  .exp-item { padding:11px 0 0; }
+  .exp-dt { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .exp-dd { font-size:11.5px; color:var(--text-secondary); line-height:1.55; margin-top:3px; }
+
+  /* filer note — information, never a penalty (DESIGN §10.6); explanation is HA-057's */
+  .filer { display:flex; gap:10px; align-items:flex-start; border:1px solid var(--info-border); background:var(--info-bg); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:13px; }
+  .filer .fico { flex:none; margin-top:1px; color:var(--info-fg); }
+  .filer .fico svg { width:17px; height:17px; stroke-width:2; }
+  .filer > .fbody { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .filer-t { font-size:12.5px; font-weight:600; color:var(--info-fg); display:block; }
+  .filer-d { font-size:11.5px; color:var(--text-secondary); line-height:1.55; display:block; }
+  .filer-lk { font-size:11.5px; font-weight:600; color:var(--int-primary); min-height:44px; display:inline-flex; align-items:center; }
+
+  /* documents-not-advice boundary — HA-061 verbatim */
+  .adv { display:flex; gap:10px; align-items:flex-start; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:13px; }
+  .adv svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.8; }
+  .adv-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .adv-b > span { display:block; }
+  .adv-t { font-size:12px; font-weight:600; color:var(--text-primary); }
+  .adv-p { font-size:11.5px; color:var(--text-secondary); line-height:1.55; }
+
+  /* supporting rows — ha-057 .suprow lineage */
+  .suprow { display:flex; align-items:center; gap:12px; min-height:60px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 13px; text-decoration:none; margin-bottom:10px; }
+  .sup-ic { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-default); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .sup-ic svg { width:18px; height:18px; stroke-width:1.8; }
+  .sup-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sup-b > span { display:block; }
+  .sup-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .sup-s { font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .sup-chev { flex:none; color:var(--text-tertiary); display:flex; }
+  .sup-chev svg { width:17px; height:17px; stroke-width:2; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .helplink { display:flex; align-items:center; justify-content:center; min-height:44px; margin-top:6px; font-size:12.5px; color:var(--int-primary); font-weight:600; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:344px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Per-booking earnings breakdown (HA-056)</h1>
+    <p>The money card: one booking, every rupee between what the guest paid and what reached the bank. It is the route <code>HA-057</code> already links to twice, labelled <b>"Full payout breakdown · <span class="num">PKR 35,325</span>"</b> — <code>/host/earnings/bookings/fatima-gulberg2-aug2026</code>. The chain is the shipped one, reproduced <b>exactly</b> and derived rather than authored: <b><span class="num">PKR 12,500</span> × <span class="num">3</span> nights = <span class="num">PKR 37,500</span></b> gross, then <b>Service fee (wakala)</b> at <span class="num">3%</span>, <b>Payment processing (MDR)</b> at <span class="num">1.8%</span> passed through <b>at cost</b>, and <b>Withholding tax</b> at the <span class="num">1%</span> ATL-filer rate — <b><span class="num">PKR 35,325</span></b> net, <b><span class="num">94.2%</span> of gross</b>, the same percentage <code>HA-055</code>'s dashboard headline carries. Labels are verbatim. <b>One fact, one owner:</b> this screen is the <i>line-item breakdown</i>; the withholding <i>explanation</i> is <code>HA-057</code>'s, so the row <b>links there instead of re-deriving base × rate</b>, and the only withholding sentence repeated here says non-filers are withheld at <b>roughly double</b> — <b>with no figure and no percentage</b>, because that is the only thing SalamStay has ever said. Because tax copy appears at all, <code>HA-061</code>'s boundary is stated verbatim: <b>SalamStay provides the documents, not tax advice.</b> Panels: breakdown (light) · deductions explained (light) · dark · اردو / RTL.</p>
+    <p class="mathnote"><b>Every figure, derived:</b> <span class="num">12,500</span> × <span class="num">3</span> = <b><span class="num">37,500</span></b> · <span class="num">37,500</span> × <span class="num">3%</span> = <b><span class="num">1,125</span></b> · <span class="num">37,500</span> × <span class="num">1.8%</span> = <b><span class="num">675</span></b> · <span class="num">37,500</span> × <span class="num">1%</span> = <b><span class="num">375</span></b> · deductions <span class="num">1,125</span> + <span class="num">675</span> + <span class="num">375</span> = <b><span class="num">2,175</span></b> · <span class="num">37,500</span> − <span class="num">2,175</span> = <b><span class="num">35,325</span></b> = <b><span class="num">94.2%</span></b> of gross. The gross, the net and the <span class="num">1%</span> filer rate are <code>ha-057</code>'s shipped numbers; the <span class="num">3%</span>, <span class="num">1.8%</span> and <span class="num">94.2%</span> are <code>ha-055</code>'s. Nothing on this screen is a new rate.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — breakdown · deductions explained</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — BREAKDOWN · EXPLAINER ============================ -->
+    <section class="panel" aria-label="Light theme — the payout breakdown, and the same screen with the deductions explainer open">
+      <div class="panel-tag">Light — A breakdown · B deductions explained</div>
+      <div class="rowflex">
+
+        <!-- A · BREAKDOWN -->
+        <div class="pcol">
+          <div class="pcap">A · Gross to net, every line itemised</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Payout breakdown</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">What you earned from this stay</h2>
+              <p class="lead">Every rupee between what your guest paid and what reached your bank.</p>
+
+              <div class="bkctx">
+                <span class="bk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                <span class="bk-b">
+                  <span class="bk-t">Gulberg <span class="num">2</span> Residence · Fatima</span>
+                  <span class="bk-s"><span class="num">Fri 7 – Mon 10 Aug 2026</span> · <span class="num">3</span> nights</span>
+                  <span class="bk-s">Paid out <span class="num">Sat 8 Aug 2026</span> · Meezan Bank <span class="num">••••4821</span></span>
+                </span>
+              </div>
+
+              <div class="led">
+                <span class="grpk">What your guest paid</span>
+                <dl class="led-rows">
+                  <div class="led-row">
+                    <dt><span class="led-k">Nightly rate</span><span class="led-sub"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                  <div class="led-row sum">
+                    <dt><span class="led-k">Gross booking value</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                </dl>
+                <span class="grpk">Deducted from your payout</span>
+                <dl class="led-rows">
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Service fee (wakala)<span class="rate num">−3%</span></span><span class="led-sub">SalamStay's agency commission on the booking</span></dt>
+                    <dd class="led-v num">−PKR 1,125</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Payment processing (MDR)<span class="rate num">−1.8%</span></span><span class="led-sub">Passed through at cost, not marked up</span></dt>
+                    <dd class="led-v num">−PKR 675</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Withholding tax <span class="tag tag-filer">ATL filer</span><span class="rate num">−1%</span></span><a class="rowlink" href="/host/earnings/withholding/fatima-gulberg2-aug2026">How this was worked out<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></dt>
+                    <dd class="led-v num">−PKR 375</dd>
+                  </div>
+                  <div class="led-row sum">
+                    <dt><span class="led-k">Total deductions</span></dt>
+                    <dd class="led-v num">−PKR 2,175</dd>
+                  </div>
+                  <div class="led-row total">
+                    <dt><span class="led-k">Net payout</span></dt>
+                    <dd class="led-v num">PKR 35,325</dd>
+                  </div>
+                </dl>
+                <div class="led-foot">That's <b><span class="num">94.2%</span></b> of the gross booking value. Payouts release <span class="num">24</span> hours after your guest checks in.</div>
+              </div>
+
+              <div class="filer">
+                <span class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="fbody">
+                  <span class="filer-t">You're on the Active Taxpayers List</span>
+                  <span class="filer-d">So the filer rate applies to this payout. Non-filers are withheld at roughly double.</span>
+                  <a class="filer-lk" href="/host/earnings/withholding/fatima-gulberg2-aug2026">See how withholding works →</a>
+                </span>
+              </div>
+
+              <a class="suprow" href="/host/earnings/payouts/fatima-gulberg2-aug2026">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="sup-b"><span class="sup-t">Payout status</span><span class="sup-s">Where this <span class="num">PKR 35,325</span> is, and when it settled.</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <a class="suprow" href="/host/earnings/tax-receipts/fatima-gulberg2-aug2026">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg></span>
+                <span class="sup-b"><span class="sup-t">Tax receipt for this booking</span><span class="sup-s">The FBR e-invoice record and the withholding certificate.</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/reservations/fatima-gulberg2-aug2026">See the reservation</a>
+              <a class="helplink" href="/host/help/fees">How fees and tax work</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · EXPLAINER OPEN -->
+        <div class="pcol">
+          <div class="pcap">B · Explainer open — what each deduction is</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Payout breakdown</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">What you earned from this stay</h2>
+              <p class="lead">Every rupee between what your guest paid and what reached your bank.</p>
+
+              <div class="led">
+                <span class="grpk">Gross to net</span>
+                <dl class="led-rows">
+                  <div class="led-row">
+                    <dt><span class="led-k">Gross booking value</span><span class="led-sub"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Service fee (wakala)<span class="rate num">−3%</span></span></dt>
+                    <dd class="led-v num">−PKR 1,125</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Payment processing (MDR)<span class="rate num">−1.8%</span></span></dt>
+                    <dd class="led-v num">−PKR 675</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Withholding tax <span class="tag tag-filer">ATL filer</span><span class="rate num">−1%</span></span></dt>
+                    <dd class="led-v num">−PKR 375</dd>
+                  </div>
+                  <div class="led-row total">
+                    <dt><span class="led-k">Net payout</span></dt>
+                    <dd class="led-v num">PKR 35,325</dd>
+                  </div>
+                </dl>
+                <div class="led-foot">That's <b><span class="num">94.2%</span></b> of the gross booking value.</div>
+              </div>
+
+              <details class="exp" open>
+                <summary class="exp-sum">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  What these deductions mean
+                  <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </summary>
+                <div class="exp-body">
+                  <dl class="exp-dl">
+                    <div class="exp-item">
+                      <dt class="exp-dt">Service fee (wakala)</dt>
+                      <dd class="exp-dd">An agency (wakala) commission SalamStay charges for listing your stay, handling the booking, and holding payment in escrow until check-in. It is a fixed <span class="num">3%</span> of the gross booking value, shown before every payout.</dd>
+                    </div>
+                    <div class="exp-item">
+                      <dt class="exp-dt">Payment processing (MDR)</dt>
+                      <dd class="exp-dd">The merchant discount rate — the card-network and acquirer (HBL) fee to process the guest's card payment. It is passed through at cost, not marked up.</dd>
+                    </div>
+                    <div class="exp-item">
+                      <dt class="exp-dt">Withholding tax</dt>
+                      <dd class="exp-dd">Advance tax collected under FBR rules and deposited against your account. <a class="filer-lk" href="/host/earnings/withholding/fatima-gulberg2-aug2026">See the full withholding detail →</a></dd>
+                    </div>
+                  </dl>
+                </div>
+              </details>
+
+              <div class="filer">
+                <span class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="fbody">
+                  <span class="filer-t">You're on the Active Taxpayers List</span>
+                  <span class="filer-d">So the filer rate applies to this payout. Non-filers are withheld at roughly double.</span>
+                  <a class="filer-lk" href="/host/payout-settings/tax">Your filer status →</a>
+                </span>
+              </div>
+
+              <div class="adv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg>
+                <span class="adv-b">
+                  <span class="adv-t">For your tax filing</span>
+                  <span class="adv-p">SalamStay provides the documents, not tax advice. We record what we withheld and paid you; what you file is between you and FBR. Your tax consultant or the FBR portal can help.</span>
+                </span>
+              </div>
+
+              <a class="suprow" href="/host/earnings/tax-receipts/fatima-gulberg2-aug2026">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg></span>
+                <span class="sup-b"><span class="sup-t">Tax receipt for this booking</span><span class="sup-s">The FBR e-invoice record and the withholding certificate.</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/earnings">All your earnings</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The breakdown is a real <code>&lt;dl&gt;</code>, not a styled grid — DESIGN §9-C's rule that a price breakdown must be read fully by assistive tech, with each rate carried in the <code>&lt;dt&gt;</code> beside its label so "Service fee (wakala), minus <span class="num">3</span> percent, minus <span class="num">PKR 1,125</span>" reads as one statement. <b>Every figure is arithmetic on shipped rates</b>: <span class="num">37,500</span> × <span class="num">3%</span>, × <span class="num">1.8%</span>, × <span class="num">1%</span>, summing to <span class="num">2,175</span> and leaving <b><span class="num">35,325</span></b> — the exact net <code>ha-057</code> and <code>ha-049</code> already print, and the exact <b><span class="num">94.2%</span></b> <code>ha-055</code>'s dashboard headline claims. Two boundaries hold the screen together. <b>One-fact-one-owner:</b> the withholding row states its rate and its rupees, then <b>links</b> to <code>HA-057</code> for the base × rate working — a second derivation here would be a second place to drift. <b>No invented rate:</b> the non-filer sentence says "roughly double" and stops, carrying <b>no percentage and no rupee figure</b>, because that phrase is the only thing SalamStay has ever said and doubling <span class="num">375</span> into "<span class="num">750</span>" would be fabricating a rate. The MDR line keeps its load-bearing four words — <b>passed through at cost</b> — which is what makes fee transparency a trust feature rather than a disclosure.</p>
+    </section>
+
+    <!-- ============================ DARK ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the payout breakdown">
+      <div class="panel-tag">Dark — C breakdown</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Breakdown — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/earnings" aria-label="Back to Earnings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Payout breakdown</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="cH">What you earned from this stay</h2>
+              <p class="lead">Every rupee between what your guest paid and what reached your bank.</p>
+
+              <div class="bkctx">
+                <span class="bk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                <span class="bk-b">
+                  <span class="bk-t">Gulberg <span class="num">2</span> Residence · Fatima</span>
+                  <span class="bk-s"><span class="num">Fri 7 – Mon 10 Aug 2026</span> · <span class="num">3</span> nights</span>
+                  <span class="bk-s">Paid out <span class="num">Sat 8 Aug 2026</span> · Meezan Bank <span class="num">••••4821</span></span>
+                </span>
+              </div>
+
+              <div class="led">
+                <span class="grpk">What your guest paid</span>
+                <dl class="led-rows">
+                  <div class="led-row">
+                    <dt><span class="led-k">Nightly rate</span><span class="led-sub"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                  <div class="led-row sum">
+                    <dt><span class="led-k">Gross booking value</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                </dl>
+                <span class="grpk">Deducted from your payout</span>
+                <dl class="led-rows">
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Service fee (wakala)<span class="rate num">−3%</span></span><span class="led-sub">SalamStay's agency commission on the booking</span></dt>
+                    <dd class="led-v num">−PKR 1,125</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Payment processing (MDR)<span class="rate num">−1.8%</span></span><span class="led-sub">Passed through at cost, not marked up</span></dt>
+                    <dd class="led-v num">−PKR 675</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">Withholding tax <span class="tag tag-filer">ATL filer</span><span class="rate num">−1%</span></span><a class="rowlink" href="/host/earnings/withholding/fatima-gulberg2-aug2026">How this was worked out<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></dt>
+                    <dd class="led-v num">−PKR 375</dd>
+                  </div>
+                  <div class="led-row sum">
+                    <dt><span class="led-k">Total deductions</span></dt>
+                    <dd class="led-v num">−PKR 2,175</dd>
+                  </div>
+                  <div class="led-row total">
+                    <dt><span class="led-k">Net payout</span></dt>
+                    <dd class="led-v num">PKR 35,325</dd>
+                  </div>
+                </dl>
+                <div class="led-foot">That's <b><span class="num">94.2%</span></b> of the gross booking value. Payouts release <span class="num">24</span> hours after your guest checks in.</div>
+              </div>
+
+              <div class="filer">
+                <span class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="fbody">
+                  <span class="filer-t">You're on the Active Taxpayers List</span>
+                  <span class="filer-d">So the filer rate applies to this payout. Non-filers are withheld at roughly double.</span>
+                  <a class="filer-lk" href="/host/earnings/withholding/fatima-gulberg2-aug2026">See how withholding works →</a>
+                </span>
+              </div>
+
+              <div class="adv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg>
+                <span class="adv-b">
+                  <span class="adv-t">For your tax filing</span>
+                  <span class="adv-p">SalamStay provides the documents, not tax advice. Your tax consultant or the FBR portal can help.</span>
+                </span>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/reservations/fatima-gulberg2-aug2026">See the reservation</a>
+              <a class="helplink" href="/host/help/fees">How fees and tax work</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark keeps the net payout as the only brand-tinted row on the screen — the one number a host opened this card for — while every deduction stays in the neutral register. Nothing here is coloured as a loss: there is no red on a fee, no down-arrow, no "you lost" framing, because MDR and tax transparency is a <b>trust feature</b> (DESIGN §9-F), not bad news being softened. The <span class="num">94.2%</span> footer is the same sentence <code>ha-055</code>'s KPI tile carries, so the dashboard and the single booking agree on the arithmetic in both themes.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the payout breakdown">
+      <div class="panel-tag">RTL · اردو — ادائیگی کی تفصیل</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — ادائیگی کی تفصیل</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/earnings" aria-label="کمائی پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">ادائیگی کی تفصیل</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="dH">اس قیام سے آپ نے کیا کمایا</h2>
+              <p class="lead">آپ کے مہمان کی ادا کردہ رقم اور آپ کے بینک میں پہنچنے والی رقم کے درمیان ہر روپیہ۔</p>
+
+              <div class="bkctx">
+                <span class="bk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11M9 21v-6h6v6"/></svg></span>
+                <span class="bk-b">
+                  <span class="bk-t">گلبرگ <span class="num">2</span> ریزیڈنس · فاطمہ</span>
+                  <span class="bk-s"><span class="num">14</span>–<span class="num">17 اگست 2026</span> · <span class="num">3</span> راتیں</span>
+                  <span class="bk-s">ادائیگی <span class="num">15 اگست 2026</span> · میزان بینک <span class="num">••••4821</span></span>
+                </span>
+              </div>
+
+              <div class="led">
+                <span class="grpk">آپ کے مہمان نے کیا ادا کیا</span>
+                <dl class="led-rows">
+                  <div class="led-row">
+                    <dt><span class="led-k">فی رات کرایہ</span><span class="led-sub"><span class="num">PKR 12,500</span> × <span class="num">3</span> راتیں</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                  <div class="led-row sum">
+                    <dt><span class="led-k">مجموعی رقم</span></dt>
+                    <dd class="led-v num">PKR 37,500</dd>
+                  </div>
+                </dl>
+                <span class="grpk">آپ کی ادائیگی سے کٹوتی</span>
+                <dl class="led-rows">
+                  <div class="led-row ded">
+                    <dt><span class="led-k">سروس فیس (وکالہ)<span class="rate num">−3%</span></span><span class="led-sub">بکنگ پر سلام اسٹے کا ایجنسی کمیشن</span></dt>
+                    <dd class="led-v num">−PKR 1,125</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">ادائیگی پروسیسنگ (MDR)<span class="rate num">−1.8%</span></span><span class="led-sub">لاگت پر منتقل، کوئی اضافہ نہیں</span></dt>
+                    <dd class="led-v num">−PKR 675</dd>
+                  </div>
+                  <div class="led-row ded">
+                    <dt><span class="led-k">ودہولڈنگ ٹیکس <span class="tag tag-filer">فائلر</span><span class="rate num">−1%</span></span><a class="rowlink" href="/ur/host/earnings/withholding/fatima-gulberg2-aug2026">یہ کیسے نکالا گیا<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a></dt>
+                    <dd class="led-v num">−PKR 375</dd>
+                  </div>
+                  <div class="led-row sum">
+                    <dt><span class="led-k">کل کٹوتی</span></dt>
+                    <dd class="led-v num">−PKR 2,175</dd>
+                  </div>
+                  <div class="led-row total">
+                    <dt><span class="led-k">خالص ادائیگی</span></dt>
+                    <dd class="led-v num">PKR 35,325</dd>
+                  </div>
+                </dl>
+                <div class="led-foot">یہ مجموعی رقم کا <b><span class="num">94.2%</span></b> ہے۔ مہمان کے آنے کے <span class="num">24</span> گھنٹے بعد ادائیگی جاری ہوتی ہے۔</div>
+              </div>
+
+              <div class="filer">
+                <span class="fico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <span class="fbody">
+                  <span class="filer-t">آپ فعال ٹیکس گزار فہرست (ATL) میں شامل ہیں</span>
+                  <span class="filer-d">اس لیے اس ادائیگی پر فائلر کی شرح لاگو ہے۔ نان فائلر سے تقریباً دوگنا کاٹا جاتا ہے۔</span>
+                  <a class="filer-lk" href="/ur/host/earnings/withholding/fatima-gulberg2-aug2026">ودہولڈنگ کیسے کام کرتا ہے ←</a>
+                </span>
+              </div>
+
+              <div class="adv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg>
+                <span class="adv-b">
+                  <span class="adv-t">آپ کی ٹیکس فائلنگ کے لیے</span>
+                  <span class="adv-p">سلام اسٹے دستاویزات فراہم کرتا ہے، ٹیکس مشورہ نہیں۔ آپ کا ٹیکس مشیر یا FBR پورٹل مدد کر سکتا ہے۔</span>
+                </span>
+              </div>
+
+              <a class="suprow" href="/ur/host/earnings/tax-receipts/fatima-gulberg2-aug2026">
+                <span class="sup-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 13h5M9.5 16h5"/></svg></span>
+                <span class="sup-b"><span class="sup-t">اس بکنگ کی ٹیکس رسید</span><span class="sup-s">FBR ای-انوائس ریکارڈ اور ودہولڈنگ سرٹیفکیٹ۔</span></span>
+                <span class="sup-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>
+              </a>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/ur/host/reservations/fatima-gulberg2-aug2026">بکنگ دیکھیں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the ledger's label/value pairs swap sides, chevrons flip to the reading direction, and <b>every money figure stays inside <code>.num</code></b> — <code>direction:ltr; unicode-bidi:isolate</code>, Western digits, tabular figures — so <span class="num">PKR 37,500</span>, <span class="num">−PKR 1,125</span>, <span class="num">−1.8%</span>, <span class="num">94.2%</span> and the masked account tail are never digit-order-mirrored (Pass&nbsp;#31 ruling). Urdu terms are the ones already shipped and are not re-coined here: "سروس فیس (وکالہ)", "ادائیگی پروسیسنگ (MDR)" and "خالص ادائیگی" from <code>ha-055</code>, "مجموعی رقم", "ودہولڈنگ ٹیکس", "فائلر" and "فعال ٹیکس گزار فہرست" from <code>ha-013</code>/<code>ha-057</code>. The non-filer sentence translates "roughly double" as "تقریباً دوگنا" and, exactly like the English, <b>carries no figure at all</b>.</p>
+    </section>
+
+  </main>
+</body>
+</html>

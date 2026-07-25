@@ -1,0 +1,442 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Damage-deposit / host-protection choice (HA-051)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  /* phone frame */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,.segtab,.flabel,.fhelp,.honestline p,.bd,.previewlabel,.pv-t,.pv-d,.amcard,.btn,a) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .savebtn { font-size:13px; font-weight:600; color:var(--int-primary); background:transparent; border:none; padding:0 12px; height:44px; cursor:pointer; font-family:inherit; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; overflow-y:auto; display:flex; flex-direction:column; padding:14px 16px 16px; gap:13px; }
+
+  .lctx { display:flex; align-items:center; gap:10px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:10px 12px; }
+  .lctx-ic { width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .lctx-ic svg { width:17px; height:17px; stroke-width:1.7; }
+  .lctx-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .lctx-loc { font-size:11px; color:var(--text-secondary); display:block; }
+
+  /* segmented control — Security deposit / Host protection */
+  .segtabs { display:flex; gap:2px; background:var(--bg-sunken); border-radius:var(--radius-md); padding:3px; }
+  .segtab { flex:1; min-height:36px; border-radius:6px; border:none; background:transparent; font-size:12.5px; font-weight:600; color:var(--text-secondary); font-family:inherit; cursor:pointer; }
+  .segtab[aria-selected="true"] { background:var(--bg-canvas); color:var(--text-primary); box-shadow:var(--el-hairline); }
+
+  .fld { display:flex; flex-direction:column; gap:6px; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; }
+  .swrow { display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:12px 13px; }
+  .swrow .swt { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .swrow .swd { font-size:11.5px; color:var(--text-secondary); margin-top:2px; display:block; }
+  .switch { width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); position:relative; flex:none; }
+  .switch.on { background:var(--int-primary); }
+  .switch .thumb { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:var(--radius-full); background:var(--bg-canvas); transition:transform .15s ease; }
+  .switch.on .thumb { transform:translateX(16px); }
+
+  .inputwrap { display:flex; align-items:center; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); min-height:44px; padding:0 12px; gap:6px; }
+  .inputwrap .prefix { font-size:14px; color:var(--text-secondary); font-weight:600; }
+  .inp { flex:1; border:none; background:transparent; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; outline:none; }
+  .fhelp { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+
+  .honestline { display:flex; gap:9px; align-items:flex-start; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:11px 12px; }
+  .honestline svg { width:16px; height:16px; stroke-width:1.9; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .honestline p { font-size:11.5px; color:var(--text-secondary); line-height:1.55; }
+  .honestline p b { color:var(--text-primary); font-weight:600; }
+
+  /* guest checkout preview — reuses GA-050's breakdown grammar */
+  .previewcard { border:1px dashed var(--border-default); background:var(--bg-sunken); border-radius:var(--radius-lg); padding:12px 13px; }
+  .previewlabel { font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); display:block; margin-bottom:9px; }
+  .bd { display:flex; flex-direction:column; gap:8px; }
+  .row { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:12.5px; color:var(--text-secondary); }
+  .row dt { font-weight:400; }
+  .row dd { color:var(--text-primary); font-weight:600; font-variant-numeric:tabular-nums; }
+  .row.total { border-top:1px solid var(--border-default); padding-top:8px; margin-top:2px; }
+  .row.total dt, .row.total dd { font-weight:700; color:var(--text-primary); font-size:13.5px; }
+  .row.dep dt, .row.dep dd { color:var(--info-fg); }
+  .pv-note { font-size:11px; color:var(--text-tertiary); margin-top:9px; line-height:1.5; display:block; }
+
+  /* host protection placeholder */
+  .amcard { border:1px dashed var(--border-default); background:var(--bg-raised); border-radius:var(--radius-lg); padding:14px 14px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .amcard .aic { width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .amcard .aic svg { width:19px; height:19px; stroke-width:1.7; }
+  .amcard .at { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .amcard .ad { font-size:11.5px; color:var(--text-secondary); line-height:1.55; max-width:230px; }
+  .amtag { font-size:10.5px; font-weight:600; color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:2px 9px; }
+
+  .grow { flex:1; min-height:4px; }
+  .btn { width:100%; min-height:46px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:660px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Damage-deposit / host-protection choice (HA-051)</h1>
+    <p>Aqib's protection setting for <strong>Gulberg 2 Residence</strong> (ADR-A19: host-choice). A segmented control offers two plain rows: a <strong>security deposit</strong> — a Switch, an amount Input, and honest when-it's-held/when-it's-released language — or <strong>host protection</strong>, stated at concept level only as a placeholder (no invented underwriter, product name, or coverage figures — see the founder-note comment in the source). Turning the deposit on renders a <strong>guest-impact preview</strong> reusing <code>GA-050</code>'s itemised <code>&lt;dl&gt;</code> breakdown grammar, and the release line reuses <code>GA-059</code>'s amanah wording verbatim: held in a custody arrangement, not spent, not lent out, no interest earned. Panels: none-set (light) · deposit-set + guest preview (light) · dark · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">None set</span><span>Deposit set · guest preview</span><span>Dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <!--
+    FOUNDER NOTE (host protection, concept-level placeholder — do not remove):
+    "Host protection" here is a PROGRAM PLACEHOLDER only. No underwriter, no insurer
+    name, no premium, no coverage limit, and no claims process is invented — SEO-RULES
+    §5/§6 forbid unshipped product claims. Ship this segment as "Not yet available"
+    until a real protection product is defined and founder-approved; then replace this
+    card's placeholder copy with the real product description, still Shariah-consistent
+    (takaful-style mutual protection framing preferred over conventional insurance
+    language, pending Shariah-advisor review).
+  -->
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL 1 ============================ -->
+    <section class="panel" aria-label="Light theme — no protection set, and deposit set with the guest preview">
+      <div class="panel-tag">Light — none set · deposit set + guest preview</div>
+      <div class="rowflex">
+
+        <!-- A · NONE SET -->
+        <div class="pcol">
+          <div class="pcap">A · None set — deposit off, host protection placeholder</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="aH">Guest protection</div>
+              <button class="savebtn" type="button">Save</button>
+            </div>
+            <div class="screen">
+              <div class="lctx">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <span class="lctx-b"><span class="lctx-name">Gulberg 2 Residence</span><span class="lctx-loc">Lahore</span></span>
+              </div>
+
+              <div class="segtabs" role="tablist" aria-label="Protection type">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Security deposit</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Host protection</button>
+              </div>
+
+              <div class="fld">
+                <div class="swrow">
+                  <span><span class="swt">Request a security deposit</span><span class="swd">Off — guests aren't asked for a deposit on this listing</span></span>
+                  <span class="switch" role="switch" aria-checked="false" aria-label="Request a security deposit"><span class="thumb"></span></span>
+                </div>
+              </div>
+
+              <div class="honestline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <p>You can turn this on any time. When it's on, a refundable hold is placed at check-in and released automatically at checkout unless you file a damage claim.</p>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn secondary" href="/host/listings/gulberg-2-residence">Back to listing</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · DEPOSIT SET + GUEST PREVIEW -->
+        <div class="pcol">
+          <div class="pcap">B · Deposit set — amount, honesty, guest preview</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="bH">Guest protection</div>
+              <button class="savebtn" type="button">Save</button>
+            </div>
+            <div class="screen">
+              <div class="lctx">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <span class="lctx-b"><span class="lctx-name">Gulberg 2 Residence</span><span class="lctx-loc">Lahore</span></span>
+              </div>
+
+              <div class="segtabs" role="tablist" aria-label="Protection type">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Security deposit</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Host protection</button>
+              </div>
+
+              <div class="fld">
+                <div class="swrow">
+                  <span><span class="swt">Request a security deposit</span><span class="swd">On — shown to guests at checkout</span></span>
+                  <span class="switch on" role="switch" aria-checked="true" aria-label="Request a security deposit"><span class="thumb"></span></span>
+                </div>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="dep-amt">Deposit amount</label>
+                <div class="inputwrap">
+                  <span class="prefix" aria-hidden="true">₨</span>
+                  <input class="inp num" id="dep-amt" type="text" inputmode="numeric" value="15,000" aria-describedby="dep-help" />
+                </div>
+                <p class="fhelp" id="dep-help">A typical range for a home this size is PKR 10,000–20,000. You set the amount — SalamStay doesn't recommend a figure.</p>
+              </div>
+
+              <div class="honestline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <p><b>Held, not spent.</b> Like your payment, the deposit sits in the same amanah custody arrangement at Meezan Bank — not spent, not lent out, no interest earned on it — and releases automatically at checkout unless you file a damage claim within 48 hours.</p>
+              </div>
+
+              <div class="previewcard">
+                <span class="previewlabel">What Fatima will see at checkout</span>
+                <dl class="bd">
+                  <div class="row"><dt><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</dt><dd class="num">PKR 37,500</dd></div>
+                  <div class="row"><dt>Service fee (wakala)</dt><dd class="num">PKR 1,125</dd></div>
+                  <div class="row total"><dt>Total (PKR)</dt><dd class="num">PKR 39,345</dd></div>
+                  <div class="row dep"><dt>Refundable damage deposit <span class="num">(held, not charged)</span></dt><dd class="num">PKR 15,000</dd></div>
+                </dl>
+                <span class="pv-note">Shown as a separate hold, clearly marked refundable — never folded into the paid total (matches <code>GA-050</code>'s itemised grammar).</span>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/host/listings/gulberg-2-residence">Save changes</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The Input reuses the shared shell (48pt, static label above, §8.1) and never nudges toward a specific figure — "you set the amount." The guest preview literally reuses <code>GA-050</code>'s <code>&lt;dl class="bd"&gt;</code> row grammar (itemised <code>dt</code>/<code>dd</code> pairs, a <code>.total</code> row) so the two screens read as one system; the deposit sits in its own row, explicitly "held, not charged," and is never summed into the paid total. The release line quotes <code>GA-059</code>'s escrow explainer almost verbatim — "not spent, not lent out, no interest earned on it" — so a host and a guest are told the identical trust story.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — HOST PROTECTION PLACEHOLDER ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the host-protection concept placeholder, and deposit-set">
+      <div class="panel-tag">Dark — host protection (concept placeholder) · deposit set</div>
+      <div class="rowflex">
+
+        <!-- C · HOST PROTECTION PLACEHOLDER -->
+        <div class="pcol">
+          <div class="pcap">C · Host protection — concept-level placeholder only</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="cH">Guest protection</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="lctx">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <span class="lctx-b"><span class="lctx-name">Gulberg 2 Residence</span><span class="lctx-loc">Lahore</span></span>
+              </div>
+
+              <div class="segtabs" role="tablist" aria-label="Protection type">
+                <button class="segtab" type="button" role="tab" aria-selected="false">Security deposit</button>
+                <button class="segtab" type="button" role="tab" aria-selected="true">Host protection</button>
+              </div>
+
+              <div class="amcard">
+                <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                <span class="amtag">Not yet available</span>
+                <span class="at">Host protection, in planning</span>
+                <span class="ad">A SalamStay-backed protection program for eligible listings, as an alternative to holding your own deposit. Coverage terms and eligibility will be announced here before this option goes live — nothing is active yet.</span>
+              </div>
+
+              <div class="honestline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <p>Until this launches, a <b>security deposit</b> is the only active protection option for your listings.</p>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn secondary" href="/host/listings/gulberg-2-residence">Back to listing</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · DEPOSIT SET (dark) -->
+        <div class="pcol">
+          <div class="pcap">D · Deposit set — dark</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/gulberg-2-residence" aria-label="Back to listing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title" id="dH">Guest protection</div>
+              <button class="savebtn" type="button">Save</button>
+            </div>
+            <div class="screen">
+              <div class="lctx">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <span class="lctx-b"><span class="lctx-name">Gulberg 2 Residence</span><span class="lctx-loc">Lahore</span></span>
+              </div>
+
+              <div class="segtabs" role="tablist" aria-label="Protection type">
+                <button class="segtab" type="button" role="tab" aria-selected="true">Security deposit</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">Host protection</button>
+              </div>
+
+              <div class="fld">
+                <div class="swrow">
+                  <span><span class="swt">Request a security deposit</span><span class="swd">On — shown to guests at checkout</span></span>
+                  <span class="switch on" role="switch" aria-checked="true" aria-label="Request a security deposit"><span class="thumb"></span></span>
+                </div>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="dep-amt-d">Deposit amount</label>
+                <div class="inputwrap">
+                  <span class="prefix" aria-hidden="true">₨</span>
+                  <input class="inp num" id="dep-amt-d" type="text" inputmode="numeric" value="15,000" />
+                </div>
+              </div>
+
+              <div class="previewcard">
+                <span class="previewlabel">What Fatima will see at checkout</span>
+                <dl class="bd">
+                  <div class="row total"><dt>Total (PKR)</dt><dd class="num">PKR 39,345</dd></div>
+                  <div class="row dep"><dt>Refundable damage deposit <span class="num">(held, not charged)</span></dt><dd class="num">PKR 15,000</dd></div>
+                </dl>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/host/listings/gulberg-2-residence">Save changes</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark carries the identical token set (§1.6). <strong>C</strong> is deliberately inert — a dashed border, a muted "Not yet available" tag, and copy that promises nothing beyond "a program... will be announced" (NEVER #3: no invented stats, no coverage figures, no underwriter name). The founder-note HTML comment above the panels documents the same constraint for whoever builds the real product later.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — deposit set">
+      <div class="panel-tag">RTL · اردو — deposit set, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Deposit set — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/gulberg-2-residence" aria-label="فہرست پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title" id="uH">مہمان تحفظ</div>
+              <button class="savebtn" type="button">محفوظ کریں</button>
+            </div>
+            <div class="screen">
+              <div class="lctx">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                <span class="lctx-b"><span class="lctx-name">گلبرگ ۲ ریزیڈنس</span><span class="lctx-loc">لاہور</span></span>
+              </div>
+
+              <div class="segtabs" role="tablist" aria-label="تحفظ کی قسم">
+                <button class="segtab" type="button" role="tab" aria-selected="true">سیکیورٹی ڈپازٹ</button>
+                <button class="segtab" type="button" role="tab" aria-selected="false">میزبان تحفظ</button>
+              </div>
+
+              <div class="fld">
+                <div class="swrow">
+                  <span><span class="swt">سیکیورٹی ڈپازٹ طلب کریں</span><span class="swd">آن — چیک آؤٹ پر مہمانوں کو دکھایا جاتا ہے</span></span>
+                  <span class="switch on" role="switch" aria-checked="true" aria-label="سیکیورٹی ڈپازٹ طلب کریں"><span class="thumb"></span></span>
+                </div>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="dep-amt-u">ڈپازٹ رقم</label>
+                <div class="inputwrap">
+                  <span class="prefix" aria-hidden="true">₨</span>
+                  <input class="inp num" id="dep-amt-u" type="text" inputmode="numeric" value="15,000" aria-describedby="dep-help-u" />
+                </div>
+                <p class="fhelp" id="dep-help-u">اس سائز کے گھر کے لیے عام حد PKR 10,000–20,000 ہے۔ رقم آپ خود طے کرتے ہیں — سلام اسٹے کوئی تجویز نہیں دیتا۔</p>
+              </div>
+
+              <div class="honestline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                <p><b>محفوظ رہتی ہے، خرچ نہیں ہوتی۔</b> آپ کی ادائیگی کی طرح، ڈپازٹ بھی اسی امانت کے انتظام میں میزان بینک میں رہتی ہے — نہ خرچ، نہ قرض، نہ سود — اور چیک آؤٹ پر خودکار طور پر جاری ہو جاتی ہے جب تک آپ 48 گھنٹوں میں نقصان کا دعویٰ نہ کریں۔</p>
+              </div>
+
+              <div class="previewcard">
+                <span class="previewlabel">فاطمہ چیک آؤٹ پر یہ دیکھیں گی</span>
+                <dl class="bd">
+                  <div class="row"><dt><span class="num">PKR 12,500</span> × <span class="num">3</span> راتیں</dt><dd class="num">PKR 37,500</dd></div>
+                  <div class="row"><dt>سروس فیس (وکالہ)</dt><dd class="num">PKR 1,125</dd></div>
+                  <div class="row total"><dt>کل (PKR)</dt><dd class="num">PKR 39,345</dd></div>
+                  <div class="row dep"><dt>واپسی کے قابل ڈیمج ڈپازٹ <span class="num">(محفوظ، کٹوتی نہیں)</span></dt><dd class="num">PKR 15,000</dd></div>
+                </dl>
+              </div>
+
+              <div class="grow"></div>
+              <a class="btn primary" href="/ur/host/listings/gulberg-2-residence">تبدیلیاں محفوظ کریں</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored: back chevron flips to the reading direction, the Switch travels toward the reading-start "on" side (§8.1), and every itemised row in the guest preview swaps label/value sides while amounts and night counts stay tabular Latin figures inside <code>.num</code> (§11 — prices are never digit-order-mirrored). The amanah release line and the "you set the amount" honesty both survive translation unchanged.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Consent (T&amp;C / privacy) (GA-085)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13) ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6; --bg-elevated:#F7F8F8;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-semantic:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --brand-400:#579D8B; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-700:#454C51;
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D; --bg-elevated:#1C2322;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-semantic:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:920px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone + bottom-sheet-over-app scaffold — ga-003 onboarding lineage */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-hairline); display:flex; flex-direction:column; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.sheet h2,.sheet .why,.rowt,.rowd,.linkt,.btn,.ctext,.pop-h,.pop-b,.hardh2,.hardbody,.hardnote,.footlink) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+
+  .sa-top, .sa-bottom { height:24px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; position:relative; z-index:4; flex:none; }
+  .sa-bottom { border-top:1px dashed var(--border-default); background-color:var(--bg-canvas); }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+
+  .scr { min-height:680px; position:relative; display:flex; flex-direction:column; justify-content:flex-end; background:var(--bg-sunken); overflow:hidden; }
+  .behind { position:absolute; inset:0; padding:16px 16px 0; opacity:.45; }
+  .behind .bbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .behind .btitle { font-size:26px; font-weight:700; color:var(--text-primary); }
+  .behind .bround { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-raised); }
+  .behind .bpill { height:52px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); margin-bottom:16px; }
+  .behind .brow { display:flex; gap:12px; }
+  .behind .btile { flex:1; height:96px; border-radius:var(--radius-lg); }
+  .scrim-layer { position:absolute; inset:0; background:var(--scrim); z-index:1; }
+
+  .sheet { position:relative; z-index:2; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; padding:8px 20px 18px; box-shadow:var(--el-popover); max-height:680px; overflow-y:auto; }
+  .grab { width:36px; height:5px; border-radius:var(--radius-full); background:var(--border-default); margin:6px auto 16px; }
+  .sheet h2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .sheet .why { font-size:13px; color:var(--text-secondary); line-height:1.5; margin-top:7px; }
+
+  .scap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:16px 2px 8px; }
+
+  /* summary rows — plain-language key points */
+  .rows { display:flex; flex-direction:column; gap:9px; }
+  .row { display:flex; gap:11px; align-items:flex-start; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); padding:11px 12px; }
+  .row .ric { flex:none; width:30px; height:30px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .row .ric svg { width:15px; height:15px; stroke-width:1.8; }
+  .row .rb { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .row .rowt { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .row .rowd { font-size:12px; color:var(--text-secondary); line-height:1.45; }
+  .row.link { cursor:pointer; }
+  .row.link .rowd a { color:var(--int-primary); font-weight:600; text-decoration:underline; }
+
+  /* full-document link rows */
+  .doclinks { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .doclink { display:flex; align-items:center; gap:11px; min-height:48px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); padding:0 13px; }
+  .doclink .dic { flex:none; width:28px; height:28px; border-radius:var(--radius-full); background:var(--bg-raised); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .doclink .dic svg { width:14px; height:14px; stroke-width:1.9; }
+  .doclink .linkt { flex:1; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .doclink .dchev { flex:none; color:var(--text-tertiary); display:flex; }
+  .doclink .dchev svg { width:16px; height:16px; stroke-width:2; }
+
+  /* explicit consent checkbox — square, never pre-ticked */
+  .consentrow { display:flex; align-items:flex-start; gap:11px; min-height:44px; margin-top:16px; cursor:pointer; }
+  .cchk { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .cbox { flex:none; width:20px; height:20px; margin-top:2px; border-radius:var(--radius-sm); border:1.5px solid var(--border-strong); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; }
+  .cbox svg { width:13px; height:13px; stroke-width:3; color:var(--text-on-brand); display:none; }
+  .cchk:checked + .cbox { background:var(--int-primary); border-color:var(--int-primary); }
+  .cchk:checked + .cbox svg { display:block; }
+  .cchk:focus-visible + .cbox { outline:2px solid var(--int-primary); outline-offset:2px; }
+  .ctext { font-size:12.5px; color:var(--text-primary); line-height:1.45; }
+  .ctext a { color:var(--int-primary); font-weight:600; text-decoration:underline; }
+
+  .sheet-actions { margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:48px; padding:0 20px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; border:1px solid transparent; letter-spacing:-0.01em; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn-primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-disabled); }
+  .btn-secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .footlink { display:block; text-align:center; margin-top:12px; font-size:12px; color:var(--text-secondary); }
+  .footlink a { color:var(--int-primary); font-weight:600; text-decoration:none; }
+  .footlink a:hover { text-decoration:underline; }
+
+  /* popover — Shariah-approach row detail */
+  .rowpop-wrap { position:relative; }
+  .popover { position:absolute; left:4px; right:4px; top:calc(100% + 6px); z-index:5; background:var(--bg-elevated); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:11px 13px 12px; }
+  .popover .care { position:absolute; top:-6px; left:26px; width:12px; height:12px; background:var(--bg-elevated); border-left:1px solid var(--border-hairline); border-top:1px solid var(--border-hairline); transform:rotate(45deg); }
+  .phone.rtl .popover .care { left:auto; right:26px; }
+  .pop-h { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:6px; }
+  .pop-b { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+  .pop-b a { color:var(--int-primary); font-weight:600; text-decoration:underline; }
+
+  /* decline hard-stop */
+  .hardsheet { position:relative; z-index:2; background:var(--bg-canvas); border-radius:var(--radius-2xl) var(--radius-2xl) 0 0; padding:8px 20px 18px; box-shadow:var(--el-popover); display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .hardsheet .grab { align-self:center; }
+  .hardic { width:56px; height:56px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; margin:6px 0 14px; }
+  .hardic svg { width:26px; height:26px; stroke-width:1.7; }
+  .hardh2 { font-size:18px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .hardbody { font-size:13px; color:var(--text-secondary); line-height:1.55; margin-top:9px; max-width:280px; }
+  .hardnote { font-size:12.5px; color:var(--text-secondary); line-height:1.5; margin-top:8px; max-width:280px; }
+  .hardnote b { color:var(--text-primary); font-weight:600; }
+  .hardactions { margin-top:18px; display:flex; flex-direction:column; gap:10px; width:100%; }
+
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:14px; padding:0 2px; line-height:1.55; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .cap b { color:var(--text-secondary); }
+
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Consent (T&amp;C / privacy) (GA-085)</h1>
+    <p>The account-creation gate that accepts SalamStay's Terms of Service and Privacy Policy — a <b>summary-first</b> bottom sheet, not a wall of legal text. Plain-language key-point rows cover how SalamStay works (with the Shariah-compliance statement referenced at concept level, linking to the full <code>/shariah-policy</code> page — never a new claim invented here), payments held in <b>amanah</b> (reusing <code>GA-059</code>'s shipped escrow language), and your data (reusing <code>GA-080</code>'s export/delete/redaction concepts) — with real full-document link rows to <code>/legal/terms</code> and <code>/legal/privacy</code>. Consent is an explicit, unchecked-by-default checkbox. Declining exits to browse with the same dignity as <code>GA-075</code>. No checkout stepper.</p>
+    <div class="legend">
+      <span>Light · summary sheet, unchecked</span>
+      <span>Dark · decline, hard-stop, exit to browse</span>
+      <span>Light · checked + "Shariah-respectful" popover open</span>
+      <span>RTL · اردو</span>
+      <span>Consent never pre-ticked · ≥44pt · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== A · LIGHT — DEFAULT, UNCHECKED ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — summary sheet, unchecked</div>
+      <section class="phone" aria-label="Terms of Service and Privacy Policy — before you continue">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Sign up</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="t-t" aria-describedby="t-w">
+            <div class="grab" aria-hidden="true"></div>
+            <h2 id="t-t">Before you continue</h2>
+            <p class="why" id="t-w">Here's a plain-language summary of what you're agreeing to — you're welcome to read the full documents below.</p>
+
+            <div class="scap">In plain words</div>
+            <div class="rows">
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg></span>
+                <span class="rb"><span class="rowt">How SalamStay works</span><span class="rowd">A Shariah-respectful stays marketplace across Pakistan. See our <a href="/shariah-policy">Shariah-respectful approach</a>.</span></span>
+              </div>
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                <span class="rb"><span class="rowt">Payments held in amanah</span><span class="rowd">Your payment sits in a trust and is released to your host only after you've checked in.</span></span>
+              </div>
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="rb"><span class="rowt">Your data</span><span class="rowd">You can export or delete it anytime; your NADRA verification documents stay redacted, always.</span></span>
+              </div>
+            </div>
+
+            <div class="scap">Read the full documents</div>
+            <div class="doclinks">
+              <a class="doclink" href="/legal/terms"><span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg></span><span class="linkt">Terms of Service</span><span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+              <a class="doclink" href="/legal/privacy"><span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="linkt">Privacy Policy</span><span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+            </div>
+
+            <label class="consentrow">
+              <input type="checkbox" class="cchk" id="tc-a" aria-describedby="t-w" />
+              <span class="cbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="ctext">I've read and agree to the <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</span>
+            </label>
+
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary" aria-disabled="true">Agree &amp; continue</button>
+              <button type="button" class="btn btn-secondary">I don't agree</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Summary rows come first (plain words), full documents second (real routes) — never the reverse. The checkbox ships <b>unchecked</b>; <b>Agree &amp; continue</b> stays a disabled affordance until it's checked.</p>
+    </div>
+
+    <!-- ============================== B · DARK — DECLINE HARD-STOP ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — decline, hard-stop, exit to browse</div>
+      <section class="phone dark" aria-label="Without agreeing, we can't create your account">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Sign up</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-900),var(--slate-500))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="hardsheet" role="dialog" aria-modal="true" aria-labelledby="hb-t" aria-describedby="hb-w">
+            <div class="grab" aria-hidden="true"></div>
+            <div class="hardic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9.5 12.5l5 5M14.5 12.5l-5 5"/></svg>
+            </div>
+            <h2 class="hardh2" id="hb-t">Without agreeing to these terms, we can't create your account</h2>
+            <p class="hardbody" id="hb-w">The Terms of Service and Privacy Policy set out how SalamStay, guests, and hosts work together — every account runs on them.</p>
+            <p class="hardnote"><b>You're welcome to keep browsing</b> — you just won't be able to create an account or book until you agree.</p>
+            <div class="hardactions">
+              <a class="btn btn-primary" href="/home">Browse stays</a>
+              <button type="button" class="btn btn-secondary">Review the terms</button>
+            </div>
+            <p class="footlink">You can agree anytime by signing up again.</p>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Same dignity as <code>GA-075</code>'s decline state: a factual, non-shaming reason, a neutral icon, and a real working exit — never a dead end.</p>
+    </div>
+
+    <!-- ============================== C · LIGHT — CHECKED + POPOVER ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — checked, Agree enabled · "Shariah-respectful approach" popover open</div>
+      <section class="phone" aria-label="Before you continue — checked, popover open">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">Sign up</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="c-t" aria-describedby="c-w">
+            <div class="grab" aria-hidden="true"></div>
+            <h2 id="c-t">Before you continue</h2>
+            <p class="why" id="c-w">Here's a plain-language summary of what you're agreeing to — you're welcome to read the full documents below.</p>
+
+            <div class="scap">In plain words</div>
+            <div class="rows">
+              <div class="rowpop-wrap">
+                <button class="row link" type="button" aria-expanded="true" aria-controls="shariah-pop" style="width:100%; text-align:start; font-family:inherit;">
+                  <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg></span>
+                  <span class="rb"><span class="rowt">How SalamStay works</span><span class="rowd">A Shariah-respectful stays marketplace across Pakistan. Tap for our approach.</span></span>
+                </button>
+                <div class="popover" id="shariah-pop" role="dialog" aria-label="Our Shariah-respectful approach">
+                  <span class="care" aria-hidden="true"></span>
+                  <div class="pop-h">In short</div>
+                  <div class="pop-b">SalamStay is <b>Shariah-respectful</b>, not a religious authority — what that means on listings:<br /><b>No-alcohol listings by default</b><br /><b>Halal-kitchen, prayer-space, and Qibla direction shown on listings</b><br />Full statement: <a href="/shariah-policy">/shariah-policy</a>.</div>
+                </div>
+              </div>
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                <span class="rb"><span class="rowt">Payments held in amanah</span><span class="rowd">Your payment sits in a trust and is released to your host only after you've checked in.</span></span>
+              </div>
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="rb"><span class="rowt">Your data</span><span class="rowd">You can export or delete it anytime; your NADRA verification documents stay redacted, always.</span></span>
+              </div>
+            </div>
+
+            <div class="scap">Read the full documents</div>
+            <div class="doclinks">
+              <a class="doclink" href="/legal/terms"><span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg></span><span class="linkt">Terms of Service</span><span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+              <a class="doclink" href="/legal/privacy"><span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="linkt">Privacy Policy</span><span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+            </div>
+
+            <label class="consentrow">
+              <input type="checkbox" class="cchk" id="tc-c" checked aria-describedby="c-w" />
+              <span class="cbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="ctext">I've read and agree to the <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</span>
+            </label>
+
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary">Agree &amp; continue</button>
+              <button type="button" class="btn btn-secondary">I don't agree</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">The "How SalamStay works" row is a disclosure trigger; its popover states the Shariah-respectful positioning at <b>concept level only</b>, using registry-consistent language, and links out to the full <code>/shariah-policy</code> statement rather than inventing new claims here.</p>
+    </div>
+
+    <!-- ============================== D · RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — summary sheet, mirrored</div>
+      <section class="phone rtl" lang="ur" dir="rtl" aria-label="جاری رکھنے سے پہلے">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="scr">
+          <div class="behind" aria-hidden="true">
+            <div class="bbar"><span class="btitle">سائن اپ</span><span class="bround"></span></div>
+            <div class="bpill"></div>
+            <div class="brow"><span class="btile" style="background:linear-gradient(150deg,var(--brand-800),var(--brand-400))"></span><span class="btile" style="background:linear-gradient(150deg,var(--slate-700),var(--slate-400))"></span></div>
+          </div>
+          <div class="scrim-layer" aria-hidden="true"></div>
+          <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="r-t" aria-describedby="r-w">
+            <div class="grab" aria-hidden="true"></div>
+            <h2 id="r-t">جاری رکھنے سے پہلے</h2>
+            <p class="why" id="r-w">یہاں سادہ الفاظ میں خلاصہ ہے کہ آپ کس چیز پر متفق ہو رہے ہیں — مکمل دستاویزات نیچے پڑھی جا سکتی ہیں۔</p>
+
+            <div class="scap">سادہ الفاظ میں</div>
+            <div class="rows">
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/></svg></span>
+                <span class="rb"><span class="rowt">سلام اسٹے کیسے کام کرتا ہے</span><span class="rowd">پاکستان بھر میں شریعت کا احترام کرنے والا رہائش کا پلیٹ فارم۔ ہمارا نقطہ نظر <a href="/shariah-policy">یہاں دیکھیں</a>۔</span></span>
+              </div>
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/></svg></span>
+                <span class="rb"><span class="rowt">ادائیگی امانت میں رکھی جاتی ہے</span><span class="rowd">آپ کی ادائیگی امانت میں رہتی ہے اور چیک اِن کے بعد ہی میزبان کو جاری کی جاتی ہے۔</span></span>
+              </div>
+              <div class="row">
+                <span class="ric" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+                <span class="rb"><span class="rowt">آپ کا ڈیٹا</span><span class="rowd">آپ کبھی بھی اسے ایکسپورٹ یا ڈیلیٹ کر سکتے ہیں؛ آپ کی نادرا دستاویزات ہمیشہ محفوظ (redacted) رہتی ہیں۔</span></span>
+              </div>
+            </div>
+
+            <div class="scap">مکمل دستاویزات پڑھیں</div>
+            <div class="doclinks">
+              <a class="doclink" href="/legal/terms"><span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg></span><span class="linkt">شرائطِ خدمت</span><span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+              <a class="doclink" href="/legal/privacy"><span class="dic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span class="linkt">رازداری پالیسی</span><span class="dchev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span></a>
+            </div>
+
+            <label class="consentrow">
+              <input type="checkbox" class="cchk" id="tc-r" aria-describedby="r-w" />
+              <span class="cbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="ctext">میں نے <a href="/legal/terms">شرائطِ خدمت</a> اور <a href="/legal/privacy">رازداری پالیسی</a> پڑھ لی ہے اور ان سے متفق ہوں۔</span>
+            </label>
+
+            <div class="sheet-actions">
+              <button type="button" class="btn btn-primary" aria-disabled="true">متفق ہوں اور جاری رکھیں</button>
+              <button type="button" class="btn btn-secondary">متفق نہیں ہوں</button>
+            </div>
+          </div>
+        </div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Full mirror: rows, doc-links and the checkbox row flow right-to-left; chevrons flip. Real Nastaliq Urdu throughout — the amanah and data-redaction facts translate faithfully, no new claims introduced in either script.</p>
+    </div>
+
+    <!-- ============================== NOTES ============================== -->
+    <div class="panel notes" style="align-self:start">
+      <div class="panel-tag">Rules, states &amp; rationale</div>
+      <ul>
+        <li><b>Summary-first, never a wall of text.</b> Three plain-language rows precede the full-document links — a guest can understand the shape of the agreement without reading two legal documents first.</li>
+        <li><b>Reused, not reinvented.</b> "Held in amanah" carries <code>GA-059</code>'s escrow language verbatim in meaning; the data row carries <code>GA-080</code>'s export/delete/NADRA-redaction concepts; the Shariah-respectful line stays at concept level and links out to <code>/shariah-policy</code> rather than asserting a new claim (SEO-RULES §5 — no invented Shariah-certification language).</li>
+        <li><b>Consent is explicit.</b> The checkbox ships unchecked; <b>Agree &amp; continue</b> is disabled until checked — matching <code>GA-075</code>'s pattern exactly, for a consistent onboarding grammar.</li>
+        <li><b>Decline is dignified.</b> A factual reason, a neutral icon, a real <b>Browse stays</b> exit — the same non-shaming register as <code>GA-075</code>'s hard-stop.</li>
+        <li><b>Real routes only.</b> <code>/legal/terms</code>, <code>/legal/privacy</code>, <code>/shariah-policy</code>, <code>/home</code> — all canonical per SEO-RULES §3.8/§3.9/§3.12. No <code>href="#"</code>.</li>
+        <li><b>No checkout stepper.</b> An onboarding-lineage sheet (<code>GA-003</code> family), not a checkout step (§7.6a).</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-085 (onboard, app+web) · reuses <code>GA-059</code>/<code>GA-080</code> language · components: bottom sheet, Button, banner, tooltip/popover · gate <code>gen S</code>.</p>
+    </div>
+  </main>
+</body>
+</html>

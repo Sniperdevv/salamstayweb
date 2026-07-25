@@ -1,0 +1,887 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Performance / insights (HA-066)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+    /* dataviz (mirrors @salamstay/design-tokens dataviz.light) */
+    --dv-series-1:#3B8371; --dv-series-2:#34527E; --dv-series-3:#8A5A16;
+    --dv-axis:#5F676D; --dv-gridline:#E7E9EA;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    /* dataviz (mirrors @salamstay/design-tokens dataviz.dark) */
+    --dv-series-1:#579D8B; --dv-series-2:#9AC0F4; --dv-series-3:#E0B36B;
+    --dv-axis:#A7AFAD; --dv-gridline:#2A3230;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1060px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ga-064 flat-frame lineage */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:900px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  /* host chrome — top bar, no stepper (post-onboarding surface) */
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:21px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); }
+  .lead { font-size:12.5px; color:var(--text-secondary); line-height:1.55; margin-top:6px; }
+
+  /* range segmented control (§8 nav) — ≥44pt */
+  .seg { display:flex; margin-top:14px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; }
+  .segbtn { flex:1; min-height:44px; font-family:inherit; font-size:11.5px; font-weight:600; color:var(--text-secondary); background:var(--bg-canvas); border:none; border-inline-end:1px solid var(--border-default); cursor:pointer; padding:0 6px; }
+  .segbtn:last-child { border-inline-end:none; }
+  .segbtn[aria-pressed="true"] { background:var(--int-subtle); color:var(--int-primary); }
+
+  /* hero occupancy tile (§14 KPI) — one honest number + a muted delta */
+  .kpihero { margin-top:14px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:14px 15px; display:flex; flex-direction:column; gap:5px; }
+  .kh-l { font-size:12px; font-weight:600; color:var(--text-secondary); display:block; }
+  .kh-row { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .kh-v { font-size:30px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary); font-variant-numeric:tabular-nums; line-height:1.1; display:block; direction:ltr; unicode-bidi:isolate; }
+  .kh-f { font-size:11.5px; color:var(--text-tertiary); display:block; }
+  .delta { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .delta svg { width:13px; height:13px; flex:none; }
+  .delta.up { color:var(--success-fg); }
+  .delta.down { color:var(--error-fg); }
+  .delta .per { color:var(--text-tertiary); font-weight:500; }
+
+  /* per-listing occupancy rows */
+  .lrows { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+  .lrow { display:flex; align-items:flex-start; gap:10px; min-height:60px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); text-decoration:none; }
+  .lr-ic { flex:none; width:32px; height:32px; border-radius:var(--radius-md); background:var(--bg-sunken); color:var(--text-secondary); display:flex; align-items:center; justify-content:center; }
+  .lr-ic svg { width:17px; height:17px; stroke-width:1.7; }
+  .lr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .lr-n { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .lr-s { font-size:11px; color:var(--text-tertiary); display:block; }
+  .lr-chip { display:inline-flex; align-items:center; gap:4px; align-self:flex-start; margin-top:3px; font-size:10px; font-weight:600; padding:2px 8px; border-radius:var(--radius-full); background:var(--bg-sunken); border:1px solid var(--border-hairline); color:var(--text-secondary); }
+  .lr-chip svg { width:10px; height:10px; stroke-width:2.2; flex:none; }
+  .lr-r { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+  .lr-pct { font-size:17px; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; line-height:1.15; display:block; direction:ltr; unicode-bidi:isolate; }
+  .dv { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* chart card — dataviz tokens + the always-present data table (G58/G59) */
+  .chartcard { margin-top:14px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px 13px 11px; }
+  .chart-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .chart-cap { font-size:11px; color:var(--text-tertiary); margin-top:2px; display:block; }
+  .chartwrap { margin-top:8px; }
+  svg.chart { width:100%; height:auto; display:block; }
+  .chart .grid { stroke:var(--dv-gridline); stroke-width:1; }
+  .chart .axtxt { fill:var(--dv-axis); font-size:9px; font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+  .chart .axtxt.ur, .chart g.ur .axtxt { font-family:'Noto Nastaliq Urdu',serif; direction:rtl; }
+  .chart .bar { fill:var(--dv-series-1); }
+  .chart .barnow { fill:var(--dv-series-1); stroke:var(--dv-axis); stroke-width:1; stroke-dasharray:2 2; }
+  .chart .barlab { fill:var(--text-primary); font-size:9.5px; font-weight:700; font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; }
+  .chartfoot { font-size:10.5px; color:var(--text-tertiary); margin-top:7px; display:block; }
+
+  details.disc { margin-top:10px; border-top:1px solid var(--border-hairline); padding-top:4px; }
+  details.disc > summary { min-height:44px; display:flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--int-primary); cursor:pointer; list-style:none; }
+  details.disc > summary::-webkit-details-marker { display:none; }
+  details.disc > summary .chev { width:13px; height:13px; flex:none; transition:transform .18s ease; }
+  details.disc[open] > summary .chev { transform:rotate(90deg); }
+  .tblwrap { overflow-x:auto; padding-bottom:4px; }
+  .tbl { width:100%; border-collapse:collapse; }
+  .tbl caption { text-align:start; font-size:11px; color:var(--text-tertiary); padding:0 0 7px; line-height:1.45; }
+  .tbl th, .tbl td { text-align:start; padding:6px 8px; font-size:11.5px; border-top:1px solid var(--border-hairline); color:var(--text-primary); }
+  .tbl thead th { background:var(--bg-sunken); color:var(--text-secondary); font-weight:600; font-size:10px; border-top:none; text-transform:uppercase; letter-spacing:.03em; }
+  .tbl td.numc, .tbl th.numc { text-align:end; font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate; }
+
+  /* "what guests mention" — themes + the guests' own words, never an average */
+  .noscore { display:flex; gap:8px; align-items:flex-start; margin-top:12px; padding:11px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .noscore svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:1px; stroke-width:1.9; }
+  .noscore span { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .ms-h { font-size:12px; font-weight:600; color:var(--text-secondary); margin-top:14px; display:block; }
+  .mlist { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .mrow { padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); display:flex; flex-direction:column; gap:5px; }
+  .m-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .m-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .m-cnt { font-size:11px; color:var(--text-secondary); font-variant-numeric:tabular-nums; white-space:nowrap; display:block; }
+  .m-q { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; font-style:italic; }
+  .m-who { font-size:10.5px; color:var(--text-tertiary); display:block; }
+  .mrow.look { background:var(--bg-raised); }
+
+  /* improvement tasks — actionable rows, each naming its own next screen */
+  .tasks { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .task { display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-hairline); }
+  .tk-ic { flex:none; width:30px; height:30px; border-radius:var(--radius-md); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; }
+  .tk-ic svg { width:16px; height:16px; stroke-width:1.9; }
+  .tk-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .tk-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .tk-d { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .tk-a { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; min-height:44px; font-size:12px; font-weight:600; color:var(--int-primary); text-decoration:none; }
+  .tk-a svg { width:13px; height:13px; flex:none; stroke-width:2.2; }
+
+  /* seasonality — a calendar fact, no ornament, no invented demand figure */
+  .seas { margin-top:14px; padding:13px 13px 11px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .seas-h { display:flex; align-items:center; gap:8px; }
+  .seas-h svg { width:16px; height:16px; color:var(--text-secondary); flex:none; stroke-width:1.8; }
+  .seas-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .seas-dates { display:flex; flex-direction:column; gap:4px; margin-top:9px; }
+  .sd-row { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .sd-n { font-size:11.5px; color:var(--text-primary); font-weight:600; display:block; }
+  .sd-g { font-size:11px; color:var(--text-secondary); font-variant-numeric:tabular-nums; text-align:end; display:block; }
+  .seas-b { font-size:11.5px; color:var(--text-secondary); line-height:1.5; margin-top:9px; display:block; }
+  .seas-foot { font-size:10.5px; color:var(--text-tertiary); margin-top:7px; display:block; }
+  .seas-a { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:12px; font-weight:600; color:var(--int-primary); text-decoration:none; margin-top:2px; }
+  .seas-a svg { width:13px; height:13px; flex:none; stroke-width:2.2; }
+
+  /* footer link row */
+  .linkrow { display:flex; align-items:center; gap:10px; min-height:52px; margin-top:12px; padding:10px 12px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); text-decoration:none; }
+  .lk-ic { flex:none; color:var(--text-secondary); display:inline-flex; }
+  .lk-ic svg { width:17px; height:17px; stroke-width:1.8; }
+  .lk-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lk-t { font-size:12.5px; font-weight:600; color:var(--text-primary); display:block; }
+  .lk-s { font-size:11px; color:var(--text-secondary); display:block; }
+  .lk-chev { flex:none; color:var(--text-tertiary); display:inline-flex; }
+  .lk-chev svg { width:15px; height:15px; stroke-width:2; }
+
+  .spacer-fill { flex:1; min-height:8px; }
+
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Performance / insights (HA-066)</h1>
+    <p>The host's Insights surface at <code>/host/insights</code> (the <code>HA-046</code> host-nav tab), built entirely from <b>Aqib's own numbers</b> — there is no benchmark, no "hosts like you", no market percentile anywhere on this screen. Occupancy is stated as a fraction the host can check (<span class="num">54</span> of <span class="num">69</span> nights, <span class="num">1</span>–<span class="num">23</span> July <span class="num">2026</span>), the headline figure and its delta are carried verbatim from shipped <code>ha-046</code> (<span class="num">78%</span>, <span class="num">+6%</span> vs last month), and the six-month trend renders from the <code>dataviz</code> tokens with <b>every bar directly labelled</b> and an <b>always-present <code>&lt;table&gt;</code></b> beneath it (G58/G59 — never chart-only), exactly as <code>ha-055</code> established. The review summary deliberately shows <b>no aggregate score</b>: <code>ha-062</code> ships no host rating, so this surface counts <b>themes across the reviews Aqib actually received</b> and quotes the guests' own words instead of inventing a star average. Improvement tasks are real rows that each name their destination — photos → <code>HA-027</code>, reply → <code>HA-077</code>, calendar → <code>HA-032</code>. The Eid/Ramadan note is <b>practical seasonality only</b> (DESIGN §10.5/§10.2): the dates are a calendar fact, the pricing sentence is reused verbatim from shipped <code>ha-044</code>, and there is no demand statistic and no festive skin. Host chrome, no stepper. Panels: overview (light) · mentions + tasks + seasonal note (light) · overview (dark) · اردو / RTL ×<span class="num">2</span>.</p>
+    <div class="toggle" role="presentation"><span class="on">Overview · light</span><span>Mentions · tasks · seasonal</span><span>Overview · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — A · OVERVIEW ============================ -->
+    <section class="panel" aria-label="Light theme — the occupancy overview with the six-month trend and its data table">
+      <div class="panel-tag">Light — occupancy overview · trend chart · chart data table</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">A · Overview — the host's own numbers, no benchmark</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Performance</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Performance</h2>
+              <p class="lead">Your own numbers for Gulberg <span class="num">2</span> Residence, F-<span class="num">6</span> Studio and Cantt View Residence. Nothing here is compared to other hosts.</p>
+
+              <div class="seg" role="group" aria-label="Date range">
+                <button class="segbtn" type="button" aria-pressed="false">This month</button>
+                <button class="segbtn" type="button" aria-pressed="true">Last <span class="num">6</span> months</button>
+                <button class="segbtn" type="button" aria-pressed="false">This year</button>
+              </div>
+
+              <div class="kpihero">
+                <span class="kh-l">Occupancy · all listings</span>
+                <div class="kh-row">
+                  <span class="kh-v">78%</span>
+                  <span class="delta up">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                    <span class="dv">+6%</span> <span class="per">vs last month</span>
+                  </span>
+                </div>
+                <span class="kh-f"><span class="num">54</span> of <span class="num">69</span> nights booked · <span class="num">1</span>–<span class="num">23</span> July <span class="num">2026</span></span>
+              </div>
+
+              <div class="lrows">
+                <a class="lrow" href="/host/listings/gulberg-2-residence">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Gulberg <span class="num">2</span> Residence</span>
+                    <span class="lr-s">Lahore · <span class="num">21</span> of <span class="num">23</span> nights</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">91%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+11%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/host/listings/f6-studio">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">F-<span class="num">6</span> Studio</span>
+                    <span class="lr-s">Islamabad · <span class="num">17</span> of <span class="num">23</span> nights</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">74%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+10%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/host/listings/cantt-view-residence">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Cantt View Residence</span>
+                    <span class="lr-s">Rawalpindi Cantonment · <span class="num">16</span> of <span class="num">23</span> nights</span>
+                    <span class="lr-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Snoozed · reopens <span class="num">1</span> Aug</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">70%</span>
+                    <span class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l7 7 4-4 5 6"/><path d="M15 16h5v-5"/></svg><span class="dv">−2%</span></span>
+                  </span>
+                </a>
+              </div>
+
+              <section class="chartcard" aria-label="Occupancy trend, last six months">
+                <span class="chart-h">Occupancy, last <span class="num">6</span> months</span>
+                <span class="chart-cap">Nights booked ÷ nights available, all three listings.</span>
+                <div class="chartwrap">
+                  <svg class="chart" viewBox="0 0 268 168" role="img" aria-label="Bar chart of monthly occupancy across all three listings, February to July 2026. February 62 percent, March 58 percent, April 71 percent, May 74 percent, June 72 percent, July 78 percent so far. Every figure is printed on its bar and repeated in the data table below.">
+                    <g>
+                      <line class="grid" x1="26" y1="10" x2="262" y2="10"/>
+                      <line class="grid" x1="26" y1="70" x2="262" y2="70"/>
+                      <line class="grid" x1="26" y1="130" x2="262" y2="130"/>
+                      <text class="axtxt" x="22" y="13" text-anchor="end">100%</text>
+                      <text class="axtxt" x="22" y="73" text-anchor="end">50%</text>
+                      <text class="axtxt" x="22" y="133" text-anchor="end">0%</text>
+                    </g>
+                    <g>
+                      <rect class="bar" x="30" y="55.6" width="26" height="74.4" rx="3"/>
+                      <rect class="bar" x="69" y="60.4" width="26" height="69.6" rx="3"/>
+                      <rect class="bar" x="108" y="44.8" width="26" height="85.2" rx="3"/>
+                      <rect class="bar" x="147" y="41.2" width="26" height="88.8" rx="3"/>
+                      <rect class="bar" x="186" y="43.6" width="26" height="86.4" rx="3"/>
+                      <rect class="barnow" x="225" y="36.4" width="26" height="93.6" rx="3"/>
+                    </g>
+                    <g>
+                      <text class="barlab" x="43" y="50" text-anchor="middle">62%</text>
+                      <text class="barlab" x="82" y="54.8" text-anchor="middle">58%</text>
+                      <text class="barlab" x="121" y="39.2" text-anchor="middle">71%</text>
+                      <text class="barlab" x="160" y="35.6" text-anchor="middle">74%</text>
+                      <text class="barlab" x="199" y="38" text-anchor="middle">72%</text>
+                      <text class="barlab" x="238" y="30.8" text-anchor="middle">78%</text>
+                    </g>
+                    <g>
+                      <text class="axtxt" x="43" y="145" text-anchor="middle">Feb</text>
+                      <text class="axtxt" x="82" y="145" text-anchor="middle">Mar</text>
+                      <text class="axtxt" x="121" y="145" text-anchor="middle">Apr</text>
+                      <text class="axtxt" x="160" y="145" text-anchor="middle">May</text>
+                      <text class="axtxt" x="199" y="145" text-anchor="middle">Jun</text>
+                      <text class="axtxt" x="238" y="145" text-anchor="middle">Jul</text>
+                      <text class="axtxt" x="238" y="158" text-anchor="middle">so far</text>
+                    </g>
+                  </svg>
+                </div>
+                <span class="chartfoot">July counts <span class="num">1</span>–<span class="num">23</span> July only — the month isn't finished, so its bar is drawn open.</span>
+
+                <details class="disc" open>
+                  <summary>
+                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                    Chart data (table)
+                  </summary>
+                  <div class="tblwrap">
+                    <table class="tbl">
+                      <caption>Monthly occupancy across Gulberg 2 Residence, F-6 Studio and Cantt View Residence, February–July 2026.</caption>
+                      <thead>
+                        <tr><th scope="col">Month</th><th scope="col" class="numc">Occupancy</th><th scope="col" class="numc">Nights booked</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><th scope="row">February 2026</th><td class="numc">62%</td><td class="numc">52 of 84</td></tr>
+                        <tr><th scope="row">March 2026</th><td class="numc">58%</td><td class="numc">54 of 93</td></tr>
+                        <tr><th scope="row">April 2026</th><td class="numc">71%</td><td class="numc">64 of 90</td></tr>
+                        <tr><th scope="row">May 2026</th><td class="numc">74%</td><td class="numc">69 of 93</td></tr>
+                        <tr><th scope="row">June 2026</th><td class="numc">72%</td><td class="numc">65 of 90</td></tr>
+                        <tr><th scope="row">July 2026 (1–23 July)</th><td class="numc">78%</td><td class="numc">54 of 69</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              </section>
+
+              <a class="linkrow" href="/host/earnings">
+                <span class="lk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></span>
+                <span class="lk-b"><span class="lk-t">See what these nights earned</span><span class="lk-s">Earnings, fees and tax, itemised</span></span>
+                <span class="lk-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every number on this panel is <b>Aqib's own</b> and stated as a checkable fraction, never a percentile: <span class="num">21</span>+<span class="num">17</span>+<span class="num">16</span> = <span class="num">54</span> booked of <span class="num">23</span>×<span class="num">3</span> = <span class="num">69</span> available nights = <span class="num">78%</span> — the exact headline figure and <span class="num">+6%</span> delta already shipped on <code>ha-046</code>. There is <b>no benchmark row</b> anywhere ("hosts like you", "area average", "top 10% in Lahore") because SalamStay holds no such data and a comparison would be an invented statistic (NEVER #3). Delta chips follow <code>ha-046</code>/§14: <b>muted semantic hue plus an arrow plus a sign</b>, never a bright badge — and Cantt View's honest <b>−2%</b> is shown at exactly the same weight as the two rises. The chart uses <b>one</b> <code>dataviz</code> series with <b>every bar directly labelled</b>, so nothing is carried by color alone, the unfinished July bar is marked by a dashed outline <i>and</i> the words "so far" <i>and</i> a footnote, and the <code>Chart data (table)</code> disclosure is <code>open</code> and permanently in the DOM (G58/G59, <code>ha-055</code> grammar).</p>
+    </section>
+
+    <!-- ============================ LIGHT — B · MENTIONS · TASKS · SEASONAL ============================ -->
+    <section class="panel" aria-label="Light theme — the review summary, improvement tasks, and the Eid and Ramadan calendar note">
+      <div class="panel-tag">Light — what guests mention · tasks · Eid &amp; Ramadan dates</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">B · Further down — mentions, tasks, seasonal note</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Performance</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="bH">What guests mention</h2>
+
+              <div class="noscore">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span>This isn't a score. It counts the things guests wrote about across your <span class="num">20</span> most recent reviews, in their words — nothing is averaged into a single number.</span>
+              </div>
+
+              <span class="ms-h">Mentioned most</span>
+              <div class="mlist">
+                <div class="mrow">
+                  <div class="m-top"><span class="m-t">Quiet</span><span class="m-cnt"><span class="num">14</span> of <span class="num">20</span></span></div>
+                  <span class="m-q">“Quiet, spotless, and exactly as described.”</span>
+                  <span class="m-who">Fatima · Gulberg <span class="num">2</span> Residence</span>
+                </div>
+                <div class="mrow">
+                  <div class="m-top"><span class="m-t">Clean</span><span class="m-cnt"><span class="num">12</span> of <span class="num">20</span></span></div>
+                  <span class="m-q">“Simple, clean and very well located for meetings on Main Boulevard.”</span>
+                  <span class="m-who">Bilal Khan · Gulberg <span class="num">2</span> Residence</span>
+                </div>
+                <div class="mrow">
+                  <div class="m-top"><span class="m-t">Backup power matched the listing</span><span class="m-cnt"><span class="num">6</span> of <span class="num">20</span></span></div>
+                  <span class="m-q">“The generator covered the evening load-shedding hours exactly as the listing said.”</span>
+                  <span class="m-who">Ali Raza · Cantt View Residence</span>
+                </div>
+              </div>
+
+              <span class="ms-h">Worth a look</span>
+              <div class="mlist">
+                <div class="mrow look">
+                  <div class="m-top"><span class="m-t">Water pressure</span><span class="m-cnt"><span class="num">3</span> of <span class="num">20</span></span></div>
+                  <span class="m-q">“Water pressure upstairs was weak one morning.”</span>
+                  <span class="m-who">Ali Raza · Cantt View Residence</span>
+                </div>
+                <div class="mrow look">
+                  <div class="m-top"><span class="m-t">Evening parking</span><span class="m-cnt"><span class="num">2</span> of <span class="num">20</span></span></div>
+                  <span class="m-q">“Street parking filled up in the evenings, so plan ahead.”</span>
+                  <span class="m-who">Sana Malik · Gulberg <span class="num">2</span> Residence</span>
+                </div>
+              </div>
+
+              <a class="linkrow" href="/host/reviews">
+                <span class="lk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                <span class="lk-b"><span class="lk-t">Read every review in full</span><span class="lk-s">Nothing is summarised away</span></span>
+                <span class="lk-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+              </a>
+
+              <span class="ms-h">Things you could do next</span>
+              <div class="tasks">
+                <div class="task">
+                  <span class="tk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg></span>
+                  <span class="tk-b">
+                    <span class="tk-t">Add photos to F-<span class="num">6</span> Studio</span>
+                    <span class="tk-d">It has <span class="num">6</span> photos; your other two homes show <span class="num">14</span> and <span class="num">11</span>. There's no photo of the kitchen or the bathroom yet.</span>
+                    <a class="tk-a" href="/host/listings/f6-studio/photos">Add photos<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                  </span>
+                </div>
+                <div class="task">
+                  <span class="tk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                  <span class="tk-b">
+                    <span class="tk-t">Reply to Ali Raza's review</span>
+                    <span class="tk-d">One review is still waiting on your public reply. You can reply publicly for <span class="num">14</span> days.</span>
+                    <a class="tk-a" href="/host/reviews/ali-raza-canttview-jul2026/respond">Write a reply<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                  </span>
+                </div>
+                <div class="task">
+                  <span class="tk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <span class="tk-b">
+                    <span class="tk-t">Open your calendar past <span class="num">30</span> September</span>
+                    <span class="tk-d">Gulberg <span class="num">2</span> Residence has no availability set after <span class="num">30</span> September <span class="num">2026</span>, so it won't appear for October dates.</span>
+                    <a class="tk-a" href="/host/listings/gulberg-2-residence/availability">Open calendar<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+                  </span>
+                </div>
+              </div>
+
+              <div class="seas">
+                <div class="seas-h">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                  <span class="seas-t">Ramadan and Eid are next on the calendar</span>
+                </div>
+                <div class="seas-dates">
+                  <div class="sd-row"><span class="sd-n">Ramadan</span><span class="sd-g">Approx <span class="num">8 February</span> – <span class="num">9 March 2027</span></span></div>
+                  <div class="sd-row"><span class="sd-n">Eid al-Fitr</span><span class="sd-g">Approx <span class="num">10</span>–<span class="num">13 March 2027</span></span></div>
+                  <div class="sd-row"><span class="sd-n">Eid al-Adha</span><span class="sd-g">Approx <span class="num">16</span>–<span class="num">19 May 2027</span></span></div>
+                </div>
+                <span class="seas-b">Many hosts adjust prices for Eid travel — set yours, or leave it as your base price. Nothing changes automatically.</span>
+                <span class="seas-foot">Hijri dates are approximate and may vary by moon sighting.</span>
+                <a class="seas-a" href="/host/listings/gulberg-2-residence/seasonal-pricing">Review Eid &amp; Ramadan pricing<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note"><b>The review summary carries no aggregate score, on purpose.</b> <code>ha-062</code> ships no host rating and no scoreboard, so inventing a "<span class="num">4.8</span> average" here would fabricate a number the product does not hold. Instead the surface does the two honest things: it <b>counts themes</b> across a stated window (the host's <span class="num">20</span> most recent reviews — his own data, the same class of figure as occupancy) and it <b>quotes the guests verbatim</b>, every quote lifted from a review already shipped on <code>ha-062</code>/<code>ha-077</code>. "Worth a look" is a neutral heading, not a penalty box — the critical mentions sit in the same row shape at the same weight, and the whole section ends by sending the host to the <i>full</i> reviews rather than trusting the summary. Improvement tasks are stated as <b>facts about the host's own listings</b> with a single action each, and none of them argues from demand: "It has <span class="num">6</span> photos; your other two homes show <span class="num">14</span> and <span class="num">11</span>" is checkable, "listings with more photos get more bookings" would not be. The <span class="num">14</span>-day reply window is <code>DESIGN.md</code> §9-J's shipped figure, verbatim from <code>ha-077</code>.</p>
+      <p class="note"><b>The Eid/Ramadan note is a calendar fact and nothing more.</b> The three periods carry the <i>same</i> plain row treatment at the <i>same</i> weight (DESIGN §10.5/§10.2) on the neutral <code>bg.raised</code> surface — no religious glyph, no lantern, no gold, no brand-green cultural fill, no "festive" skin, and no <code>semantic</code> tint that would read as an alert. The Gregorian dates, the Hijri approximation footnote and the pricing sentence ("Many hosts adjust prices for Eid travel — set yours, or leave it as your base price. Nothing changes automatically.") are all reused <b>verbatim from shipped <code>ha-044</code></b>. There is deliberately no demand figure — no "bookings rise <span class="num">40%</span> over Eid", no suggested surge percentage, no "peak season" badge — because SalamStay holds no such data (NEVER #3). The screen states <i>when</i>; the host decides <i>whether</i>.</p>
+    </section>
+
+    <!-- ============================ DARK — C · OVERVIEW ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the occupancy overview with the dark dataviz palette">
+      <div class="panel-tag">Dark — occupancy overview · dark dataviz series</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Overview — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Performance</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Performance</h2>
+              <p class="lead">Your own numbers for Gulberg <span class="num">2</span> Residence, F-<span class="num">6</span> Studio and Cantt View Residence. Nothing here is compared to other hosts.</p>
+
+              <div class="seg" role="group" aria-label="Date range">
+                <button class="segbtn" type="button" aria-pressed="false">This month</button>
+                <button class="segbtn" type="button" aria-pressed="true">Last <span class="num">6</span> months</button>
+                <button class="segbtn" type="button" aria-pressed="false">This year</button>
+              </div>
+
+              <div class="kpihero">
+                <span class="kh-l">Occupancy · all listings</span>
+                <div class="kh-row">
+                  <span class="kh-v">78%</span>
+                  <span class="delta up">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                    <span class="dv">+6%</span> <span class="per">vs last month</span>
+                  </span>
+                </div>
+                <span class="kh-f"><span class="num">54</span> of <span class="num">69</span> nights booked · <span class="num">1</span>–<span class="num">23</span> July <span class="num">2026</span></span>
+              </div>
+
+              <div class="lrows">
+                <a class="lrow" href="/host/listings/gulberg-2-residence">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Gulberg <span class="num">2</span> Residence</span>
+                    <span class="lr-s">Lahore · <span class="num">21</span> of <span class="num">23</span> nights</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">91%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+11%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/host/listings/cantt-view-residence">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n">Cantt View Residence</span>
+                    <span class="lr-s">Rawalpindi Cantonment · <span class="num">16</span> of <span class="num">23</span> nights</span>
+                    <span class="lr-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>Snoozed · reopens <span class="num">1</span> Aug</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">70%</span>
+                    <span class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l7 7 4-4 5 6"/><path d="M15 16h5v-5"/></svg><span class="dv">−2%</span></span>
+                  </span>
+                </a>
+              </div>
+
+              <section class="chartcard" aria-label="Occupancy trend, last six months, dark theme">
+                <span class="chart-h">Occupancy, last <span class="num">6</span> months</span>
+                <span class="chart-cap">Nights booked ÷ nights available, all three listings.</span>
+                <div class="chartwrap">
+                  <svg class="chart" viewBox="0 0 268 168" role="img" aria-label="Bar chart of monthly occupancy across all three listings, February to July 2026, dark theme. Same figures as the data table below.">
+                    <g>
+                      <line class="grid" x1="26" y1="10" x2="262" y2="10"/>
+                      <line class="grid" x1="26" y1="70" x2="262" y2="70"/>
+                      <line class="grid" x1="26" y1="130" x2="262" y2="130"/>
+                      <text class="axtxt" x="22" y="13" text-anchor="end">100%</text>
+                      <text class="axtxt" x="22" y="73" text-anchor="end">50%</text>
+                      <text class="axtxt" x="22" y="133" text-anchor="end">0%</text>
+                    </g>
+                    <g>
+                      <rect class="bar" x="30" y="55.6" width="26" height="74.4" rx="3"/>
+                      <rect class="bar" x="69" y="60.4" width="26" height="69.6" rx="3"/>
+                      <rect class="bar" x="108" y="44.8" width="26" height="85.2" rx="3"/>
+                      <rect class="bar" x="147" y="41.2" width="26" height="88.8" rx="3"/>
+                      <rect class="bar" x="186" y="43.6" width="26" height="86.4" rx="3"/>
+                      <rect class="barnow" x="225" y="36.4" width="26" height="93.6" rx="3"/>
+                    </g>
+                    <g>
+                      <text class="barlab" x="43" y="50" text-anchor="middle">62%</text>
+                      <text class="barlab" x="82" y="54.8" text-anchor="middle">58%</text>
+                      <text class="barlab" x="121" y="39.2" text-anchor="middle">71%</text>
+                      <text class="barlab" x="160" y="35.6" text-anchor="middle">74%</text>
+                      <text class="barlab" x="199" y="38" text-anchor="middle">72%</text>
+                      <text class="barlab" x="238" y="30.8" text-anchor="middle">78%</text>
+                    </g>
+                    <g>
+                      <text class="axtxt" x="43" y="145" text-anchor="middle">Feb</text>
+                      <text class="axtxt" x="82" y="145" text-anchor="middle">Mar</text>
+                      <text class="axtxt" x="121" y="145" text-anchor="middle">Apr</text>
+                      <text class="axtxt" x="160" y="145" text-anchor="middle">May</text>
+                      <text class="axtxt" x="199" y="145" text-anchor="middle">Jun</text>
+                      <text class="axtxt" x="238" y="145" text-anchor="middle">Jul</text>
+                      <text class="axtxt" x="238" y="158" text-anchor="middle">so far</text>
+                    </g>
+                  </svg>
+                </div>
+                <span class="chartfoot">July counts <span class="num">1</span>–<span class="num">23</span> July only — the month isn't finished, so its bar is drawn open.</span>
+
+                <details class="disc" open>
+                  <summary>
+                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                    Chart data (table)
+                  </summary>
+                  <div class="tblwrap">
+                    <table class="tbl">
+                      <caption>Monthly occupancy across all three listings, February–July 2026.</caption>
+                      <thead>
+                        <tr><th scope="col">Month</th><th scope="col" class="numc">Occupancy</th><th scope="col" class="numc">Nights booked</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><th scope="row">February 2026</th><td class="numc">62%</td><td class="numc">52 of 84</td></tr>
+                        <tr><th scope="row">March 2026</th><td class="numc">58%</td><td class="numc">54 of 93</td></tr>
+                        <tr><th scope="row">April 2026</th><td class="numc">71%</td><td class="numc">64 of 90</td></tr>
+                        <tr><th scope="row">May 2026</th><td class="numc">74%</td><td class="numc">69 of 93</td></tr>
+                        <tr><th scope="row">June 2026</th><td class="numc">72%</td><td class="numc">65 of 90</td></tr>
+                        <tr><th scope="row">July 2026 (1–23 July)</th><td class="numc">78%</td><td class="numc">54 of 69</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              </section>
+
+              <div class="seas">
+                <div class="seas-h">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                  <span class="seas-t">Ramadan and Eid are next on the calendar</span>
+                </div>
+                <div class="seas-dates">
+                  <div class="sd-row"><span class="sd-n">Ramadan</span><span class="sd-g">Approx <span class="num">8 February</span> – <span class="num">9 March 2027</span></span></div>
+                  <div class="sd-row"><span class="sd-n">Eid al-Fitr</span><span class="sd-g">Approx <span class="num">10</span>–<span class="num">13 March 2027</span></span></div>
+                </div>
+                <span class="seas-b">Many hosts adjust prices for Eid travel — set yours, or leave it as your base price. Nothing changes automatically.</span>
+                <span class="seas-foot">Hijri dates are approximate and may vary by moon sighting.</span>
+                <a class="seas-a" href="/host/listings/gulberg-2-residence/seasonal-pricing">Review Eid &amp; Ramadan pricing<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark re-resolves every role (§1.5) and swaps the <code>dataviz</code> series, axis and gridline to their dark siblings — <code>--dv-series-1</code> moves from <code>#3B8371</code> to <code>#579D8B</code>, authored to stay AA-legible on the <code>#0E1211</code> canvas. The direct bar labels use <code>--text-primary</code>, not the series color, so they stay readable in both themes and the chart never depends on the fill being distinguishable. Figures are identical to the light panel — a theme change is never allowed to change a number. The seasonal card keeps the same neutral <code>bg.raised</code> surface in dark: it does not become a warning, and it does not acquire an accent.</p>
+    </section>
+
+    <!-- ============================ RTL / اردو ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the insights overview and the seasonal note">
+      <div class="panel-tag">RTL · اردو — "کارکردگی", mirrored (chart x-axis reversed, y-axis at the reading start)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — overview, chart mirrored</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur">کارکردگی</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="ur" id="dH">کارکردگی</h2>
+              <p class="lead ur">یہ آپ کے اپنے اعداد ہیں — گلبرگ <span class="num">2</span> ریزیڈنس، F-<span class="num">6</span> اسٹوڈیو اور کینٹ ویو ریزیڈنس۔ کسی دوسرے میزبان سے موازنہ نہیں کیا جاتا۔</p>
+
+              <div class="seg" role="group" aria-label="مدت">
+                <button class="segbtn ur" type="button" aria-pressed="false">یہ مہینہ</button>
+                <button class="segbtn ur" type="button" aria-pressed="true">پچھلے <span class="num">6</span> ماہ</button>
+                <button class="segbtn ur" type="button" aria-pressed="false">یہ سال</button>
+              </div>
+
+              <div class="kpihero">
+                <span class="kh-l ur">قیام کی شرح · تمام لسٹنگز</span>
+                <div class="kh-row">
+                  <span class="kh-v">78%</span>
+                  <span class="delta up">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg>
+                    <span class="dv">+6%</span> <span class="per ur">پچھلے ماہ کے مقابلے</span>
+                  </span>
+                </div>
+                <span class="kh-f ur"><span class="num">69</span> میں سے <span class="num">54</span> راتیں بک ہوئیں · <span class="num">1</span>–<span class="num">23</span> جولائی <span class="num">2026</span></span>
+              </div>
+
+              <div class="lrows">
+                <a class="lrow" href="/ur/host/listings/gulberg-2-residence">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n ur">گلبرگ <span class="num">2</span> ریزیڈنس</span>
+                    <span class="lr-s ur">لاہور · <span class="num">23</span> میں سے <span class="num">21</span> راتیں</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">91%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+11%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/ur/host/listings/f6-studio">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n ur">F-<span class="num">6</span> اسٹوڈیو</span>
+                    <span class="lr-s ur">اسلام آباد · <span class="num">23</span> میں سے <span class="num">17</span> راتیں</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">74%</span>
+                    <span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l7-7 4 4 5-6"/><path d="M15 8h5v5"/></svg><span class="dv">+10%</span></span>
+                  </span>
+                </a>
+                <a class="lrow" href="/ur/host/listings/cantt-view-residence">
+                  <span class="lr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/></svg></span>
+                  <span class="lr-b">
+                    <span class="lr-n ur">کینٹ ویو ریزیڈنس</span>
+                    <span class="lr-s ur">راولپنڈی کینٹ · <span class="num">23</span> میں سے <span class="num">16</span> راتیں</span>
+                    <span class="lr-chip ur"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8v8M15 8v8"/></svg>عارضی طور پر بند · <span class="num">1</span> اگست کو دوبارہ</span>
+                  </span>
+                  <span class="lr-r">
+                    <span class="lr-pct">70%</span>
+                    <span class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l7 7 4-4 5 6"/><path d="M15 16h5v-5"/></svg><span class="dv">−2%</span></span>
+                  </span>
+                </a>
+              </div>
+
+              <section class="chartcard" aria-label="قیام کی شرح کا رجحان">
+                <span class="chart-h ur">قیام کی شرح — پچھلے <span class="num">6</span> ماہ</span>
+                <span class="chart-cap ur">بک شدہ راتیں ÷ دستیاب راتیں، تینوں لسٹنگز۔</span>
+                <div class="chartwrap">
+                  <!-- RTL: months reversed (February at the reading start = right), y-axis moves right -->
+                  <svg class="chart" viewBox="0 0 268 168" role="img" aria-label="ماہانہ قیام کی شرح کا بار چارٹ، فروری تا جولائی 2026۔ فروری 62 فیصد، مارچ 58 فیصد، اپریل 71 فیصد، مئی 74 فیصد، جون 72 فیصد، جولائی اب تک 78 فیصد۔ تمام اعداد نیچے جدول میں موجود ہیں۔">
+                    <g>
+                      <line class="grid" x1="6" y1="10" x2="242" y2="10"/>
+                      <line class="grid" x1="6" y1="70" x2="242" y2="70"/>
+                      <line class="grid" x1="6" y1="130" x2="242" y2="130"/>
+                      <text class="axtxt" x="246" y="13" text-anchor="start">100%</text>
+                      <text class="axtxt" x="246" y="73" text-anchor="start">50%</text>
+                      <text class="axtxt" x="246" y="133" text-anchor="start">0%</text>
+                    </g>
+                    <g>
+                      <rect class="barnow" x="10" y="36.4" width="26" height="93.6" rx="3"/>
+                      <rect class="bar" x="49" y="43.6" width="26" height="86.4" rx="3"/>
+                      <rect class="bar" x="88" y="41.2" width="26" height="88.8" rx="3"/>
+                      <rect class="bar" x="127" y="44.8" width="26" height="85.2" rx="3"/>
+                      <rect class="bar" x="166" y="60.4" width="26" height="69.6" rx="3"/>
+                      <rect class="bar" x="205" y="55.6" width="26" height="74.4" rx="3"/>
+                    </g>
+                    <g>
+                      <text class="barlab" x="23" y="30.8" text-anchor="middle">78%</text>
+                      <text class="barlab" x="62" y="38" text-anchor="middle">72%</text>
+                      <text class="barlab" x="101" y="35.6" text-anchor="middle">74%</text>
+                      <text class="barlab" x="140" y="39.2" text-anchor="middle">71%</text>
+                      <text class="barlab" x="179" y="54.8" text-anchor="middle">58%</text>
+                      <text class="barlab" x="218" y="50" text-anchor="middle">62%</text>
+                    </g>
+                    <g class="ur">
+                      <text class="axtxt" x="23" y="145" text-anchor="middle">جولائی</text>
+                      <text class="axtxt" x="62" y="145" text-anchor="middle">جون</text>
+                      <text class="axtxt" x="101" y="145" text-anchor="middle">مئی</text>
+                      <text class="axtxt" x="140" y="145" text-anchor="middle">اپریل</text>
+                      <text class="axtxt" x="179" y="145" text-anchor="middle">مارچ</text>
+                      <text class="axtxt" x="218" y="145" text-anchor="middle">فروری</text>
+                      <text class="axtxt" x="23" y="160" text-anchor="middle">اب تک</text>
+                    </g>
+                  </svg>
+                </div>
+                <span class="chartfoot ur">جولائی میں صرف <span class="num">1</span>–<span class="num">23</span> جولائی شامل ہیں — مہینہ مکمل نہیں، اس لیے اس کا بار کھلا کھینچا گیا ہے۔</span>
+
+                <details class="disc" open>
+                  <summary class="ur">
+                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                    چارٹ کا ڈیٹا (جدول)
+                  </summary>
+                  <div class="tblwrap">
+                    <table class="tbl">
+                      <caption class="ur">تینوں لسٹنگز کی ماہانہ قیام کی شرح، فروری–جولائی <span class="num">2026</span>۔</caption>
+                      <thead>
+                        <tr><th scope="col" class="ur">ماہ</th><th scope="col" class="numc ur">شرح</th><th scope="col" class="numc ur">بک شدہ راتیں</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><th scope="row" class="ur">فروری <span class="num">2026</span></th><td class="numc">62%</td><td class="numc">52 / 84</td></tr>
+                        <tr><th scope="row" class="ur">مارچ <span class="num">2026</span></th><td class="numc">58%</td><td class="numc">54 / 93</td></tr>
+                        <tr><th scope="row" class="ur">اپریل <span class="num">2026</span></th><td class="numc">71%</td><td class="numc">64 / 90</td></tr>
+                        <tr><th scope="row" class="ur">مئی <span class="num">2026</span></th><td class="numc">74%</td><td class="numc">69 / 93</td></tr>
+                        <tr><th scope="row" class="ur">جون <span class="num">2026</span></th><td class="numc">72%</td><td class="numc">65 / 90</td></tr>
+                        <tr><th scope="row" class="ur">جولائی <span class="num">2026</span></th><td class="numc">78%</td><td class="numc">54 / 69</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              </section>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — mentions, tasks, seasonal note</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="eH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur">کارکردگی</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <h2 class="ur" id="eH">مہمان کن باتوں کا ذکر کرتے ہیں</h2>
+
+              <div class="noscore">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                <span class="ur">یہ کوئی اسکور نہیں۔ آپ کے <span class="num">20</span> تازہ ترین جائزوں میں مہمانوں نے جن باتوں کا ذکر کیا، انہی کو ان کے اپنے الفاظ میں گنا گیا ہے — کسی چیز کا اوسط نہیں نکالا جاتا۔</span>
+              </div>
+
+              <span class="ms-h ur">سب سے زیادہ ذکر</span>
+              <div class="mlist">
+                <div class="mrow">
+                  <div class="m-top"><span class="m-t ur">پرسکون</span><span class="m-cnt ur"><span class="num">20</span> میں سے <span class="num">14</span></span></div>
+                  <span class="m-q ur">”پرسکون، صاف ستھرا، اور بالکل تفصیل کے مطابق۔“</span>
+                  <span class="m-who ur">فاطمہ · گلبرگ <span class="num">2</span> ریزیڈنس</span>
+                </div>
+                <div class="mrow">
+                  <div class="m-top"><span class="m-t ur">بیک اپ بجلی لسٹنگ کے مطابق</span><span class="m-cnt ur"><span class="num">20</span> میں سے <span class="num">6</span></span></div>
+                  <span class="m-q ur">”جنریٹر نے شام کی لوڈ شیڈنگ کے اوقات بالکل ویسے ہی پورے کیے جیسے لسٹنگ میں لکھا تھا۔“</span>
+                  <span class="m-who ur">علی رضا · کینٹ ویو ریزیڈنس</span>
+                </div>
+              </div>
+
+              <span class="ms-h ur">دیکھنے کے قابل</span>
+              <div class="mlist">
+                <div class="mrow look">
+                  <div class="m-top"><span class="m-t ur">پانی کا پریشر</span><span class="m-cnt ur"><span class="num">20</span> میں سے <span class="num">3</span></span></div>
+                  <span class="m-q ur">”ایک صبح اوپر والی منزل پر پانی کا پریشر کم تھا۔“</span>
+                  <span class="m-who ur">علی رضا · کینٹ ویو ریزیڈنس</span>
+                </div>
+              </div>
+
+              <a class="linkrow" href="/ur/host/reviews">
+                <span class="lk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                <span class="lk-b"><span class="lk-t ur">ہر جائزہ مکمل پڑھیں</span><span class="lk-s ur">کچھ بھی چھپایا نہیں جاتا</span></span>
+                <span class="lk-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+              </a>
+
+              <span class="ms-h ur">آگے آپ کیا کر سکتے ہیں</span>
+              <div class="tasks">
+                <div class="task">
+                  <span class="tk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg></span>
+                  <span class="tk-b">
+                    <span class="tk-t ur">F-<span class="num">6</span> اسٹوڈیو میں تصاویر شامل کریں</span>
+                    <span class="tk-d ur">اس میں <span class="num">6</span> تصاویر ہیں؛ آپ کے دوسرے دو گھروں میں <span class="num">14</span> اور <span class="num">11</span> ہیں۔ باورچی خانے اور غسل خانے کی تصویر ابھی نہیں۔</span>
+                    <a class="tk-a ur" href="/ur/host/listings/f6-studio/photos">تصاویر شامل کریں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+                  </span>
+                </div>
+                <div class="task">
+                  <span class="tk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg></span>
+                  <span class="tk-b">
+                    <span class="tk-t ur">علی رضا کے جائزے کا جواب دیں</span>
+                    <span class="tk-d ur">ایک جائزہ آپ کے عوامی جواب کا منتظر ہے۔ آپ <span class="num">14</span> دن تک عوامی جواب دے سکتے ہیں۔</span>
+                    <a class="tk-a ur" href="/ur/host/reviews/ali-raza-canttview-jul2026/respond">جواب لکھیں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+                  </span>
+                </div>
+                <div class="task">
+                  <span class="tk-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+                  <span class="tk-b">
+                    <span class="tk-t ur"><span class="num">30</span> ستمبر کے بعد کا کیلنڈر کھولیں</span>
+                    <span class="tk-d ur">گلبرگ <span class="num">2</span> ریزیڈنس میں <span class="num">30</span> ستمبر <span class="num">2026</span> کے بعد کوئی دستیابی مقرر نہیں، اس لیے وہ اکتوبر کی تاریخوں میں نظر نہیں آئے گی۔</span>
+                    <a class="tk-a ur" href="/ur/host/listings/gulberg-2-residence/availability">کیلنڈر کھولیں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+                  </span>
+                </div>
+              </div>
+
+              <div class="seas">
+                <div class="seas-h">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+                  <span class="seas-t ur">کیلنڈر پر اگلی تاریخیں رمضان اور عید ہیں</span>
+                </div>
+                <div class="seas-dates">
+                  <div class="sd-row"><span class="sd-n ur">رمضان</span><span class="sd-g ur">تقریباً <span class="num">8 فروری</span> – <span class="num">9 مارچ 2027</span></span></div>
+                  <div class="sd-row"><span class="sd-n ur">عید الفطر</span><span class="sd-g ur">تقریباً <span class="num">10</span>–<span class="num">13 مارچ 2027</span></span></div>
+                  <div class="sd-row"><span class="sd-n ur">عید الاضحیٰ</span><span class="sd-g ur">تقریباً <span class="num">16</span>–<span class="num">19 مئی 2027</span></span></div>
+                </div>
+                <span class="seas-b ur">بہت سے میزبان عید کے سفر کے لیے قیمتیں تبدیل کرتے ہیں — آپ اپنی قیمت مقرر کریں، یا بنیادی قیمت رہنے دیں۔ کچھ بھی خودبخود تبدیل نہیں ہوتا۔</span>
+                <span class="seas-foot ur">ہجری تاریخیں تخمینی ہیں اور رویتِ ہلال سے مختلف ہو سکتی ہیں۔</span>
+                <a class="seas-a ur" href="/ur/host/listings/gulberg-2-residence/seasonal-pricing">عید و رمضان کی قیمتیں دیکھیں<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></a>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end (§11): the back chevron and every row chevron flip to point the way Urdu reads, the KPI tile and listing rows flow right-to-left, and the <b>chart reverses its x-axis</b> so February sits at the reading start (right) with the <b>y-axis moved to the right edge</b> — <code>ha-055</code>'s shipped RTL chart rule. Digits are <b>never mirrored and never Eastern Arabic-Indic</b> (Pass #31): every run — <span class="num">54</span> of <span class="num">69</span>, the percentages, <span class="num">1</span>–<span class="num">23</span> July, the <span class="num">20</span>-review window, the <span class="num">14</span>-day reply window and the <span class="num">2</span> in "گلبرگ <span class="num">2</span> ریزیڈنس" — sits inside <code>.num</code> with <code>direction:ltr; unicode-bidi:isolate</code>, and each <code>aria-label</code> states the same figures the eye reads. The Urdu chart <code>aria-label</code> spells all six values, so a screen-reader user is never sent to look at a picture. The seasonal card survives translation with <b>no ornament added</b> — the three periods stay identical plain rows and the moon-sighting footnote is <code>ha-044</code>'s verbatim Urdu line.</p>
+    </section>
+
+  </main>
+</body>
+</html>

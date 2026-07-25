@@ -1,0 +1,503 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — GA-004 Sign up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3; --int-link:#2E7D6A;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --warning-fg:#8A5A16; --error-fg:#A8412F; --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-full:9999px;
+    --brand-300:#82BCAB; --brand-400:#579D8B; --brand-600:#2E7D6A; --brand-700:#256757; --brand-800:#1E5A4C; --brand-900:#1A473D;
+    --slate-400:#AEB4B9; --slate-500:#828A90; --slate-600:#5F676D; --slate-700:#454C51; --slate-800:#2B3134;
+    --sa-stripe:rgba(46,125,106,.10);
+    --skeleton-base:var(--bg-sunken); --skeleton-shine:var(--bg-raised);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F; --int-link:#579D8B;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --warning-fg:#E0B36B; --error-fg:#E39385; --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --shadow-card:var(--el-card);
+    --sa-stripe:rgba(87,157,139,.16);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 24px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .head .legend span { font-size:11.5px; font-weight:600; color:#5F676D; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:5px 12px; }
+
+  main { max-width:1240px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .panel { background:var(--bg-canvas); border-radius:24px; padding:24px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:18px; }
+  .panel-tag b { color:var(--int-primary); font-weight:700; }
+
+  /* Phone frame */
+  .phone { max-width:360px; margin:0 auto; border:1px solid var(--border-hairline); border-radius:26px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--el-subtle); display:flex; flex-direction:column; min-height:720px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.h-title,.h-sub,.flabel,.fhint,.ferr,.sbtn,.divider,.banner,.qlink,.primary,.legal,.altline,.brandmark,.notice-tx h4,.notice-tx p,.count) { font-family:'Noto Nastaliq Urdu',serif; }
+  .phone.rtl .h-title { line-height:1.8; }
+
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sa-top span, .sa-bottom span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:20px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; }
+
+  .statusbar { display:flex; align-items:center; justify-content:space-between; padding:2px 18px 0; height:22px; flex:none; }
+  .statusbar .time { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .statusbar .sysic { display:flex; gap:5px; align-items:center; }
+  .statusbar .sysic svg { width:15px; height:15px; color:var(--text-primary); }
+
+  .authbar { display:flex; align-items:center; justify-content:space-between; padding:4px 8px 2px; flex:none; }
+  .brandmark { font-size:12px; font-weight:700; letter-spacing:.01em; color:var(--text-secondary); }
+  .brandmark i { color:var(--int-primary); font-style:normal; }
+  .icon-btn { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .icon-btn svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.9; }
+  .ib-spacer { width:44px; height:44px; flex:none; }
+  .phone.rtl .authbar .icon-btn svg { transform:scaleX(-1); }
+
+  .auth { padding:6px 20px 8px; flex:1 1 auto; }
+  .h-title { font-size:25px; font-weight:700; letter-spacing:-0.01em; color:var(--text-primary); margin-top:6px; }
+  .h-sub { font-size:14px; color:var(--text-secondary); margin-top:7px; line-height:1.5; }
+
+  .social { display:flex; flex-direction:column; gap:10px; margin-top:22px; }
+  .sbtn { display:flex; align-items:center; justify-content:center; gap:10px; min-height:48px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-default); font-size:15px; font-weight:600; color:var(--text-primary); }
+  .sbtn:hover { background:var(--bg-raised); }
+  .sbtn svg { width:19px; height:19px; color:var(--text-primary); }
+
+  .divider { display:flex; align-items:center; gap:12px; margin:20px 2px 4px; color:var(--text-tertiary); font-size:12px; font-weight:600; }
+  .divider::before,.divider::after { content:""; height:1px; flex:1; background:var(--border-hairline); }
+
+  .field { margin-top:18px; }
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:8px; }
+  .fwrap { display:flex; align-items:center; gap:11px; height:52px; padding:0 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); }
+  .fwrap.focus { border-color:var(--int-primary); background:var(--bg-canvas); box-shadow:0 0 0 3px var(--sa-stripe); }
+  .fwrap.err { border-color:var(--error-fg); background:var(--bg-canvas); }
+  .prefix { font-size:15px; font-weight:600; color:var(--text-secondary); padding-right:11px; border-right:1px solid var(--border-default); }
+  .fval { font-size:16px; color:var(--text-primary); letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+  .fval.ph { color:var(--text-tertiary); }
+  .caret { display:inline-block; width:1.5px; height:22px; background:var(--int-primary); vertical-align:-4px; margin-left:1px; }
+  .fhint { font-size:12px; color:var(--text-secondary); margin-top:8px; line-height:1.45; }
+  .ferr { display:flex; align-items:flex-start; gap:6px; font-size:12px; color:var(--error-fg); font-weight:500; margin-top:8px; line-height:1.45; }
+  .ferr svg { width:14px; height:14px; flex:none; margin-top:1px; color:var(--error-fg); }
+
+  .banner { display:flex; gap:10px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); font-size:12.5px; line-height:1.5; margin-top:16px; }
+  .banner svg { width:17px; height:17px; flex:none; margin-top:1px; }
+  .banner a { text-decoration:underline; font-weight:600; }
+  .banner.info { background:var(--info-bg); border:1px solid var(--info-border); color:var(--info-fg); }
+  .banner.info a { color:var(--info-fg); }
+
+  .qlink { display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; margin-top:6px; font-size:14px; font-weight:600; color:var(--int-link); }
+  .qlink svg { width:15px; height:15px; stroke-width:2; }
+  .phone.rtl .qlink svg { transform:scaleX(-1); }
+
+  .primary { width:100%; min-height:52px; margin-top:18px; border-radius:var(--radius-md); background:var(--int-primary); color:var(--text-on-brand); font-size:16px; font-weight:600; border:none; cursor:pointer; font-family:inherit; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
+  .primary:hover { background:var(--int-primary-hover); }
+  .primary[aria-disabled="true"] { background:var(--border-default); color:var(--text-tertiary); cursor:default; }
+  .spin { width:19px; height:19px; border-radius:50%; border:2px solid var(--text-on-brand); border-top-color:transparent; animation:rot .7s linear infinite; }
+  @keyframes rot { 100% { transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation:none; } }
+
+  .legal { font-size:12px; color:var(--text-tertiary); text-align:center; margin-top:16px; line-height:1.55; }
+  .legal a { color:var(--text-secondary); text-decoration:underline; }
+
+  .altline { border-top:1px solid var(--border-hairline); text-align:center; padding:15px 20px calc(4px + env(safe-area-inset-bottom)); font-size:13.5px; color:var(--text-secondary); flex:none; }
+  .altline a { color:var(--int-link); font-weight:700; }
+
+  /* Notes panel */
+  .notes ul { display:flex; flex-direction:column; gap:11px; }
+  .notes li { position:relative; padding-left:22px; font-size:13px; color:var(--text-secondary); line-height:1.5; }
+  .notes li::before { content:""; position:absolute; left:2px; top:7px; width:8px; height:8px; border-radius:2px; background:var(--int-primary); }
+  .notes li b { color:var(--text-primary); font-weight:600; }
+  .cap { font-size:12px; color:var(--text-tertiary); margin-top:12px; padding:0 2px; line-height:1.5; }
+  .cap code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+
+  @media (max-width:1080px){ main{ grid-template-columns:1fr; } }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>GA-004 — Sign up (mobile app)</h1>
+    <p>Phone-first account creation for the onboarding flow (<code>/signup</code> → OTP <code>GA-005</code>). CNIC identity is framed just-in-time — a calm "you'll verify before you book" line, never an upfront wall — with a quiet passport affordance for non-Pakistanis. Social auth (Google / Apple) are entry affordances per GA-006; consent carries real Terms / Privacy anchors. Quiet Modern: one calm brand button, no ornament, only SEO-RULES §5 registry claims.</p>
+    <div class="legend">
+      <span>Light · default</span>
+      <span>Dark · default</span>
+      <span>Error · invalid number</span>
+      <span>Loading · submitting</span>
+      <span>RTL · اردو</span>
+      <span>≥44pt targets · safe-area annotated</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== LIGHT · DEFAULT ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — default</div>
+      <section class="phone" aria-label="Sign up — light, default">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/welcome" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Create your account</h2>
+          <p class="h-sub">Sign up with your mobile number to start booking verified stays.</p>
+
+          <div class="social">
+            <a class="sbtn" href="/auth/google" aria-label="Continue with Google">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              Continue with Google
+            </a>
+            <a class="sbtn" href="/auth/apple" aria-label="Continue with Apple">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.3-.6 2.6-.6 1.2 0 1.5.6 2.6.6 1 0 1.7-.9 2.4-1.9.5-.8.8-1.5.8-1.6-.1 0-2.2-.9-2.2-3.3zM14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z"/></svg>
+              Continue with Apple
+            </a>
+          </div>
+
+          <div class="divider"><span>or</span></div>
+
+          <div class="field" role="group" aria-labelledby="l-ph-l l-ph-h">
+            <span class="flabel" id="l-ph-l">Mobile number</span>
+            <div class="fwrap focus">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval" dir="ltr">300 123 4567</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="fhint" id="l-ph-h">We'll send a one-time code to confirm it.</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+            <span>You'll verify your CNIC before you book — not now. SalamStay runs on <a href="/legal/verification">CNIC-verified guests and hosts via NADRA Verisys</a>.</span>
+          </div>
+
+          <a class="qlink" href="/signup/passport">Not from Pakistan? Continue with a passport <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+
+          <button class="primary" type="button">Continue</button>
+
+          <p class="legal">By continuing, you agree to our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="altline">Already have an account? <a href="/login">Log in</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Order: <code>social → or → +92 number → CNIC just-in-time note → passport link → Continue → legal</code>. The CNIC line is reassurance, not a gate; the passport affordance is the quiet foreigner branch to <code>/signup/passport</code>.</p>
+    </div>
+
+    <!-- ============================== DARK · DEFAULT ============================== -->
+    <div class="panel dark">
+      <div class="panel-tag"><b>Dark</b> — default</div>
+      <section class="phone dark" aria-label="Sign up — dark, default">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/welcome" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Create your account</h2>
+          <p class="h-sub">Sign up with your mobile number to start booking verified stays.</p>
+
+          <div class="social">
+            <a class="sbtn" href="/auth/google" aria-label="Continue with Google">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              Continue with Google
+            </a>
+            <a class="sbtn" href="/auth/apple" aria-label="Continue with Apple">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.3-.6 2.6-.6 1.2 0 1.5.6 2.6.6 1 0 1.7-.9 2.4-1.9.5-.8.8-1.5.8-1.6-.1 0-2.2-.9-2.2-3.3zM14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z"/></svg>
+              Continue with Apple
+            </a>
+          </div>
+
+          <div class="divider"><span>or</span></div>
+
+          <div class="field" role="group" aria-labelledby="d-ph-l d-ph-h">
+            <span class="flabel" id="d-ph-l">Mobile number</span>
+            <div class="fwrap">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval ph" dir="ltr">3XX XXX XXXX</span>
+            </div>
+            <p class="fhint" id="d-ph-h">We'll send a one-time code to confirm it.</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+            <span>You'll verify your CNIC before you book — not now. SalamStay runs on <a href="/legal/verification">CNIC-verified guests and hosts via NADRA Verisys</a>.</span>
+          </div>
+
+          <a class="qlink" href="/signup/passport">Not from Pakistan? Continue with a passport <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+
+          <button class="primary" type="button" aria-disabled="true">Continue</button>
+
+          <p class="legal">By continuing, you agree to our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="altline">Already have an account? <a href="/login">Log in</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Empty field state: <b>Continue</b> is a disabled affordance (<code>aria-disabled</code>) until a plausible number is entered — never a dead press. On-fill it becomes the active brand button.</p>
+    </div>
+
+    <!-- ============================== ERROR · INVALID NUMBER ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — error · invalid number</div>
+      <section class="phone" aria-label="Sign up — error, invalid number">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/welcome" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Create your account</h2>
+          <p class="h-sub">Sign up with your mobile number to start booking verified stays.</p>
+
+          <div class="social">
+            <a class="sbtn" href="/auth/google" aria-label="Continue with Google">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              Continue with Google
+            </a>
+            <a class="sbtn" href="/auth/apple" aria-label="Continue with Apple">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.3-.6 2.6-.6 1.2 0 1.5.6 2.6.6 1 0 1.7-.9 2.4-1.9.5-.8.8-1.5.8-1.6-.1 0-2.2-.9-2.2-3.3zM14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z"/></svg>
+              Continue with Apple
+            </a>
+          </div>
+
+          <div class="divider"><span>or</span></div>
+
+          <div class="field" role="group" aria-labelledby="e-ph-l e-ph-e">
+            <span class="flabel" id="e-ph-l">Mobile number</span>
+            <div class="fwrap err">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval" dir="ltr">300 12</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="ferr" id="e-ph-e" role="alert">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+              Enter a valid Pakistani mobile number — 10 digits after +92, e.g. 300 1234567.
+            </p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+            <span>You'll verify your CNIC before you book — not now. SalamStay runs on <a href="/legal/verification">CNIC-verified guests and hosts via NADRA Verisys</a>.</span>
+          </div>
+
+          <a class="qlink" href="/signup/passport">Not from Pakistan? Continue with a passport <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+
+          <button class="primary" type="button" aria-disabled="true">Continue</button>
+
+          <p class="legal">By continuing, you agree to our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="altline">Already have an account? <a href="/login">Log in</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Error is never colour-only: <code>border.error</code> + a leading icon + a <code>role="alert"</code> message that says exactly what to fix (a fixable next step, no dead end). The number stays LTR bidi even under RTL.</p>
+    </div>
+
+    <!-- ============================== LOADING · SUBMITTING ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>Light</b> — loading · submitting</div>
+      <section class="phone" aria-label="Sign up — submitting">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><path d="M12 19h.01"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/welcome" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">Create your account</h2>
+          <p class="h-sub">Sign up with your mobile number to start booking verified stays.</p>
+
+          <div class="social">
+            <a class="sbtn" href="/auth/google" aria-label="Continue with Google">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              Continue with Google
+            </a>
+            <a class="sbtn" href="/auth/apple" aria-label="Continue with Apple">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.3-.6 2.6-.6 1.2 0 1.5.6 2.6.6 1 0 1.7-.9 2.4-1.9.5-.8.8-1.5.8-1.6-.1 0-2.2-.9-2.2-3.3zM14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z"/></svg>
+              Continue with Apple
+            </a>
+          </div>
+
+          <div class="divider"><span>or</span></div>
+
+          <div class="field" role="group" aria-labelledby="s-ph-l s-ph-h">
+            <span class="flabel" id="s-ph-l">Mobile number</span>
+            <div class="fwrap">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval" dir="ltr">300 123 4567</span>
+            </div>
+            <p class="fhint" id="s-ph-h">Sending your code…</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+            <span>You'll verify your CNIC before you book — not now. SalamStay runs on <a href="/legal/verification">CNIC-verified guests and hosts via NADRA Verisys</a>.</span>
+          </div>
+
+          <a class="qlink" href="/signup/passport">Not from Pakistan? Continue with a passport <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+
+          <button class="primary" type="button" aria-busy="true" aria-label="Sending your code">
+            <span class="spin" aria-hidden="true"></span>
+          </button>
+
+          <p class="legal">By continuing, you agree to our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.</p>
+        </div>
+
+        <div class="altline">Already have an account? <a href="/login">Log in</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Loading locks the button width, replaces the label with a spinner (never appends — no width jump) and sets <code>aria-busy</code>. The spinner is transform-only and stops under reduced-motion. Success routes forward to <code>GA-005</code> (OTP verify).</p>
+    </div>
+
+    <!-- ============================== RTL · اردو ============================== -->
+    <div class="panel">
+      <div class="panel-tag"><b>RTL · اردو</b> — default</div>
+      <section class="phone rtl" dir="rtl" lang="ur" aria-label="Sign up — Urdu, right to left">
+        <div class="sa-top" aria-hidden="true"><span>safe-area-inset-top</span></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time">9:41</span>
+          <span class="sysic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="1"/><rect x="7" y="10" width="3" height="10" rx="1"/><rect x="12" y="6" width="3" height="14" rx="1"/><rect x="17" y="3" width="3" height="17" rx="1"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 10v4"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
+          </span>
+        </div>
+
+        <header class="authbar">
+          <a class="icon-btn" href="/welcome" aria-label="واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+          <div class="brandmark">Salam<i>.</i>Stay</div>
+          <span class="ib-spacer" aria-hidden="true"></span>
+        </header>
+
+        <div class="auth">
+          <h2 class="h-title">اپنا اکاؤنٹ بنائیں</h2>
+          <p class="h-sub">تصدیق شدہ رہائش بُک کرنے کے لیے اپنے موبائل نمبر سے سائن اپ کریں۔</p>
+
+          <div class="social">
+            <a class="sbtn" href="/auth/google" aria-label="گوگل کے ساتھ جاری رکھیں">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              گوگل کے ساتھ جاری رکھیں
+            </a>
+            <a class="sbtn" href="/auth/apple" aria-label="ایپل کے ساتھ جاری رکھیں">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2 1.6-3 1.7-3-.9-1.4-2.4-1.5-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.2 2-1.4 2.4-.4 6 1 8 .7 1 1.4 2 2.5 2 1 0 1.3-.6 2.6-.6 1.2 0 1.5.6 2.6.6 1 0 1.7-.9 2.4-1.9.5-.8.8-1.5.8-1.6-.1 0-2.2-.9-2.2-3.3zM14.6 6.3c.5-.7.9-1.6.8-2.5-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.4.9.1 1.7-.4 2.3-1.1z"/></svg>
+              ایپل کے ساتھ جاری رکھیں
+            </a>
+          </div>
+
+          <div class="divider"><span>یا</span></div>
+
+          <div class="field" role="group" aria-labelledby="r-ph-l r-ph-h">
+            <span class="flabel" id="r-ph-l">موبائل نمبر</span>
+            <div class="fwrap focus">
+              <span class="prefix" dir="ltr">+92</span>
+              <span class="fval" dir="ltr">300 123 4567</span><span class="caret" aria-hidden="true"></span>
+            </div>
+            <p class="fhint" id="r-ph-h">تصدیق کے لیے ہم ایک بار کا کوڈ بھیجیں گے۔</p>
+          </div>
+
+          <div class="banner info" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+            <span>آپ بُکنگ سے پہلے اپنا شناختی کارڈ (CNIC) تصدیق کریں گے — ابھی نہیں۔ SalamStay <a href="/legal/verification">نادرا ویریسیس کے ذریعے تصدیق شدہ مہمانوں اور میزبانوں</a> پر چلتا ہے۔</span>
+          </div>
+
+          <a class="qlink" href="/signup/passport">پاکستان سے نہیں ہیں؟ پاسپورٹ کے ساتھ جاری رکھیں <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+
+          <button class="primary" type="button">جاری رکھیں</button>
+
+          <p class="legal">جاری رکھ کر، آپ ہماری <a href="/legal/terms">شرائطِ خدمت</a> اور <a href="/legal/privacy">رازداری پالیسی</a> سے اتفاق کرتے ہیں۔</p>
+        </div>
+
+        <div class="altline">پہلے سے اکاؤنٹ ہے؟ <a href="/login">لاگ اِن کریں</a></div>
+        <div class="sa-bottom" aria-hidden="true"><span>safe-area-inset-bottom</span></div>
+      </section>
+      <p class="cap">Full mirror: back chevron, leading/trailing slots and the passport chevron flip; the <b>+92 number stays LTR</b> (bidi) because a phone number follows the content locale, not the UI. Urdu strings are Nastaliq with a line-height bump.</p>
+    </div>
+
+    <!-- ============================== NOTES / GATE COMPLIANCE ============================== -->
+    <div class="panel notes">
+      <div class="panel-tag">Behaviour, cultural law &amp; S1 gate compliance · web-variant note</div>
+      <ul>
+        <li><b>CNIC is just-in-time, never an upfront wall.</b> Sign-up asks only for a phone number; the CNIC line is a calm <code>info</code> banner ("you'll verify before you book — not now") carrying the SEO-RULES §5 claim <code>CNIC-verified guests and hosts via NADRA Verisys</code> verbatim. The full capture lives downstream at <code>GA-041</code>.</li>
+        <li><b>The foreigner branch is a quiet link.</b> "Not from Pakistan? Continue with a passport" routes to <code>/signup/passport</code> — never a loud toggle, never presuming everyone holds a CNIC.</li>
+        <li><b>Social = entry affordances (GA-006).</b> Google / Apple are secondary buttons that sit above the number field. Rendered monochrome (<code>text.primary</code>) to stay token-pure — see judgment note below.</li>
+        <li><b>Real anchors only.</b> Terms <code>/legal/terms</code>, Privacy <code>/legal/privacy</code>, verification <code>/legal/verification</code>, passport <code>/signup/passport</code>, login <code>/login</code>, social <code>/auth/google</code> · <code>/auth/apple</code>. No <code>href="#"</code>, no clickable divs; the CTA and back are real controls.</li>
+        <li><b>No dead ends.</b> Empty number → <b>Continue</b> is a disabled affordance; invalid number → a <code>role="alert"</code> field error stating exactly what to fix; submit → width-locked spinner then forward to <code>GA-005</code>.</li>
+        <li><b>+92 prefix Input variant.</b> Fixed non-editable <code>text.secondary</code> "+92" prefix slot with a hairline divider; national number in the editable area, tabular, LTR under both directions (inputs doc §2 / §17).</li>
+        <li><b>On-palette, no ornament.</b> Every colour resolves through a <code>var()</code> token; one calm brand button; no religious ornamentation, no gold, no green-washed fill. Copy is registry-verbatim or plain descriptive — no invented stats, ratings, or testimonials.</li>
+        <li><b>Web variant (<code>/signup</code>, SSR→SPA).</b> Same fields in a centred single-column card (max ~440px) on the marketing chrome; social buttons side-by-side ≥ md; the phone frame becomes a page section; keyboard focus-ring on every control; Terms/Privacy as inline anchors. Identical copy, identical CNIC just-in-time framing.</li>
+      </ul>
+      <p class="cap">Registry: <code>SCREENS.md</code> GA-004 (onboard, app+web) · components <code>Input §2</code> · <code>Button §1</code> · <code>+92 prefix §17</code> · a11y <code>DESIGN §11</code>. <b>Judgment call:</b> Google/Apple marks are drawn monochrome to honour NEVER #1 (tokens only); production may swap in the vendors' full-colour brand assets as a sanctioned out-of-token exception per Google/Apple brand rules.</p>
+    </div>
+  </main>
+</body>
+</html>

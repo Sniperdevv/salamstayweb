@@ -1,0 +1,686 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Cancellation-policy setup (HA-078)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Token block — @salamstay/design-tokens roles (DESIGN §13), copied verbatim from ha-040 ===== */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90; --text-disabled:#AEB4B9;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F; --text-disabled:#5B6663;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+
+  .head { max-width:1280px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:980px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; background:#fff; border:1px solid #E7E9EA; border-radius:4px; padding:1px 5px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1280px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* ===== phone frame — post-publish editor lineage; NO wizard bars (handoff §7.6a) ===== */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:700px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.lctx-name,.lctx-loc,h2,.lead,.sh,.pol-t,.pol-s,.pol-l,.tog-tt,.tog-d,.pv-ht,.pv-ctx,.tier b,.lede,.tl .rt,.tl .when,.tl .amt,.hijri .ht,.hijri .hd,.hijri .approx,.honestnote p,.laststat span,.unsavedbar .tx,.ebtn) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .lctx { padding:9px 18px 0; flex:none; }
+  .lctx-chip { display:flex; align-items:center; gap:9px; padding:8px 11px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); text-decoration:none; min-height:44px; }
+  .lctx-ic { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .lctx-ic svg { width:14px; height:14px; color:var(--text-secondary); stroke-width:1.8; }
+  .lctx-tx { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .lctx-name { display:block; font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-loc { display:block; font-size:10.5px; color:var(--text-tertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lctx-chev { flex:none; width:14px; height:14px; color:var(--text-tertiary); }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:14px 18px 20px; overflow-y:auto; }
+  .screen h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sh { font-size:13px; font-weight:600; color:var(--text-primary); margin:18px 0 9px; }
+  .sh:first-of-type { margin-top:0; }
+
+  /* policy option cards — a real radiogroup; selection is border + tick, never colour alone */
+  .pollist { display:flex; flex-direction:column; gap:10px; }
+  .pol { display:flex; gap:11px; align-items:flex-start; width:100%; text-align:start; padding:13px 13px 14px; border-radius:var(--radius-lg); border:1px solid var(--border-hairline); background:var(--bg-canvas); font-family:inherit; cursor:pointer; }
+  .pol .rad { width:20px; height:20px; flex:none; border-radius:var(--radius-full); border:2px solid var(--border-strong); background:var(--bg-canvas); margin-top:2px; display:flex; align-items:center; justify-content:center; }
+  .pol .rad i { width:9px; height:9px; border-radius:var(--radius-full); background:transparent; display:block; }
+  .pol[aria-checked="true"] { border-color:var(--int-primary); background:var(--int-subtle); }
+  .pol[aria-checked="true"] .rad { border-color:var(--int-primary); }
+  .pol[aria-checked="true"] .rad i { background:var(--int-primary); }
+  .pol .pb { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+  .pol-t { display:block; font-size:14px; font-weight:600; color:var(--text-primary); }
+  .pol-s { display:block; font-size:12px; color:var(--text-secondary); line-height:1.45; }
+  .pol-l { display:block; font-size:11px; color:var(--text-tertiary); line-height:1.5; padding-top:5px; margin-top:3px; border-top:1px solid var(--border-hairline); }
+
+  /* Ramadan / Eid exception — quiet utility switch, no cultural fill (§10.3) */
+  .toglist { display:flex; flex-direction:column; }
+  .togrow { display:flex; gap:12px; align-items:flex-start; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .tog-ic { width:34px; height:34px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px; }
+  .tog-ic svg { width:17px; height:17px; color:var(--text-secondary); stroke-width:1.7; }
+  .tog-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding-top:1px; }
+  .tog-tt { display:block; font-size:13px; font-weight:600; color:var(--text-primary); }
+  .tog-d { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .swbtn { flex:none; width:44px; height:44px; margin:-8px -10px -8px 0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; padding:0; cursor:pointer; }
+  .sw { position:relative; width:40px; height:24px; border-radius:var(--radius-full); background:var(--border-strong); display:block; }
+  .sw i { position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(16,25,27,.28); display:block; }
+  .sw.on { background:var(--int-primary); }
+  .sw.on i { transform:translateX(16px); }
+  .phone.rtl .swbtn { margin:-8px 0 -8px -10px; }
+  .phone.rtl .sw i { left:auto; right:2px; }
+  .phone.rtl .sw.on i { transform:translateX(-16px); }
+
+  /* guest-impact preview — ga-034's sheet, exactly as the guest reads it */
+  .pv { margin-top:6px; padding:13px 14px; border-radius:var(--radius-lg); background:var(--int-subtle); border:1px solid var(--border-hairline); }
+  .pv-h { display:flex; align-items:center; gap:6px; margin-bottom:9px; }
+  .pv-h svg { width:14px; height:14px; color:var(--int-primary); stroke-width:2; flex:none; }
+  .pv-ht { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--int-primary); }
+  .tier { display:inline-flex; align-items:center; gap:7px; min-height:28px; padding:0 11px; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--int-primary); }
+  .tier svg { width:14px; height:14px; color:var(--int-primary); stroke-width:1.9; flex:none; }
+  .tier b { font-size:12.5px; font-weight:600; color:var(--int-primary); }
+  .lede { font-size:12.5px; color:var(--text-primary); line-height:1.5; margin-top:10px; }
+  .lede b { font-weight:600; }
+  .pv-ctx { display:block; font-size:11px; color:var(--text-secondary); margin-top:9px; }
+
+  /* refund schedule — ga-034's semantic timeline; % carries meaning, no-refund is quiet grey */
+  .tl { list-style:none; position:relative; margin-top:10px; }
+  .tl li { position:relative; padding:0 0 14px 30px; }
+  .tl li:last-child { padding-bottom:0; }
+  .tl li::before { content:""; position:absolute; inset-inline-start:9px; top:21px; bottom:-2px; width:2px; background:var(--border-hairline); }
+  .tl li:last-child::before { display:none; }
+  .tl .node { position:absolute; inset-inline-start:0; top:1px; width:20px; height:20px; border-radius:var(--radius-full); background:var(--bg-canvas); border:2px solid var(--border-strong); display:flex; align-items:center; justify-content:center; }
+  .tl .node svg { width:12px; height:12px; stroke-width:2.4; }
+  .tl li.full .node { border-color:var(--success-border); background:var(--success-bg); }
+  .tl li.full .node svg { color:var(--success-fg); }
+  .tl li.part .node { border-color:var(--warning-border); background:var(--warning-bg); }
+  .tl li.part .node svg { color:var(--warning-fg); }
+  .tl li.none .node { border-color:var(--border-default); background:var(--bg-sunken); }
+  .tl li.none .node svg { color:var(--text-tertiary); }
+  .tl .rowtop { display:flex; align-items:baseline; gap:8px; }
+  .tl .rt { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .tl .pct { margin-inline-start:auto; font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .tl li.full .pct { color:var(--success-fg); }
+  .tl li.part .pct { color:var(--warning-fg); }
+  .tl li.none .pct { color:var(--text-tertiary); }
+  .tl .when { font-size:11.5px; color:var(--text-secondary); margin-top:2px; line-height:1.45; }
+  .tl .when b { color:var(--text-primary); font-weight:600; }
+  .tl .amt { font-size:11.5px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .tl .amt b { color:var(--text-primary); font-weight:600; }
+
+  /* Hijri boundary note — calm info register, honest moon-sighting line (ga-034 verbatim) */
+  .hijri { display:flex; gap:10px; align-items:flex-start; padding:11px 12px; border-radius:var(--radius-lg); background:var(--info-bg); border:1px solid var(--info-border); margin-top:11px; }
+  .hijri .hic { width:30px; height:30px; flex:none; border-radius:var(--radius-full); background:var(--bg-canvas); border:1px solid var(--info-fg); display:flex; align-items:center; justify-content:center; }
+  .hijri .hic svg { width:16px; height:16px; color:var(--info-fg); stroke-width:1.75; }
+  .hijri .hx { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .hijri .ht { display:block; font-size:12px; font-weight:600; color:var(--info-fg); }
+  .hijri .hd { display:block; font-size:11.5px; color:var(--text-secondary); line-height:1.45; }
+  .hijri .hd b { color:var(--text-primary); font-weight:600; }
+  .hijri .approx { display:block; margin-top:4px; color:var(--text-tertiary); font-size:11px; line-height:1.45; }
+
+  .honestnote { display:flex; gap:9px; align-items:flex-start; margin-top:14px; padding:12px 13px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .honestnote svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; stroke-width:1.7; }
+  .honestnote p { font-size:11.5px; color:var(--text-secondary); line-height:1.5; }
+
+  .laststat { display:flex; align-items:center; gap:9px; margin-top:14px; padding:10px 12px; border-radius:var(--radius-md); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .laststat svg { width:15px; height:15px; color:var(--success-fg); flex:none; stroke-width:2; }
+  .laststat span { font-size:11.5px; color:var(--text-secondary); line-height:1.4; }
+  .laststat b { color:var(--text-primary); font-weight:600; }
+
+  .spacer-fill { flex:1; }
+
+  .unsavedbar { flex:none; display:flex; align-items:center; gap:10px; padding:12px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--warning-bg); border-top:1px solid var(--warning-border); }
+  .unsavedbar .uic { flex:none; width:20px; height:20px; color:var(--warning-fg); }
+  .unsavedbar .tx { flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--warning-fg); line-height:1.35; }
+  .ebtnrow { flex:none; display:flex; gap:8px; }
+  .ebtn { min-height:40px; padding:0 14px; border-radius:var(--radius-md); font-size:12.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+  .ebtn.discard { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .ebtn.save { background:var(--int-primary); color:var(--text-on-brand); }
+
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Cancellation-policy setup (HA-078)</h1>
+    <p>The host end of <code>GA-034</code>. Three tiers as a real radiogroup — <b>Flexible · Moderate · Strict</b> — each stating its windows in the guest's own words, and the preview below renders <code>ga-034</code>'s shipped sheet exactly as the guest will read it: the tier chip, the plain-language lede, the semantic refund timeline, and "No refund" in <b>quiet grey</b>, never an alarming red. <b>Every window is a figure <code>ga-034</code> already ships</b> — <span class="num">5</span> days, <span class="num">7</span> days, <span class="num">48</span> hours, <span class="num">14</span> days, and the <span class="num">10</span>-day Ramadan/Eid extension; nothing new was invented, and Moderate is composed only from windows already in the shipped set. The Hijri exception is a plain switch with <code>ga-034</code>'s moon-sighting honesty line carried over verbatim, and an existing-bookings line states the <code>ha-043</code> precedent: changes apply to <b>new bookings only</b>. Reached inline from pricing (<code>HA-031</code>) in the standard editor frame. Case: host Aqib, <b>Cantt View Residence, Rawalpindi Cantonment</b>, <b>PKR 12,000</b> per night.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — current (Moderate) · changed (Strict)</span><span>Dark — changed (Flexible)</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — CURRENT · CHANGED ============================ -->
+    <section class="panel" aria-label="Light theme — the current Moderate policy, and a changed state showing the Strict preview with the unsaved-changes bar">
+      <div class="panel-tag">Light — A current (Moderate) · B changed to Strict (unsaved)</div>
+      <div class="rowflex">
+
+        <!-- A · CURRENT -->
+        <div class="pcol">
+          <div class="pcap">A · Current — Moderate, nothing unsaved</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/pricing" aria-label="Back to Pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cancellation policy</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="aH">Cancellation policy</h2>
+              <p class="lead">How much a guest gets back if plans change. Pick the certainty you need — they see the same words you do.</p>
+
+              <h3 class="sh" id="polh-a">Choose a policy</h3>
+              <div class="pollist" role="radiogroup" aria-labelledby="polh-a">
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Flexible</span>
+                    <span class="pol-s">Free cancellation until <span class="num">5</span> days before check-in.</span>
+                    <span class="pol-l">Full refund until <span class="num">5</span> days before · half until <span class="num">48</span> hours before · none after that.</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="true">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Moderate</span>
+                    <span class="pol-s">Free cancellation until <span class="num">7</span> days before check-in.</span>
+                    <span class="pol-l">Full refund until <span class="num">7</span> days before · half until <span class="num">48</span> hours before · none after that.</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Strict</span>
+                    <span class="pol-s">Free cancellation only within <span class="num">48</span> hours of booking, if that's <span class="num">14</span>+ days before check-in.</span>
+                    <span class="pol-l">Full refund in that window · half until <span class="num">7</span> days before · none after that.</span>
+                  </span>
+                </button>
+              </div>
+
+              <h3 class="sh">Ramadan &amp; Eid</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Longer free cancellation over the holidays</span><span class="tog-d">Extends free cancellation to <span class="num">10</span> days before check-in for stays over Ramadan and Eid, when plans often shift.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Longer free cancellation over Ramadan and Eid, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh">Preview — what guests will read</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Guest's cancellation sheet</span></div>
+                <span class="tier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg><b>Moderate</b></span>
+                <p class="lede">Cancel <b>free up to <span class="num">7</span> days before check-in</b> and get everything back. Cancel later and part of your stay is refunded, based on how close it is to your arrival.</p>
+                <span class="pv-ctx">Example — a <span class="num">3</span>-night stay at <span class="num">PKR 12,000</span> a night.</span>
+                <ol class="tl">
+                  <li class="full">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <div class="rowtop"><span class="rt">Full refund</span><span class="pct num">100%</span></div>
+                    <div class="when">Cancel until <b><span class="num">7</span> days before check-in</b></div>
+                    <div class="amt"><b><span class="num">PKR 36,000</span></b> comes back — everything they paid.</div>
+                  </li>
+                  <li class="part">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9"/></svg></span>
+                    <div class="rowtop"><span class="rt">Partial refund</span><span class="pct num">50%</span></div>
+                    <div class="when">Up to <b><span class="num">48</span> hours before check-in</b></div>
+                    <div class="amt">Half of the nightly total returns; the service fee (wakala) is kept.</div>
+                  </li>
+                  <li class="none">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></span>
+                    <div class="rowtop"><span class="rt">No refund</span><span class="pct num">0%</span></div>
+                    <div class="when">Inside the last <b><span class="num">48</span> hours</b>, or after check-in</div>
+                    <div class="amt">Nights already reserved for them are non-refundable.</div>
+                  </li>
+                </ol>
+                <div class="hijri">
+                  <span class="hic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="hx">
+                    <span class="ht">A longer free-cancellation window</span>
+                    <span class="hd">This host extends free cancellation to <b><span class="num">10</span> days before check-in</b> for stays over Ramadan and the Eid holidays, when travel plans often shift.
+                      <span class="approx">Boundaries follow the Hijri calendar, which is approximate and may vary by moon sighting.</span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Policy changes apply to new bookings only — guests who already booked keep the policy they booked under.</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>Saved — last updated <b><span class="num">18 July 2026</span></b>. No changes since.</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · CHANGED TO STRICT -->
+        <div class="pcol">
+          <div class="pcap">B · Changed to Strict — preview follows, unsaved bar shown</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/pricing" aria-label="Back to Pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cancellation policy</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="bH">Cancellation policy</h2>
+              <p class="lead">How much a guest gets back if plans change. Pick the certainty you need — they see the same words you do.</p>
+
+              <h3 class="sh" id="polh-b">Choose a policy</h3>
+              <div class="pollist" role="radiogroup" aria-labelledby="polh-b">
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Flexible</span>
+                    <span class="pol-s">Free cancellation until <span class="num">5</span> days before check-in.</span>
+                    <span class="pol-l">Full refund until <span class="num">5</span> days before · half until <span class="num">48</span> hours before · none after that.</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Moderate</span>
+                    <span class="pol-s">Free cancellation until <span class="num">7</span> days before check-in.</span>
+                    <span class="pol-l">Full refund until <span class="num">7</span> days before · half until <span class="num">48</span> hours before · none after that.</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="true">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Strict</span>
+                    <span class="pol-s">Free cancellation only within <span class="num">48</span> hours of booking, if that's <span class="num">14</span>+ days before check-in.</span>
+                    <span class="pol-l">Full refund in that window · half until <span class="num">7</span> days before · none after that.</span>
+                  </span>
+                </button>
+              </div>
+
+              <h3 class="sh">Ramadan &amp; Eid</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Longer free cancellation over the holidays</span><span class="tog-d">Extends free cancellation to <span class="num">10</span> days before check-in for stays over Ramadan and Eid, when plans often shift.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="false" aria-label="Longer free cancellation over Ramadan and Eid, off"><span class="sw" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh">Preview — what guests will read</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Guest's cancellation sheet</span></div>
+                <span class="tier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg><b>Strict</b></span>
+                <p class="lede">This host asks for more certainty. You can <b>cancel free within <span class="num">48</span> hours of booking</b>, as long as that's at least <span class="num">14</span> days before check-in. After that, the stay is non-refundable.</p>
+                <span class="pv-ctx">Example — a <span class="num">3</span>-night stay at <span class="num">PKR 12,000</span> a night.</span>
+                <ol class="tl">
+                  <li class="full">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <div class="rowtop"><span class="rt">Full refund</span><span class="pct num">100%</span></div>
+                    <div class="when">Within <b><span class="num">48</span> hours of booking</b>, if <span class="num">14</span>+ days before check-in</div>
+                    <div class="amt"><b><span class="num">PKR 36,000</span></b> comes back in full.</div>
+                  </li>
+                  <li class="part">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9"/></svg></span>
+                    <div class="rowtop"><span class="rt">Partial refund</span><span class="pct num">50%</span></div>
+                    <div class="when">Cancel up to <b><span class="num">7</span> days before check-in</b></div>
+                    <div class="amt">Half of the nightly total returns; the service fee (wakala) is kept.</div>
+                  </li>
+                  <li class="none">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></span>
+                    <div class="rowtop"><span class="rt">No refund</span><span class="pct num">0%</span></div>
+                    <div class="when">Within <b><span class="num">7</span> days</b> of check-in, or after arrival</div>
+                    <div class="amt">This stay is held for them and is non-refundable.</div>
+                  </li>
+                </ol>
+                <div class="hijri">
+                  <span class="hic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="hx">
+                    <span class="ht">Same schedule over the holidays</span>
+                    <span class="hd">This host keeps the Strict schedule during Ramadan and Eid — <b>no extra exception</b> applies. Any dated boundaries above are read against the Hijri calendar.
+                      <span class="approx">Hijri dates are approximate and may vary by moon sighting.</span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Policy changes apply to new bookings only — your <span class="num">2</span> confirmed guests keep the Moderate terms they booked under.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="unsavedbar">
+              <svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span class="tx">You have unsaved changes</span>
+              <div class="ebtnrow">
+                <button class="ebtn discard" type="button">Discard</button>
+                <button class="ebtn save" type="button">Save</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Every day-count on this screen already exists in the shipped <code>ga-034</code> sheet — <span class="num">5</span> days and <span class="num">48</span> hours from its Flexible panel, <span class="num">48</span> hours / <span class="num">14</span> days / <span class="num">7</span> days from its Strict panel, and the <span class="num">10</span>-day Ramadan extension from its Hijri note. <b>Moderate is composed only from those windows</b> (<span class="num">7</span> days, then <span class="num">48</span> hours), so the host tier the guest sheet never illustrated introduces no new number (NEVER #3). The preview is not a summary — it is <code>ga-034</code>'s surface, with its timeline grammar, its wakala sentence and its quiet-grey "No refund" node intact, so a host tightening their terms sees precisely the sentence a guest will meet. Selection is border + filled radio + <code>aria-checked</code>, never colour alone (§8.7).</p>
+    </section>
+
+    <!-- ============================ DARK — CHANGED TO FLEXIBLE ============================ -->
+    <section class="panel dark" aria-label="Dark theme — the policy changed to Flexible with its guest preview and the unsaved-changes bar">
+      <div class="panel-tag">Dark — C changed to Flexible (unsaved)</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Changed to Flexible — dark</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/listings/cantt-view-residence/pricing" aria-label="Back to Pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Cancellation policy</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">Cantt View Residence</span><span class="lctx-loc">Rawalpindi Cantonment</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="cH">Cancellation policy</h2>
+              <p class="lead">How much a guest gets back if plans change. Pick the certainty you need — they see the same words you do.</p>
+
+              <h3 class="sh" id="polh-c">Choose a policy</h3>
+              <div class="pollist" role="radiogroup" aria-labelledby="polh-c">
+                <button class="pol" type="button" role="radio" aria-checked="true">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Flexible</span>
+                    <span class="pol-s">Free cancellation until <span class="num">5</span> days before check-in.</span>
+                    <span class="pol-l">Full refund until <span class="num">5</span> days before · half until <span class="num">48</span> hours before · none after that.</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Moderate</span>
+                    <span class="pol-s">Free cancellation until <span class="num">7</span> days before check-in.</span>
+                    <span class="pol-l">Full refund until <span class="num">7</span> days before · half until <span class="num">48</span> hours before · none after that.</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">Strict</span>
+                    <span class="pol-s">Free cancellation only within <span class="num">48</span> hours of booking, if that's <span class="num">14</span>+ days before check-in.</span>
+                    <span class="pol-l">Full refund in that window · half until <span class="num">7</span> days before · none after that.</span>
+                  </span>
+                </button>
+              </div>
+
+              <h3 class="sh">Ramadan &amp; Eid</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">Longer free cancellation over the holidays</span><span class="tog-d">Extends free cancellation to <span class="num">10</span> days before check-in for stays over Ramadan and Eid, when plans often shift.</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="Longer free cancellation over Ramadan and Eid, on"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh">Preview — what guests will read</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">Guest's cancellation sheet</span></div>
+                <span class="tier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg><b>Flexible</b></span>
+                <p class="lede">Cancel <b>free up to <span class="num">5</span> days before check-in</b> and get everything back. Cancel later and part of your stay is refunded, based on how close it is to your arrival.</p>
+                <span class="pv-ctx">Example — a <span class="num">3</span>-night stay at <span class="num">PKR 12,000</span> a night.</span>
+                <ol class="tl">
+                  <li class="full">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <div class="rowtop"><span class="rt">Full refund</span><span class="pct num">100%</span></div>
+                    <div class="when">Cancel until <b><span class="num">5</span> days before check-in</b></div>
+                    <div class="amt"><b><span class="num">PKR 36,000</span></b> comes back — everything they paid.</div>
+                  </li>
+                  <li class="part">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9"/></svg></span>
+                    <div class="rowtop"><span class="rt">Partial refund</span><span class="pct num">50%</span></div>
+                    <div class="when">Up to <b><span class="num">48</span> hours before check-in</b></div>
+                    <div class="amt">Half of the nightly total returns; the service fee (wakala) is kept.</div>
+                  </li>
+                  <li class="none">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></span>
+                    <div class="rowtop"><span class="rt">No refund</span><span class="pct num">0%</span></div>
+                    <div class="when">Inside the last <b><span class="num">48</span> hours</b>, or after check-in</div>
+                    <div class="amt">Nights already reserved for them are non-refundable.</div>
+                  </li>
+                </ol>
+                <div class="hijri">
+                  <span class="hic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="hx">
+                    <span class="ht">A longer free-cancellation window</span>
+                    <span class="hd">This host extends free cancellation to <b><span class="num">10</span> days before check-in</b> for stays over Ramadan and the Eid holidays, when travel plans often shift.
+                      <span class="approx">Boundaries follow the Hijri calendar, which is approximate and may vary by moon sighting.</span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>Policy changes apply to new bookings only — your <span class="num">2</span> confirmed guests keep the Moderate terms they booked under.</p>
+              </div>
+
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="unsavedbar">
+              <svg class="uic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+              <span class="tx">You have unsaved changes</span>
+              <div class="ebtnrow">
+                <button class="ebtn discard" type="button">Discard</button>
+                <button class="ebtn save" type="button">Save</button>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Dark shows the loosening direction, so all three tiers appear across the card. "No refund" stays on the <b>quiet grey</b> sunken node in both themes — it is a fact about the calendar, not a punishment, and giving it the error tone would teach hosts to read their own terms as a threat (§10.8, the <code>ga-034</code> ruling). The Ramadan/Eid row is a plain neutral switch with a calendar-and-dot glyph: no religious ornament, no green cultural fill, the exact visual weight of any other option (§10.2/§10.3).</p>
+    </section>
+
+    <!-- ============================ RTL / URDU ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the current Moderate policy">
+      <div class="panel-tag">RTL · اردو — منسوخی کی پالیسی</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">D · اردو — معتدل (Moderate)</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/listings/cantt-view-residence/pricing" aria-label="قیمتوں پر واپس جائیں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">منسوخی کی پالیسی</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="lctx">
+              <a class="lctx-chip" href="/ur/host/listings/cantt-view-residence/edit">
+                <span class="lctx-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span>
+                <span class="lctx-tx"><span class="lctx-name">کینٹ ویو ریزیڈنس</span><span class="lctx-loc">راولپنڈی کینٹونمنٹ</span></span>
+                <svg class="lctx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              </a>
+            </div>
+            <div class="screen">
+              <h2 id="dH">منسوخی کی پالیسی</h2>
+              <p class="lead">منصوبہ بدلنے پر مہمان کو کتنی رقم واپس ملے گی۔ جتنا اطمینان چاہیے وہ چنیں — مہمان بھی یہی الفاظ پڑھتے ہیں۔</p>
+
+              <h3 class="sh" id="polh-d">پالیسی منتخب کریں</h3>
+              <div class="pollist" role="radiogroup" aria-labelledby="polh-d">
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">لچکدار</span>
+                    <span class="pol-s">چیک اِن سے <span class="num">5</span> دن پہلے تک مفت منسوخی۔</span>
+                    <span class="pol-l">پوری واپسی <span class="num">5</span> دن پہلے تک · نصف <span class="num">48</span> گھنٹے پہلے تک · اس کے بعد کچھ نہیں۔</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="true">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">معتدل</span>
+                    <span class="pol-s">چیک اِن سے <span class="num">7</span> دن پہلے تک مفت منسوخی۔</span>
+                    <span class="pol-l">پوری واپسی <span class="num">7</span> دن پہلے تک · نصف <span class="num">48</span> گھنٹے پہلے تک · اس کے بعد کچھ نہیں۔</span>
+                  </span>
+                </button>
+                <button class="pol" type="button" role="radio" aria-checked="false">
+                  <span class="rad" aria-hidden="true"><i></i></span>
+                  <span class="pb">
+                    <span class="pol-t">سخت</span>
+                    <span class="pol-s">صرف بکنگ کے <span class="num">48</span> گھنٹوں کے اندر مفت منسوخی، بشرطیکہ چیک اِن میں <span class="num">14</span>+ دن باقی ہوں۔</span>
+                    <span class="pol-l">اسی وقفے میں پوری واپسی · نصف <span class="num">7</span> دن پہلے تک · اس کے بعد کچھ نہیں۔</span>
+                  </span>
+                </button>
+              </div>
+
+              <h3 class="sh">رمضان اور عید</h3>
+              <ul class="toglist" role="list">
+                <li class="togrow">
+                  <span class="tog-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="tog-b"><span class="tog-tt">تہواروں میں مفت منسوخی کا لمبا وقفہ</span><span class="tog-d">رمضان اور عید کے قیام کے لیے مفت منسوخی چیک اِن سے <span class="num">10</span> دن پہلے تک بڑھ جاتی ہے، جب منصوبے اکثر بدلتے ہیں۔</span></span>
+                  <button class="swbtn" type="button" role="switch" aria-checked="true" aria-label="رمضان اور عید میں مفت منسوخی کا لمبا وقفہ، آن"><span class="sw on" aria-hidden="true"><i></i></span></button>
+                </li>
+              </ul>
+
+              <h3 class="sh">پیش منظر — مہمان کیا پڑھیں گے</h3>
+              <div class="pv">
+                <div class="pv-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv-ht">مہمان کی منسوخی شیٹ</span></div>
+                <span class="tier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/><path d="M9 15l2 2 4-4"/></svg><b>معتدل</b></span>
+                <p class="lede">چیک اِن سے <b><span class="num">7</span> دن پہلے تک مفت منسوخی</b> — پوری رقم واپس۔ بعد میں منسوخ کریں تو قیام کا کچھ حصہ واپس ہوتا ہے، آمد کی قربت کے حساب سے۔</p>
+                <span class="pv-ctx">مثال — <span class="num">3</span> راتوں کا قیام، فی رات <span class="num">PKR 12,000</span>۔</span>
+                <ol class="tl">
+                  <li class="full">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <div class="rowtop"><span class="rt">پوری واپسی</span><span class="pct num">100%</span></div>
+                    <div class="when">چیک اِن سے <b><span class="num">7</span> دن پہلے</b> تک منسوخی</div>
+                    <div class="amt"><b><span class="num">PKR 36,000</span></b> مکمل واپس — جو کچھ ادا کیا، سب۔</div>
+                  </li>
+                  <li class="part">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="9"/></svg></span>
+                    <div class="rowtop"><span class="rt">جزوی واپسی</span><span class="pct num">50%</span></div>
+                    <div class="when">چیک اِن سے <b><span class="num">48</span> گھنٹے پہلے</b> تک</div>
+                    <div class="amt">رات کی رقم کا نصف واپس؛ سروس فیس (وکالہ) رکھی جاتی ہے۔</div>
+                  </li>
+                  <li class="none">
+                    <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg></span>
+                    <div class="rowtop"><span class="rt">کوئی واپسی نہیں</span><span class="pct num">0%</span></div>
+                    <div class="when">آخری <b><span class="num">48</span> گھنٹوں</b> میں، یا چیک اِن کے بعد</div>
+                    <div class="amt">ان کے لیے مختص راتیں ناقابلِ واپسی ہیں۔</div>
+                  </li>
+                </ol>
+                <div class="hijri">
+                  <span class="hic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="16" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+                  <span class="hx">
+                    <span class="ht">مفت منسوخی کا لمبا وقفہ</span>
+                    <span class="hd">رمضان اور عید کے قیام کے لیے یہ میزبان مفت منسوخی چیک اِن سے <b><span class="num">10</span> دن پہلے</b> تک بڑھا دیتے ہیں، جب سفر کے منصوبے اکثر بدلتے ہیں۔
+                      <span class="approx">حدود ہجری کیلنڈر کے مطابق ہیں، جو تخمینی ہے اور رؤیتِ ہلال سے بدل سکتا ہے۔</span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="honestnote">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                <p>پالیسی کی تبدیلی صرف نئی بکنگ پر لاگو ہوتی ہے — جو مہمان پہلے بک کر چکے ہیں، ان پر وہی شرائط رہتی ہیں جن پر انہوں نے بکنگ کی۔</p>
+              </div>
+
+              <div class="laststat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                <span>محفوظ شدہ — آخری اپ ڈیٹ <b><span class="num">18 July 2026</span></b>۔ اس کے بعد کوئی تبدیلی نہیں۔</span>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron, the radio column, the switch knob and the timeline rail all flip toward the reading direction via logical properties (<code>inset-inline-start</code>, <code>margin-inline-start</code>). Percentages, day counts, dates and every <b>PKR</b> amount sit in LTR-isolated <code>.num</code> spans in Western digits — PKR spelled out, never a rupee glyph — with <code>aria-label</code> numerals matching what is visible (Pass #31 ruling). The Urdu tier names reuse <code>ga-034</code>'s shipped lexicon (لچکدار = Flexible), extended with معتدل for Moderate and سخت for Strict.</p>
+    </section>
+
+  </main>
+</body>
+</html>

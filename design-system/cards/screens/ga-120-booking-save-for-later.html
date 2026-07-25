@@ -1,0 +1,435 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Booking save-for-later (GA-120)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:860px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1000px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — ga-064 flat-frame lineage */
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen, .phone.rtl .tbar-title { font-family:'Noto Nastaliq Urdu', serif; }
+  .phone.rtl .hero h2, .phone.rtl .hero .sub, .phone.rtl .bnr-d, .phone.rtl .vs, .phone.rtl .claimnote { line-height:1.95; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:18px 16px 18px; }
+
+  /* hero */
+  .hero { display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:16px; }
+  .hero .icn { width:60px; height:60px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; border:1px solid transparent; }
+  .hero .icn svg { width:28px; height:28px; stroke-width:1.9; }
+  .hero .icn.info { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .hero h2 { font-size:19px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-top:14px; }
+  .hero .sub { font-size:13.5px; color:var(--text-secondary); margin-top:7px; line-height:1.55; }
+  .hero .sub b { color:var(--text-primary); font-weight:600; }
+
+  /* held summary card */
+  .sumcard { border:1px solid var(--border-hairline); border-radius:var(--radius-xl); background:var(--bg-raised); padding:14px 15px; margin-bottom:16px; box-shadow:var(--el-hairline); }
+  .sum-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .sum-title { font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .sum-loc { font-size:12.5px; color:var(--text-secondary); margin-top:2px; margin-bottom:12px; display:flex; align-items:center; gap:5px; }
+  .sum-loc svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-tertiary); flex:none; }
+  .sumrows { display:flex; flex-direction:column; gap:9px; }
+  .srow { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+  .sdt { font-size:12.5px; color:var(--text-secondary); flex:none; }
+  .sdd { font-size:12.5px; font-weight:600; color:var(--text-primary); text-align:end; }
+  .sdd .num { font-variant-numeric:tabular-nums; }
+  .heldtag { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; border-radius:var(--radius-full); padding:4px 10px; color:var(--info-fg); background:var(--info-bg); border:1px solid var(--info-border); flex:none; }
+  .heldtag svg { width:12px; height:12px; stroke-width:2; }
+
+  /* calm banner (info) */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:16px; border:1px solid transparent; }
+  .bnr.info { background:var(--info-bg); border-color:var(--info-border); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:19px; height:19px; stroke-width:1.95; color:var(--info-fg); }
+  .bnr .bnr-b { flex:1; min-width:0; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); margin-top:3px; }
+
+  /* verification checklist (GA-049 lineage) */
+  .vsec-h { font-size:12.5px; font-weight:600; color:var(--text-primary); margin:2px 2px 10px; }
+  .vlist { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+  .vrow { display:flex; gap:11px; align-items:flex-start; min-height:60px; border:1px solid var(--border-hairline); background:var(--bg-raised); border-radius:var(--radius-lg); padding:11px 12px; }
+  .vbubble { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; border:1px solid transparent; }
+  .vbubble svg { width:19px; height:19px; stroke-width:2; }
+  .vbubble.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .vbubble.review { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .vbubble.needed { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+  .vmeta { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .vt { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .vs { font-size:12px; color:var(--text-secondary); }
+  .vact { display:block; margin-top:8px; font-size:12.5px; font-weight:600; }
+  .vstate { display:inline-flex; align-items:center; gap:5px; align-self:flex-start; font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:var(--radius-full); border:1px solid transparent; white-space:nowrap; }
+  .vstate svg { width:11px; height:11px; stroke-width:2.4; }
+  .vstate.ok { background:var(--success-bg); border-color:var(--success-border); color:var(--success-fg); }
+  .vstate.review { background:var(--info-bg); border-color:var(--info-border); color:var(--info-fg); }
+  .vstate.needed { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-fg); }
+
+  .claimnote { font-size:11.5px; color:var(--text-tertiary); margin-top:2px; margin-bottom:6px; line-height:1.55; }
+  .claim { color:var(--text-secondary); font-weight:600; }
+
+  .spacer-fill { flex:1; min-height:12px; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:15px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:18px; height:18px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.ghost { background:transparent; color:var(--int-primary); }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:14px; font-size:13px; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  a:hover { text-decoration:underline; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Booking save-for-later (GA-120)</h1>
+    <p>A required party-type document isn't ready yet — so instead of a forced cancel, the booking is <strong>held and saved</strong> until the guest can fetch it (§3.2, culture; §9-D save-and-resume). The dates and price are held "while you finish verification" — <em>no invented hours-promise</em>, no dead end. A held-summary card carries the facts, a document checklist shows exactly what's done and what's left, and the primary path is <strong>resume</strong> (into GA-115), never abandon. Nothing is charged while a booking is on hold, and progress syncs when the connection returns. Panels: Couple — Nikah Nama needed · near-complete, doc in review · Family — FRC + B-Form needed (dark) · Urdu / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Couple · Nikah Nama needed</span><span>Doc in review · resuming</span><span>Family · FRC + B-Form · dark</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — held booking needing a Nikah Nama, and the near-complete in-review state">
+      <div class="panel-tag">Light — Nikah Nama needed · document in review</div>
+      <div class="rowflex">
+
+        <!-- A · COUPLE — NIKAH NAMA NEEDED -->
+        <div class="pcol">
+          <div class="pcap">A · Held — one document left to add</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Booking saved</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg></span>
+                <h2 id="aH">We've saved your booking</h2>
+                <span class="sub">A couple's booking needs a <b>Nikah Nama</b>. We've held your dates and price — add it whenever you have it ready, and we'll pick up right here.</span>
+              </div>
+
+              <div class="sumcard">
+                <div class="sum-top">
+                  <div class="sum-title">Margalla View Apartment</div>
+                  <span class="heldtag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>Held</span>
+                </div>
+                <div class="sum-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</div>
+                <dl class="sumrows">
+                  <div class="srow"><dt class="sdt">Dates held</dt><dd class="sdd"><span class="num">Fri 14 – Mon 17 Aug 2026</span></dd></div>
+                  <div class="srow"><dt class="sdt">Price held</dt><dd class="sdd"><span class="num">PKR 42,350</span> · <span class="num">3 nights</span></dd></div>
+                  <div class="srow"><dt class="sdt">Held for</dt><dd class="sdd">While you finish verification</dd></div>
+                </dl>
+              </div>
+
+              <div class="vsec-h">Your documents</div>
+              <ul class="vlist">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC — you</div><div class="vs">Verified via NADRA Verisys</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC — Fatima (spouse)</div><div class="vs">Verified via NADRA Verisys</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble needed" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <div class="vmeta">
+                    <div class="vt">Nikah Nama</div>
+                    <div class="vs">Add this to complete your couple's booking. A photo of the certificate is enough.</div>
+                    <a class="vact" href="/verify/nikah-nama">Add your Nikah Nama</a>
+                  </div>
+                  <span class="vstate needed" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Needed</span>
+                </li>
+              </ul>
+
+              <p class="claimnote">This completes a <span class="claim">Nikah Nama–verified couples' bookings</span>. Your documents are used only for verification — hosts and guests never see them.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/verify/resume">Finish verification</a>
+              <button class="btn ghost" type="button">Keep it saved for now</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · NEAR-COMPLETE — DOC IN REVIEW, BOOKING RESUMING -->
+        <div class="pcol">
+          <div class="pcap">B · Document in review — booking resumes on its own</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Booking saved</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+                <h2 id="bH">Almost done — your Nikah Nama is in review</h2>
+                <span class="sub">Your booking stays held while a person checks your document — usually within a few hours. We'll pick it back up the moment it clears.</span>
+              </div>
+
+              <div class="bnr info" role="status">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="bnr-b">
+                  <div class="bnr-h">Nothing more to do right now</div>
+                  <div class="bnr-d">We'll notify you when it's verified, then take you straight to confirm. Nothing is charged while it's on hold.</div>
+                </div>
+              </div>
+
+              <div class="sumcard">
+                <div class="sum-top">
+                  <div class="sum-title">Margalla View Apartment</div>
+                  <span class="heldtag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>Held</span>
+                </div>
+                <div class="sum-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7, Islamabad</div>
+                <dl class="sumrows">
+                  <div class="srow"><dt class="sdt">Dates held</dt><dd class="sdd"><span class="num">Fri 14 – Mon 17 Aug 2026</span></dd></div>
+                  <div class="srow"><dt class="sdt">Price held</dt><dd class="sdd"><span class="num">PKR 42,350</span></dd></div>
+                </dl>
+              </div>
+
+              <ul class="vlist">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC — both of you</div><div class="vs">Verified via NADRA Verisys</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble review" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg></span>
+                  <div class="vmeta"><div class="vt">Nikah Nama</div><div class="vs">In review — usually within a few hours. We'll notify you.</div></div>
+                  <span class="vstate review" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>In review</span>
+                </li>
+              </ul>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/trips/requests/is-f7-2bed-aug2026">View your held booking</a>
+              <a class="btn ghost" href="/verify/resume">Check verification status</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">No forced cancel, no dead end. The held-summary states <strong>dates held</strong>, <strong>price held</strong>, and <strong>held for "while you finish verification"</strong> — a neutral hold policy with <em>no invented hours-number</em> (the row note and §9-D name none). The checklist is the GA-049 pattern: verified rows carry a quiet tick, the missing document is a calm amber <strong>"Needed"</strong> with a direct "Add your Nikah Nama" action — never a red X. <strong>B</strong> shows the in-review handoff: the booking simply waits and resumes itself, so the guest's only "action" is reassurance. The primary button always resumes into GA-115; "Keep it saved for now" is a real <code>&lt;button&gt;</code> that preserves the hold.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL ============================ -->
+    <section class="panel dark" aria-label="Dark theme — held family booking needing FRC and a child's B-Form">
+      <div class="panel-tag">Dark — Family · FRC + B-Form needed</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">C · Family booking — two documents left</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title">Booking saved</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg></span>
+                <h2 id="cH">We've saved your booking</h2>
+                <span class="sub">A family booking needs two documents. Your dates and price are held — fetch them when it suits, and nothing is lost.</span>
+              </div>
+
+              <div class="sumcard">
+                <div class="sum-top">
+                  <div class="sum-title">Sector G-6 Family House</div>
+                  <span class="heldtag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>Held</span>
+                </div>
+                <div class="sum-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>G-6, Islamabad</div>
+                <dl class="sumrows">
+                  <div class="srow"><dt class="sdt">Dates held</dt><dd class="sdd"><span class="num">Sat 22 – Tue 25 Aug 2026</span></dd></div>
+                  <div class="srow"><dt class="sdt">Price held</dt><dd class="sdd"><span class="num">PKR 35,600</span></dd></div>
+                  <div class="srow"><dt class="sdt">Held for</dt><dd class="sdd">While you finish verification</dd></div>
+                </dl>
+              </div>
+
+              <div class="vsec-h">Your documents · 2 left</div>
+              <ul class="vlist">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">CNIC — you</div><div class="vs">Verified via NADRA Verisys</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble needed" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <div class="vmeta">
+                    <div class="vt">FRC — family certificate</div>
+                    <div class="vs">NADRA Family Registration Certificate. Confirms your family group.</div>
+                    <a class="vact" href="/verify/frc">Add your FRC</a>
+                  </div>
+                  <span class="vstate needed" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Needed</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble needed" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <div class="vmeta">
+                    <div class="vt">B-Form — child</div>
+                    <div class="vs">For the child travelling with you. A photo of the B-Form will do.</div>
+                    <a class="vact" href="/verify/b-form">Add the B-Form</a>
+                  </div>
+                  <span class="vstate needed" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Needed</span>
+                </li>
+              </ul>
+
+              <p class="claimnote">This completes an <span class="claim">FRC-verified family bookings</span>. Your progress is saved and syncs when you're back online.</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/verify/resume">Finish verification</a>
+              <button class="btn ghost" type="button">Keep it saved for now</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The family variant proves the pattern scales: two <strong>Needed</strong> documents (FRC + a child's B-Form), each with its own plain "Add…" action into the upload flows, and the claim tie-in uses the §5 wording verbatim — <span class="claim">FRC-verified family bookings</span>. The reassurance about saved-and-syncs-offline is the §9-D promise; the booking is never at risk while the guest goes to fetch a certificate.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — held couple booking needing a Nikah Nama">
+      <div class="panel-tag">RTL · اردو — "ہم نے آپ کی بکنگ محفوظ کر لی", mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">Held — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title">بکنگ محفوظ</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="hero">
+                <span class="icn info" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg></span>
+                <h2 id="uH">ہم نے آپ کی بکنگ محفوظ کر لی</h2>
+                <span class="sub">جوڑے کی بکنگ کے لیے <b>نکاح نامہ</b> درکار ہے۔ ہم نے آپ کی تاریخیں اور قیمت روک لی ہے — جب تیار ہو تب شامل کریں، ہم یہیں سے آگے بڑھیں گے۔</span>
+              </div>
+
+              <div class="sumcard">
+                <div class="sum-top">
+                  <div class="sum-title">Margalla View Apartment</div>
+                  <span class="heldtag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a1 1 0 0 1 1 1v16l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>محفوظ</span>
+                </div>
+                <div class="sum-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>F-7، اسلام آباد</div>
+                <dl class="sumrows">
+                  <div class="srow"><dt class="sdt">تاریخیں محفوظ</dt><dd class="sdd"><span class="num">14 – 17 Aug 2026</span></dd></div>
+                  <div class="srow"><dt class="sdt">قیمت محفوظ</dt><dd class="sdd"><span class="num">PKR 42,350</span></dd></div>
+                  <div class="srow"><dt class="sdt">کب تک</dt><dd class="sdd">جب تک آپ تصدیق مکمل کریں</dd></div>
+                </dl>
+              </div>
+
+              <div class="vsec-h">آپ کی دستاویزات</div>
+              <ul class="vlist">
+                <li class="vrow">
+                  <span class="vbubble ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <div class="vmeta"><div class="vt">شناختی کارڈ — آپ دونوں</div><div class="vs">نادرا ویری سِس سے تصدیق شدہ</div></div>
+                  <span class="vstate ok" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تصدیق شدہ</span>
+                </li>
+                <li class="vrow">
+                  <span class="vbubble needed" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                  <div class="vmeta">
+                    <div class="vt">نکاح نامہ</div>
+                    <div class="vs">جوڑے کی بکنگ مکمل کرنے کے لیے شامل کریں۔ سرٹیفکیٹ کی تصویر کافی ہے۔</div>
+                    <a class="vact" href="/verify/nikah-nama">اپنا نکاح نامہ شامل کریں</a>
+                  </div>
+                  <span class="vstate needed" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>درکار</span>
+                </li>
+              </ul>
+
+              <p class="claimnote">یہ ایک <span class="claim">نکاح نامہ سے تصدیق شدہ جوڑے کی بکنگ</span> مکمل کرتا ہے۔ دستاویزات صرف تصدیق کے لیے استعمال ہوتی ہیں — میزبان یا مہمان انہیں کبھی نہیں دیکھتے۔</p>
+
+              <div class="spacer-fill"></div>
+              <a class="btn primary" href="/verify/resume">تصدیق مکمل کریں</a>
+              <button class="btn ghost" type="button">فی الحال محفوظ رہنے دیں</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Mirrored end to end: the back chevron and list-row layout flip to the reading direction, "محفوظ" (Held) sits in the leading corner of the summary card, and the missing-document row keeps its calm "درکار" (Needed) amber. Money and dates stay tabular Latin inside <code>.num</code>. The claim renders as the faithful Urdu of the §5 wording, and the save-for-later promise — nothing lost, resume when ready — is stated plainly in Nastaliq.</p>
+    </section>
+
+  </main>
+</body>
+</html>

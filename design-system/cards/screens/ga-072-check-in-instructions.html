@@ -1,0 +1,371 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Check-in instructions (GA-072)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:900px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:300px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1000px; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .phone { width:300px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:600px; position:relative; }
+  .phone.rtl { direction:rtl; font-family:'Noto Nastaliq Urdu', serif; line-height:1.95; }
+  .phone.rtl .num, .phone.rtl .latin, .phone.rtl .code-val, .phone.rtl .ci-when { font-family:'Inter', sans-serif; line-height:1.5; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 15px 15px; }
+
+  /* offline / saved banner */
+  .banner { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:16px; border:1px solid var(--info-border); background:var(--info-bg); }
+  .banner.saved { border-color:var(--success-border); background:var(--success-bg); }
+  .banner-ic { flex:none; margin-top:1px; color:var(--info-fg); }
+  .banner.saved .banner-ic { color:var(--success-fg); }
+  .banner-ic svg { width:20px; height:20px; stroke-width:1.9; }
+  .banner-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .banner-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .banner-s { font-size:12px; color:var(--text-secondary); }
+
+  /* check-in time reminder */
+  .ci-time { display:flex; align-items:center; gap:10px; padding:12px 13px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); margin-bottom:18px; }
+  .ci-time-ic { width:36px; height:36px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-subtle); color:var(--int-primary); }
+  .ci-time-ic svg { width:18px; height:18px; stroke-width:1.9; }
+  .ci-time-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .ci-label { font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .ci-when { font-size:13.5px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+
+  .sec-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-tertiary); margin:2px 2px 12px; }
+
+  /* numbered wizard steps */
+  .steps { list-style:none; display:flex; flex-direction:column; }
+  .step { display:flex; gap:13px; position:relative; padding-bottom:16px; }
+  .step:last-child { padding-bottom:4px; }
+  .step:not(:last-child)::before { content:""; position:absolute; inset-inline-start:15px; top:32px; bottom:2px; width:2px; background:var(--border-default); }
+  .step-num { width:32px; height:32px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--int-primary); color:var(--text-on-brand); font-size:14px; font-weight:700; z-index:1; font-variant-numeric:tabular-nums; }
+  .step-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; padding-top:4px; }
+  .step-t { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .step-s { font-size:12.5px; color:var(--text-secondary); }
+
+  /* code chip with copy */
+  .codechip { display:inline-flex; align-items:center; gap:10px; align-self:flex-start; margin-top:4px; padding:7px 8px 7px 14px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); }
+  .code-val { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:17px; font-weight:600; letter-spacing:.14em; color:var(--text-primary); }
+  .code-copy { width:34px; height:34px; border-radius:var(--radius-sm); border:none; background:var(--bg-canvas); color:var(--int-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .code-copy svg { width:16px; height:16px; stroke-width:1.9; }
+
+  /* host contact fallback */
+  .fallback { margin-top:20px; padding:14px 14px 15px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-raised); }
+  .fallback-h { display:flex; gap:9px; align-items:center; }
+  .fallback-h svg { width:18px; height:18px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .fallback-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .fallback-s { display:block; font-size:12px; color:var(--text-secondary); margin-top:5px; }
+  .fallback-actions { display:flex; gap:9px; margin-top:12px; }
+  .btn { min-height:44px; border-radius:var(--radius-md); font-size:13.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px; text-decoration:none; padding:0 14px; }
+  .btn svg { width:16px; height:16px; stroke-width:1.9; flex:none; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); flex:1; }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); flex:1; }
+
+  .spacer-fill { flex:1; }
+  a { color:var(--int-primary); text-decoration:none; font-weight:600; }
+  .phone.rtl .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Check-in instructions (GA-072)</h1>
+    <p>Getting in, made foolproof — self check-in as a <strong>structured step-by-step wizard</strong>: one action per numbered step (gate code → floor → door → lockbox), each code copyable. Because arrival often happens on flaky data or none, the page is a <strong>§9-D resilience surface</strong>: it caches to the phone and stays fully readable offline — the banner tells the guest so plainly ("Saved to your phone — works without internet"), and if they lose signal it says so calmly without hiding a thing. A host-contact fallback closes the screen for the "can't get in" moment. Panels: saved / online (light) · <strong>offline-active</strong> state (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Saved · online · light</span><span>Offline — showing saved</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT PANEL ============================ -->
+    <section class="panel" aria-label="Light theme — check-in instructions, saved and online">
+      <div class="panel-tag">Light — saved to phone · numbered steps · host fallback</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Self check-in — wizard</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="aH">Check-in instructions</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="banner saved" role="status">
+                <span class="banner-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4M12 3v12M8 11l4 4 4-4"/></svg></span>
+                <span class="banner-b"><span class="banner-t">Saved to your phone</span><span class="banner-s">Works without internet — you'll have these on arrival even with no signal.</span></span>
+              </div>
+
+              <div class="ci-time">
+                <span class="ci-time-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="ci-time-b"><span class="ci-label">Check-in</span><span class="ci-when">Fri 14 Aug · from 2:00 PM</span></span>
+              </div>
+
+              <div class="sec-label">Getting in — 4 steps</div>
+              <ol class="steps">
+                <li class="step">
+                  <span class="step-num">1</span>
+                  <span class="step-body">
+                    <span class="step-t">Main gate</span>
+                    <span class="step-s">Enter this code on the keypad to the right of the gate.</span>
+                    <span class="codechip"><span class="code-val">4471</span><button class="code-copy" aria-label="Copy gate code 4471"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">2</span>
+                  <span class="step-body">
+                    <span class="step-t">Third floor</span>
+                    <span class="step-s">Take the lift on your left up to the 3rd floor.</span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">3</span>
+                  <span class="step-body">
+                    <span class="step-t">Apartment 3B</span>
+                    <span class="step-s">Turn right out of the lift — it's the second door.</span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">4</span>
+                  <span class="step-body">
+                    <span class="step-t">Lockbox by the door</span>
+                    <span class="step-s">Open the lockbox with this code — the key is inside.</span>
+                    <span class="codechip"><span class="code-val">8290</span><button class="code-copy" aria-label="Copy lockbox code 8290"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+                  </span>
+                </li>
+              </ol>
+
+              <div class="fallback">
+                <span class="fallback-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span class="fallback-t">Can't get in?</span></span>
+                <span class="fallback-s">Ayesha is expecting you — reach her any time and she'll help.</span>
+                <div class="fallback-actions">
+                  <a class="btn primary" href="/messages/host-margalla-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Message Ayesha</a>
+                  <a class="btn secondary" href="/trips/is-f7-2bed-aug2026/call-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>Call host</a>
+                </div>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">A true wizard: <strong>one action per step</strong> so a tired traveller can't lose their place — gate code, floor, door, lockbox, in order. Codes sit in copyable mono chips with a <code>&lt;button&gt;</code> (never nested in a link, R7). The <strong>saved</strong> banner is the success register — a plain promise that the details are on-device. The host fallback is the no-dead-end exit for the "can't get in" moment: message primary, call host secondary. All targets ≥44pt.</p>
+    </section>
+
+    <!-- ============================ DARK PANEL — OFFLINE STATE ============================ -->
+    <section class="panel dark" aria-label="Dark theme — check-in instructions shown while offline">
+      <div class="panel-tag">Dark — offline-active · still fully readable</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">Offline — showing your saved check-in</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="tbar-title" id="bH">Check-in instructions</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="banner" role="status">
+                <span class="banner-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01M3 3l18 18"/></svg></span>
+                <span class="banner-b"><span class="banner-t">You're offline — showing your saved check-in</span><span class="banner-s">Everything below still works. It'll refresh once you're back online.</span></span>
+              </div>
+
+              <div class="ci-time">
+                <span class="ci-time-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="ci-time-b"><span class="ci-label">Check-in</span><span class="ci-when">Fri 14 Aug · from 2:00 PM</span></span>
+              </div>
+
+              <div class="sec-label">Getting in — 4 steps</div>
+              <ol class="steps">
+                <li class="step">
+                  <span class="step-num">1</span>
+                  <span class="step-body">
+                    <span class="step-t">Main gate</span>
+                    <span class="step-s">Enter this code on the keypad to the right of the gate.</span>
+                    <span class="codechip"><span class="code-val">4471</span><button class="code-copy" aria-label="Copy gate code 4471"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">2</span>
+                  <span class="step-body">
+                    <span class="step-t">Third floor</span>
+                    <span class="step-s">Take the lift on your left up to the 3rd floor.</span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">3</span>
+                  <span class="step-body">
+                    <span class="step-t">Apartment 3B</span>
+                    <span class="step-s">Turn right out of the lift — it's the second door.</span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">4</span>
+                  <span class="step-body">
+                    <span class="step-t">Lockbox by the door</span>
+                    <span class="step-s">Open the lockbox with this code — the key is inside.</span>
+                    <span class="codechip"><span class="code-val">8290</span><button class="code-copy" aria-label="Copy lockbox code 8290"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+                  </span>
+                </li>
+              </ol>
+
+              <div class="fallback">
+                <span class="fallback-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span class="fallback-t">Can't get in?</span></span>
+                <span class="fallback-s">Calling works even with no data — message will send once you're back online.</span>
+                <div class="fallback-actions">
+                  <a class="btn secondary" href="/messages/host-margalla-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>Message</a>
+                  <a class="btn primary" href="/trips/is-f7-2bed-aug2026/call-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>Call host</a>
+                </div>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">The offline state is honest and calm (§9-D): an <code>role="status"</code> banner in the muted info register says the guest is offline and — crucially — that <strong>everything below still works</strong>. Nothing is greyed out or hidden. On this state the fallback promotes <strong>Call host</strong> (a native dial needs no data) and demotes Message (queues until reconnect) — the resilience order flips to match reality.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering of the check-in instructions">
+      <div class="panel-tag">RTL · اردو — "چیک اِن ہدایات", mirrored</div>
+      <div class="rowflex">
+        <div class="pcol">
+          <div class="pcap">چیک اِن — اردو</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="uH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <button class="ib" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+              <div class="tbar-title" id="uH">چیک اِن ہدایات</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+              <div class="banner saved" role="status">
+                <span class="banner-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4M12 3v12M8 11l4 4 4-4"/></svg></span>
+                <span class="banner-b"><span class="banner-t">آپ کے فون میں محفوظ</span><span class="banner-s">انٹرنیٹ کے بغیر بھی کام کرے گا — پہنچنے پر سگنل نہ ہو تب بھی یہ آپ کے پاس ہوں گی۔</span></span>
+              </div>
+
+              <div class="ci-time">
+                <span class="ci-time-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="ci-time-b"><span class="ci-label">چیک اِن</span><span class="ci-when">جمعہ <span class="num">14</span> اگست · <span class="num">2:00 PM</span> سے</span></span>
+              </div>
+
+              <div class="sec-label">اندر داخلہ — <span class="num">4</span> مراحل</div>
+              <ol class="steps">
+                <li class="step">
+                  <span class="step-num">1</span>
+                  <span class="step-body">
+                    <span class="step-t">مرکزی گیٹ</span>
+                    <span class="step-s">گیٹ کے دائیں کی-پیڈ پر یہ کوڈ درج کریں۔</span>
+                    <span class="codechip"><span class="code-val">4471</span><button class="code-copy" aria-label="گیٹ کوڈ 4471 کاپی کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">2</span>
+                  <span class="step-body">
+                    <span class="step-t">تیسری منزل</span>
+                    <span class="step-s">بائیں جانب لفٹ سے تیسری منزل پر جائیں۔</span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">3</span>
+                  <span class="step-body">
+                    <span class="step-t">اپارٹمنٹ <span class="num">3B</span></span>
+                    <span class="step-s">لفٹ سے دائیں مڑیں — دوسرا دروازہ۔</span>
+                  </span>
+                </li>
+                <li class="step">
+                  <span class="step-num">4</span>
+                  <span class="step-body">
+                    <span class="step-t">دروازے کے پاس لاک باکس</span>
+                    <span class="step-s">اس کوڈ سے لاک باکس کھولیں — چابی اندر ہے۔</span>
+                    <span class="codechip"><span class="code-val">8290</span><button class="code-copy" aria-label="لاک باکس کوڈ 8290 کاپی کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></span>
+                  </span>
+                </li>
+              </ol>
+
+              <div class="fallback">
+                <span class="fallback-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span class="fallback-t">اندر نہیں جا پا رہے؟</span></span>
+                <span class="fallback-s">عائشہ آپ کی منتظر ہیں — کسی بھی وقت رابطہ کریں، وہ مدد کریں گی۔</span>
+                <div class="fallback-actions">
+                  <a class="btn primary" href="/messages/host-margalla-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg>پیغام بھیجیں</a>
+                  <a class="btn secondary" href="/trips/is-f7-2bed-aug2026/call-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4l2 5-3 2a12 12 0 0 0 6 6l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>کال کریں</a>
+                </div>
+              </div>
+              <div class="spacer-fill"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+      </div>
+      <p class="note">Mirrored: the step rail and connector move to the leading (right) edge, the numbered circles and copy affordances mirror with the row, and door codes stay Latin mono for unambiguous entry (§11). Instruction copy is plain, real Urdu; the "4 steps" label reads <span lang="ur">4 مراحل</span>. Note: this is a check-in instruction list, not the booking journey stepper — post-book screens carry no journey stepper (§7.6a).</p>
+    </section>
+
+  </main>
+</body>
+</html>

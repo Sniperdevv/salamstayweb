@@ -1,0 +1,541 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Referral programme, host side (HA-069)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     HA-069 · REFERRAL PROGRAMME (HOST SIDE) · app view (noindex) · route
+       "/host/referral" · host chrome, NO stepper (§7.6a)
+     ---------------------------------------------------------------------------
+     THIS IS GA-110, SEEN FROM THE HOST TAB — NOT A SECOND PROGRAMME.
+       SalamStay ships exactly one referral programme (GA-110 at
+       /account/referral): one personal link, one flat PKR 1,500 thank-you
+       credit for BOTH sides once the invited friend completes their first
+       stay, one list of invites. No host-side figure, no host-side trigger and
+       no second reward exists anywhere in the corpus — so this screen reuses
+       the shipped programme verbatim rather than inventing one:
+         · figure  PKR 1,500 — verbatim from GA-110 (itself verbatim GA-060)
+         · link    salamstay.pk/r/aqibg — Aqib's shipped referral link
+         · list    Ali Raza / Bilal Khan / Sana Malik with the same states and
+                   the same 18 Jun 2026 credit date (GA-110 / GA-060)
+         · banner  "A flat thank-you — never interest" — copy reused verbatim
+       and states plainly that it is the same programme and the same link as
+       the travelling account, so the two surfaces can never disagree.
+     PARKED (founder): a host-to-host milestone — "what if the person I invite
+       becomes a host?" — is NOT shipped. It renders as ONE labelled template
+       slot with a "Not set yet" chip (the HA-067 convention), never as an
+       invented amount or trigger.
+     HALAL FRAMING (DESIGN §10.3, SEO §5): a flat one-time credit, never a
+       percentage, never tied to spend, never riba-adjacent. Stated in a plain
+       info-register role="note" banner — stated, not sold.
+     "How it works" is a plain numbered explainer, NOT the booking-journey
+       stepper (§7.6a) — static circles, no progress line, no current state.
+     Initials avatars only; no faces on fictional identities (GA-090/GA-110).
+     No response-time or SLA promise anywhere.
+============================================================================ -->
+
+<style>
+  /* ============ Token block — @salamstay/design-tokens roles (DESIGN §13) ============ */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-active:#1E5A4C; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --sa-stripe:rgba(46,125,106,.10);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-active:#AFD6C9; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --sa-stripe:rgba(87,157,139,.16);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#fff; border:1px solid #E7E9EA; padding:1px 5px; border-radius:4px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:326px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1060px; line-height:1.6; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* phone frame — host chrome (ha-066 lineage); NO journey stepper (§7.6a) */
+  .phone { width:326px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:780px; position:relative; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl .screen { direction:rtl; }
+  .ur { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; text-decoration:none; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 20px; overflow-y:auto; }
+
+  /* hero */
+  .rhero { padding:2px 2px 4px; }
+  .rhero-ic { width:46px; height:46px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .rhero-ic svg { width:23px; height:23px; stroke-width:1.8; }
+  .rhero h2 { font-size:19px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; }
+  .rhero p { font-size:13px; color:var(--text-secondary); margin-top:6px; line-height:1.5; }
+  .rhero p b { color:var(--text-primary); font-weight:600; }
+
+  /* halal-reward framing banner — copy verbatim from GA-110 */
+  .bnr { display:flex; gap:11px; align-items:flex-start; border-radius:var(--radius-lg); padding:13px 14px; margin-top:14px; border:1px solid transparent; }
+  .bnr.info { background:var(--info-bg); border-color:var(--info-border); }
+  .bnr .bnr-ic { flex:none; margin-top:1px; }
+  .bnr .bnr-ic svg { width:19px; height:19px; stroke-width:1.85; color:var(--info-fg); }
+  .bnr .bnr-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .bnr .bnr-h { font-size:13px; font-weight:600; color:var(--text-primary); display:block; }
+  .bnr .bnr-d { font-size:12px; color:var(--text-secondary); display:block; line-height:1.5; margin:0; }
+
+  /* one-programme note — the anti-drift line */
+  .onep { display:flex; gap:9px; align-items:flex-start; margin-top:10px; padding:10px 12px; border-radius:var(--radius-lg); background:var(--bg-raised); border:1px solid var(--border-hairline); }
+  .onep svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:1px; stroke-width:1.9; }
+  .onep span { font-size:11.5px; color:var(--text-secondary); line-height:1.5; display:block; }
+  .onep a { color:var(--int-primary); font-weight:600; text-decoration:none; }
+
+  .sec-h { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:20px 2px 10px; }
+
+  /* your-link row */
+  .linkrow { display:flex; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:var(--radius-md); background:var(--bg-sunken); border:1px solid var(--border-default); }
+  .phone.rtl .linkrow { padding:8px 14px 8px 8px; }
+  .lurl { flex:1; min-width:0; font-size:13px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .copybtn { height:36px; padding:0 16px; border-radius:var(--radius-sm); background:var(--int-primary); color:var(--text-on-brand); font-size:13.5px; font-weight:600; border:none; cursor:pointer; font-family:inherit; flex:none; display:inline-flex; align-items:center; gap:6px; }
+  .copybtn svg { width:15px; height:15px; stroke-width:2; }
+
+  /* share-to channel row — WhatsApp-first (PK norm), no brand-channel colour */
+  .chlabel { font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:18px 2px 10px; }
+  .channels { display:flex; gap:13px; overflow-x:auto; padding-bottom:2px; }
+  .channel { display:flex; flex-direction:column; align-items:center; gap:7px; background:transparent; border:none; cursor:pointer; font-family:inherit; flex:none; width:56px; }
+  .channel .cbub { width:46px; height:46px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); display:flex; align-items:center; justify-content:center; }
+  .channel .cbub svg { width:21px; height:21px; color:var(--text-secondary); stroke-width:1.75; }
+  .channel .clbl { font-size:11px; font-weight:500; color:var(--text-secondary); text-align:center; line-height:1.2; }
+  .channel.lead .cbub { background:var(--int-subtle); border-color:var(--border-brand); }
+  .channel.lead .cbub svg { color:var(--int-primary); }
+  .channel.lead .clbl { color:var(--text-primary); font-weight:600; }
+
+  /* how it works — plain numbered explainer, NOT the booking-journey stepper (§7.6a) */
+  .steps { list-style:none; display:flex; flex-direction:column; gap:12px; }
+  .step { display:flex; gap:12px; align-items:flex-start; }
+  .stepnum { flex:none; width:26px; height:26px; border-radius:var(--radius-full); background:var(--bg-raised); border:1px solid var(--border-hairline); color:var(--text-secondary); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; font-family:'Inter',sans-serif; }
+  .stepbd { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; padding-top:2px; }
+  .stept { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .stepd { font-size:12px; color:var(--text-secondary); line-height:1.45; }
+
+  /* the ONE unshipped question, as a labelled slot (HA-067 convention) */
+  .slot { display:flex; align-items:center; gap:10px; min-height:58px; margin-top:10px; padding:11px 12px; border:1px dashed var(--border-default); border-radius:var(--radius-lg); background:var(--bg-sunken); }
+  .slot-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .slot-n { font-size:12.5px; font-weight:600; color:var(--text-secondary); display:block; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .slot-s { font-size:11px; color:var(--text-tertiary); display:block; line-height:1.5; }
+  .slot-p { flex:none; font-size:10.5px; font-weight:700; border-radius:var(--radius-full); padding:4px 9px; white-space:nowrap; background:var(--bg-canvas); color:var(--text-tertiary); border:1px solid var(--border-default); }
+
+  /* invited-friends list — invited / booked / credit-earned */
+  .flist { list-style:none; display:flex; flex-direction:column; gap:9px; }
+  .frow { display:flex; align-items:center; gap:12px; min-height:58px; border:1px solid var(--border-hairline); background:var(--bg-canvas); border-radius:var(--radius-lg); padding:10px 12px; }
+  .f-av { flex:none; width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700; font-family:'Inter',sans-serif; }
+  .f-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .f-t { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .f-s { font-size:12px; color:var(--text-secondary); }
+  .f-pill { flex:none; font-size:11px; font-weight:700; border-radius:var(--radius-full); padding:5px 10px; white-space:nowrap; }
+  .f-pill.neutral { background:var(--bg-sunken); color:var(--text-secondary); border:1px solid var(--border-hairline); }
+  .f-pill.info { background:var(--info-bg); color:var(--info-fg); border:1px solid var(--info-border); }
+  .f-pill.success { background:var(--success-bg); color:var(--success-fg); border:1px solid var(--success-border); }
+
+  .terms { font-size:11.5px; color:var(--text-tertiary); margin-top:18px; line-height:1.5; }
+  .terms a { color:var(--int-primary); font-weight:600; text-decoration:none; }
+
+  /* empty state (§8.5 pattern) */
+  .empty { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px 10px; }
+  .empty-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--bg-sunken); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .empty-ic svg { width:26px; height:26px; stroke-width:1.6; }
+  .empty-h { font-size:15.5px; font-weight:600; color:var(--text-primary); }
+  .empty-d { font-size:12.5px; color:var(--text-secondary); margin-top:6px; line-height:1.5; max-width:240px; }
+
+  /* toast — link copied */
+  .toast { position:absolute; inset-inline:16px; bottom:34px; z-index:8; display:flex; align-items:center; gap:11px; background:var(--bg-canvas); border:1px solid var(--success-border); border-radius:var(--radius-lg); box-shadow:var(--el-popover); padding:12px 14px; }
+  .toast .ti { color:var(--success-fg); flex:none; }
+  .toast .ti svg { width:20px; height:20px; stroke-width:2.1; }
+  .toast .tbd { flex:1; min-width:0; }
+  .toast .th { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .toast .th span { font-weight:400; color:var(--text-secondary); }
+
+  .grow { flex:1; min-height:8px; }
+  a:focus-visible, button:focus-visible { outline:2px solid var(--int-primary); outline-offset:2px; border-radius:var(--radius-sm); }
+  @media (max-width:700px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Referral programme, host side (HA-069)</h1>
+    <p>The invite surface in the host tab, at <code>/host/referral</code>. SalamStay ships <strong>one</strong> referral programme — <code>GA-110</code> — and this screen is that programme seen from hosting, not a second one: the same <strong>flat PKR <span class="num">1,500</span></strong> thank-you credit for <strong>both sides</strong> once an invited friend completes their first stay, the same personal link <code>salamstay.pk/r/aqibg</code>, the same three invites with the same states and the same <span class="num">18 Jun 2026</span> credit date. The halal framing is reused <strong>verbatim</strong> — "A flat thank-you — never interest" — a one-time credit, never a percentage, never tied to what anyone spends (DESIGN §10.3, SEO §5). A quiet line states outright that this is the same link as the travelling account, so the two surfaces can never drift apart. The one question a host would actually ask and the product cannot yet answer — <em>what if the person I invite becomes a host?</em> — renders as a <strong>labelled template slot</strong> with a <em>Not set yet</em> chip (the <code>HA-067</code> convention), <strong>parked for founder sign-off</strong>, rather than an invented figure. "How it works" is a plain numbered explainer, <strong>not a journey stepper</strong> (§7.6a). Host chrome. Panels: full screen (light) · link copied (dark) · no invites yet (light) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Full screen · light</span><span>Link copied · dark</span><span>No invites yet</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ ROW 1 — LIGHT FULL · DARK + TOAST ============================ -->
+    <section class="panel" aria-label="Light theme — the host referral screen, and dark theme with the link-copied toast">
+      <div class="panel-tag">Light — full screen · Dark — link copied toast</div>
+      <div class="rowflex">
+
+        <!-- A -->
+        <div class="pcol">
+          <div class="pcap">A · Invite friends — light</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Invite friends</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="rhero">
+                <span class="rhero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg></span>
+                <h2 id="aH">Invite friends, earn credit</h2>
+                <p>When a friend joins with your link and completes their first stay, <b>you both get PKR 1,500 credit</b> — automatically, the same SalamStay credit you already know.</p>
+              </div>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">A flat thank-you — never interest</span>
+                  <p class="bnr-d">This is a one-time credit for each friend who joins, not a percentage and never tied to what they spend. It's booking credit, plain and simple — the same as any other SalamStay credit.</p>
+                </div>
+              </div>
+
+              <div class="onep">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+                <span>One programme, one link. This is the same invite link as your <a href="/account/referral">travelling account</a> — invite from either side and the credit is the same.</span>
+              </div>
+
+              <div class="sec-h">Your link</div>
+              <div class="linkrow">
+                <span class="lurl num">salamstay.pk/r/aqibg</span>
+                <button class="copybtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy</button>
+              </div>
+
+              <div class="chlabel">Share to</div>
+              <div class="channels">
+                <button class="channel lead" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span><span class="clbl">WhatsApp</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.5 8L4 21l1.5-4.5A8.5 8.5 0 1 1 21 11.5z"/></svg></span><span class="clbl">Messages</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span class="clbl">Email</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.5 10.5l7-4M8.5 13.5l7 4"/></svg></span><span class="clbl">More</span></button>
+              </div>
+
+              <div class="sec-h">How it works</div>
+              <ol class="steps">
+                <li class="step"><span class="stepnum" aria-hidden="true">1</span><span class="stepbd"><span class="stept">Share your link</span><span class="stepd">Send it over WhatsApp, or copy it anywhere.</span></span></li>
+                <li class="step"><span class="stepnum" aria-hidden="true">2</span><span class="stepbd"><span class="stept">They complete their first stay</span><span class="stepd">Your friend signs up with your link and finishes a booking.</span></span></li>
+                <li class="step"><span class="stepnum" aria-hidden="true">3</span><span class="stepbd"><span class="stept">You both get credit</span><span class="stepd"><span class="num">PKR 1,500</span> lands in each of your SalamStay credit balances.</span></span></li>
+              </ol>
+
+              <div class="slot">
+                <div class="slot-b">
+                  <span class="slot-n">{host_referral_reward}</span>
+                  <span class="slot-s">If someone you invite starts hosting instead, we haven't decided what that earns yet — so we're not going to name a figure. It appears here when it's agreed.</span>
+                </div>
+                <span class="slot-p">Not set yet</span>
+              </div>
+
+              <div class="sec-h">Your invites</div>
+              <ul class="flist">
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">AR</span>
+                  <span class="f-b"><span class="f-t">Ali Raza</span><span class="f-s"><span class="num">2</span> days ago · invited</span></span>
+                  <span class="f-pill neutral">Invited</span>
+                </li>
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">BK</span>
+                  <span class="f-b"><span class="f-t">Bilal Khan</span><span class="f-s">Booked their first stay</span></span>
+                  <span class="f-pill info">Booked</span>
+                </li>
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">SM</span>
+                  <span class="f-b"><span class="f-t">Sana Malik</span><span class="f-s">Stay completed · <span class="num">18 Jun 2026</span></span></span>
+                  <span class="f-pill success num">+PKR 1,500</span>
+                </li>
+              </ul>
+
+              <p class="terms">By inviting friends, you agree to the <a href="/legal/referral-terms">referral terms</a>.</p>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B -->
+        <div class="pcol">
+          <div class="pcap">B · After tapping Copy — "Link copied"</div>
+          <section class="phone dark" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Invite friends</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="rhero">
+                <span class="rhero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg></span>
+                <h2 id="bH" class="sr-only">Invite friends, earn credit</h2>
+                <p>When a friend joins with your link and completes their first stay, <b>you both get PKR 1,500 credit</b> — automatically, the same SalamStay credit you already know.</p>
+              </div>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">A flat thank-you — never interest</span>
+                  <p class="bnr-d">This is a one-time credit for each friend who joins, not a percentage and never tied to what they spend. It's booking credit, plain and simple.</p>
+                </div>
+              </div>
+
+              <div class="onep">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+                <span>One programme, one link. This is the same invite link as your <a href="/account/referral">travelling account</a>.</span>
+              </div>
+
+              <div class="sec-h">Your link</div>
+              <div class="linkrow">
+                <span class="lurl num">salamstay.pk/r/aqibg</span>
+                <button class="copybtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Copied</button>
+              </div>
+
+              <div class="chlabel">Share to</div>
+              <div class="channels">
+                <button class="channel lead" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span><span class="clbl">WhatsApp</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.5 8L4 21l1.5-4.5A8.5 8.5 0 1 1 21 11.5z"/></svg></span><span class="clbl">Messages</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span class="clbl">Email</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.5 10.5l7-4M8.5 13.5l7 4"/></svg></span><span class="clbl">More</span></button>
+              </div>
+
+              <div class="sec-h">Your invites</div>
+              <ul class="flist">
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">AR</span>
+                  <span class="f-b"><span class="f-t">Ali Raza</span><span class="f-s"><span class="num">2</span> days ago · invited</span></span>
+                  <span class="f-pill neutral">Invited</span>
+                </li>
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">SM</span>
+                  <span class="f-b"><span class="f-t">Sana Malik</span><span class="f-s">Stay completed · <span class="num">18 Jun 2026</span></span></span>
+                  <span class="f-pill success num">+PKR 1,500</span>
+                </li>
+              </ul>
+
+              <div class="grow"></div>
+            </div>
+            <div class="toast" role="status" aria-live="polite">
+              <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg></span>
+              <div class="tbd">
+                <div class="th">Link copied <span>— paste it anywhere</span></div>
+              </div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note"><b>Nothing here is a new programme, and the screen says so.</b> The figure, the link, the trigger, the three lifecycle states and the <span class="num">18 Jun 2026</span> credit date are all carried across from shipped <code>GA-110</code> — a host and a traveller looking at the same account must never see two different numbers. The "one programme, one link" row is the mechanism that keeps them honest: it links straight to <code>/account/referral</code>, so drift would be visible in one tap. The halal framing is <b>stated, never sold</b> — a plain <code>role="note"</code> banner in the muted info register, no percentage language, no cashback, no riba-adjacent wording. The <code>{host_referral_reward}</code> slot is the one honest gap: a host <i>will</i> ask what happens if their friend starts hosting, and rather than answering with a number nobody has agreed, the row names the question, admits it isn't decided, and holds the space the build will fill. "How it works" uses static circles with <b>no connecting progress line and no current state</b> — it is an explainer, not the <span class="num">4</span>-step booking stepper (§7.6a).</p>
+    </section>
+
+    <!-- ============================ ROW 2 — EMPTY · RTL/URDU ============================ -->
+    <section class="panel" aria-label="Light theme empty state, and the right-to-left Urdu rendering">
+      <div class="panel-tag">Light — no invites yet (empty) · اردو · RTL</div>
+      <div class="rowflex">
+
+        <!-- C -->
+        <div class="pcol">
+          <div class="pcap">C · No invites yet</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Invite friends</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="rhero">
+                <span class="rhero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg></span>
+                <h2 id="cH" class="sr-only">Invite friends, earn credit</h2>
+                <p>When a friend joins with your link and completes their first stay, <b>you both get PKR 1,500 credit</b> — automatically, the same SalamStay credit you already know.</p>
+              </div>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h">A flat thank-you — never interest</span>
+                  <p class="bnr-d">This is a one-time credit for each friend who joins, not a percentage and never tied to what they spend.</p>
+                </div>
+              </div>
+
+              <div class="sec-h">Your link</div>
+              <div class="linkrow">
+                <span class="lurl num">salamstay.pk/r/aqibg</span>
+                <button class="copybtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy</button>
+              </div>
+
+              <div class="chlabel">Share to</div>
+              <div class="channels">
+                <button class="channel lead" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span><span class="clbl">WhatsApp</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.5 8L4 21l1.5-4.5A8.5 8.5 0 1 1 21 11.5z"/></svg></span><span class="clbl">Messages</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span class="clbl">Email</span></button>
+              </div>
+
+              <div class="sec-h">Your invites</div>
+              <div class="empty">
+                <span class="empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M16 3.5a3.2 3.2 0 0 1 0 6M18 20a6 6 0 0 0-3-5.2"/></svg></span>
+                <h3 class="empty-h">No invites yet</h3>
+                <p class="empty-d">Share your link above — you'll see your friends here once they join.</p>
+              </div>
+
+              <p class="terms">By inviting friends, you agree to the <a href="/legal/referral-terms">referral terms</a>.</p>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D -->
+        <div class="pcol">
+          <div class="pcap">D · اردو — مدعو کریں، کریڈٹ کمائیں</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="واپس آج پر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title ur">دوستوں کو مدعو کریں</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="screen">
+
+              <div class="rhero">
+                <span class="rhero-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg></span>
+                <h2 id="dH" class="ur">دوستوں کو مدعو کریں، کریڈٹ کمائیں</h2>
+                <p class="ur">جب کوئی دوست آپ کے لنک سے شامل ہو اور اپنا پہلا قیام مکمل کرے، تو <b>آپ دونوں کو <span class="num">PKR 1,500</span> کریڈٹ ملتا ہے</b> — خود بخود، وہی سلام اسٹے کریڈٹ جسے آپ پہلے سے جانتے ہیں۔</p>
+              </div>
+
+              <div class="bnr info" role="note">
+                <span class="bnr-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="bnr-b">
+                  <span class="bnr-h ur">ایک مقررہ شکریہ — کبھی سود نہیں</span>
+                  <p class="bnr-d ur">یہ ہر شامل ہونے والے دوست کے لیے ایک ہی بار کا کریڈٹ ہے، فیصد نہیں، اور کبھی بھی ان کے خرچ سے نہیں جڑا۔ یہ سیدھا سادہ بکنگ کریڈٹ ہے — بالکل کسی بھی دوسرے سلام اسٹے کریڈٹ کی طرح۔</p>
+                </div>
+              </div>
+
+              <div class="onep">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+                <span class="ur">ایک ہی پروگرام، ایک ہی لنک۔ یہ وہی لنک ہے جو آپ کے <a href="/ur/account/referral">مسافری اکاؤنٹ</a> میں ہے — کسی بھی طرف سے مدعو کریں، کریڈٹ ایک ہی ہے۔</span>
+              </div>
+
+              <div class="sec-h ur">آپ کا لنک</div>
+              <div class="linkrow">
+                <span class="lurl num">salamstay.pk/r/aqibg</span>
+                <button class="copybtn ur" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>کاپی کریں</button>
+              </div>
+
+              <div class="chlabel ur">شیئر کریں</div>
+              <div class="channels">
+                <button class="channel lead" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.4-4A8 8 0 1 1 8 18.6z"/><path d="M9 10.5c.3 1.6 2 3.3 3.6 3.6.6.1 1.2-.4 1.5-.9l1.2.5"/></svg></span><span class="clbl ur">واٹس ایپ</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.5 8L4 21l1.5-4.5A8.5 8.5 0 1 1 21 11.5z"/></svg></span><span class="clbl ur">میسج</span></button>
+                <button class="channel" type="button"><span class="cbub" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span><span class="clbl ur">ای میل</span></button>
+              </div>
+
+              <div class="sec-h ur">یہ کیسے کام کرتا ہے</div>
+              <ol class="steps">
+                <li class="step"><span class="stepnum" aria-hidden="true">1</span><span class="stepbd"><span class="stept ur">اپنا لنک شیئر کریں</span><span class="stepd ur">واٹس ایپ پر بھیجیں، یا کہیں بھی کاپی کریں۔</span></span></li>
+                <li class="step"><span class="stepnum" aria-hidden="true">2</span><span class="stepbd"><span class="stept ur">وہ اپنا پہلا قیام مکمل کریں</span><span class="stepd ur">آپ کا دوست آپ کے لنک سے سائن اپ کرے اور بکنگ مکمل کرے۔</span></span></li>
+                <li class="step"><span class="stepnum" aria-hidden="true">3</span><span class="stepbd"><span class="stept ur">آپ دونوں کو کریڈٹ ملتا ہے</span><span class="stepd ur"><span class="num">PKR 1,500</span> آپ دونوں کے سلام اسٹے کریڈٹ بیلنس میں شامل ہو جاتا ہے۔</span></span></li>
+              </ol>
+
+              <div class="slot">
+                <div class="slot-b">
+                  <span class="slot-n">{host_referral_reward}</span>
+                  <span class="slot-s ur">اگر آپ کا مدعو کردہ دوست خود میزبانی شروع کر دے تو اس پر کیا ملے گا — یہ ابھی طے نہیں ہوا، اس لیے ہم کوئی رقم نہیں لکھ رہے۔ طے ہوتے ہی یہیں ظاہر ہوگی۔</span>
+                </div>
+                <span class="slot-p ur">طے نہیں</span>
+              </div>
+
+              <div class="sec-h ur">آپ کی دعوتیں</div>
+              <ul class="flist">
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">عل</span>
+                  <span class="f-b"><span class="f-t ur">علی رضا</span><span class="f-s ur"><span class="num">2</span> دن پہلے · مدعو کیا گیا</span></span>
+                  <span class="f-pill neutral ur">مدعو کیا گیا</span>
+                </li>
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">بل</span>
+                  <span class="f-b"><span class="f-t ur">بلال خان</span><span class="f-s ur">پہلا قیام بک کر لیا</span></span>
+                  <span class="f-pill info ur">بک ہو گیا</span>
+                </li>
+                <li class="frow">
+                  <span class="f-av" aria-hidden="true">ثم</span>
+                  <span class="f-b"><span class="f-t ur">ثناء ملک</span><span class="f-s ur">قیام مکمل · <span class="num">18 Jun 2026</span></span></span>
+                  <span class="f-pill success num">+PKR 1,500</span>
+                </li>
+              </ul>
+
+              <p class="terms ur">دوستوں کو مدعو کر کے، آپ <a href="/ur/legal/referral-terms">ریفرل کی شرائط</a> سے اتفاق کرتے ہیں۔</p>
+
+              <div class="grow"></div>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The empty state (C) keeps the link, the WhatsApp-first channel row and the halal banner fully usable — only the invites list is replaced with a calm, oriented "No invites yet" prompt (§8.5: one line glyph, a headline, one sentence, no dead end). RTL (D) mirrors the back chevron and the whole layout; names use the two-letter monogram convention <code>GA-096</code> established (علی → <b>عل</b>, بلال → <b>بل</b>, ثناء → <b>ثم</b>), while <span class="num">PKR</span> figures, the link and the <span class="num">18 Jun 2026</span> date stay LTR-isolated tabular inside <code>.num</code> so they never digit-order-mirror. Western digits, Urdu prose around them (Pass #<span class="num">31</span>). The slot token stays Latin monospace in both directions — it is a build-time identifier, not prose.</p>
+    </section>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Screen — Tourism license capture (HA-010)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-on-brand:#FFFFFF; --text-on-inverse:#FFFFFF;
+    --int-primary:#2E7D6A; --int-primary-hover:#256757; --int-subtle:#EEF6F3;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F;   --error-bg:#FBECE9;   --error-border:#EBBDB2;
+    --info-fg:#3A5A86;    --info-bg:#ECF1F8;    --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.56);
+    --sa-stripe:rgba(46,125,106,.10);
+    --shadow-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-hairline:0 1px 2px 0 rgba(16,25,27,.04);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px; --radius-full:9999px;
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-on-brand:#0E1211; --text-on-inverse:#FFFFFF;
+    --int-primary:#579D8B; --int-primary-hover:#82BCAB; --int-subtle:#16231F;
+    --border-hairline:#2A3230; --border-default:#39413F;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385;   --error-bg:#2C1B18;   --error-border:#4E322C;
+    --info-fg:#8FB0DB;    --info-bg:#171F2B;    --info-border:#31435C;
+    --scrim:rgba(0,0,0,.62);
+    --sa-stripe:rgba(87,157,139,.16);
+    --shadow-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-hairline:0 1px 2px 0 rgba(0,0,0,.24);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  a { color:inherit; text-decoration:none; }
+  ul,ol { list-style:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  .head { max-width:1240px; margin:0 auto 26px; }
+  .head h1 { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:920px; }
+  .toggle { display:inline-flex; flex-wrap:wrap; gap:2px; margin-top:14px; background:#fff; border:1px solid #E7E9EA; border-radius:9999px; padding:4px; }
+  .toggle span { font-size:12px; font-weight:600; padding:5px 14px; border-radius:9999px; color:#5F676D; }
+  .toggle span.on { background:#16191B; color:#fff; }
+
+  .stage { max-width:1240px; margin:0 auto; }
+  .panel { background:var(--bg-canvas); border-radius:22px; padding:26px 24px 28px; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); margin-bottom:24px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:20px; }
+  .rowflex { display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start; }
+  .pcol { width:302px; }
+  .pcap { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin-bottom:10px; padding-left:2px; }
+  .note { font-size:12px; color:var(--text-tertiary); margin-top:16px; max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+
+  /* phone frame — host lineage (ha-004/ha-005); NO checkout stepper */
+  .phone { width:302px; border:1px solid var(--border-hairline); border-radius:30px; overflow:hidden; background:var(--bg-canvas); box-shadow:var(--shadow-card); display:flex; flex-direction:column; min-height:660px; }
+  .phone.rtl { direction:rtl; }
+  .phone.rtl :is(.tbar-title,.hc-a,.hc-now,h2,.lead,.flabel,.stv,.dtv,.us,.ut,.field-sub,.dm-cap,.st-t,.st-d,.bnr-h,.bnr-d,.byp-t,.tk-t,.tk-d,.tk-when,.sbody .st,.sbody .sd,.pref-t,.pref-s,.helplink,.btn,a,.reqpill,.corepill) { font-family:'Noto Nastaliq Urdu', serif; line-height:1.9; }
+  .sa-top { height:26px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-bottom:1px dashed var(--border-default); flex:none; }
+  .sa-top span { font-size:9px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sa-bottom { height:22px; background:repeating-linear-gradient(45deg,var(--sa-stripe),var(--sa-stripe) 6px,transparent 6px,transparent 12px); display:flex; align-items:center; justify-content:center; border-top:1px dashed var(--border-default); flex:none; position:relative; }
+  .sa-bottom span { font-size:8.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .home-ind { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); width:96px; height:4px; border-radius:var(--radius-full); background:var(--text-tertiary); opacity:.5; }
+
+  .tbar { display:flex; align-items:center; min-height:52px; padding:2px 6px; gap:4px; border-bottom:1px solid var(--border-hairline); flex:none; }
+  .ib { width:44px; height:44px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; background:transparent; border:none; cursor:pointer; }
+  .ib svg { width:22px; height:22px; color:var(--text-primary); stroke-width:1.75; }
+  .hubctx { display:flex; align-items:center; gap:6px; padding:9px 18px 2px; flex:none; }
+  .hubctx .hc-a { font-size:11.5px; font-weight:600; color:var(--text-secondary); text-decoration:none; }
+  .hubctx .hc-a:hover { text-decoration:underline; }
+  .hubctx .hc-sep { font-size:11px; color:var(--text-tertiary); }
+  .hubctx .hc-now { font-size:11.5px; font-weight:600; color:var(--text-primary); }
+  .tbar-title { flex:1; font-size:15px; font-weight:600; color:var(--text-primary); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .spacer { width:44px; flex:none; }
+
+  .screen { flex:1; display:flex; flex-direction:column; padding:16px 16px 18px; overflow-y:auto; }
+  .screen h2 { font-size:18.5px; font-weight:600; letter-spacing:-0.01em; color:var(--text-primary); margin-bottom:6px; }
+  .screen .lead { font-size:12.5px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5; }
+  .sec-lb { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-tertiary); margin:14px 2px 9px; }
+  .sec-lb:first-of-type { margin-top:0; }
+
+  /* why-panel callout */
+  .callout { display:flex; gap:11px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-lg); padding:13px 14px; margin-bottom:16px; }
+  .callout .cico { flex:none; color:var(--text-secondary); margin-top:1px; }
+  .callout .cico svg { width:18px; height:18px; stroke-width:1.75; }
+  .callout .ctxt { font-size:12px; color:var(--text-secondary); line-height:1.55; }
+  .callout .ctxt strong { color:var(--text-primary); font-weight:600; }
+
+  /* fields — Input/Select shell (§8.1) */
+  .fld { margin-bottom:13px; }
+  .flabel { font-size:12.5px; font-weight:600; color:var(--text-primary); margin-bottom:7px; display:block; }
+  .select-trig, .date-trig { width:100%; min-height:48px; border-radius:var(--radius-md); border:1px solid var(--border-default); background:var(--bg-sunken); padding:0 13px; display:flex; align-items:center; gap:10px; font-family:inherit; cursor:pointer; }
+  .select-trig .stv, .date-trig .dtv { flex:1; min-width:0; text-align:start; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .date-trig .dtv.ph { color:var(--text-tertiary); font-weight:500; }
+  .select-trig svg, .date-trig svg { width:17px; height:17px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .select-trig:focus-visible, .date-trig:focus-visible, .txtinput:focus-visible { outline:none; border-color:var(--int-primary); box-shadow:0 0 0 2px var(--int-subtle); }
+  .field-sub { font-size:11px; color:var(--text-tertiary); margin-top:6px; line-height:1.45; display:block; }
+  .txtinput { width:100%; min-height:48px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); padding:0 13px; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--text-primary); }
+  .txtinput::placeholder { color:var(--text-tertiary); font-weight:500; }
+
+  /* upload tile — neutral, dashed, two equal paths (§8.8 non-camera fallback) */
+  .uptile { border:1.5px dashed var(--border-default); border-radius:var(--radius-lg); background:var(--bg-raised); padding:18px 14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:7px; }
+  .uptile .uic { width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-sunken); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .uptile .uic svg { width:19px; height:19px; stroke-width:1.7; }
+  .uptile .ut { font-size:12.5px; font-weight:600; color:var(--text-primary); }
+  .uptile .us { font-size:11.5px; color:var(--text-secondary); }
+  .ubtns { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; justify-content:center; width:100%; }
+  .ubtns .btn { flex:1; min-width:118px; }
+
+  /* neutral document placeholder — NEVER a real-looking certificate */
+  .docmock { border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-raised); padding:13px; position:relative; overflow:hidden; }
+  .dm-head { display:flex; align-items:center; gap:9px; margin-bottom:12px; }
+  .dm-ic { width:32px; height:32px; border-radius:var(--radius-sm); background:var(--bg-sunken); border:1px solid var(--border-default); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .dm-ic svg { width:16px; height:16px; stroke-width:1.6; }
+  .dm-chip { margin-left:auto; font-size:8.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-tertiary); background:var(--bg-sunken); border:1px solid var(--border-default); border-radius:var(--radius-full); padding:2px 8px; }
+  .phone.rtl .dm-chip { margin-left:0; margin-right:auto; }
+  .dm-lines { display:flex; flex-direction:column; gap:9px; }
+  .dm-line { display:block; height:7px; border-radius:var(--radius-full); background:var(--bg-sunken); }
+  .dm-line.w90 { width:90%; } .dm-line.w70 { width:70%; } .dm-line.w55 { width:55%; } .dm-line.w40 { width:40%; }
+  .dm-seal { position:absolute; right:13px; bottom:13px; width:34px; height:34px; border-radius:var(--radius-full); border:1.5px dashed var(--border-default); opacity:.7; }
+  .phone.rtl .dm-seal { right:auto; left:13px; }
+  .dm-cap { font-size:11px; color:var(--text-tertiary); margin:8px 0 0; text-align:center; }
+  .doc-actions { display:flex; gap:14px; justify-content:center; margin-top:9px; }
+  .doc-actions button, .doc-actions a { font-size:12px; font-weight:600; color:var(--int-primary); background:transparent; border:none; cursor:pointer; font-family:inherit; padding:6px 2px; min-height:32px; }
+
+  /* status rows (§8.3) */
+  .statusrow { display:flex; align-items:flex-start; gap:11px; border-radius:var(--radius-lg); padding:12px 13px; margin-bottom:13px; }
+  .statusrow.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .statusrow.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .statusrow .sico { flex:none; margin-top:1px; }
+  .statusrow .sico svg { width:18px; height:18px; stroke-width:2; }
+  .statusrow.ok .sico svg { color:var(--success-fg); }
+  .statusrow.info .sico svg { color:var(--info-fg); }
+  .statusrow .sbody .st { font-size:12.5px; font-weight:600; }
+  .statusrow.ok .st { color:var(--success-fg); }
+  .statusrow.info .st { color:var(--info-fg); }
+  .statusrow .sbody .sd { font-size:11.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+
+  .byp { display:inline-flex; align-items:center; gap:8px; background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:var(--radius-full); padding:7px 13px; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:14px; }
+  .byp svg { width:14px; height:14px; stroke-width:1.9; color:var(--text-secondary); flex:none; }
+  .byp-t { display:inline; }
+
+  /* status tracker (submitted -> in review -> verified) */
+  .track { display:flex; flex-direction:column; margin:2px 0 14px; }
+  .track li { display:flex; gap:12px; align-items:stretch; }
+  .tk-rail { display:flex; flex-direction:column; align-items:center; flex:none; width:24px; }
+  .tk-dot { width:24px; height:24px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; flex:none; border:2px solid var(--border-default); background:var(--bg-canvas); color:var(--text-tertiary); }
+  .tk-dot svg { width:13px; height:13px; stroke-width:2.4; }
+  .tk-line { display:block; width:2px; flex:1; background:var(--border-hairline); min-height:16px; margin:3px 0; }
+  .track li:last-child .tk-line { display:none; }
+  .track li.done .tk-dot { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .track li.done .tk-line { background:var(--int-primary); }
+  .track li.now .tk-dot { border-color:var(--int-primary); color:var(--int-primary); box-shadow:0 0 0 3px var(--int-subtle); }
+  .tk-body { flex:1; padding-bottom:14px; }
+  .tk-t { font-size:13px; font-weight:600; color:var(--text-primary); }
+  .track li.upcoming .tk-t { color:var(--text-tertiary); }
+  .tk-d { font-size:11.5px; color:var(--text-secondary); margin-top:2px; line-height:1.4; }
+  .tk-when { font-size:10.5px; color:var(--text-tertiary); margin-top:3px; }
+
+  /* verified summary rows */
+  .sumrow { display:flex; flex-direction:column; gap:2px; border-bottom:1px solid var(--border-hairline); padding:10px 2px; }
+  .sumrow:last-of-type { border-bottom:none; }
+  .sum-lb { font-size:11px; color:var(--text-tertiary); }
+  .sum-val { font-size:13.5px; font-weight:600; color:var(--text-primary); }
+
+  .hero-ic { width:52px; height:52px; border-radius:var(--radius-full); background:var(--int-subtle); color:var(--int-primary); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+  .hero-ic.ok { background:var(--success-bg); color:var(--success-fg); }
+  .hero-ic svg { width:26px; height:26px; stroke-width:1.6; }
+
+  .spacer-fill { flex:1; }
+  .btn { width:100%; min-height:48px; border-radius:var(--radius-md); font-size:14.5px; font-weight:600; font-family:inherit; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; }
+  .btn svg { width:17px; height:17px; stroke-width:2; }
+  .btn.primary { background:var(--int-primary); color:var(--text-on-brand); }
+  .btn.secondary { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+  .btn.sm { min-height:44px; font-size:13.5px; }
+  .btn + .btn { margin-top:10px; }
+  .helplink { display:block; text-align:center; margin-top:12px; font-size:12.5px; }
+  a.helplink, .doc-actions a { color:var(--int-primary); font-weight:600; }
+  a.helplink:hover { text-decoration:underline; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  @media (max-width:680px){ .pcol,.phone{ width:100%; max-width:340px; } .rowflex{ justify-content:center; } }
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1>Screen — Tourism license capture (HA-010)</h1>
+    <p>The host records their provincial tourism-license number, issuing authority and expiry — required to host legally in their area (host-verify, ARCH §11.5.4). The <b>issuing authority</b> is a Select that is factually city/province-matched (never an invented body name); <b>license number</b> and <b>expiry date</b> are plain fields; the license itself uploads to a neutral CSS placeholder with two equal paths in (upload a file / take a photo — capture is a convenience, never a gate, §8.8/§9-D). A WHY panel states the rule and its one consequence plainly: the listing auto-pauses if the license lapses. Case used throughout: host Aqib, listing Gulberg 2 Residence, Lahore, Punjab — continuing the lineage already shipped in <code>HA-004</code> and <code>HA-046</code>. Panels: empty form + filled/ready (light) · submitted + verified (dark) · اردو / RTL.</p>
+    <div class="toggle" role="presentation"><span class="on">Light — empty · filled &amp; ready</span><span>Dark — submitted · verified</span><span>اردو · RTL</span></div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ============================ LIGHT — EMPTY FORM + FILLED/READY ============================ -->
+    <section class="panel" aria-label="Light theme — the empty capture form with the why panel, and the filled form ready to submit">
+      <div class="panel-tag">Light — empty form + why panel · filled form, document attached</div>
+      <div class="rowflex">
+
+        <!-- A · EMPTY FORM -->
+        <div class="pcol">
+          <div class="pcap">A · Add your license — empty</div>
+          <section class="phone" aria-labelledby="aH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tourism license</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Documents</span></div>
+            <div class="screen">
+              <h2 id="aH">Add your tourism license</h2>
+              <p class="lead">Required to host legally in Lahore, Punjab — SalamStay keeps you compliant by tracking it for you.</p>
+
+              <div class="callout">
+                <span class="cico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="ctxt"><strong>Why we ask.</strong> A tourism license lets you host legally in your area. If it lapses, we pause your listing automatically until it's renewed — never a surprise, always fixable.</span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="fa1">Issuing authority</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="fa1"><span class="stv">Your provincial tourism authority</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">Matched automatically to Gulberg 2 Residence — Lahore, Punjab.</span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="fa2">License number</label>
+                <input class="txtinput" id="fa2" type="text" placeholder="e.g. TL-2026-04821" />
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="fa3">Expiry date</span>
+                <button class="date-trig" type="button" aria-labelledby="fa3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="dtv ph">Select expiry date</span></button>
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="fa4">License document</span>
+                <div class="uptile" role="group" aria-labelledby="fa4">
+                  <span class="uic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M4 20h16"/></svg></span>
+                  <span class="ut">Add your license document</span>
+                  <span class="us">A clear photo or PDF works</span>
+                  <div class="ubtns">
+                    <button class="btn secondary sm" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Take a photo</button>
+                    <button class="btn secondary sm" type="button">Upload a file</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">Save license</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- B · FILLED, DOCUMENT ATTACHED -->
+        <div class="pcol">
+          <div class="pcap">B · Filled &amp; document attached — ready</div>
+          <section class="phone" aria-labelledby="bH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Tourism license</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Documents</span></div>
+            <div class="screen">
+              <h2 id="bH">Add your tourism license</h2>
+              <p class="lead">Required to host legally in Lahore, Punjab — SalamStay keeps you compliant by tracking it for you.</p>
+
+              <div class="fld">
+                <span class="flabel" id="fb1">Issuing authority</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="fb1"><span class="stv">Your provincial tourism authority</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                <span class="field-sub">Matched automatically to Gulberg 2 Residence — Lahore, Punjab.</span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="fb2">License number</label>
+                <input class="txtinput" id="fb2" type="text" value="TL-2026-04821" />
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="fb3">Expiry date</span>
+                <button class="date-trig" type="button" aria-labelledby="fb3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="dtv">14 Nov 2026</span></button>
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="fb4">License document</span>
+                <div class="docmock" role="img" aria-label="Attached license document, shown as a neutral placeholder with no real details rendered.">
+                  <div class="dm-head">
+                    <span class="dm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M14 2v6h6"/></svg></span>
+                    <span class="dm-chip">Attached</span>
+                  </div>
+                  <div class="dm-lines" aria-hidden="true">
+                    <span class="dm-line w70"></span>
+                    <span class="dm-line w90"></span>
+                    <span class="dm-line w55"></span>
+                    <span class="dm-line w40"></span>
+                  </div>
+                  <span class="dm-seal" aria-hidden="true"></span>
+                </div>
+                <p class="dm-cap">license.pdf · captured just now</p>
+                <div class="doc-actions">
+                  <button type="button">Change</button>
+                  <button type="button">Remove</button>
+                </div>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">Ready to submit</div><div class="sd">We'll review this within a day or two.</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">Submit license</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">The <b>issuing authority Select</b> never invents a specific authority body — it states the neutral, factual role ("your provincial tourism authority") and grounds it in the host's own city/province, matching the province already named in the shipped <code>HA-046</code> dashboard banner ("Your Punjab tourism registration…"). The document is a <b>neutral CSS placeholder</b> (never a rendered certificate); both a camera and a plain file-upload path are offered at equal weight (§8.8 — capture is a convenience, never a gate). No checkout stepper — this is a host-verify screen, not the guest booking journey (§7.6a).</p>
+    </section>
+
+    <!-- ============================ DARK — SUBMITTED + VERIFIED ============================ -->
+    <section class="panel dark" aria-label="Dark theme — submitted for review, and verified">
+      <div class="panel-tag">Dark — submitted, in review · verified</div>
+      <div class="rowflex">
+
+        <!-- C · SUBMITTED / IN REVIEW -->
+        <div class="pcol">
+          <div class="pcap">C · Submitted — in review</div>
+          <section class="phone" aria-labelledby="cH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/host/today" aria-label="Back to dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+              <div class="tbar-title">Verification status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Documents</span></div>
+            <div class="screen">
+              <h2 id="cH">Your license is with our team</h2>
+              <p class="lead">Thanks — it's submitted. We'll notify you the moment it's reviewed; Gulberg 2 Residence stays live in the meantime.</p>
+
+              <span class="byp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20a5 5 0 0 1 10 0"/><circle cx="12" cy="8" r="3.4"/></svg><span class="byp-t">Reviewed by our team, not automatically</span></span>
+
+              <ol class="track">
+                <li class="done">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Submitted</div><div class="tk-d">Your license document was received.</div><div class="tk-when">Today, <span class="num">10:40</span> AM</div></div>
+                </li>
+                <li class="now" aria-current="step">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">In review</div><div class="tk-d">Usually within a day or two.</div></div>
+                </li>
+                <li class="upcoming">
+                  <div class="tk-rail"><span class="tk-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="tk-line"></span></div>
+                  <div class="tk-body"><div class="tk-t">Verified</div><div class="tk-d">You're set to keep hosting legally.</div></div>
+                </li>
+              </ol>
+
+              <div class="spacer-fill"></div>
+              <button class="btn secondary" type="button">Back to dashboard</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+        <!-- D · VERIFIED -->
+        <div class="pcol">
+          <div class="pcap">D · Verified — quiet approval</div>
+          <section class="phone" aria-labelledby="dH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <span class="spacer" aria-hidden="true"></span>
+              <div class="tbar-title">Verification status</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/host/onboarding">Host setup</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">Documents</span></div>
+            <div class="screen">
+              <div class="hero-ic ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <h2 id="dH">You're licensed to host</h2>
+              <p class="lead">This is a one-time step — you won't be asked again until it's time to renew.</p>
+
+              <div class="sumrow"><span class="sum-lb">Issuing authority</span><span class="sum-val">Provincial tourism authority — Punjab</span></div>
+              <div class="sumrow"><span class="sum-lb">License number</span><span class="sum-val num">TL-2026-04821</span></div>
+              <div class="sumrow"><span class="sum-lb">Expiry</span><span class="sum-val">14 Nov 2026</span></div>
+
+              <div class="statusrow ok" role="status" style="margin-top:14px;">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <div class="sbody"><div class="st">Verified</div><div class="sd">Gulberg 2 Residence stays live.</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <a class="btn secondary" href="/host/listings/gulberg-2-residence/compliance">Manage license</a>
+              <a class="helplink" href="/help/tourism-registration">How renewal reminders work</a>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Verification is <b>reviewed by a person, not automatically</b> — the same dignified, process-oriented grammar as <code>GA-045</code>/<code>GA-049</code> (§8.3/§10.6): a quiet tick, never a celebration, and no red X anywhere in the ladder. "Manage license" and the renewal help link reuse the exact routes already shipped in <code>HA-046</code>'s dashboard compliance banner, keeping the host's Gulberg 2 Residence case consistent across cards.</p>
+    </section>
+
+    <!-- ============================ RTL / URDU PANEL ============================ -->
+    <section class="panel" aria-label="Right-to-left Urdu rendering — the filled form ready to submit">
+      <div class="panel-tag">RTL · اردو — filled form, mirrored</div>
+      <div class="rowflex">
+
+        <div class="pcol">
+          <div class="pcap">E · اردو — تیار برائے جمع</div>
+          <section class="phone rtl" dir="rtl" lang="ur" aria-labelledby="rH">
+            <div class="sa-top"><span>safe-area-inset-top</span></div>
+            <div class="tbar">
+              <a class="ib" href="/ur/host/today" aria-label="ڈیش بورڈ پر واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></a>
+              <div class="tbar-title">سیاحتی لائسنس</div>
+              <span class="spacer" aria-hidden="true"></span>
+            </div>
+            <div class="hubctx"><a class="hc-a" href="/ur/host/onboarding">میزبان سیٹ اپ</a><span class="hc-sep" aria-hidden="true">·</span><span class="hc-now">دستاویزات</span></div>
+            <div class="screen">
+              <h2 id="rH">اپنا سیاحتی لائسنس شامل کریں</h2>
+              <p class="lead">لاہور، پنجاب میں قانونی طور پر میزبانی کے لیے ضروری — سلام اسٹے اسے آپ کے لیے ٹریک کرتا ہے تاکہ آپ تعمیل میں رہیں۔</p>
+
+              <div class="callout">
+                <span class="cico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+                <span class="ctxt"><strong>ہم یہ کیوں پوچھتے ہیں۔</strong> سیاحتی لائسنس آپ کو اپنے علاقے میں قانونی طور پر میزبانی کی اجازت دیتا ہے۔ اگر اس کی میعاد ختم ہو جائے تو ہم آپ کی لسٹنگ خودکار طور پر روک دیتے ہیں جب تک تجدید نہ ہو — کبھی حیرت نہیں، ہمیشہ قابلِ حل۔</span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="ru1">جاری کرنے والا ادارہ</span>
+                <button class="select-trig" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="ru1"><span class="stv">آپ کا صوبائی سیاحتی ادارہ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9l-6 6-6-6"/></svg></button>
+                <span class="field-sub">گلبرگ 2 ریزیڈنس — لاہور، پنجاب کی بنیاد پر خودکار مماثلت۔</span>
+              </div>
+
+              <div class="fld">
+                <label class="flabel" for="ru2">لائسنس نمبر</label>
+                <input class="txtinput num" id="ru2" type="text" value="TL-2026-04821" style="direction:ltr; text-align:right;" />
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="ru3">میعاد ختم ہونے کی تاریخ</span>
+                <button class="date-trig" type="button" aria-labelledby="ru3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="dtv"><span class="num">14</span> نومبر <span class="num">2026</span></span></button>
+              </div>
+
+              <div class="fld">
+                <span class="flabel" id="ru4">لائسنس دستاویز</span>
+                <div class="docmock" role="img" aria-label="منسلک لائسنس دستاویز — غیر جانبدار نمونہ، کوئی حقیقی تفصیل نہیں دکھائی گئی۔">
+                  <div class="dm-head">
+                    <span class="dm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M14 2v6h6"/></svg></span>
+                    <span class="dm-chip">منسلک</span>
+                  </div>
+                  <div class="dm-lines" aria-hidden="true">
+                    <span class="dm-line w70"></span>
+                    <span class="dm-line w90"></span>
+                    <span class="dm-line w55"></span>
+                    <span class="dm-line w40"></span>
+                  </div>
+                  <span class="dm-seal" aria-hidden="true"></span>
+                </div>
+                <p class="dm-cap">license.pdf · ابھی لی گئی</p>
+              </div>
+
+              <div class="statusrow info" role="status">
+                <span class="sico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></span>
+                <div class="sbody"><div class="st">جمع کرانے کے لیے تیار</div><div class="sd">ہم ایک یا دو دن میں جائزہ لیں گے۔</div></div>
+              </div>
+
+              <div class="spacer-fill"></div>
+              <button class="btn primary" type="button">لائسنس جمع کروائیں</button>
+            </div>
+            <div class="sa-bottom"><span>safe-area-inset-bottom</span><span class="home-ind" aria-hidden="true"></span></div>
+          </section>
+        </div>
+
+      </div>
+      <p class="note">Full mirror (§11): the back chevron flips to the leading (right) edge, the Select's chevron mirrors, and the license number stays LTR-isolated (<code>.num</code>) inside the right-to-left row. The expiry date localises its month name ("نومبر") while its digits stay Latin and LTR-isolated, matching the convention already set by <code>GA-049</code>'s Urdu panel.</p>
+    </section>
+
+  </main>
+</body>
+</html>
