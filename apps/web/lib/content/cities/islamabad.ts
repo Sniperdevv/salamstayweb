@@ -2,14 +2,14 @@ import { ISLAMABAD_AREAS, LISTING_THUMBS } from "@/lib/content/image-manifest";
 import type { CityContent } from "./types";
 
 /**
- * Islamabad — the GW-002 instance, at `/stays-in-islamabad`, on the v2
+ * Islamabad: the GW-002 instance, at `/stays-in-islamabad`, on the v2
  * inventory-first contract.
  *
  * Local facts trace to screens-research/sections/city-facts.md §1: real
  * sectors (F-6, F-7, F-8, E-7, Blue Area), real landmarks (Faisal Mosque,
  * Daman-e-Koh, Pakistan Monument, Rawal Lake, Centaurus), qualitative
  * load-shedding and the Metrobus Red Line. Items the research file marked
- * "[verify before publish]" — G-sectors, named hospitals — are OMITTED.
+ * "[verify before publish]" (G-sectors, named hospitals) are OMITTED.
  *
  * What moved in the v2 rewrite, string by string:
  * - The five-line intro is gone. Its three `<strong>` §5 claims are NOT
@@ -22,7 +22,7 @@ import type { CityContent } from "./types";
  * - The hero photograph is gone, so `hero` is gone with it. The LCP element is
  *   the first card of the featured rail.
  * - Area blurbs became one-line labels. Every sector detail they carried is
- *   still on the page, verbatim, in FAQ answer 1 — which reads as a paragraph
+ *   still on the page, verbatim, in FAQ answer 1, which reads as a paragraph
  *   about F-6, F-7, F-8, E-7 and Blue Area precisely because it was written to
  *   answer that question in full.
  * - Note bodies, filter labels, FAQ questions and answers, related links and
@@ -41,7 +41,7 @@ export const islamabad: CityContent = {
   path: "/stays-in-islamabad",
   name: "Islamabad",
   metaDescription:
-    "Find verified stays in Islamabad. Filter by no-alcohol listings, halal kitchen, women-only stays, and prayer space — with load-shedding hours and backup power shown on each home.",
+    "Find verified stays in Islamabad. Filter by no-alcohol listings, halal kitchen, women-only stays, and prayer space, with load-shedding hours and backup power shown on each home.",
 
   h1: "Stays in Islamabad",
   /** Fifteen words. Names the sectors the inventory actually sits in, which is
@@ -71,7 +71,7 @@ export const islamabad: CityContent = {
         location: "F-6, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
         attributes: ["halal-kitchen", "no-alcohol", "backup-power"],
-        schemaName: "Sunlit 2-bed near Kohsar Market — F-6, Islamabad",
+        schemaName: "Sunlit 2-bed near Kohsar Market, F-6, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-7/central-studio-by-jinnah-super",
@@ -80,7 +80,7 @@ export const islamabad: CityContent = {
         location: "F-7, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
         attributes: ["women-only", "halal-kitchen", "backup-power"],
-        schemaName: "Central studio by Jinnah Super — F-7, Islamabad",
+        schemaName: "Central studio by Jinnah Super, F-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz",
@@ -89,7 +89,7 @@ export const islamabad: CityContent = {
         location: "F-8, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
         attributes: ["halal-kitchen", "prayer-space", "no-alcohol"],
-        schemaName: "Quiet family home in F-8 Markaz — F-8, Islamabad",
+        schemaName: "Quiet family home in F-8 Markaz, F-8, Islamabad",
       },
       {
         href: "/stays-in-islamabad/e-7/margalla-view-apartment",
@@ -98,7 +98,7 @@ export const islamabad: CityContent = {
         location: "E-7, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/e-7/margalla-view-apartment"],
         attributes: ["halal-kitchen", "no-alcohol", "backup-power"],
-        schemaName: "Margalla-view apartment — E-7, Islamabad",
+        schemaName: "Margalla-view apartment, E-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/blue-area/business-studio-jinnah-avenue",
@@ -107,7 +107,7 @@ export const islamabad: CityContent = {
         location: "Blue Area, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
         attributes: ["no-alcohol", "backup-power", "halal-kitchen"],
-        schemaName: "Business studio on Jinnah Avenue — Blue Area, Islamabad",
+        schemaName: "Business studio on Jinnah Avenue, Blue Area, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-6/garden-guest-house-near-kohsar",
@@ -116,7 +116,7 @@ export const islamabad: CityContent = {
         location: "F-6, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
         attributes: ["family-friendly", "halal-kitchen", "backup-power"],
-        schemaName: "Garden guest house near Kohsar — F-6, Islamabad",
+        schemaName: "Garden guest house near Kohsar, F-6, Islamabad",
       },
     ],
     viewAll: { href: "/search?city=islamabad", label: "View all stays in Islamabad" },
@@ -125,7 +125,7 @@ export const islamabad: CityContent = {
   areas: {
     heading: "Popular areas in Islamabad",
     intro:
-      "Islamabad is laid out in lettered, numbered sectors at the foot of the Margalla Hills — greener and more orderly than the plains cities. These are the sectors travellers stay in most.",
+      "Islamabad is laid out in lettered, numbered sectors at the foot of the Margalla Hills, greener and more orderly than the plains cities. These are the sectors travellers stay in most.",
     items: [
       {
         name: "F-6",
@@ -164,7 +164,7 @@ export const islamabad: CityContent = {
       },
       {
         /**
-         * Not a place you book — a navigation aid, so no photograph and no
+         * Not a place you book but a navigation aid, so no photograph and no
          * link. Its line keeps the full landmark sentence rather than a
          * shortened one: Faisal Mosque, Daman-e-Koh, the Pakistan Monument,
          * Rawal Lake and Centaurus appear nowhere else on this page, and the
@@ -182,7 +182,7 @@ export const islamabad: CityContent = {
       {
         icon: "power",
         heading: "Load-shedding & backup power",
-        body: "Islamabad’s capital sectors generally see lighter scheduled outages than most of the country, though summer peak-demand cuts still happen. Guest houses commonly run UPS or a generator — and every listing shows its own load-shedding hours and backup power.",
+        body: "Islamabad’s capital sectors generally see lighter scheduled outages than most of the country, though summer peak-demand cuts still happen. Guest houses commonly run UPS or a generator, and every listing shows its own load-shedding hours and backup power.",
       },
       {
         icon: "transit",
@@ -236,7 +236,7 @@ export const islamabad: CityContent = {
       {
         question: "Which areas are best to stay in Islamabad?",
         answer:
-          "F-6 and F-7 are the most central and leafy sectors, walkable to Kohsar Market and Jinnah Super. F-8 is a secure, upscale residential sector with its own markaz. E-7 sits against the Margalla foothills next to the diplomatic enclave — quiet and high-end. Blue Area, along Jinnah Avenue, is the commercial spine and best for business trips.",
+          "F-6 and F-7 are the most central and leafy sectors, walkable to Kohsar Market and Jinnah Super. F-8 is a secure, upscale residential sector with its own markaz. E-7 sits against the Margalla foothills next to the diplomatic enclave: quiet and high-end. Blue Area, along Jinnah Avenue, is the commercial spine and best for business trips.",
       },
       {
         question: "How does verification work for a booking in Islamabad?",

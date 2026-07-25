@@ -32,7 +32,10 @@ export function AreaGettingAround({ area }: { readonly area: AreaContent }) {
         {around.heading}
       </h2>
 
-      <div className={`${headingGap} grid grid-cols-1 gap-4 md:grid-cols-3`}>
+      {/* Same open-column air as the "About" strip above it: the notes lost
+          their plate (§1), so `space-8` between columns and `space-6` between
+          rows is what separates them now. */}
+      <div className={`${headingGap} grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-3`}>
         {around.items.map((note) => (
           <DisclosureCard
             key={note.heading}

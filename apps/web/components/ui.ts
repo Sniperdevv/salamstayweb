@@ -59,6 +59,30 @@ export const btnGhost =
 export const btnSecondary = `inline-flex h-12 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md bg-raised px-6 text-bodyMd font-medium text-primary hover:bg-hairline ${focusRing} ${pressable}`;
 
 /**
+ * The same §5 button, for the one place it cannot use its own fill: ON a
+ * `bg.raised` band.
+ *
+ * §5 specifies a fill, but what it is actually specifying is a RELATIONSHIP —
+ * a plate one neutral step off the surface it sits on, with no border and no
+ * shadow, because it neither floats nor bounds a form. On the canvas that step
+ * is `bg.raised`. Inside the one tinted band on the site, `bg.raised` IS the
+ * ground, so the same class produces a button that is exactly invisible: a
+ * label with an arrow and no plate at all, which reads as neither a button nor
+ * an §8 inline action.
+ *
+ * The step therefore inverts rather than disappearing: `bg.canvas` on the
+ * tint, hovering to `border.hairline` — the same neighbouring-neutral hover
+ * `btnSecondary` uses, and one that still darkens relative to white in both
+ * themes. Every other property is byte-identical to `btnSecondary`; this is one
+ * fill role, answered for one ground.
+ *
+ * NOT composed as `${btnSecondary} bg-canvas`: Tailwind emits `.bg-raised`
+ * after `.bg-canvas`, so the append would lose to the base regardless of class
+ * order in the string.
+ */
+export const btnSecondaryOnTint = `inline-flex h-12 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md bg-canvas px-6 text-bodyMd font-medium text-primary hover:bg-hairline ${focusRing} ${pressable}`;
+
+/**
  * Underline-at-rest (TASTE-RULES §8): every inline text action — Show more,
  * Learn more, Report, View all — is ink and underlined WHERE IT SITS, not on
  * hover. Brand green is not a link colour here (§2): green survives only on the

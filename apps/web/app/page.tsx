@@ -21,8 +21,10 @@ import {
 import { ArrowRightIcon } from "@/components/icons";
 import { CITY_GRID, CityCardCompact } from "@/components/stays/city-card-compact";
 import { FeaturedStayCard } from "@/components/stays/featured-stay-card";
+import { RAIL_CARD_SIZES } from "@/components/stays/rail-metrics";
+import { StayCardCompact } from "@/components/stays/stay-card-compact";
 import { StayRail } from "@/components/stays/stay-rail";
-import { btnBase, btnLg, btnPrimary, focusRing, gutter } from "@/components/ui";
+import { btnSecondaryOnTint, focusRing, gutter } from "@/components/ui";
 import { F7_STAYS, FEATURED_STAYS } from "@/lib/content/featured-stays";
 
 // Rail 2 hides stays already shown in rail 1 (same city, adjacent rails —
@@ -31,13 +33,24 @@ const RAIL_ONE_HREFS = new Set(FEATURED_STAYS.islamabad.map((s) => s.href));
 const F7_RAIL = F7_STAYS.filter((s) => !RAIL_ONE_HREFS.has(s.href));
 
 /**
- * Rail 1 leads with ONE promoted home drawn as the §10 featured card, and the
- * remaining eight run as the ordinary rail beneath it. Same nine homes, same
- * order, same section, same `<h2>` — the first one is simply lifted out of the
- * row and given the card that floats.
+ * Rail 1's lead ROW: one promoted home drawn as the §10 featured card, then the
+ * next two as ordinary compact tiles beside it, then the remaining six running
+ * as the rail beneath. Same nine homes, same order, same section, same `<h2>`.
+ *
+ * Why three and not one: the featured card alone ran at `container.prose` (720)
+ * inside a 1232 shell, so at 1280 the first fold carried 43% dead canvas to the
+ * right of the one thing the page most wants read. The air was defensible as a
+ * column the search pill had already drawn, but a column drawn by a pill 200px
+ * higher is not a column the eye still sees — it reads as a page that stopped.
+ * Two tiles fill it with the only thing that belongs there, which is more
+ * inventory, and the row then says "here is a home, and here are more" in one
+ * glance instead of two.
  */
-const [ISLAMABAD_FEATURED, ...ISLAMABAD_RAIL] = FEATURED_STAYS.islamabad;
-import { CITY_CARDS, GUIDE_CARDS, HOST_IMAGES, image } from "@/lib/content/image-manifest";
+const [ISLAMABAD_FEATURED, ...ISLAMABAD_REST] = FEATURED_STAYS.islamabad;
+const ISLAMABAD_LEAD_PAIR = ISLAMABAD_REST.slice(0, 2);
+const ISLAMABAD_RAIL = ISLAMABAD_REST.slice(2);
+import { BETA_CITIES } from "@/lib/content/beta-cities";
+import { GUIDE_CARDS, HOST_IMAGES, image } from "@/lib/content/image-manifest";
 import { JsonLdScript, organization, webSite } from "@/lib/seo/jsonld";
 import { pageMetadata } from "@/lib/seo/metadata";
 
@@ -91,50 +104,6 @@ export const metadata = pageMetadata(
   "/",
   "Book verified homes and rooms across Pakistan. CNIC-verified guests and hosts via NADRA Verisys, no-alcohol listings by default, and load-shedding hours shown on every stay.",
 );
-
-/**
- * The six beta cities. Each line is the shipped city-card copy reduced to the
- * part that answers "where in it" — the compact tile truncates to one line, and
- * a lead-in like "The leafy capital" spends that line on nothing checkable.
- */
-const CITIES = [
-  {
-    href: "/stays-in-islamabad",
-    name: "Islamabad",
-    line: "F-6, F-7, Margalla foothills",
-    img: CITY_CARDS.islamabad,
-  },
-  {
-    href: "/stays-in-karachi",
-    name: "Karachi",
-    line: "Clifton, DHA, city centre",
-    img: CITY_CARDS.karachi,
-  },
-  {
-    href: "/stays-in-lahore",
-    name: "Lahore",
-    line: "Gulberg, DHA, Walled City",
-    img: CITY_CARDS.lahore,
-  },
-  {
-    href: "/stays-in-peshawar",
-    name: "Peshawar",
-    line: "Hayatabad, historic bazaars",
-    img: CITY_CARDS.peshawar,
-  },
-  {
-    href: "/stays-in-faisalabad",
-    name: "Faisalabad",
-    line: "D-Ground, Clock Tower",
-    img: CITY_CARDS.faisalabad,
-  },
-  {
-    href: "/stays-in-rawalpindi",
-    name: "Rawalpindi",
-    line: "Saddar, Bahria Town",
-    img: CITY_CARDS.rawalpindi,
-  },
-] as const;
 
 /**
  * All nine SEO-RULES §5 claims, verbatim and in registry order. The shipped
@@ -247,13 +216,29 @@ const GUIDE_TILE_SIZES = "(min-width: 1280px) 400px, (min-width: 640px) 31vw, 10
 const HOST_TEASER_SIZES = "(min-width: 1280px) 470px, (min-width: 768px) 37vw, 100vw";
 
 /**
- * The featured card's photograph. The card is capped at `container.prose`
- * (720) — the same measure the search pill and the hero line above it run at,
- * so the promoted card lands on a column the page has already established
- * rather than on a width of its own. Inside it: 12px padding, a 2/5 media
- * column, so the frame is (720 − 24) × 0.4 ≈ 280px and never grows.
+ * The featured card's photograph, at the widths the lead ROW gives it.
+ *
+ * From `lg` the card takes the flexible column beside two 208px tiles: at the
+ * 1280 cap that is 1232 − 208 − 208 − 12 − 12 = 792, and its 2/5 media column
+ * is (792 − 24) × 0.4 ≈ 307. Between 1024 and 1280 the same arithmetic runs on
+ * the viewport, so 25vw is the smallest hint that is never short of it (256 at
+ * 1024 against 205 needed, 320 at 1279 against 316). Below `lg` the card is the
+ * full shell and the media is 2/5 of it; below `sm` it stacks and the
+ * photograph leads at full width.
+ *
+ * An over-hint costs a slightly larger byte range; an under-hint costs a blurry
+ * LCP, which is why every step above rounds up rather than down.
  */
-const FEATURED_MEDIA_SIZES = "(min-width: 640px) 280px, calc(40vw - 22px)";
+const FEATURED_MEDIA_SIZES =
+  "(min-width: 1280px) 310px, (min-width: 1024px) 25vw, (min-width: 640px) 40vw, 100vw";
+
+/**
+ * The two tiles beside the featured card. From `lg` they are the rail's own
+ * fixed `w-rail-card`, so `RAIL_CARD_SIZES` is exactly right; below `lg` they
+ * sit two-across in the shell, which is half the viewport less the gutter and
+ * the gap.
+ */
+const LEAD_PAIR_SIZES = `(min-width: 1024px) ${RAIL_CARD_SIZES}, 50vw`;
 
 /* Guide tiles reuse the compact-card motion verbatim: the photograph scales
    under the pointer, the tile presses, nothing lifts. A second hover grammar on
@@ -318,19 +303,27 @@ export default function HomePage() {
             same photography, same wording, same motion — at a different size,
             not a second card system.
 
-            It does NOT fill the 1232 measure. It runs at `container.prose`,
-            which is the width of the search pill directly above it, so the air
-            to its right is a column the page already drew rather than a gap.
-            Widening it to the shell would make the photograph 493px and the
-            card 350px deep, which buys nothing and costs the fold.
+            It does NOT run at `container.prose` any more. Capped at 720 inside
+            a 1232 shell it left 43% of the first fold empty at 1280, and the
+            argument that the air was "a column the page already drew" did not
+            survive looking at it: the pill that drew that column is 200px
+            higher and out of the eye's frame by the time the card is read, so
+            what is left is a page that stops halfway across. The card now takes
+            the flexible column of a three-part row and the next two homes take
+            the other two, which fills the fold with the only thing that has any
+            business there.
 
-            `priority` moved onto this card's photograph with the promotion —
-            it is the LCP element now, and exactly one image on the page carries
-            it, as before.
+            One section, one `<h2>`, one order: the lead row is homes 1-3 and
+            the rail beneath is 4-9. Nothing is duplicated between them.
 
-            The "New" chip stays off in this section: it is honest on every
-            listing we have, so drawing it on all thirty-two tiles would just be
-            thirty-two identical chips. */}
+            `priority` stays on this card's photograph — it is the LCP element,
+            and exactly one image on the page carries it, as before. The two
+            tiles beside it lazy-load like every other card: they are beside the
+            LCP element, not competing with it for the first connection.
+
+            The "New" chip stays off across the page: it is honest on every
+            listing we have, so drawing it everywhere would be thirty-two
+            identical chips saying nothing about any of them. */}
         <div className={`${shell} ${rhythm}`}>
           <StayRail
             heading="Stays in Islamabad"
@@ -340,12 +333,26 @@ export default function HomePage() {
                  and a city that ever ships an empty one gets no lead card
                  instead of a crash. */
               ISLAMABAD_FEATURED ? (
-                <div className="max-w-prose">
-                  <FeaturedStayCard
-                    stay={ISLAMABAD_FEATURED}
-                    sizes={FEATURED_MEDIA_SIZES}
-                    priority
-                  />
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
+                  <div className="min-w-0 lg:flex-1">
+                    <FeaturedStayCard
+                      stay={ISLAMABAD_FEATURED}
+                      sizes={FEATURED_MEDIA_SIZES}
+                      priority
+                    />
+                  </div>
+                  {/* Two-across under `lg`, where the row would otherwise wrap
+                      into a stack the rail below already provides; a flex pair
+                      at the rail's own fixed width from `lg`, so the tiles here
+                      and the tiles eight pixels below are the same object at
+                      the same size rather than two sizes of the same card. */}
+                  <div className="grid grid-cols-2 gap-3 lg:flex lg:shrink-0">
+                    {ISLAMABAD_LEAD_PAIR.map((stay) => (
+                      <div key={stay.href} className="lg:w-rail-card">
+                        <StayCardCompact stay={stay} sizes={LEAD_PAIR_SIZES} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : undefined
             }
@@ -373,7 +380,7 @@ export default function HomePage() {
             Where will you go?
           </h2>
           <ul className={`${headingGap} ${CITY_GRID}`}>
-            {CITIES.map((c) => (
+            {BETA_CITIES.map((c) => (
               <li key={c.href}>
                 <CityCardCompact
                   href={c.href}
@@ -442,8 +449,14 @@ export default function HomePage() {
               five jobs and section tinting is one of them, and NO other
               section-tinting exists. A brand-washed band is also a fifth green
               on a page whose budget is four roles, and it is the one green here
-              that carries no meaning — the CTA inside it already says "act". */}
-          <div className="flex flex-col gap-6 rounded-xl border border-hairline bg-raised p-6 md:flex-row md:items-center md:gap-10 md:p-8">
+              that carries no meaning — the CTA inside it already says "act".
+
+              NO border either (§1). The tint alone is the band: a shadow means
+              the element floats over the page you scroll and a border means a
+              form boundary, and this is neither — it is a tinted section, which
+              is one of `bg.raised`'s five jobs. Tint plus hairline was the band
+              hedging about which of the two it was. */}
+          <div className="flex flex-col gap-6 rounded-xl bg-raised p-6 md:flex-row md:items-center md:gap-10 md:p-8">
             <div className="min-w-0 flex-1">
               <h2 id="host-h" className={sectionH2}>
                 Become a host on SalamStay
@@ -452,7 +465,19 @@ export default function HomePage() {
                 List your home for verified guests, set your own house rules, and see every
                 fee before you earn.
               </p>
-              <Link href="/become-a-host" className={`${btnBase} ${btnPrimary} ${btnLg} mt-5`}>
+              {/* The gray-fill secondary button (§5), not the brand fill.
+                  §2 allows ONE primary CTA per surface and this page already
+                  spends it on the search pill's submit — the thing the homepage
+                  is actually for. A second green button 3,000px down was a
+                  fifth green on a four-role budget, and it was competing with
+                  search for the same "this is the action" reading. Hosting is a
+                  real destination; it is not what a visitor came here to do.
+
+                  `OnTint` and not the plain §5 button: this band IS `bg.raised`,
+                  and the §5 fill is `bg.raised`, so the ordinary secondary
+                  button renders here as a label with no plate under it. See the
+                  note on the variant in components/ui.ts. */}
+              <Link href="/become-a-host" className={`${btnSecondaryOnTint} mt-5`}>
                 Start hosting
                 <ArrowRightIcon className="size-5" />
               </Link>

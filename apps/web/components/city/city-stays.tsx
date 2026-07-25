@@ -17,11 +17,14 @@ import { shell, rhythm } from "@/components/discovery/shell";
  * hero photograph is gone, and a second priority image on the page would only
  * compete with it for the same connection.
  *
- * `newChip` is on. The chip means one checkable thing — this home has no
- * published two-way review — and pre-launch that is true of every listing, so
- * six chips in a row are six true statements rather than a ranking. The
- * homepage turns it off on its second, third and fourth rails because four
- * rails of chips is wallpaper; one rail is not.
+ * `newChip` is OFF, and that is a correction rather than a preference. The chip
+ * means one checkable thing — this home has no published two-way review — and
+ * pre-launch that is true of EVERY listing. A row where all nine cards carry
+ * the same mark is not nine facts, it is a texture: the mark that distinguishes
+ * nothing distinguishes nothing, and the reader learns to stop seeing it, which
+ * costs the chip its meaning for the day one home does earn a review and drops
+ * it. The chip earns its place on a surface that mixes reviewed and unreviewed
+ * homes; no surface does yet.
  *
  * The projection through `fromStayCard` is the mapper the homepage rails use,
  * so a home rendered here and the same home rendered on `/` cannot drift.
@@ -36,7 +39,7 @@ export function CityStays({ city }: { readonly city: CityContent }) {
         headingId="stays-h"
         stays={stays.items.map((s) => fromStayCard(s))}
         viewAll={{ href: stays.viewAll.href, label: stays.viewAll.label }}
-        newChip
+        newChip={false}
         priority
       />
     </div>

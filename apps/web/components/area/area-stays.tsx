@@ -28,12 +28,16 @@ import { shell, rhythm } from "@/components/discovery/shell";
  * typographic hero is gone, and a second priority image on the page would only
  * compete with it for the same connection.
  *
- * `newChip` is ON here, and this is the one surface on the site that explains
- * why. The chip means one checkable thing — this home has no published two-way
- * review — and pre-launch that is true of every listing, so six chips in a row
- * are six true statements rather than a ranking. The supply note sits directly
- * under the rail it explains, which is the whole reason the chip is on: the
- * homepage turns it off because four rails of chips with no note is wallpaper.
+ * `newChip` is OFF, on every rail on the site. The chip means one checkable
+ * thing — this home has no published two-way review — and pre-launch that is
+ * true of EVERY listing, so a row of six identical chips is a texture rather
+ * than six facts, and a mark that distinguishes nothing teaches the reader to
+ * stop seeing it. It comes back on the first surface that mixes reviewed and
+ * unreviewed homes, which is what it was always for.
+ *
+ * The supply note stays, because the honest statement it carries is about the
+ * ABSENCE of ratings and that absence is still on the screen. It now says so in
+ * its own words instead of pointing at a chip.
  *
  * The projection through `fromStayCard` carries "F-7, Islamabad" as the card's
  * place line rather than the fixture's `location` ("Entire apartment · 2
@@ -48,9 +52,9 @@ import { shell, rhythm } from "@/components/discovery/shell";
  * row above it, which is what it is. §11.14 is the same rule from the other
  * side: contextual micro-strips are `bg.raised`, tiny, factual.
  *
- * The payload is "New chip", because that is the thing on the screen the
- * sentence is about — it is drawn eight pixels above, six times over. §7 and
- * §11.12: bold the payload word only, never a whole sentence.
+ * The payload is "two-way review", because that is the condition the whole
+ * sentence turns on: a rating exists only after one. §7 and §11.12: bold the
+ * payload word only, never a whole sentence.
  */
 
 /**
@@ -59,7 +63,7 @@ import { shell, rhythm } from "@/components/discovery/shell";
  * the sector — and if a future area's note does not contain it, the strip
  * simply renders plain rather than breaking.
  */
-const NOTE_PAYLOAD = "New chip";
+const NOTE_PAYLOAD = "two-way review";
 
 function SupplyNote({ text }: { readonly text: string }) {
   const at = text.indexOf(NOTE_PAYLOAD);
@@ -85,14 +89,19 @@ export function AreaStays({ area }: { readonly area: AreaContent }) {
         headingId="stays-h"
         stays={stays.items.map((s) => fromStayCard(s, place))}
         viewAll={{ href: stays.viewAll.href, label: stays.viewAll.label }}
-        newChip
+        newChip={false}
         priority
       />
 
-      {/* The `.supplynote`, under the rail rather than under a grid: it
-          explains the chip drawn eight pixels above it, and a reader who never
-          scrolls past the rail has still read it. */}
-      <p className="mt-4 max-w-[76ch] rounded-md bg-raised px-4 py-3 text-caption text-secondary">
+      {/* The `.supplynote`, under the rail rather than under a grid: it answers
+          the question the row above it raises — where are the ratings — and a
+          reader who never scrolls past the rail has still read it.
+
+          13/400 (`label`), not 12: `caption` is the smallest role on the
+          ladder and §7 puts micro at 13. At 12 on a tint the strip read as
+          fine print, which is the one thing an honesty statement must not
+          look like. */}
+      <p className="mt-4 max-w-[76ch] rounded-md bg-raised px-4 py-3 text-label font-normal text-secondary">
         <SupplyNote text={stays.note} />
       </p>
     </div>

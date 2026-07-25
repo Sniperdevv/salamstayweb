@@ -1,11 +1,11 @@
 /**
- * Area-landing content model, v2 — the data contract behind the GW-003
+ * Area-landing content model, v2: the data contract behind the GW-003
  * template, rebuilt inventory-first (Phase 4 of the Airbnb-gap redesign, and
  * the last of the three build phases).
  *
  * `/stays-in-islamabad/f-7` is the first area page. The layout lives once in
- * `components/area/*`; an area ships by adding one object of this shape — and,
- * critically, only once that area clears the GATE 19 supply gate recorded in
+ * `components/area/*`; an area ships by adding one object of this shape, and
+ * critically only once that area clears the GATE 19 supply gate recorded in
  * its content file. This type cannot enforce the gate; the content file's
  * ledger comment is where a reviewer checks it.
  *
@@ -32,8 +32,8 @@
  *   about which kinds of traveller the sector "suits", which was the one run of
  *   prose on the page that named no checkable local fact.
  * - **`stays.intro` is gone.** The rail heading is the whole label. The reason
- *   the sector has a page at all — enough verified homes from enough separate
- *   hosts — is still stated on the page, in `nearby.parentNote`, which is where
+ *   the sector has a page at all (enough verified homes from enough separate
+ *   hosts) is still stated on the page, in `nearby.parentNote`, which is where
  *   a reader meets the question ("why does F-7 have a page and G-11 not?").
  * - **Every `eyebrow` is gone.** Five uppercase micro-labels above five
  *   headings is a rhythm, not information, and the redesign direction bans them.
@@ -66,7 +66,7 @@ export type AreaNoteIcon = "walk" | "transit" | "power";
  *
  * The card clamps `body` to two lines and a disclosure opens the rest in
  * place, so the whole string is always in the served HTML and in the
- * accessibility tree — an area may write the context it needs without having
+ * accessibility tree, so an area may write the context it needs without having
  * to guess a card height.
  */
 export interface AreaContextRow {
@@ -114,7 +114,7 @@ export interface AreaContent {
 
   /**
    * The trail, root-first. Feeds the visible `<nav aria-label="Breadcrumb">`
-   * AND `breadcrumbList()` from this one array — the last crumb renders as
+   * AND `breadcrumbList()` from this one array. The last crumb renders as
    * `aria-current` text while still carrying its path for the schema, which is
    * how G40's "visible ≡ schema" holds without a second list to keep in sync.
    */
@@ -123,7 +123,7 @@ export interface AreaContent {
   /** The one `<h1>`, verbatim from §3.3: `Stays in {Area}, {City}`. */
   readonly h1: string;
   /**
-   * ONE line under the H1, at most twenty words. Plain neutral description —
+   * ONE line under the H1, at most twenty words. Plain neutral description of
    * where in the area you are looking, in checkable local terms, and it still
    * names the area in its first clause so §3.3's answer-first intro holds. It
    * may refer to a §5 claim in ordinary words, but it may NOT paraphrase a
@@ -135,7 +135,7 @@ export interface AreaContent {
   readonly stays: {
     /** §3.3's sample verbatim heading: `Stays in {Area}`. */
     readonly heading: string;
-    /** Exactly six, in rail order — the first is the LCP image. */
+    /** Exactly six, in rail order. The first is the LCP image. */
     readonly items: readonly StayCardContent[];
     /** The rail's trailing link, e.g. search filtered to this area. */
     readonly viewAll: RelatedLink;
@@ -180,7 +180,7 @@ export interface AreaContent {
 
    1. DELETE `facts` and the `AreaFact` / `AreaFactIcon` imports. The strip is
       not drawn. Before deleting, confirm each fact is stated somewhere that
-      still renders — in practice `about.items`, `around.items` and the FAQ
+      still renders. In practice `about.items`, `around.items` and the FAQ
       already carry all four, and "from PKR —" is on every rail card.
    2. REPLACE `intro: RichText` with `support: string`. Twenty words maximum,
       one line, no `{ strong }` runs, no §5 claim wording, and it still names
@@ -190,7 +190,7 @@ export interface AreaContent {
       before the paragraphs go; a fact that is in neither is a fact the page
       was making in passing, and GATE 19 counts facts a reader can check.
    4. DELETE `stays.intro`. Keep `stays.heading`, `stays.items` (exactly six,
-      in rail order — the first is the LCP image), `stays.viewAll` and
+      in rail order, the first being the LCP image), `stays.viewAll` and
       `stays.note`.
    5. DELETE `about.eyebrow`, `stays.eyebrow`, `around.eyebrow`,
       `nearby.eyebrow`, `faq.eyebrow`. The template no longer reads them.

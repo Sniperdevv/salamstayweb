@@ -63,11 +63,19 @@ const LEGAL = [
   { href: "/legal/cookie-policy", label: "Cookie policy" },
 ] as const;
 
+/**
+ * The bottom rule carries the two links that have no column of their own.
+ *
+ * It used to carry four, and the other two — Community standards and Shariah
+ * approach — are already printed above it, in Hosting and in Company. A link
+ * repeated eighty pixels below itself does not make the destination easier to
+ * find; it makes the reader check whether the two are the same thing. §3.12's
+ * inventory is unchanged: every href it names is still a real crawlable anchor
+ * in this footer, once each.
+ */
 const BOTTOM = [
   { href: "/legal/editorial-policy", label: "Editorial policy" },
   { href: "/legal/corrections", label: "Corrections" },
-  { href: "/legal/community-standards", label: "Community standards" },
-  { href: "/shariah-policy", label: "Shariah approach" },
 ] as const;
 
 /**

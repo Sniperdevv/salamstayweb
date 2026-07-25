@@ -34,32 +34,56 @@ import { ChevronRightIcon } from "@/components/icons";
  * `components/city/city-practical.tsx` and `components/area/disclosure-card.tsx`
  * carried the same class strings with one difference between them, and that
  * difference is now the `surface` prop below.
+ *
+ * The card frame itself is gone (see the note on `card`): these are content
+ * blocks, and §1 says content carries neither shadow nor border.
  */
 
 /**
- * The ring is drawn on the CARD, not on the `<summary>` that takes the focus.
- * The summary fills the card's content box, so the shared `focusRing`'s 4px
- * offset would land astride the card border and paint a halo in the wrong
- * colour. `:has()` moves the same 2px `interactive` ring and the same offset
- * out to the card edge — where the offset colour has to be whatever the card
- * is actually sitting on, which is the one thing that differs between the two
- * call sites: the area page's cards sit on the page canvas, the city page's
- * sit on the tinted practical-notes band.
+ * NO box (TASTE-RULES §1). This is a reading block, and §1's governing rule is
+ * that a shadow means the element floats over the page you scroll, a border
+ * means a form boundary or an unselected choice, and content carries NEITHER.
+ * v2 drew these as `rounded-lg border border-hairline bg-canvas` plates; the
+ * plate was doing no work the column gap does not do, and three of them in a
+ * row read as three little forms rather than as three notes.
+ *
+ * What the box was quietly paying for was the focus ring's ground: with the
+ * whole card outlined, a ring on the card edge looked deliberate. With no card
+ * there is nothing to ring, so the ring moves back onto the `<summary>` that
+ * actually takes the focus — which is where it belonged all along, and which
+ * removes the `:has()` indirection entirely.
+ *
+ * The offset colour still has to be whatever the block is sitting on, and that
+ * is the one thing that differs between the two call sites: the area page's
+ * notes sit on the page canvas, the city page's sit on the tinted
+ * practical-notes band.
  */
-const card =
-  "group rounded-lg border border-hairline bg-canvas " +
-  "has-[summary:focus-visible]:ring-2 has-[summary:focus-visible]:ring-interactive " +
-  "has-[summary:focus-visible]:ring-offset-4";
+const card = "group";
 
 const RING_OFFSET = {
-  canvas: "has-[summary:focus-visible]:ring-offset-canvas",
-  raised: "has-[summary:focus-visible]:ring-offset-raised",
+  canvas: "focus-visible:ring-offset-canvas",
+  raised: "focus-visible:ring-offset-raised",
 } as const;
 
+/**
+ * `p-4` is gone with the plate — padding inside a box that no longer exists is
+ * just an indent. `ring-offset-2` rather than the chrome's 4: the summary IS
+ * the content, so a 4px gap would open a hole between the ring and the words it
+ * is pointing at, where on a plated control the offset is reading against the
+ * plate's own edge.
+ */
 const summary =
-  "block cursor-pointer list-none p-4 focus-visible:outline-none [&::-webkit-details-marker]:hidden";
+  "block cursor-pointer list-none rounded-md focus-visible:outline-none focus-visible:ring-2 " +
+  "focus-visible:ring-interactive focus-visible:ring-offset-2 " +
+  "[&::-webkit-details-marker]:hidden";
 
-const heading = "flex items-center gap-2.5 text-bodySm font-semibold text-primary";
+/**
+ * 16/600 (§7: card titles 16/500-600). At 14 the heading matched its own body
+ * exactly and, with the plate gone, nothing else separated the two — the step
+ * up is what makes the block read as a titled note rather than as a paragraph
+ * with a bold first line.
+ */
+const heading = "flex items-center gap-2.5 text-bodyMd font-semibold text-primary";
 
 /**
  * Two lines closed, all of them open. `group-[[open]]` compiles to

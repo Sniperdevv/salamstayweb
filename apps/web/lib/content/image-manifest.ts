@@ -92,9 +92,16 @@ export const IMAGES = {
     alt: "Boulevard below the Margalla Hills, Islamabad — pine-lined central reservation",
     width: 1880,
     height: 1253,
-    pages: ["/"],
+    /* Was the homepage hero; the homepage has had no hero photograph since the
+       inventory-first rebuild, and it now draws the F-6 tile on the city page
+       instead. `HOME_HERO` still names it, so a future hero gets it back. */
+    pages: [
+      "/stays-in-islamabad",
+      "/stays-in-islamabad/f-6",
+      "/guides/where-to-stay-in-islamabad",
+    ],
     credit: "Tahamie Farooqui",
-    category: "hero",
+    category: "area",
     authentic: true,
   },
   "islamabad-rawal-lake-sunset": {
@@ -104,9 +111,16 @@ export const IMAGES = {
     alt: "Rawal Lake at sunset, Islamabad — Margalla foothills along the far shore",
     width: 1880,
     height: 1253,
-    pages: ["/stays-in-islamabad", "/guides/where-to-stay-in-islamabad"],
+    /* Was the city-page hero; that hero photograph is gone with the
+       inventory-first rebuild, and the frame now draws the E-7 tile, whose own
+       line is "Margalla foothills, high-end". `CITY_HEROES` still names it. */
+    pages: [
+      "/stays-in-islamabad",
+      "/stays-in-islamabad/e-7",
+      "/guides/where-to-stay-in-islamabad",
+    ],
     credit: "Ashraf Hussain",
-    category: "city",
+    category: "area",
     authentic: true,
   },
   "islamabad-sector-grid-aerial": {
@@ -307,31 +321,33 @@ export const IMAGES = {
     id: "tree-lined-residential-street",
     file: "/images/tree-lined-residential-street.jpg",
     subject: "Quiet residential avenue lined with mature pines, hills in the distance",
-    alt: "Tree-lined residential avenue, F-6, Islamabad — mature pines along both kerbs",
+    alt: "Tree-lined residential avenue, Islamabad — mature pines along both kerbs",
     width: 1376,
     height: 1300,
-    pages: [
-      "/stays-in-islamabad",
-      "/stays-in-islamabad/f-6",
-      "/guides/where-to-stay-in-islamabad",
-    ],
+    /* HELD, not drawn: the F-6 tile took the Margalla boulevard vista in the
+       closing review because this frame's heavy brown grade reads as
+       underexposed beside the blue-sky tiles either side of it. Reserved for
+       the Islamabad guide, which has room for a warmer sector frame at a size
+       where the grade reads as a season rather than as a fault. */
+    pages: ["/guides/where-to-stay-in-islamabad"],
     credit: "Ali Hamza Tullah",
     category: "area",
     authentic: false,
-    note: "Tree-lined avenue consistent with Islamabad's sectors, but the Pexels record does not confirm the sector. Stand-in for F-6.",
+    note: "Tree-lined avenue consistent with Islamabad's sectors, but the Pexels record does not confirm the sector. Held for the Islamabad guide; no longer stands in for a named sector.",
   },
   "quiet-sector-road-autumn-trees": {
     id: "quiet-sector-road-autumn-trees",
     file: "/images/quiet-sector-road-autumn-trees.jpg",
     subject: "Wide sector road with street lighting and pines on both sides",
-    alt: "Sector road with street lighting, F-7, Islamabad — pines set back behind the kerb",
+    alt: "Sector road with street lighting, Islamabad — pines set back behind the kerb",
     width: 1342,
     height: 1300,
-    pages: ["/stays-in-islamabad"],
+    /* HELD, not drawn — same reason as the frame above it. */
+    pages: ["/guides/where-to-stay-in-islamabad"],
     credit: "Ali Hamza Tullah",
     category: "area",
     authentic: false,
-    note: "Sector-style avenue consistent with Islamabad, but the Pexels record does not confirm the sector. Stand-in for F-7.",
+    note: "Sector-style avenue consistent with Islamabad, but the Pexels record does not confirm the sector. Held for the Islamabad guide; no longer stands in for a named sector.",
   },
   "apartment-block-exterior-blue-sky": {
     id: "apartment-block-exterior-blue-sky",
@@ -354,18 +370,18 @@ export const IMAGES = {
     id: "apartment-complex-with-gardens",
     file: "/images/apartment-complex-with-gardens.jpg",
     subject: "Residential blocks set around landscaped lawns and walkways",
-    alt: "Residential blocks around landscaped lawns, E-7, Islamabad — walkways between the gardens",
+    alt: "Residential blocks around landscaped lawns, F-7, Islamabad — walkways between the gardens",
     width: 1733,
     height: 1300,
     pages: [
       "/stays-in-islamabad",
-      "/stays-in-islamabad/e-7",
+      "/stays-in-islamabad/f-7",
       "/guides/where-to-stay-in-islamabad",
     ],
     credit: "Mahmoud Zakariya",
     category: "area",
     authentic: false,
-    note: "Regional planned-housing complex, not photographed in Islamabad. Stand-in for E-7.",
+    note: "Regional planned-housing complex, not photographed in Islamabad. Stand-in for F-7, which E-7 vacated when it took the Rawal Lake frame.",
   },
 
   // ─────────────────────────────────────────────────────────────────────
@@ -1291,12 +1307,34 @@ export const GUIDE_CARDS = {
   karachi: "karachi-night-street-fog",
 } as const satisfies Record<string, ImageId>;
 
-/** Islamabad area grid (gw-002 §Popular areas), in card order. */
+/**
+ * Islamabad area grid (gw-002 §Popular areas), in card order.
+ *
+ * Re-cut in the closing review. Two of the five were the same photographer's
+ * heavily brown-graded Islamabad street set: at thumbnail scale, next to three
+ * blue-sky frames, they read as underexposed rather than as autumnal, and a row
+ * where two of five cells look like failed loads undoes the row. §9 forbids
+ * compensating with a filter, so the answer is different frames, not a grade.
+ *
+ * The two that came in were already in the manifest and already Islamabad, and
+ * both had stopped being drawn anywhere when the hero photographs left `/` and
+ * `/stays-in-islamabad`:
+ *  · F-6 takes the Margalla boulevard vista — a genuinely Islamabad,
+ *    genuinely bright tree-lined avenue under the range, which is what "central
+ *    and leafy" looks like.
+ *  · E-7 takes the Rawal Lake frame, whose own alt names the Margalla
+ *    foothills that E-7's tile line names. It is `authentic: true`, so the
+ *    sector swaps a regional stand-in for a real Islamabad photograph.
+ *  · F-7 takes the planted-blocks frame E-7 vacated: bright, residential, and
+ *    the closest thing in the pool to housing around a markaz.
+ * Net: two murky frames out, two authentic-Islamabad frames in, one stand-in
+ * moved one tile along.
+ */
 export const ISLAMABAD_AREAS = {
-  "f-6": "tree-lined-residential-street",
-  "f-7": "quiet-sector-road-autumn-trees",
+  "f-6": "islamabad-margalla-boulevard-vista",
+  "f-7": "apartment-complex-with-gardens",
   "f-8": "apartment-block-exterior-blue-sky",
-  "e-7": "apartment-complex-with-gardens",
+  "e-7": "islamabad-rawal-lake-sunset",
   "blue-area": "islamabad-sector-grid-aerial",
 } as const satisfies Record<string, ImageId>;
 

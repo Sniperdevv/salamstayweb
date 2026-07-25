@@ -34,12 +34,27 @@ Loop: `frontend-designer` builds (skills loaded first, then **TASTE-RULES.md**) 
 
 | Pass | Date | Scope | Result |
 |---|---|---|---|
+| RECAL | 2026-07-25 | Full recalibration: TASTE-RULES.md (Airbnb-inventory craft bar) + tokens v0.1.0 + craft layer + page pass + closing review fixes. Verdict: "system is unicorn-grade" — elevation/imagery/motion/color discipline beat the reference | committed |
+| WAVE | 2026-07-25 | 8-agent parallel wave: 5 city instances (city-facts, anti-doorway), listing detail (mosaic/booking-card/anchor-bar, LodgingBusiness only), search shell (GATE 76 proof), become-a-host (displayLg+squircle), trust cluster+guide, legal set+consent banner, editorial+help hub, review fixer. Mid-flight consistency broadcasts ×2. FULL SITE: 25 routes · 0 HARD · images PASS · typecheck clean | committed — consolidated review wave next |
+
+
+| Pass | Date | Scope | Result |
+|---|---|---|---|
 | W0.5 | 2026-07-25 | Images: 61 localized (14 authentic-city, 30 listing, 10 gallery), ATTRIBUTIONS.md, verify-images.mjs PASS. Chrome+404/500 by frontend-designer (skills: emil-design-eng, design-taste-frontend): ui.ts shared press/focus grammar, IntersectionObserver scroll sentinel, hover behind (hover:hover), .num canon in globals. Token-gaps logged: focusRing unexposed, layout.ts absent from preset, elevationDark never emitted (latent dark bug), no 44px step, no 16px icon, Nastaliq unloaded. DEV SERVER: port 3003 | chrome awaiting review |
 | W0 | 2026-07-25 | Scaffold: Next 15 + tokens preset + theme emitter · route registry (24 pages + 47 stubs) · lib/seo builders (G74 matrix by construction) · robots/sitemap · catch-all stub resolver · validate-pages.mjs (G30/41/42/43/6/4/76/44/74/49/40/37/57/53/5) · dev server live, stub=200, unknown=404 | foundation green |
 
 ## LOOP PAUSED (founder-ordered, 2026-07-25)
 
 After gw-003 landed the founder ordered: stop dispatching pages; diagnose the Airbnb gap (our pages read editorial/text-heavy vs inventory-first) with the taste skills in plan mode; improve the existing design language before resuming waves. /search, listing page, Wave 1b–4 all wait on that plan.
+
+## Parked (founder / follow-up) — wave additions
+
+- GW-014 card wants "Cookie settings" in the shared footer (§3.12 inventory change — founder).
+- Registry/title em-dashes are the documented §3 title pattern (G41-enforced); changing = registry-wide founder decision.
+- ?type= params from homepage chips are read by nobody yet (honest: land on browse shell) — until structured property types exist.
+- Stay-fixture dedup: city content files should become the single source; featured-stays derives (~200 dup lines).
+- Card-layer reconciliations: listing CTA "Reserve" vs card's "Check availability"; ha-001 meta-title variant vs registry.
+- hreflang: site-wide deferred until real /ur (standing §4 ruling).
 
 ## Parked (founder / follow-up)
 

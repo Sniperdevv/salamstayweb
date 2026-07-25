@@ -41,7 +41,11 @@ export function CityNotes({ city }: { readonly city: CityContent }) {
         {notes.heading}
       </h2>
 
-      <div className={`${headingGap} grid grid-cols-1 gap-4 md:grid-cols-3`}>
+      {/* The notes carry no plate any more (§1: content carries neither shadow
+          nor border), so the separation is distance: `space-8` between columns
+          and `space-6` between rows, the same air the area page's "About"
+          strip runs on. */}
+      <div className={`${headingGap} grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-3`}>
         {notes.items.map((note) => (
           <DisclosureCard
             key={note.heading}

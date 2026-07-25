@@ -94,6 +94,14 @@ section-tinting exists (theme lock).
 
 - Ladder on content pages: H1 ≈ 26 (h3/h4 role) · sections ≈ 22 (h5) · card
   titles 16/500-600 · body 16/400 · meta 14/400 gray · micro 13.
+- **The one sanctioned exception: rail cards at 208px carry their title at
+  14/600.** A horizontally-scrolling rail is a browsing surface, not a reading
+  one, and at that width 16px turns a normal Pakistani listing name into two
+  clamped lines on most cards — so the exception buys back the row's baseline
+  rhythm rather than saving a pixel. It applies to `w-rail-card` tiles ONLY.
+  Every other card title on the site — area context columns, disclosure notes,
+  wayfinding tiles, the featured card, guide tiles — is 16 (founder-ruled
+  2026-07-25).
 - `display` (52) and `displayLg` (64) are **funnel/marketing heroes only, once
   per journey**. Content pages never shout. The 64px hero derives its power
   from a 4:1 contrast against a single 16px input and one oversized squircle —

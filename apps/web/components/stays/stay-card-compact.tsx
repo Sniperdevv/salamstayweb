@@ -35,9 +35,13 @@ import { WishlistHeart } from "./wishlist-heart";
  *   shadowed rather than tinted or scrimmed, because §9 is absolute that
  *   nothing darkens a photograph — chrome on an image earns its legibility
  *   from its own container, never by degrading what is underneath.
- * - **Three tight rows.** Name (one line, truncated — a card title that wraps
- *   ragged onto a second line breaks the rail's baseline grid), area line,
- *   attribute line. 4px between them; they read as one block, not three fields.
+ * - **Three tight rows.** Name (14px, clamped to TWO lines per the closing
+ *   review: a title cut mid-word at a card's width tells the reader less than
+ *   a second line costs the grid, and "Whole apartment in DHA Phase 5" is the
+ *   normal length here rather than the exception, with the box for BOTH lines
+ *   reserved so a one-line card's area line does not start a line above its
+ *   neighbour's), area line, attribute line. 4px between them; they read as
+ *   one block, not three fields.
  * - **The attribute line.** Two real attributes from the home's own list, in
  *   the shipped `ATTRIBUTES` wording, joined by ONE `·` (§7: one separator per
  *   gap, never chained). It replaced a third line that said "PKR — night", and
@@ -82,17 +86,21 @@ const overlayChip =
  *
  * `w-16` is `space-16` (64px), the nearest step to the ~60px the recipe asks
  * for; `h-3` is the caption size, so the bar reads as a line of type that has
- * not arrived rather than as a rule. The breath is Tailwind's `animate-pulse`
- * — a 2s opacity cycle, the one perpetual animation Emil sanctions outright
- * because it communicates state (loading) rather than decorating. It stops
- * dead under `motion-reduce`, where the bar alone still says "not yet".
+ * not arrived rather than as a rule.
+ *
+ * STATIC, not pulsing (closing-review ruling). The bar used to breathe on
+ * Tailwind's `animate-pulse`, on the argument that a pulse communicates
+ * loading. It does not, here: nothing is in flight. Pricing is unpublished,
+ * not pending, so a perpetual animation on every card of every rail was
+ * decoration claiming to be state — and twelve of them cycling at once is the
+ * loudest thing on a quiet page.
  *
  * `aria-hidden`: a screen reader gets the name and the area and no price,
  * which is the honest reading. A skeleton announced as "loading" would promise
  * a number that is not on its way over this request.
  */
 const skeletonBar =
-  "inline-block h-3 w-16 rounded-sm bg-slate-100 align-middle animate-pulse motion-reduce:animate-none dark:bg-raised";
+  "inline-block h-3 w-16 rounded-sm bg-slate-100 align-middle dark:bg-raised";
 
 const mediaFrame =
   "relative block overflow-hidden rounded-lg border border-hairline";
@@ -115,10 +123,15 @@ export interface StayCardCompactProps {
    */
   readonly sizes?: string;
   /**
-   * Page-level gate for the "New" chip, ANDed with the stay's own flag. On by
-   * default because the chip is the only badge we can honestly draw; a surface
-   * that would otherwise show six identical chips in one row can pass `false`
-   * and lose nothing true.
+   * Page-level gate for the "New" chip, ANDed with the stay's own flag.
+   *
+   * OFF by default, which is the closing-review ruling and the opposite of the
+   * shipped default. Pre-launch every listing is unreviewed, so the chip is
+   * true on all of them and therefore distinguishes none of them; a row where
+   * every card carries the same mark is a texture, and a reader who learns to
+   * ignore it will still be ignoring it on the day one home earns a review and
+   * drops it. A surface that genuinely mixes reviewed and unreviewed homes
+   * opts in explicitly.
    */
   readonly newChip?: boolean;
   /** LCP escape hatch for a first, above-the-fold rail. */
@@ -128,7 +141,7 @@ export interface StayCardCompactProps {
 export function StayCardCompact({
   stay,
   sizes = RAIL_CARD_SIZES,
-  newChip = true,
+  newChip = false,
   priority = false,
 }: StayCardCompactProps) {
   const img = image(stay.image);
@@ -156,7 +169,18 @@ export function StayCardCompact({
           ) : null}
         </span>
 
-        <span className="mt-2.5 block truncate text-bodySm font-semibold text-primary">
+        {/* Two lines, with the box for both reserved whether or not the second
+            is used. `truncate` shipped first and cut real names mid-word; a
+            bare `line-clamp-2` fixed that but let a one-line card's area line
+            start a whole line above its two-line neighbour's, so a rail of six
+            read as a ragged staircase. `2lh` is the element's OWN computed
+            line-height, so the reserve is the type token's value rather than a
+            pixel guess, and a browser without the unit ignores the rule and
+            gets the clamp alone.
+
+            No `block`: `line-clamp-2` sets `display: -webkit-box`, and a
+            `block` emitted after it in the cascade would kill the clamp. */}
+        <span className="mt-2.5 line-clamp-2 min-h-[2lh] text-bodySm font-semibold text-primary">
           {stay.name}
         </span>
         <span className="mt-1 block truncate text-caption text-tertiary">{stay.area}</span>

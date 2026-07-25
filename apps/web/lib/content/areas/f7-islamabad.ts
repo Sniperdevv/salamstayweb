@@ -2,7 +2,7 @@ import { LISTING_THUMBS } from "@/lib/content/image-manifest";
 import type { AreaContent } from "./types";
 
 /**
- * F-7, Islamabad — the GW-003 instance, at `/stays-in-islamabad/f-7`, on the
+ * F-7, Islamabad: the GW-003 instance, at `/stays-in-islamabad/f-7`, on the
  * v2 inventory-first contract.
  *
  * Local facts trace to screens-research/sections/city-facts.md §1a and the
@@ -37,32 +37,32 @@ import type { AreaContent } from "./types";
  * Deliberate absences, all load-bearing:
  * - NO price figure. "PKR —" is the card's own data-driven placeholder.
  * - NO ratings, review counts or listing counts. Pre-launch, none exist.
- * - NO Blue Area link and NO G-sector mention — see the link discipline below.
+ * - NO Blue Area link and NO G-sector mention. See the link discipline below.
  *
  * ───────────────────────────────────────────────────────────────────────────
- * SUPPLY GATE — why this page is allowed to exist (SCREENS §6 anti-doorway ·
+ * SUPPLY GATE: why this page is allowed to exist (SCREENS §6 anti-doorway ·
  * MANDATE GATE 19 · specs/similarity-and-content-quality.md §5). ALL THREE
  * conditions must hold at render time; the route is not generated otherwise:
  *   (1) >= 8 active, bookable listings inside the F-7 polygon from >= 2
- *       distinct hosts — data-driven at build (ISR), never hard-coded here.
+ *       distinct hosts, data-driven at build (ISR), never hard-coded here.
  *       The six tiles below are design placeholder inventory, not the gate.
  *   (2) Demonstrated independent neighbourhood-level intent ("stays in F-7",
- *       "stays near Jinnah Super") — pre-launch judged from the flagged
+ *       "stays near Jinnah Super"). Pre-launch judged from the flagged
  *       metro-area set; post-launch from Search Console (GATE 19 S5).
  *   (3) >= 5 unique local facts not already dominant on the parent city page.
  *       The five this instance ships:
- *         a. F-7 Markaz built around Jinnah Super Market — the sector's
+ *         a. F-7 Markaz built around Jinnah Super Market: the sector's
  *            dining + shopping core (city-facts §1a).
  *         b. Calm by day, livelier in the evening (city-facts §1a).
  *         c. Embassy-adjacent; the diplomatic enclave and E-7 sit west
  *            (city-facts §1a).
- *         d. Jamia Masjid, F-7 Markaz — about a 4-minute walk, ~300 m
+ *         d. Jamia Masjid, F-7 Markaz, about a 4-minute walk, ~300 m
  *            (ga-030 shipped figure).
- *         e. Street 12 Masjid, F-7/2 — about a 9-minute walk, ~700 m, near
+ *         e. Street 12 Masjid, F-7/2, about a 9-minute walk, ~700 m, near
  *            Jinnah Super (ga-030 shipped figure).
  *       All five survive the v2 rewrite: a, c, d and e in `about.items` and in
  *       the FAQ; b in `about.items` item 3 and in FAQ answer 3.
- *   Disposition if any condition fails: the GATE 19 six — keep · improve ·
+ *   Disposition if any condition fails: the GATE 19 six. Keep · improve ·
  *   merge into the city page · redirect · noindex temporarily · remove.
  *   "Never decide from word count alone."
  *
@@ -76,8 +76,8 @@ import type { AreaContent } from "./types";
  *   - The G-sectors (G-9 / G-11) are NOT linked or named: city-facts §1a
  *     carries a [verify before publish] flag on them, and an unverified fact
  *     may not ship on an indexable page.
- *   - No link is minted to any area that has not cleared the supply gate —
- *     that is exactly how doorway sets are born.
+ *   - No link is minted to any area that has not cleared the supply gate.
+ *     That is exactly how doorway sets are born.
  * ───────────────────────────────────────────────────────────────────────────
  */
 export const f7Islamabad: AreaContent = {
@@ -96,8 +96,8 @@ export const f7Islamabad: AreaContent = {
 
   h1: "Stays in F-7, Islamabad",
   /** Thirteen words, and one line at the 720px prose measure. Says what the
-   *  inventory is and where in the sector it sits — the markaz block and the
-   *  hills the sector backs onto — in the city page's own register. */
+   *  inventory is and where in the sector it sits (the markaz block and the
+   *  hills the sector backs onto), in the city page's own register. */
   support:
     "Verified homes around F-7 Markaz and Jinnah Super Market, below the Margalla Hills.",
 
@@ -111,7 +111,7 @@ export const f7Islamabad: AreaContent = {
         location: "Entire apartment · 2 bedrooms · 6 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/is-f7-2bed"],
         attributes: ["halal-kitchen", "no-alcohol", "backup-power"],
-        schemaName: "Margalla View Apartment — F-7, Islamabad",
+        schemaName: "Margalla View Apartment, F-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-7/cedar-lodge-f7",
@@ -120,7 +120,7 @@ export const f7Islamabad: AreaContent = {
         location: "Entire home · 3 bedrooms · 6 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/cedar-lodge-f7"],
         attributes: ["qibla-marked", "halal-kitchen", "backup-power"],
-        schemaName: "Cedar Lodge, F-7 Markaz — F-7, Islamabad",
+        schemaName: "Cedar Lodge, F-7 Markaz, F-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-7/central-studio-by-jinnah-super",
@@ -129,7 +129,7 @@ export const f7Islamabad: AreaContent = {
         location: "Studio · 1 bedroom · 2 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
         attributes: ["women-only", "halal-kitchen", "backup-power"],
-        schemaName: "Central studio by Jinnah Super — F-7, Islamabad",
+        schemaName: "Central studio by Jinnah Super, F-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-7/family-portion-jinnah-super",
@@ -138,7 +138,7 @@ export const f7Islamabad: AreaContent = {
         location: "Whole portion · 3 bedrooms · 2 baths",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
         attributes: ["family-friendly", "prayer-space", "halal-kitchen"],
-        schemaName: "Family portion near Jinnah Super — F-7, Islamabad",
+        schemaName: "Family portion near Jinnah Super, F-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-7/quiet-1-bed-street-12",
@@ -147,7 +147,7 @@ export const f7Islamabad: AreaContent = {
         location: "Entire flat · 1 bedroom · 2 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
         attributes: ["prayer-space", "no-alcohol", "backup-power"],
-        schemaName: "Quiet 1-bed off Street 12 — F-7, Islamabad",
+        schemaName: "Quiet 1-bed off Street 12, F-7, Islamabad",
       },
       {
         href: "/stays-in-islamabad/f-7/upper-portion-f-7-markaz",
@@ -156,11 +156,11 @@ export const f7Islamabad: AreaContent = {
         location: "Upper portion · 2 bedrooms · 4 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
         attributes: ["women-only", "backup-power", "halal-kitchen"],
-        schemaName: "Upper portion near F-7 Markaz — F-7, Islamabad",
+        schemaName: "Upper portion near F-7 Markaz, F-7, Islamabad",
       },
     ],
     viewAll: { href: "/search?city=islamabad&area=f-7", label: "See all stays in F-7" },
-    note: "New listings show a New chip until their first two-way review is published — SalamStay never shows a rating a home has not earned.",
+    note: "No home here carries a rating yet. A rating is published only after a two-way review, so nothing on this page is a score a home has not earned.",
   },
 
   about: {
@@ -169,12 +169,12 @@ export const f7Islamabad: AreaContent = {
       {
         icon: "market",
         heading: "F-7 Markaz & Jinnah Super Market",
-        body: "The sector’s dining and shopping core — restaurants, bakeries, pharmacies and a grocery run, all within the markaz block.",
+        body: "The sector’s dining and shopping core: restaurants, bakeries, pharmacies and a grocery run, all within the markaz block.",
       },
       {
         icon: "masjid",
         heading: "Jamia Masjid, F-7 Markaz",
-        body: "Roughly a four-minute walk — about 300 m — from the blocks around the markaz. Street 12 Masjid in F-7/2 is about nine minutes on foot, near Jinnah Super.",
+        body: "Roughly a four-minute walk, about 300 m, from the blocks around the markaz. Street 12 Masjid in F-7/2 is about nine minutes on foot, near Jinnah Super.",
       },
       {
         icon: "civic",
@@ -195,7 +195,7 @@ export const f7Islamabad: AreaContent = {
       {
         icon: "walk",
         heading: "On foot",
-        body: "Most of what you need day to day — the markaz, Jinnah Super, bakeries and pharmacies — is inside a short walk of the sector’s central blocks, and the streets are lit and busy into the evening.",
+        body: "Most of what you need day to day (the markaz, Jinnah Super, bakeries and pharmacies) is inside a short walk of the sector’s central blocks, and the streets are lit and busy into the evening.",
       },
       {
         icon: "transit",
@@ -219,24 +219,24 @@ export const f7Islamabad: AreaContent = {
         href: "/stays-in-islamabad/f-6",
         label: "Stays in F-6",
         blurb:
-          "One of the oldest, most established sectors — central and leafy, walkable to Kohsar Market and popular with first-time visitors.",
+          "One of the oldest, most established sectors: central and leafy, walkable to Kohsar Market and popular with first-time visitors.",
       },
       {
         href: "/stays-in-islamabad/f-8",
         label: "Stays in F-8",
         blurb:
-          "A secure, upscale residential sector with its own markaz and cafés — quiet and convenient across the Kashmir Highway.",
+          "A secure, upscale residential sector with its own markaz and cafés. Quiet and convenient across the Kashmir Highway.",
       },
       {
         href: "/stays-in-islamabad/e-7",
         label: "Stays in E-7",
         blurb:
-          "A premium sector set against the Margalla foothills, adjacent to the diplomatic enclave — quiet, green and high-end.",
+          "A premium sector set against the Margalla foothills, adjacent to the diplomatic enclave. Quiet, green and high-end.",
       },
     ],
     parent: { href: "/stays-in-islamabad", label: "All stays in Islamabad" },
     parentNote:
-      "A sector gets its own page only once it has enough verified homes and its own local detail — otherwise it lives on the Islamabad page.",
+      "A sector gets its own page only once it has enough verified homes and its own local detail. Otherwise it lives on the Islamabad page.",
   },
 
   faq: {
@@ -245,7 +245,7 @@ export const f7Islamabad: AreaContent = {
       {
         question: "Where is F-7 in Islamabad?",
         answer:
-          "F-7 is a central sector on Islamabad’s lettered-and-numbered grid, sitting below the Margalla Hills. Its markaz — F-7 Markaz, built around Jinnah Super Market — holds most of the sector’s food, groceries and shopping. Several embassies sit alongside it, and the Blue Area commercial spine and Centaurus Mall are a short drive south.",
+          "F-7 is a central sector on Islamabad’s lettered-and-numbered grid, sitting below the Margalla Hills. Its markaz (F-7 Markaz, built around Jinnah Super Market) holds most of the sector’s food, groceries and shopping. Several embassies sit alongside it, and the Blue Area commercial spine and Centaurus Mall are a short drive south.",
       },
       {
         question: "How far is the nearest masjid from a stay in F-7?",

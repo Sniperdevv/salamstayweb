@@ -10,10 +10,19 @@ import { shell, rhythm, sectionH2, headingGap } from "@/components/discovery/she
  * v1 opened this block with two lede paragraphs and then drew the four rows as
  * a hairline-divided two-column list with 40px glyph tiles, about 520px deep.
  * The paragraphs are gone (see the content file's header for where each fact
- * in them survives) and the rows are now four tight cards in one dense strip,
+ * in them survives) and the rows are now four open columns in one dense strip,
  * the shape the city page gives its area tiles one level up.
  *
- * Tight cards, NOT the `DisclosureCard` the notes below use, and the reason is
+ * NO box (TASTE-RULES §1). The governing elevation rule is that a shadow means
+ * the element floats over the page you scroll and a border means a form
+ * boundary or an unselected choice; content carries NEITHER. These four rows
+ * are "things to know" content, so they are glyph + title + body in open space,
+ * and the restraint is most of the premium read. What used to be the card's
+ * `p-4` is now air: the column gap widens to `space-8` and the row gap to
+ * `space-6` so the four columns are separated by distance rather than by a
+ * drawn edge.
+ *
+ * Open columns, NOT the `DisclosureCard` the notes below use, and the reason is
  * measured rather than stylistic: these four bodies are twenty to thirty words,
  * so at any card width this grid can produce they either fit inside a two-line
  * clamp or miss it by a line. A "Read more" that expands a card by nothing is a
@@ -49,19 +58,21 @@ export function AreaAbout({ area }: { readonly area: AreaContent }) {
       </h2>
 
       <ul
-        className={`${headingGap} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4`}
+        className={`${headingGap} grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4`}
       >
         {about.items.map((item) => {
           const Icon = AREA_CONTEXT_ICONS[item.icon];
           return (
-            <li
-              key={item.heading}
-              className="rounded-lg border border-hairline bg-canvas p-4"
-            >
-              <h3 className="flex items-start gap-2.5 text-bodySm font-semibold text-primary sm:min-h-[2lh]">
+            <li key={item.heading}>
+              {/* 16/600 (§7: card titles 16/500-600). At 14 the heading and its
+                  own body were the same size and the strip read as four
+                  paragraphs; one step up is the whole hierarchy this block
+                  needs now that no box is drawing it. */}
+              <h3 className="flex items-start gap-2.5 text-bodyMd font-semibold text-primary sm:min-h-[2lh]">
                 {/* The glyph sits in a line-box-tall cell so it optically
-                    centres on the first line of a heading that wraps. */}
-                <span className="grid h-5 shrink-0 place-items-center">
+                    centres on the first line of a heading that wraps. `h-6`
+                    tracks the 16px heading's line box, not the 14px one. */}
+                <span className="grid h-6 shrink-0 place-items-center">
                   <Icon className="size-5 text-secondary" />
                 </span>
                 {item.heading}

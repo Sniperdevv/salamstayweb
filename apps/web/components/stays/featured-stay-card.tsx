@@ -29,10 +29,13 @@ import { WishlistHeart } from "./wishlist-heart";
  *   and a promoted card that shows LESS home than the tile it is promoting has
  *   the hierarchy backwards. Stacked, it shows 319 × 213 and leads properly.
  * - **Four text rows at ~22px pitch, then ONE deliberate 16px break.** The
- *   break is the whole typographic idea. Title / meta / meta run as one block
- *   at the type's natural leading; the price row is a different KIND of
- *   statement, and one extra step of space says so more clearly than a rule, a
- *   tint or a weight change would.
+ *   break is the whole typographic idea. Title / place / attribute / attribute
+ *   run as one block at the type's natural leading; the price row is a
+ *   different KIND of statement, and one extra step of space says so more
+ *   clearly than a rule, a tint or a weight change would. The fourth row is
+ *   the home's SECOND attribute on its own line rather than chained to the
+ *   first with a `·` — the chain belongs to the 208px tile, where one line is
+ *   all there is; at reading scale two short true statements read as two facts.
  * - **The text column is centred against the photograph, from `sm`.** Four
  *   honest rows come to about 100px and the 3:2 photograph to about 185, so
  *   top-aligning them leaves eighty pixels of void under the price row and the
@@ -88,7 +91,7 @@ const mediaImage =
  * why the two colour classes are named rather than a `bg-skeleton` role.
  */
 const skeletonBar =
-  "inline-block h-3 w-16 rounded-sm bg-slate-100 align-middle animate-pulse motion-reduce:animate-none dark:bg-raised";
+  "inline-block h-3 w-16 rounded-sm bg-slate-100 align-middle dark:bg-raised";
 
 export interface FeaturedStayCardProps {
   readonly stay: FeaturedStay;
@@ -127,14 +130,29 @@ export function FeaturedStayCard({ stay, sizes, priority = false }: FeaturedStay
         <span className="flex w-full min-w-0 flex-1 flex-col sm:pr-11">
           <span className="truncate text-bodyMd font-semibold text-primary">{stay.name}</span>
           <span className="truncate text-bodySm text-secondary">{stay.area}</span>
-          {stay.attributes ? (
-            <span className="truncate text-bodySm text-secondary">
-              {stay.attributes[0]} &middot; {stay.attributes[1]}
-            </span>
-          ) : null}
+          {/* The §10 recipe asks for FOUR text rows, and this card shipped
+              three: name, place, and both attributes chained onto one line
+              with a `·`. Three rows against a 3:2 photograph left the text
+              column short and the price skeleton alone at the bottom of a
+              visibly empty half-card.
+
+              The fourth row is not new data — it is the second attribute,
+              given its own line. At rail scale the chain is right, because the
+              tile is 208px and one line is all there is; at reading scale two
+              short true statements read as two facts about the home, which is
+              what they are. Nothing is invented to fill the height: §12 says
+              this home has no rating, no review count and no published price,
+              and it still has none. */}
+          {stay.attributes
+            ? stay.attributes.map((attribute) => (
+                <span key={attribute} className="truncate text-bodySm text-secondary">
+                  {attribute}
+                </span>
+              ))
+            : null}
 
           {/* The one deliberate break: the price row is a different kind of
-              statement from the three above it. */}
+              statement from the four above it. */}
           <span className="mt-4 block text-bodySm">
             <span aria-hidden="true" className={skeletonBar} />
           </span>
