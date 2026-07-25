@@ -158,29 +158,52 @@ export const article = (a: ArticleInput): JsonLd => ({
   ...(a.image ? { image: `${ORIGIN}${a.image}` } : {}),
 });
 
-export const webPage = (path: string, name: string): JsonLd => ({
+export interface WebPageInput {
+  readonly path: string;
+  readonly name: string;
+  /** The card's own WebPage description. Registry-grounded prose, never new claims. */
+  readonly description: string;
+  /**
+   * Internal paths this page deliberately hands the reader on to — the GW-006 /
+   * GW-007 card contracts name these explicitly. Paths, not URLs: the origin is
+   * applied here so a card contract can never ship a bare or foreign one.
+   */
+  readonly significantLink?: readonly string[];
+}
+
+export const webPage = (p: WebPageInput): JsonLd => ({
   "@context": "https://schema.org",
   "@type": "WebPage",
-  url: `${ORIGIN}${path}`,
-  name,
+  url: `${ORIGIN}${p.path}`,
+  name: p.name,
+  inLanguage: "en-PK",
+  description: p.description,
   isPartOf: { "@id": `${ORIGIN}/#website` },
   publisher: { "@id": `${ORIGIN}/#organization` },
+  ...(p.significantLink
+    ? { significantLink: p.significantLink.map((path) => `${ORIGIN}${path}`) }
+    : {}),
 });
 
-export const aboutPage = (): JsonLd => ({
+export const aboutPage = (description: string): JsonLd => ({
   "@context": "https://schema.org",
   "@type": "AboutPage",
   url: `${ORIGIN}/about`,
   name: "About SalamStay",
+  inLanguage: "en-PK",
+  description,
   isPartOf: { "@id": `${ORIGIN}/#website` },
   mainEntity: {
     "@type": "Organization",
     name: "SalamStay",
     url: `${ORIGIN}/`,
+    description: "SalamStay, a home-sharing marketplace for Pakistan.",
     areaServed: { "@type": "Country", name: "Pakistan" },
+    knowsLanguage: ["en-PK", "ur-PK"],
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
+      availableLanguage: ["en", "ur"],
       url: `${ORIGIN}/help/contact`,
     },
   },
