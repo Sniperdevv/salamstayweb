@@ -43,7 +43,7 @@ export function HomeSearchPill() {
       <Segment label="Guests" value="Add guests" />
       <button
         type="submit"
-        className={`m-2 inline-flex h-12 shrink-0 select-none items-center justify-center gap-2 self-stretch whitespace-nowrap rounded-full bg-interactive px-6 text-bodyMd font-semibold text-on-brand transition-[transform,background-color] duration-instant ease-decelerate hover:bg-interactive-hover active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 md:self-center ${focusRing}`}
+        className={`m-2 inline-flex h-12 shrink-0 select-none items-center justify-center gap-2 self-stretch whitespace-nowrap rounded-full bg-interactive px-6 text-bodyMd font-semibold text-on-brand transition-[transform,background-color] duration-instant ease-decelerate hover:bg-interactive-hover active:scale-[0.97] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:active:scale-100 md:self-center ${focusRing}`}
       >
         <SearchIcon className="size-5" stroke={iconStroke.bold} />
         Search stays

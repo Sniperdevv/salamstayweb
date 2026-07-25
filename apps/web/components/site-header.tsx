@@ -32,7 +32,7 @@ export interface SiteHeaderProps {
 
 /** The pill is a link, not a button — it still answers a press. */
 const pressablePill =
-  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-none motion-reduce:active:scale-100";
+  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:active:scale-100";
 
 const navLink =
   "hidden rounded-md py-3 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary md:inline-flex";
@@ -96,7 +96,7 @@ export function SiteHeader({ search }: SiteHeaderProps) {
 
       <header
         data-scrolled={scrolled ? "true" : "false"}
-        className="sticky top-0 z-header border-b border-hairline bg-canvas transition-[border-color,box-shadow] duration-fast ease-decelerate data-[scrolled=true]:border-transparent data-[scrolled=true]:shadow-subtle motion-reduce:transition-none"
+        className="sticky top-0 z-header border-b border-hairline bg-canvas transition-[border-color,box-shadow] duration-fast ease-decelerate data-[scrolled=true]:border-transparent data-[scrolled=true]:shadow-subtle motion-reduce:duration-instant"
       >
         <div className={`mx-auto flex h-16 max-w-wide items-center gap-4 ${gutter}`}>
           <Link

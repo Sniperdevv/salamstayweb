@@ -119,11 +119,14 @@ export function ChatIcon(props: GlyphProps) {
 }
 
 /** Claim 9 — transparent fees and tax. */
-export function RupeeIcon(props: GlyphProps) {
+export function FeesReceiptIcon(props: GlyphProps) {
+  // Neutral receipt mark — the card's own glyph draws a dollar sign, which
+  // breaks the PKR canon; card-layer fix is parked for the founder.
   return (
     <Glyph {...props}>
-      <path d="M12 2v20" />
-      <path d="M17 6.5c-.8-1.5-2.5-2.5-5-2.5-3 0-5 1.5-5 3.5s2 3 5 3.5 5 1.5 5 3.5-2 3.5-5 3.5c-2.5 0-4.2-1-5-2.5" />
+      <path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3z" />
+      <path d="M9 8h6" />
+      <path d="M9 12h6" />
     </Glyph>
   );
 }

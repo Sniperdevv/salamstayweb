@@ -19,7 +19,7 @@ import {
   PrayerSpaceIcon,
   PrivateRoomIcon,
   QiblaIcon,
-  RupeeIcon,
+  FeesReceiptIcon,
   ShieldCheckIcon,
   UserPlusIcon,
   VillaIcon,
@@ -170,7 +170,7 @@ const TRUST = [
   {
     claim: "Transparent fees and tax — every rupee shown before you book or earn",
     desc: "The full price — fees and tax included — is visible before you commit.",
-    Icon: RupeeIcon,
+    Icon: FeesReceiptIcon,
   },
 ] as const;
 
@@ -215,10 +215,10 @@ const h2 = "text-h3 text-primary";
 const sectionSub = "mt-2 max-w-[64ch] text-bodyMd text-secondary";
 
 const mediaCard =
-  "group block overflow-hidden rounded-lg border border-hairline bg-canvas shadow-subtle transition-[transform,box-shadow] duration-fast ease-decelerate hover:-translate-y-0.5 hover:shadow-card active:scale-[0.99] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100";
+  "group block overflow-hidden rounded-lg border border-hairline bg-canvas shadow-subtle transition-[transform] duration-fast ease-decelerate hover:-translate-y-0.5 hover:shadow-card active:scale-[0.99] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100";
 
 const typeChip =
-  "group inline-flex h-12 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-5 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100";
+  "group inline-flex h-12 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-5 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:active:scale-100";
 
 export default function HomePage() {
   const hero = image(HOME_HERO);
@@ -276,7 +276,7 @@ export default function HomePage() {
                 height={hero.height}
                 priority
                 sizes="(min-width: 1120px) 1072px, 100vw"
-                className="aspect-video w-full object-cover lg:aspect-[21/9]"
+                className="aspect-video w-full object-cover lg:aspect-[21/9] lg:object-[center_72%]"
               />
             </div>
           </div>

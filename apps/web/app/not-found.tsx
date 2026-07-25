@@ -36,7 +36,7 @@ const CITIES = [
 ] as const;
 
 const chip =
-  "group inline-flex h-12 items-center gap-2 rounded-full border border-border-default bg-canvas px-5 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100";
+  "group inline-flex h-12 items-center gap-2 rounded-full border border-border-default bg-canvas px-5 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant motion-reduce:active:scale-100";
 
 const row =
   "group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors duration-instant ease-decelerate hover:bg-raised";

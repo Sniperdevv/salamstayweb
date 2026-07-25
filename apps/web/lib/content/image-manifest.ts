@@ -981,7 +981,7 @@ export const HOME_HERO: ImageId = "islamabad-margalla-boulevard-vista";
 
 /** Homepage city grid, in card order (gw-001 §CITY ENTRY GRID). */
 export const CITY_CARDS = {
-  islamabad: "islamabad-rawal-lake-sunset",
+  islamabad: "islamabad-sector-grid-aerial",
   karachi: "karachi-skyline-sunset",
   lahore: "lahore-fort-citadel",
   peshawar: "peshawar-college-building-green",
