@@ -100,7 +100,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-hairline bg-canvas">
       <h2 className="sr-only">Footer</h2>
-      <div className={`mx-auto max-w-page pt-12 ${gutter}`}>
+      <div className={`mx-auto max-w-wide pt-12 ${gutter}`}>
         <div className="mb-8 flex flex-wrap items-start justify-between gap-6">
           <div>
             <div className="text-h5 font-semibold tracking-tight text-primary">

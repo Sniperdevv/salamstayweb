@@ -12,6 +12,12 @@ import { iconStroke } from "@salamstay/design-tokens/icons";
  *
  * Every glyph sits beside a real text label, so all are aria-hidden.
  *
+ * Set membership follows what the site actually draws. The inventory-first
+ * homepage rebuild retired its three-step verification explainer and its
+ * Ramadan-dates attribute row, so `UserPlusIcon`, `IdCardIcon`, `CheckIcon`
+ * and `CrescentIcon` left with them rather than sitting here unreferenced.
+ * They are in the card if a later surface needs them back.
+ *
  * NOTE: the `Glyph` wrapper duplicates the one in `components/icons.tsx`
  * on purpose — icons.tsx is chrome-shared and under review in parallel, so
  * this file does not reach into it. Hoist the primitive into one module once
@@ -131,36 +137,6 @@ export function FeesReceiptIcon(props: GlyphProps) {
   );
 }
 
-/* ── Verification steps ────────────────────────────────────────────────── */
-
-export function UserPlusIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <path d="M20 8v6M23 11h-6" />
-      <circle cx="9" cy="8" r="4" />
-      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
-    </Glyph>
-  );
-}
-
-export function IdCardIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <circle cx="9" cy="12" r="2.5" />
-      <path d="M14 10h4M14 14h4" />
-    </Glyph>
-  );
-}
-
-export function CheckIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <path d="M4 12l5 5L20 6" />
-    </Glyph>
-  );
-}
-
 /* ── Cultural & practical attributes ───────────────────────────────────── */
 
 export function HalalKitchenIcon(props: GlyphProps) {
@@ -198,14 +174,6 @@ export function BackupPowerIcon(props: GlyphProps) {
       <rect x="7" y="9" width="10" height="12" rx="1" />
       <path d="M10 9V4h4v5" />
       <path d="M12 13v4" />
-    </Glyph>
-  );
-}
-
-export function CrescentIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <path d="M5 12.5a7 7 0 1 0 6.5-9.5A5.5 5.5 0 0 1 5 12.5z" />
     </Glyph>
   );
 }

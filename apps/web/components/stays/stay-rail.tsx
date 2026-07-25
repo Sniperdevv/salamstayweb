@@ -39,8 +39,19 @@ import { StayCardCompact } from "./stay-card-compact";
  * rather than flush against the viewport edge.
  */
 
+/**
+ * The trailing link. Hidden below `sm`, because a phone cannot hold both: at
+ * 375 the row is 343px wide and "Stays in F-7, Islamabad" alone measures 266,
+ * so the heading — which is the more important of the two, and the section's
+ * accessible name — truncates to "Stays in F-7, Isla…" to make room for a
+ * secondary link. Shortening the label does not save it; the arithmetic fails
+ * for any label longer than about four characters. From `sm` up both fit with
+ * room to spare. Nothing is lost on a phone: the link's destination is the
+ * city page, which the city grid and the footer both link to, and the anchor
+ * stays in the server HTML either way (G37).
+ */
 const viewAllLink =
-  "inline-flex items-center gap-1 rounded-sm text-bodySm font-medium text-link underline-offset-4 " +
+  "hidden sm:inline-flex items-center gap-1 rounded-sm text-bodySm font-medium text-link underline-offset-4 " +
   "transition-colors duration-instant ease-decelerate hover:text-link-strong hover:underline " +
   "motion-reduce:transition-[background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
