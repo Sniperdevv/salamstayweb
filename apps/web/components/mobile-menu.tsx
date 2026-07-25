@@ -64,7 +64,7 @@ const CITIES: readonly { readonly href: string; readonly name: string }[] = [
 
 const menuLink =
   "flex min-h-11 items-center rounded-md py-2 text-bodyMd text-primary " +
-  "transition-colors duration-instant ease-decelerate hover:text-interactive " +
+  "transition-colors duration-instant ease-decelerate hover:text-secondary " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
 

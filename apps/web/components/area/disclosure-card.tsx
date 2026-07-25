@@ -64,9 +64,15 @@ const heading = "flex items-center gap-2.5 text-bodySm font-semibold text-primar
  */
 const body = "mt-2 line-clamp-2 text-bodySm text-secondary group-[[open]]:line-clamp-none";
 
+/**
+ * "Read more" / "Show less" are inline text actions, so §8 applies literally:
+ * underlined AT REST, in ink. Not brand — §2 spends green on four roles and a
+ * disclosure toggle is none of them. The hover dims rather than decorating,
+ * because the decoration is already there.
+ */
 const affordance =
-  "mt-2 items-center gap-1 text-caption font-medium text-link " +
-  "transition-colors duration-instant ease-decelerate group-hover:text-link-strong " +
+  "mt-2 items-center gap-1 text-caption font-medium text-primary underline underline-offset-4 " +
+  "transition-colors duration-instant ease-decelerate group-hover:text-secondary " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
 

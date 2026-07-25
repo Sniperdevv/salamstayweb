@@ -11,6 +11,27 @@ import { focusRing, gutter } from "./ui";
  * the editorial / corrections / standards / Shariah quartet. Every anchor is a
  * route registered in `lib/seo/route-registry.ts` (G37); routes flip from
  * stub/todo to real pages as the build waves land — see WEB-BUILD.md.
+ *
+ * Drawn to the TASTE-RULES §10 footer redline, which is four decisions:
+ *
+ *  · **`bg.raised` band, hairline top.** §6: raised does five jobs and this is
+ *    one of them. A footer on the bare canvas has no edge; a footer with a
+ *    heavy rule has a scar. Tint plus hairline is the whole treatment.
+ *  · **Links 16/400 INK, no underline at rest.** This is the one place §8's
+ *    underline-at-rest rule is deliberately suspended: forty underlined rows is
+ *    a hatch pattern, not a link list. Ink at body weight already reads as
+ *    navigable inside a labelled `<nav>`; the underline arrives on hover.
+ *  · **36px row pitch** — the most generous repeated gap on the site, and most
+ *    of why a link-dense footer reads as calm instead of as a sitemap dump.
+ *  · **15/600 headings, not `overline`.** §7 is explicit that `overline` is a
+ *    FORM-LABEL token (CHECK-IN, GUESTS) and never a section eyebrow; four
+ *    uppercase micro-caps above four columns is exactly the eyebrow tic §11.20
+ *    bans. The nearest role below the link size, set semibold, does the same
+ *    grouping work without shouting.
+ *
+ * The §3.12 link set, the four `aria-label`s and the sr-only h2 are byte-exact
+ * and structural (G37/G78). Nothing below changes an href, a label or an
+ * element — only type roles, colour roles and spacing.
  */
 
 const CITIES = [
@@ -49,8 +70,20 @@ const BOTTOM = [
   { href: "/shariah-policy", label: "Shariah approach" },
 ] as const;
 
+/**
+ * One footer row. The 36px box IS the pitch: the row sets the rhythm, so the
+ * gap between two links is one value rather than a line box plus two paddings
+ * that have to be reasoned about together. Ink at 16/400, underline on hover
+ * only, `underline-offset-4` so the rule clears the descenders.
+ *
+ * `min-h-9`, NOT `h-9`. A fixed height is right until a label wraps — at 375
+ * "Community standards" takes two lines, and a hard 36px box let the second
+ * line escape and collide with the row above it. As a minimum the pitch is
+ * exact for every single-line row (which is all but one of them at every
+ * breakpoint) and the one wrapping row simply gets the height it needs.
+ */
 const colLink =
-  "-mx-1 block rounded-md px-1 py-1 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary hover:underline";
+  "-mx-1 flex min-h-9 items-center rounded-md px-1 py-1 text-bodyMd text-primary underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-secondary hover:underline motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
 
 function Column({
   label,
@@ -61,7 +94,7 @@ function Column({
 }) {
   return (
     <nav aria-label={label}>
-      <h3 className="mb-3 text-overline uppercase text-tertiary">{label}</h3>
+      <h3 className="mb-2 text-bodySm font-semibold text-primary">{label}</h3>
       {links.map((l) => (
         <Link key={l.href + l.label} href={l.href} className={`${colLink} ${focusRing}`}>
           {l.label}
@@ -71,7 +104,11 @@ function Column({
   );
 }
 
-/** Same v1 rule as the header: EN is active, اردو is a span until `/ur` ships. */
+/**
+ * Same v1 rule as the header: EN is active, اردو is a span until `/ur` ships.
+ * Active segment is ink (`interactive.selectedFill`), not brand — see the note
+ * on the shared `LanguageGroup` in components/language-group.tsx.
+ */
 function LanguageGroup() {
   return (
     <span
@@ -82,7 +119,7 @@ function LanguageGroup() {
       <span
         lang="en"
         aria-current="true"
-        className="flex items-center bg-interactive px-3 py-2 text-label font-semibold leading-none text-on-brand"
+        className="flex items-center bg-selected px-3 py-2 text-label font-semibold leading-none text-selected-fg"
       >
         EN
       </span>
@@ -98,11 +135,13 @@ function LanguageGroup() {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-hairline bg-canvas">
+    <footer className="border-t border-hairline bg-raised">
       <h2 className="sr-only">Footer</h2>
       <div className={`mx-auto max-w-wide pb-10 pt-12 md:pb-12 ${gutter}`}>
         <div className="mb-8 flex flex-wrap items-start justify-between gap-6">
           <div>
+            {/* Green role 1 of 4: the wordmark dot. The only brand mark in the
+                footer, and the reason the rest of this surface is ink. */}
             <div className="text-h5 font-semibold tracking-tight text-primary">
               Salam<span className="text-interactive">.</span>Stay
             </div>
@@ -121,7 +160,10 @@ export function SiteFooter() {
           <Column label="Legal" links={LEGAL} />
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-5 text-caption text-tertiary">
+        {/* `text.tertiary` is AA-large only (≥18.66px per the token's own note);
+            at `caption` it under-runs 4.5:1 on either surface, so the bottom
+            rule is set in `text.secondary`. */}
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-5 text-caption text-secondary">
           <span>
             © <span className="num">2026</span> SalamStay
           </span>
@@ -130,7 +172,7 @@ export function SiteFooter() {
               <Link
                 key={l.href + l.label}
                 href={l.href}
-                className={`-mx-1 rounded-md px-1 py-1 text-tertiary transition-colors duration-instant ease-decelerate hover:text-secondary hover:underline ${focusRing}`}
+                className={`-mx-1 rounded-md px-1 py-1 underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-primary hover:underline motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate ${focusRing}`}
               >
                 {l.label}
               </Link>

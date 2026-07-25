@@ -45,13 +45,13 @@ export const headingGap = "mt-5";
  * Sibling-sector tile: a bordered panel that is itself a link. The toolkit's
  * `panelLink` at `p-5` with this page's `p-4` cards next to it reads as two
  * card families, so the padding is the page's and the motion is the toolkit's,
- * copied verbatim — border and heading go brand, the press answers with the
- * shared 0.99 scale, no lift, and reduced motion keeps the colour change and
- * drops the transform.
+ * copied verbatim — the border strengthens (never goes brand: §2 keeps green
+ * off hover states everywhere), the press answers with the shared 0.99 scale,
+ * no lift, and reduced motion keeps the colour change and drops the transform.
  */
 export const siblingPanel =
   "group block rounded-lg border border-hairline bg-canvas p-4 " +
   "transition-[transform,border-color] duration-instant ease-decelerate " +
-  "hover:border-border-brand active:scale-[0.99] " +
+  "hover:border-border-strong active:scale-[0.99] " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";

@@ -62,7 +62,7 @@ function AreaTile({ area }: { readonly area: CityArea }) {
       <div>
         <span
           aria-hidden="true"
-          className={`${mediaFrame} grid aspect-[4/3] place-items-center bg-brand-subtle text-interactive`}
+          className={`${mediaFrame} grid aspect-[4/3] place-items-center bg-raised text-tertiary`}
         >
           <LandmarkIcon className="size-8" />
         </span>

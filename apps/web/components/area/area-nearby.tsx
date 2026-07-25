@@ -44,7 +44,7 @@ export function AreaNearby({ area }: { readonly area: AreaContent }) {
           <Link key={item.href} href={item.href} className={`${siblingPanel} ${focusRing}`}>
             <span className="flex items-center gap-2 text-bodySm font-semibold text-primary">
               {item.label}
-              <ArrowRightIcon className="size-4 shrink-0 text-interactive" />
+              <ArrowRightIcon className="size-4 shrink-0 text-tertiary transition-colors duration-instant ease-decelerate group-hover:text-primary motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate" />
             </span>
             <span className="mt-1.5 block text-bodySm text-secondary">{item.blurb}</span>
           </Link>

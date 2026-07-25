@@ -41,7 +41,7 @@ export function FaqSection({
                 {/* The glyph sits in a line-box-tall cell so it optically
                     centres on the first line of a question that wraps. */}
                 <span className="grid h-6 shrink-0 place-items-center">
-                  <HelpIcon className="size-5 text-interactive" />
+                  <HelpIcon className="size-5 text-tertiary" />
                 </span>
                 {item.question}
               </h3>

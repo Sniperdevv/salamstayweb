@@ -33,12 +33,20 @@ export interface SiteHeaderProps {
   readonly search?: string;
 }
 
-/** The pill is a link, not a button — it still answers a press. */
+/**
+ * The pill is a link, not a button — it still answers a press.
+ *
+ * Elevation (TASTE-RULES §1, §10): shadow, never a border. The pill floats over
+ * the page the reader scrolls; hover deepens it by one ladder rung
+ * (`floating` → `popover`) at `duration.fast`, decelerating, so the response
+ * lands the instant the pointer does.
+ */
 const pressablePill =
-  "transition-[transform,border-color,box-shadow] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "transition-[transform,box-shadow] duration-fast ease-decelerate hover:shadow-popover active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 const navLink =
-  "hidden rounded-md py-3 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary md:inline-flex";
+  "hidden rounded-md py-3 text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary md:inline-flex " +
+  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
 
 const CITY_LABELS: Record<string, string> = {
   islamabad: "Islamabad",
@@ -146,7 +154,7 @@ export function SiteHeader({ search }: SiteHeaderProps) {
             <Link
               href={pill?.href ?? "/search"}
               aria-label={pill?.aria ?? "Search stays"}
-              className={`mx-auto hidden h-12 max-w-md flex-1 items-center gap-3 rounded-full border border-border-default bg-canvas pl-5 pr-2 shadow-subtle md:flex ${focusRing} ${pressablePill}`}
+              className={`mx-auto hidden h-12 max-w-md flex-1 items-center gap-3 rounded-full bg-canvas pl-5 pr-2 shadow-floating md:flex ${focusRing} ${pressablePill}`}
             >
               <SearchIcon className="size-5 shrink-0 text-secondary" />
               <span className="flex-1 truncate text-bodyMd text-secondary">{pillSummary}</span>

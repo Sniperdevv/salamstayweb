@@ -10,7 +10,15 @@ import {
   MessageIcon,
   RetryIcon,
 } from "@/components/icons";
-import { btnBase, btnGhost, btnLg, btnPrimary, focusRing, gutter } from "@/components/ui";
+import {
+  btnBase,
+  btnGhost,
+  btnLg,
+  btnPrimary,
+  focusRing,
+  gutter,
+  inlineAction,
+} from "@/components/ui";
 
 /**
  * GW-016 — the unhandled-error shell.
@@ -30,7 +38,7 @@ const row =
   "group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors duration-instant ease-decelerate hover:bg-raised";
 
 const rowIcon =
-  "grid size-8 shrink-0 place-items-center rounded-md bg-brand-subtle text-interactive";
+  "grid size-8 shrink-0 place-items-center rounded-md bg-raised text-secondary";
 
 export default function Error({
   error,
@@ -49,9 +57,9 @@ export default function Error({
       <meta name="robots" content="noindex" />
 
       {/* HERO — the plain statement, then the retry */}
-      <section className="bg-canvas bg-[radial-gradient(120%_90%_at_86%_-10%,var(--ss-interactive-subtle)_0%,transparent_46%)]">
+      <section className="bg-canvas">
         <div className={`mx-auto max-w-page py-12 md:py-16 ${gutter}`}>
-          <p className="text-overline uppercase text-interactive">
+          <p className="text-overline uppercase text-tertiary">
             Error <span className="num">500</span>
           </p>
           <h1 className="mt-3 max-w-[19ch] text-h2 font-semibold tracking-tighter text-primary md:text-h1 md:font-semibold">
@@ -96,7 +104,7 @@ export default function Error({
                 was charged. Check{" "}
                 <Link
                   href="/trips"
-                  className={`rounded-sm font-medium text-link underline-offset-4 hover:underline ${focusRing}`}
+                  className={`font-medium ${inlineAction} ${focusRing}`}
                 >
                   your trips
                 </Link>{" "}

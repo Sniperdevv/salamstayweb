@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { inlineAction } from "@/components/ui";
 import { routeByPath } from "@/lib/seo/route-registry";
 
 /**
@@ -42,10 +43,10 @@ export default async function StubPage({ params }: { params: Promise<Params> }) 
         homepage or the help center.
       </p>
       <p className="flex gap-4">
-        <Link className="text-link underline-offset-4 hover:underline" href="/">
+        <Link className={inlineAction} href="/">
           Go to the homepage
         </Link>
-        <Link className="text-link underline-offset-4 hover:underline" href="/help">
+        <Link className={inlineAction} href="/help">
           Help center
         </Link>
       </p>

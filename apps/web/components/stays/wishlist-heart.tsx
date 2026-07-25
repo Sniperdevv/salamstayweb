@@ -36,7 +36,37 @@ const heartBase =
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
-export function WishlistHeart({ stayName }: { readonly stayName: string }) {
+/**
+ * TASTE-RULES §10 gives the heart exactly two forms, chosen by what it sits on:
+ *
+ * - `media` — a NAKED white stroke over a photograph. No plate. The
+ *   `drop-shadow` traces the glyph's own alpha (a `box-shadow` would trace its
+ *   bounding rectangle), which is the only way a stroke survives an unknowable
+ *   image without a scrim — and §9 forbids scrims on photography outright.
+ * - `chrome` — a circular neutral-fill button, and ONLY on white chrome, where
+ *   there is no photograph to survive and a shadowed stroke would be a shadow
+ *   cast onto a flat surface for no reason. The featured card is the one place
+ *   this form is correct.
+ */
+export type WishlistHeartVariant = "media" | "chrome";
+
+const glyph: Record<WishlistHeartVariant, string> = {
+  media: "size-5 text-slate-0 drop-shadow-on-media",
+  chrome: "size-5 text-primary",
+};
+
+const plate: Record<WishlistHeartVariant, string> = {
+  media: "grid size-8 place-items-center",
+  chrome: "grid size-8 place-items-center rounded-full bg-raised",
+};
+
+export function WishlistHeart({
+  stayName,
+  variant = "media",
+}: {
+  readonly stayName: string;
+  readonly variant?: WishlistHeartVariant;
+}) {
   const router = useRouter();
 
   return (
@@ -47,10 +77,8 @@ export function WishlistHeart({ stayName }: { readonly stayName: string }) {
       onClick={() => router.push("/signup")}
       className={`${heartBase} ${focusRing}`}
     >
-      {/* Naked stroke heart, no plate — the drop shadow alone separates it from
-          any photo (the Airbnb grid-card treatment; plates are for white chrome). */}
-      <span className="grid size-8 place-items-center">
-        <HeartIcon className="size-5 text-slate-0 drop-shadow-on-media" />
+      <span className={plate[variant]}>
+        <HeartIcon className={glyph[variant]} />
       </span>
     </button>
   );

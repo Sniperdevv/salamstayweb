@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRightIcon } from "@/components/icons";
-import { focusRing } from "@/components/ui";
+import { focusRing, inlineAction } from "@/components/ui";
 import type { FeaturedStay } from "@/lib/content/featured-stays";
 import { RailControls } from "./rail-controls";
 import { StayCardCompact } from "./stay-card-compact";
@@ -49,12 +49,14 @@ import { StayCardCompact } from "./stay-card-compact";
  * room to spare. Nothing is lost on a phone: the link's destination is the
  * city page, which the city grid and the footer both link to, and the anchor
  * stays in the server HTML either way (G37).
+ *
+ * Treatment: TASTE-RULES §8 — ink, underlined AT REST, never brand. Airbnb runs
+ * both forms and so do we: a section-header link like this one is an inline
+ * text action, and a section-BOTTOM action ("Show all 42 stays") is the §5
+ * gray-fill secondary button. Which one an action gets is decided by where it
+ * sits, not by how important it feels.
  */
-const viewAllLink =
-  "hidden sm:inline-flex items-center gap-1 rounded-sm text-bodySm font-medium text-link underline-offset-4 " +
-  "transition-colors duration-instant ease-decelerate hover:text-link-strong hover:underline " +
-  "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
-  "motion-reduce:ease-decelerate";
+const viewAllLink = `hidden sm:inline-flex items-center gap-1 text-bodySm font-medium ${inlineAction}`;
 
 /**
  * Scrollbar suppression. Not a token question — this hides the scrollbar's

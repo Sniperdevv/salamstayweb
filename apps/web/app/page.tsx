@@ -247,7 +247,7 @@ const cardLink =
 const typeChip =
   "group inline-flex h-10 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-4 " +
   "text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate " +
-  "hover:border-border-brand hover:text-interactive active:scale-[0.97] " +
+  "hover:border-border-strong active:scale-[0.97] " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
@@ -356,7 +356,12 @@ export default function HomePage() {
             >
               {CLAIMS.map(({ claim, Icon }) => (
                 <li key={claim} className="flex items-start gap-3">
-                  <Icon className="mt-0.5 size-5 shrink-0 text-interactive" />
+                  {/* Gray, not brand (TASTE-RULES §2: "Icons are ink or gray").
+                      The green "verification mark" role is a single badge — a
+                      shield on a listing, an unread dot — not nine 20px glyphs
+                      across a tinted plate, which is a green field with text in
+                      it. The claims are the content; the glyphs point at them. */}
+                  <Icon className="mt-0.5 size-5 shrink-0 text-secondary" />
                   <span className="text-bodySm text-primary">{claim}</span>
                 </li>
               ))}
@@ -366,7 +371,12 @@ export default function HomePage() {
 
         {/* BECOME A HOST */}
         <section aria-labelledby="host-h" className={`${shell} pt-8 md:pt-10 ${rhythm}`}>
-          <div className="flex flex-col gap-6 rounded-xl border border-hairline bg-brand-subtle p-6 md:flex-row md:items-center md:gap-10 md:p-8">
+          {/* `bg.raised`, not the brand tint. §6 is a theme lock: raised does
+              five jobs and section tinting is one of them, and NO other
+              section-tinting exists. A brand-washed band is also a fifth green
+              on a page whose budget is four roles, and it is the one green here
+              that carries no meaning — the CTA inside it already says "act". */}
+          <div className="flex flex-col gap-6 rounded-xl border border-hairline bg-raised p-6 md:flex-row md:items-center md:gap-10 md:p-8">
             <div className="min-w-0 flex-1">
               <h2 id="host-h" className={sectionH2}>
                 Become a host on SalamStay
@@ -434,7 +444,7 @@ export default function HomePage() {
           <div className={`${headingGap} flex flex-wrap gap-2.5`}>
             {PROPERTY_TYPES.map(({ href, label, Icon }) => (
               <Link key={href} href={href} className={`${typeChip} ${focusRing}`}>
-                <Icon className="size-5 text-secondary transition-colors duration-instant ease-decelerate group-hover:text-interactive" />
+                <Icon className="size-5 text-secondary transition-colors duration-instant ease-decelerate group-hover:text-primary" />
                 {label}
               </Link>
             ))}

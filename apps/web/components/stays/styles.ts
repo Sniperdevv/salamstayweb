@@ -1,4 +1,4 @@
-import { gutter } from "@/components/ui";
+import { gutter, inlineAction } from "@/components/ui";
 
 /**
  * Stays-discovery class grammar — one definition of the page rhythm shared by
@@ -25,7 +25,15 @@ export const sectionShell = `mx-auto max-w-page py-12 md:py-16 ${gutter}`;
 /** Sections after the hero are separated by a hairline, as the card draws. */
 export const sectionRule = "border-t border-hairline";
 
-export const eyebrow = "text-overline uppercase text-interactive";
+/**
+ * TASTE-RULES §7 / §11.20 are explicit that there are ZERO section eyebrows —
+ * `overline` is a form-label token (CHECK-IN, GUESTS) and nothing else. The two
+ * remaining consumers (`faq-section`, `notes-section`) are not mounted by any
+ * shipped route, so removing the prop is a pass-2 deletion rather than a live
+ * change; the green is taken off it now so no surface can reintroduce a brand
+ * micro-label by importing this.
+ */
+export const eyebrow = "text-overline uppercase text-tertiary";
 
 export const sectionHeading = "text-h3 text-primary";
 
@@ -40,9 +48,17 @@ export const sectionSub = "mt-3 max-w-[66ch] text-bodyMd text-secondary";
 export const cardLift =
   "transition-[transform,border-color] duration-fast ease-decelerate hover:-translate-y-0.5 active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100";
 
-/** Pill control: filter chips. Border and label go brand on hover. */
+/**
+ * Pill control: filter chips.
+ *
+ * §1: a chip is an unselected choice, so it carries a border and no shadow.
+ * §2/§3: the hover state strengthens the BORDER and leaves the label ink — a
+ * chip that goes green under the pointer is claiming the primary-action colour
+ * for a filter, and a row of eight of them turns the page green on a mouse
+ * sweep. Selected (when it ships) is `bg-selected` ink fill, never brand.
+ */
 export const chip =
-  "group inline-flex h-10 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-4 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "group inline-flex h-10 select-none items-center gap-2 rounded-full border border-border-default bg-canvas px-4 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 /**
  * Static attribute pill on a listing tile. Not interactive — no hover state.
@@ -58,13 +74,22 @@ export const attributePill =
  * tiles (gw-003 `.nb:hover { border-color: brand }`). No lift and no shadow
  * swap: these sit in a row of three plain panels beside the practical notes,
  * which do NOT move, and lifting only the linked ones would read as the page
- * disagreeing with itself. Border and heading go brand, the press answers with
- * the shared 0.97-family scale. Reduced motion keeps the colour change and
- * drops the transform, per the shipped `pressable` pattern in `ui.ts`.
+ * disagreeing with itself. The press answers with the shared 0.97-family scale.
+ * Reduced motion keeps the colour change and drops the transform, per the
+ * shipped `pressable` pattern in `ui.ts`.
+ *
+ * The card's brand hover border is retired under §2: a panel is an unselected
+ * choice (§1), its hover strengthens the boundary, and `border.strong` is the
+ * role that means exactly that. Green is not a hover colour anywhere.
  */
 export const panelLink =
-  "group block rounded-lg border border-hairline bg-canvas p-5 transition-[transform,border-color] duration-instant ease-decelerate hover:border-border-brand active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "group block rounded-lg border border-hairline bg-canvas p-5 transition-[transform,border-color] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.99] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
-/** Inline brand link (area "View stays in …", related columns). */
-export const inlineLink =
-  "inline-flex items-center gap-2 rounded-sm text-bodySm font-medium text-link underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-link-strong hover:underline motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
+/**
+ * Inline text link (area "View stays in …", related columns) — §8's
+ * underline-at-rest, in ink, at the discovery surfaces' 14px meta size. The
+ * flex box is this file's own (some call sites pair the label with a leading
+ * or trailing glyph); everything about colour, underline and hover comes from
+ * the one shared `inlineAction` in `ui.ts` so nothing can drift.
+ */
+export const inlineLink = `inline-flex items-center gap-2 text-bodySm font-medium ${inlineAction}`;

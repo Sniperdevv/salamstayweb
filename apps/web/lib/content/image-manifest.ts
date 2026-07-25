@@ -61,6 +61,26 @@ export interface ImageEntry {
 const STOCK_INTERIOR =
   "Licensed stock interior standing in for a beta listing. Not a photograph of a real SalamStay home.";
 
+/** Stand-in note for stock exteriors and outdoor spaces on a listing card. */
+const STOCK_EXTERIOR =
+  "Licensed stock exterior standing in for a beta listing. Not a photograph of a real SalamStay home.";
+
+/**
+ * Stand-in note for frames the Pexels record places in Pakistan. The building
+ * is genuinely Pakistani; the listing it illustrates is not real, so the frame
+ * is still a declared stand-in.
+ */
+const STOCK_INTERIOR_PK =
+  "Licensed stock interior photographed in Pakistan, standing in for a beta listing. Not a photograph of a real SalamStay home.";
+
+/**
+ * Stand-in note for South Asian frames outside Pakistan. Named separately from
+ * `STOCK_INTERIOR` so the manifest never implies a Pakistani provenance the
+ * Pexels record does not support.
+ */
+const STOCK_INTERIOR_SOUTH_ASIA =
+  "Licensed stock interior photographed elsewhere in South Asia, standing in for a beta listing. Not a photograph of a real SalamStay home.";
+
 export const IMAGES = {
   // ─────────────────────────────────────────────────────────────────────
   // Heroes
@@ -785,6 +805,279 @@ export const IMAGES = {
   },
 
   // ─────────────────────────────────────────────────────────────────────
+  // Rail depth — three further homes per beta city (rails of nine)
+  //
+  // Unlike the pool above, every frame here is claimed by exactly ONE city, so
+  // the three cards a city gains cannot collide with another city's rail. The
+  // sourcing brief was Pakistani-plausible rooms: split air conditioning,
+  // ceiling fans, marble and terrazzo floors, enclosed balconies, boundary
+  // walls. Frames that read as Western mansions, chalets or fireplaces were
+  // cut at review, as were renders, frames carrying non-Muslim religious
+  // iconography, and any frame whose landscape contradicts its city.
+  // ─────────────────────────────────────────────────────────────────────
+
+  // ——— Islamabad ———
+  "sitting-room-with-leather-sofas": {
+    id: "sitting-room-with-leather-sofas",
+    file: "/images/sitting-room-with-leather-sofas.jpg",
+    subject:
+      "Sitting room with leather sofas, a ceiling fan and a staircase rising behind the seating",
+    alt: "Sitting room of a family home, F-10, Islamabad — staircase rising behind the seating group",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad"],
+    credit: "Zyn Aly",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_PK,
+  },
+  "dining-room-with-long-table-and-cabinet": {
+    id: "dining-room-with-long-table-and-cabinet",
+    file: "/images/dining-room-with-long-table-and-cabinet.jpg",
+    subject:
+      "Dining room with a long table, a run of chairs and a timber display cabinet",
+    alt: "Dining room of a whole portion, G-11, Islamabad — timber display cabinet behind the long table",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad"],
+    credit: "Zyn Aly",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_PK,
+  },
+  "bedroom-with-large-window-greenery": {
+    id: "bedroom-with-large-window-greenery",
+    file: "/images/bedroom-with-large-window-greenery.jpg",
+    subject:
+      "Bedroom with a ceiling fan, wall-mounted air conditioning and sliding doors onto a green hillside",
+    alt: "Bedroom of a hillside 1-bed, Bani Gala, Islamabad — ceiling fan above the bed, balcony doors alongside",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad"],
+    credit: "Moustache Escape",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+
+  // ——— Karachi ———
+  "apartment-building-with-balconies": {
+    id: "apartment-building-with-balconies",
+    file: "/images/apartment-building-with-balconies.jpg",
+    subject: "Front elevation of a low-rise apartment block with cantilevered balconies",
+    alt: "Apartment block frontage, Gulistan-e-Johar, Karachi — cantilevered balconies down the elevation",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-karachi"],
+    credit: "Sharath G.",
+    category: "listing",
+    authentic: false,
+    note: STOCK_EXTERIOR,
+  },
+  "patio-with-wicker-seating": {
+    id: "patio-with-wicker-seating",
+    file: "/images/patio-with-wicker-seating.jpg",
+    subject: "Covered veranda with square columns, a ceiling fan and cane seating",
+    alt: "Covered veranda of a whole portion, DHA Phase 6, Karachi — ceiling fan above the cane seating",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-karachi"],
+    credit: "Naresh Babu",
+    category: "listing",
+    authentic: false,
+    note: STOCK_EXTERIOR,
+  },
+  "bedroom-with-tall-wardrobe": {
+    id: "bedroom-with-tall-wardrobe",
+    file: "/images/bedroom-with-tall-wardrobe.jpg",
+    subject:
+      "Bedroom with wall-mounted air conditioning above the bed, a padded headboard and a full-height wardrobe",
+    alt: "Bedroom of a 1-bed flat, Nazimabad, Karachi — wall-mounted air conditioning above the headboard",
+    width: 1880,
+    height: 1255,
+    pages: ["/stays-in-karachi"],
+    credit: "Max Vakhtbovych",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Lahore ———
+  "living-room-with-timber-slat-wall": {
+    id: "living-room-with-timber-slat-wall",
+    file: "/images/living-room-with-timber-slat-wall.jpg",
+    subject:
+      "Sitting room with a timber slat wall, a low sofa and an enclosed balcony beyond the glazing",
+    alt: "Sitting room of a bright flat, Askari 11, Lahore — enclosed balcony beyond the seating",
+    width: 1584,
+    height: 1056,
+    pages: ["/stays-in-lahore"],
+    credit: "The Funiture Studio",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "bedroom-with-red-curtains": {
+    id: "bedroom-with-red-curtains",
+    file: "/images/bedroom-with-red-curtains.jpg",
+    subject:
+      "Bedroom with red curtains across a bay window, a printed bedspread and a terrazzo floor",
+    alt: "Bedroom of a marble-floor room, Samanabad, Lahore — red curtains across the bay window",
+    width: 1880,
+    height: 1265,
+    pages: ["/stays-in-lahore"],
+    credit: "Fahad Puthawala",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "entrance-with-carved-door": {
+    id: "entrance-with-carved-door",
+    file: "/images/entrance-with-carved-door.jpg",
+    subject:
+      "Entrance hall with green double doors set in perforated brass panels, the kitchen open alongside",
+    alt: "Entrance of a whole house, Allama Iqbal Town, Lahore — green double doors beside the open kitchen",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-lahore"],
+    credit: "Sharath G.",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+
+  // ——— Peshawar ———
+  "bedroom-with-carved-window-screen": {
+    id: "bedroom-with-carved-window-screen",
+    file: "/images/bedroom-with-carved-window-screen.jpg",
+    subject:
+      "Plain bedroom with a frosted window above the bed, brown bedding and a luggage rack",
+    alt: "Bedroom of a single room, Dalazak Road, Peshawar — frosted window set above the bed",
+    width: 1880,
+    height: 1254,
+    pages: ["/stays-in-peshawar"],
+    credit: "Fahad Puthawala",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "kitchen-with-red-cabinets-and-gas-stove": {
+    id: "kitchen-with-red-cabinets-and-gas-stove",
+    file: "/images/kitchen-with-red-cabinets-and-gas-stove.jpg",
+    subject:
+      "Kitchen with red cabinets, a granite worktop, a gas hob and a mesh window over the sink",
+    alt: "Kitchen of a family portion, Board Bazaar, Peshawar — gas hob at the end of a granite run",
+    width: 1880,
+    height: 1254,
+    pages: ["/stays-in-peshawar"],
+    credit: "Fahad Puthawala",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "house-facade-with-plants-and-terrace": {
+    id: "house-facade-with-plants-and-terrace",
+    file: "/images/house-facade-with-plants-and-terrace.jpg",
+    subject:
+      "Single-storey house with a tiled roof, a covered porch and planting along the drive",
+    alt: "Frontage of a garden bungalow, Nasir Bagh Road, Peshawar — covered porch across the front of the house",
+    width: 1880,
+    height: 1254,
+    pages: ["/stays-in-peshawar"],
+    credit: "Fahad Puthawala",
+    category: "listing",
+    authentic: false,
+    note: STOCK_EXTERIOR,
+  },
+
+  // ——— Faisalabad ———
+  "living-room-with-ceiling-fan-and-tv-wall": {
+    id: "living-room-with-ceiling-fan-and-tv-wall",
+    file: "/images/living-room-with-ceiling-fan-and-tv-wall.jpg",
+    subject:
+      "Sitting room with a ceiling fan, two facing sofas and a wall-mounted television",
+    alt: "Sitting room of a whole house, Batala Colony, Faisalabad — ceiling fan above two facing sofas",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-faisalabad"],
+    credit: "Liva Kitchens And Interiors",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "bedroom-with-bay-window-seat": {
+    id: "bedroom-with-bay-window-seat",
+    file: "/images/bedroom-with-bay-window-seat.jpg",
+    subject:
+      "Guest bedroom with a metal-framed bed, striped bedding and a cushioned seat in the window bay",
+    alt: "Bedroom of a guest room, Millat Town, Faisalabad — cushioned seat built into the window bay",
+    width: 1880,
+    height: 1274,
+    pages: ["/stays-in-faisalabad"],
+    credit: "Fahad Puthawala",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "dining-corner-with-round-table": {
+    id: "dining-corner-with-round-table",
+    file: "/images/dining-corner-with-round-table.jpg",
+    subject: "Dining corner with a round table, four chairs and an open door to the kitchen",
+    alt: "Dining corner of a compact flat, Jaranwala Road, Faisalabad — round table beside the kitchen door",
+    width: 1880,
+    height: 1255,
+    pages: ["/stays-in-faisalabad"],
+    credit: "Max Vakhtbovych",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Rawalpindi ———
+  "living-room-with-city-view-windows": {
+    id: "living-room-with-city-view-windows",
+    file: "/images/living-room-with-city-view-windows.jpg",
+    subject:
+      "Sitting room with full-height curtains, low seating and a balcony looking over the city",
+    alt: "Sitting room of a high-floor flat, Askari 14, Rawalpindi — full-height curtains onto the balcony",
+    width: 1733,
+    height: 1300,
+    pages: ["/stays-in-rawalpindi"],
+    credit: "Sanjay Indiresh",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "bedroom-with-wooden-furniture-daylight": {
+    id: "bedroom-with-wooden-furniture-daylight",
+    file: "/images/bedroom-with-wooden-furniture-daylight.jpg",
+    subject:
+      "Bedroom with a timber wardrobe run and a deep window seat looking over rooftops",
+    alt: "Bedroom of an upper room, Gulraiz, Rawalpindi — deep window seat looking over the rooftops",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-rawalpindi"],
+    credit: "Anisha Deb",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR_SOUTH_ASIA,
+  },
+  "kitchen-with-marble-counter-and-tap": {
+    id: "kitchen-with-marble-counter-and-tap",
+    file: "/images/kitchen-with-marble-counter-and-tap.jpg",
+    subject:
+      "Kitchen with a marble island, fitted units and wall-mounted air conditioning above the doorway",
+    alt: "Kitchen of a whole portion, Peshawar Road, Rawalpindi — wall-mounted air conditioning above the doorway",
+    width: 1880,
+    height: 1255,
+    pages: ["/stays-in-rawalpindi"],
+    credit: "Max Vakhtbovych",
+    category: "listing",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ─────────────────────────────────────────────────────────────────────
   // Gallery — Margalla View Apartment (is-f7-2bed), gw-004
   // Ordered set. `is-f7-living` is also the listing card thumbnail.
   // ─────────────────────────────────────────────────────────────────────
@@ -1034,6 +1327,10 @@ export const LISTING_THUMBS = {
  * Shared stay photography for the five template city pages. Each city page
  * draws its featured-stay cards from this pool; `pages` on each entry records
  * which cities already claim it, so no city repeats another city's frame.
+ *
+ * The first twenty frames are shared: each is claimed by two cities, which is
+ * why `pages` matters. The fifteen added for rails of nine are claimed by one
+ * city each and are listed after them.
  */
 export const STAY_POOL: readonly ImageId[] = [
   "living-room-interior-design-neutral",
@@ -1056,7 +1353,36 @@ export const STAY_POOL: readonly ImageId[] = [
   "courtyard-with-plants",
   "hallway-apartment-wooden",
   "guest-house-exterior-with-garden",
+  // ——— single-city frames added for rails of nine ———
+  "apartment-building-with-balconies",
+  "patio-with-wicker-seating",
+  "bedroom-with-tall-wardrobe",
+  "living-room-with-timber-slat-wall",
+  "bedroom-with-red-curtains",
+  "entrance-with-carved-door",
+  "bedroom-with-carved-window-screen",
+  "kitchen-with-red-cabinets-and-gas-stove",
+  "house-facade-with-plants-and-terrace",
+  "living-room-with-ceiling-fan-and-tv-wall",
+  "bedroom-with-bay-window-seat",
+  "dining-corner-with-round-table",
+  "living-room-with-city-view-windows",
+  "bedroom-with-wooden-furniture-daylight",
+  "kitchen-with-marble-counter-and-tap",
 ];
+
+/**
+ * Three further Islamabad frames, in rail order. Islamabad's own six live in
+ * `cities/islamabad.ts` and are untouched; these extend that rail to nine
+ * without editing the shipped six. They are not part of `CITY_STAY_CARDS`
+ * because that map describes the five template pages, each of which draws its
+ * whole rail from the pool.
+ */
+export const ISLAMABAD_EXTRA_STAY_CARDS = [
+  "sitting-room-with-leather-sofas",
+  "dining-room-with-long-table-and-cabinet",
+  "bedroom-with-large-window-greenery",
+] as const satisfies readonly ImageId[];
 
 /** Featured-stay cards per template city page, in card order. */
 export const CITY_STAY_CARDS = {
@@ -1067,6 +1393,9 @@ export const CITY_STAY_CARDS = {
     "dining-room-apartment-minimal",
     "bedroom-two-single-beds",
     "guest-house-exterior-with-garden",
+    "apartment-building-with-balconies",
+    "patio-with-wicker-seating",
+    "bedroom-with-tall-wardrobe",
   ],
   "/stays-in-lahore": [
     "living-room-wooden-furniture-sofa-bed",
@@ -1075,6 +1404,9 @@ export const CITY_STAY_CARDS = {
     "kitchen-bar-counter-contemporary",
     "dining-area-with-balcony-doors",
     "courtyard-with-plants",
+    "living-room-with-timber-slat-wall",
+    "bedroom-with-red-curtains",
+    "entrance-with-carved-door",
   ],
   "/stays-in-peshawar": [
     "living-room-light-couch-window",
@@ -1083,6 +1415,9 @@ export const CITY_STAY_CARDS = {
     "kitchen-modern-clean-counter",
     "dining-room-apartment-minimal",
     "balcony-apartment-seating",
+    "bedroom-with-carved-window-screen",
+    "kitchen-with-red-cabinets-and-gas-stove",
+    "house-facade-with-plants-and-terrace",
   ],
   "/stays-in-faisalabad": [
     "living-room-wooden-furniture-sofa-bed",
@@ -1091,6 +1426,9 @@ export const CITY_STAY_CARDS = {
     "kitchen-modern-clean-counter",
     "dining-area-with-balcony-doors",
     "hallway-apartment-wooden",
+    "living-room-with-ceiling-fan-and-tv-wall",
+    "bedroom-with-bay-window-seat",
+    "dining-corner-with-round-table",
   ],
   "/stays-in-rawalpindi": [
     "living-room-light-couch-window",
@@ -1099,6 +1437,9 @@ export const CITY_STAY_CARDS = {
     "bedroom-simple-side-table",
     "kitchen-bar-counter-contemporary",
     "terrace-seating-with-large-windows",
+    "living-room-with-city-view-windows",
+    "bedroom-with-wooden-furniture-daylight",
+    "kitchen-with-marble-counter-and-tap",
   ],
 } as const satisfies Record<string, readonly ImageId[]>;
 

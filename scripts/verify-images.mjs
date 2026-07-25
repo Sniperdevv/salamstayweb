@@ -14,7 +14,7 @@ const mod = await import(MANIFEST);
 const {
   ALL_IMAGES, IMAGES, IS_F7_GALLERY, CITY_CARDS, ISLAMABAD_AREAS,
   LISTING_THUMBS, CITY_STAY_CARDS, STAY_POOL, GUIDE_CARDS, HOST_IMAGES,
-  CITY_SECONDARY, HOME_HERO,
+  CITY_SECONDARY, HOME_HERO, ISLAMABAD_EXTRA_STAY_CARDS,
 } = mod;
 
 const dims = (f) => {
@@ -88,6 +88,27 @@ for (const [route, list] of Object.entries(CITY_STAY_CARDS)) {
 for (const [route, id] of Object.entries(LISTING_THUMBS))
   if (!IMAGES[id].pages.includes(route))
     errors.push(`LISTING_THUMBS[${route}]: ${id} does not list ${route} in pages`);
+
+// Islamabad's rail extension: same rules as a CITY_STAY_CARDS list, plus it may
+// not reuse a frame the Islamabad city page already ships (LISTING_THUMBS).
+checkIds('ISLAMABAD_EXTRA_STAY_CARDS', ISLAMABAD_EXTRA_STAY_CARDS);
+if (new Set(ISLAMABAD_EXTRA_STAY_CARDS).size !== ISLAMABAD_EXTRA_STAY_CARDS.length)
+  errors.push('ISLAMABAD_EXTRA_STAY_CARDS: repeats an image');
+for (const id of ISLAMABAD_EXTRA_STAY_CARDS) {
+  if (!IMAGES[id].pages.includes('/stays-in-islamabad'))
+    errors.push(`ISLAMABAD_EXTRA_STAY_CARDS: ${id} does not list /stays-in-islamabad in pages`);
+  if (Object.values(LISTING_THUMBS).includes(id))
+    errors.push(`ISLAMABAD_EXTRA_STAY_CARDS: ${id} already thumbnails a shipped listing`);
+}
+
+// The pool is a promise, not a scrapbook: no duplicate entries, and every
+// frame in it is actually drawn by some city rail. A frame that ships bytes no
+// page renders is dead weight, and the orphan check above cannot see it
+// because the manifest does reference the file.
+if (new Set(STAY_POOL).size !== STAY_POOL.length) errors.push('STAY_POOL: repeats an image');
+const railed = new Set(Object.values(CITY_STAY_CARDS).flat());
+for (const id of STAY_POOL)
+  if (!railed.has(id)) errors.push(`STAY_POOL: ${id} is in the pool but no city rail draws it`);
 
 // ——— report ———
 const byCat = {};

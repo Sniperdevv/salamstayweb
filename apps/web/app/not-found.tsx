@@ -8,7 +8,15 @@ import {
   PinIcon,
   SearchIcon,
 } from "@/components/icons";
-import { btnBase, btnGhost, btnLg, btnPrimary, focusRing, gutter } from "@/components/ui";
+import {
+  btnBase,
+  btnGhost,
+  btnLg,
+  btnPrimary,
+  focusRing,
+  gutter,
+  inlineAction,
+} from "@/components/ui";
 
 /**
  * GW-015 — the not-found shell served for any undefined route.
@@ -36,7 +44,7 @@ const CITIES = [
 ] as const;
 
 const chip =
-  "group inline-flex h-12 items-center gap-2 rounded-full border border-border-default bg-canvas px-5 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-brand hover:text-interactive active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+  "group inline-flex h-12 items-center gap-2 rounded-full border border-border-default bg-canvas px-5 text-bodySm font-medium text-primary transition-[transform,border-color,color] duration-instant ease-decelerate hover:border-border-strong active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 const row =
   "group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors duration-instant ease-decelerate hover:bg-raised";
@@ -47,9 +55,16 @@ export default function NotFound() {
       <title>Page not found — SalamStay</title>
       <meta name="robots" content="noindex, follow" />
       {/* HERO — the plain statement, then the two first moves */}
-      <section className="bg-canvas bg-[radial-gradient(120%_90%_at_86%_-10%,var(--ss-interactive-subtle)_0%,transparent_46%)]">
+      {/* Flat canvas. §2 is explicit that brand green is FLAT, never a
+          gradient, and §11.20 puts the whole product's gradient budget at
+          zero — a brand wash behind an error headline is decoration doing no
+          work. */}
+      <section className="bg-canvas">
         <div className={`mx-auto max-w-page py-12 md:py-16 ${gutter}`}>
-          <p className="text-overline uppercase text-interactive">
+          {/* Tertiary, not brand: the label is metadata about the page, and
+              green is spent on the wordmark dot, the search submit, the one
+              primary CTA and verification marks (§2). */}
+          <p className="text-overline uppercase text-tertiary">
             Error <span className="num">404</span>
           </p>
           <h1 className="mt-3 max-w-[18ch] text-h2 font-semibold tracking-tighter text-primary md:text-h1 md:font-semibold">
@@ -88,7 +103,7 @@ export default function NotFound() {
           <div className="mt-6 flex flex-wrap gap-3">
             {CITIES.map((c) => (
               <Link key={c.href} href={c.href} className={`${chip} ${focusRing}`}>
-                <PinIcon className="size-4 text-tertiary transition-colors duration-instant ease-decelerate group-hover:text-interactive" />
+                <PinIcon className="size-4 text-tertiary transition-colors duration-instant ease-decelerate group-hover:text-primary" />
                 {c.label}
               </Link>
             ))}
@@ -110,7 +125,7 @@ export default function NotFound() {
           <ul className="mt-6 overflow-hidden rounded-lg border border-hairline bg-canvas">
             <li>
               <Link href="/help" className={`${row} ${focusRing}`}>
-                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-brand-subtle text-interactive">
+                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-raised text-secondary">
                   <HelpIcon className="size-5" />
                 </span>
                 <span className="flex flex-col gap-1">
@@ -125,7 +140,7 @@ export default function NotFound() {
             </li>
             <li className="border-t border-hairline">
               <Link href="/help/contact" className={`${row} ${focusRing}`}>
-                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-brand-subtle text-interactive">
+                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-raised text-secondary">
                   <MessageIcon className="size-5" />
                 </span>
                 <span className="flex flex-col gap-1">
@@ -142,7 +157,7 @@ export default function NotFound() {
             </li>
             <li className="border-t border-hairline">
               <Link href="/become-a-host" className={`${row} ${focusRing}`}>
-                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-brand-subtle text-interactive">
+                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-raised text-secondary">
                   <HomeIcon className="size-5" />
                 </span>
                 <span className="flex flex-col gap-1">
@@ -164,14 +179,14 @@ export default function NotFound() {
             anything else on the site, through{" "}
             <Link
               href="/help/contact"
-              className={`font-medium text-link underline-offset-4 hover:underline ${focusRing} rounded-sm`}
+              className={`font-medium ${inlineAction} ${focusRing}`}
             >
               contact support
             </Link>{" "}
             or our{" "}
             <Link
               href="/legal/corrections"
-              className={`font-medium text-link underline-offset-4 hover:underline ${focusRing} rounded-sm`}
+              className={`font-medium ${inlineAction} ${focusRing}`}
             >
               corrections policy
             </Link>

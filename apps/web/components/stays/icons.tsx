@@ -41,6 +41,31 @@ function Glyph({
   );
 }
 
+/* ── TASTE-RULES §10 (badge pill over a photo) ─────────────────────────── */
+
+/**
+ * Spark — the glyph inside the "New" badge pill.
+ *
+ * Stated plainly because it breaks this file's own rule: this is the ONE glyph
+ * here that is not lifted from an approved card. The corpus draws its "New"
+ * chip in the title row with no glyph at all (ga-016 `.newchip`); TASTE-RULES
+ * §10 moves the badge onto the photograph and specifies "opaque white pill +
+ * glyph + 14/600 ink label + elevation.onMedia", and the corpus icon set has no
+ * sparkle, leaf or equivalent freshness mark to lift.
+ *
+ * Drawn to the §11.3 redline rather than freehand: outline only, thin stroke
+ * (it renders at 14px beside a 14px label, where `regular` reads heavy), round
+ * joins, symmetric about 12,12. It says "new" and nothing else — not verified,
+ * not rated, not featured. Flagged for the design corpus to adopt or replace.
+ */
+export function SparkIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.thin} {...props}>
+      <path d="M12 4c.5 5 3 7.5 8 8-5 .5-7.5 3-8 8-.5-5-3-7.5-8-8 5-.5 7.5-3 8-8z" />
+    </Glyph>
+  );
+}
+
 /* ── gw-002 (city) ─────────────────────────────────────────────────────── */
 
 /** Best season / weather. */

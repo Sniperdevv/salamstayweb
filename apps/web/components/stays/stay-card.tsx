@@ -73,7 +73,7 @@ export function StayCard({
       <span className="mt-3 flex items-center gap-2">
         <span className="min-w-0 text-bodyMd font-semibold text-primary">{stay.title}</span>
         {newChip ? (
-          <span className="shrink-0 rounded-full bg-brand-subtle px-2 py-0.5 text-overline font-semibold text-interactive">
+          <span className="shrink-0 rounded-full bg-raised px-2 py-0.5 text-overline font-semibold text-primary">
             New
           </span>
         ) : null}

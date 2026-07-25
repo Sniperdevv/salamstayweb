@@ -5,6 +5,12 @@
  * `/ur` does not exist yet, so اردو is a plain span rather than a dead link —
  * the corpus' EN/اردو affordance without a promise the router cannot keep. EN
  * is the active language on every shipped route.
+ *
+ * The active segment is INK, not brand (TASTE-RULES §2 / §3): "this one is
+ * chosen" is `interactive.selectedFill`, and brand green is reserved for the
+ * wordmark dot, the search-submit circle, the surface's one primary CTA and
+ * verification marks. A green EN chip next to a green Sign up button spends two
+ * roles saying two different things in the same colour.
  */
 export function LanguageGroup({ className = "" }: { readonly className?: string }) {
   return (
@@ -16,7 +22,7 @@ export function LanguageGroup({ className = "" }: { readonly className?: string 
       <span
         lang="en"
         aria-current="true"
-        className="flex items-center bg-interactive px-3 py-2 text-label font-semibold leading-none text-on-brand"
+        className="flex items-center bg-selected px-3 py-2 text-label font-semibold leading-none text-selected-fg"
       >
         EN
       </span>

@@ -71,9 +71,15 @@ const noteHeading = "flex items-center gap-2.5 text-bodySm font-semibold text-pr
 const noteBody =
   "mt-2 line-clamp-2 text-bodySm text-secondary group-[[open]]:line-clamp-none";
 
+/**
+ * "Read more" / "Show less" are inline text actions, so §8 applies literally:
+ * underlined AT REST, in ink. Byte-identical to the area template's
+ * `disclosure-card.tsx` affordance, which is the documented duplicate this
+ * file's header already notes.
+ */
 const noteAffordance =
-  "mt-2 items-center gap-1 text-caption font-medium text-link " +
-  "transition-colors duration-instant ease-decelerate group-hover:text-link-strong " +
+  "mt-2 items-center gap-1 text-caption font-medium text-primary underline underline-offset-4 " +
+  "transition-colors duration-instant ease-decelerate group-hover:text-secondary " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
 
@@ -142,7 +148,7 @@ export function CityFilters({ city }: { readonly city: CityContent }) {
           const { Icon } = ATTRIBUTES[filter.icon];
           return (
             <Link key={filter.href} href={filter.href} className={`${chip} ${focusRing}`}>
-              <Icon className="size-4 text-secondary transition-colors duration-instant ease-decelerate group-hover:text-interactive motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate" />
+              <Icon className="size-4 text-secondary transition-colors duration-instant ease-decelerate group-hover:text-primary motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate" />
               {filter.label}
             </Link>
           );

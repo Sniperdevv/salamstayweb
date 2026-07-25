@@ -10,11 +10,16 @@ Slot assignment, alt text and the `authentic` honesty flag for each file live in
 The six `is-f7-*` frames were carried over from `design-system/assets/photos/` so the
 approved gw-004 gallery ships unchanged.
 
-**61 files.**
+`living-room-with-timber-slat-wall.jpg` is the only file altered after download: the
+original frame is 16:9, so it was centre-cropped to 3:2 to satisfy the crop rule in
+TASTE-RULES §9. Nothing else is retouched, filtered or recoloured.
+
+**79 files.**
 
 | File | Photographer | Pexels ID | Source |
 |---|---|---|---|
 | `apartment-block-exterior-blue-sky.jpg` | Mahmoud Zakariya | 36749936 | https://www.pexels.com/photo/modern-apartment-complex-under-clear-blue-sky-36749936/ |
+| `apartment-building-with-balconies.jpg` | Sharath G. | 7672060 | https://www.pexels.com/photo/white-concrete-building-7672060/ |
 | `apartment-complex-with-gardens.jpg` | Mahmoud Zakariya | 33414224 | https://www.pexels.com/photo/modern-residential-complex-with-gardens-33414224/ |
 | `balcony-apartment-seating.jpg` | ATHENEA CODJAMBASSIS ROSSITTO | 26571200 | https://www.pexels.com/photo/balcony-in-apartment-26571200/ |
 | `balcony-lounge-above-city.jpg` | Atlantic Ambience | 14286287 | https://www.pexels.com/photo/lounge-area-on-balcony-above-city-14286287/ |
@@ -24,17 +29,27 @@ approved gw-004 gallery ships unchanged.
 | `bedroom-two-single-beds.jpg` | Ahmet ÇÖTÜR | 26859040 | https://www.pexels.com/photo/bedroom-with-two-single-beds-26859040/ |
 | `bedroom-villa-warm-neutral.jpg` | Ansar Muhammad | 27604138 | https://www.pexels.com/photo/dania-city-villa-in-sulaymaniyah-city-27604138/ |
 | `bedroom-white-linen.jpg` | Curtis Adams | 8583859 | https://www.pexels.com/photo/a-bed-with-white-linen-in-a-bedroom-8583859/ |
+| `bedroom-with-bay-window-seat.jpg` | Fahad Puthawala | 31944373 | https://www.pexels.com/photo/cozy-bedroom-with-striped-bedspread-and-bay-windows-31944373/ |
+| `bedroom-with-carved-window-screen.jpg` | Fahad Puthawala | 31925629 | https://www.pexels.com/photo/cozy-bedroom-with-decorative-window-in-ahmedabad-31925629/ |
+| `bedroom-with-large-window-greenery.jpg` | Moustache Escape | 19332135 | https://www.pexels.com/photo/bed-in-hotel-room-19332135/ |
+| `bedroom-with-red-curtains.jpg` | Fahad Puthawala | 31944411 | https://www.pexels.com/photo/cozy-bedroom-interior-with-red-curtains-in-ahmedabad-31944411/ |
+| `bedroom-with-tall-wardrobe.jpg` | Max Vakhtbovych | 6312079 | https://www.pexels.com/photo/interior-of-bedroom-with-big-bed-and-wardrobe-6312079/ |
+| `bedroom-with-wooden-furniture-daylight.jpg` | Anisha Deb | 36195703 | https://www.pexels.com/photo/peaceful-bedroom-with-natural-light-in-pune-36195703/ |
 | `bedroom-wooden-bed-warm.jpg` | Curtis Adams | 3773575 | https://www.pexels.com/photo/brown-wooden-bed-inside-bedroom-3773575/ |
 | `bedroom-wooden-cabinets-white-linen.jpg` | Max Vakhtbovych | 8141962 | https://www.pexels.com/photo/a-bed-with-white-linen-near-the-wooden-cabinets-8141962/ |
 | `courtyard-with-plants.jpg` | FOX ^.ᆽ.^= ∫ | 38101264 | https://www.pexels.com/photo/charming-urban-courtyard-with-lush-plants-38101264/ |
 | `dining-area-with-balcony-doors.jpg` | Max Vakhtbovych | 7061333 | https://www.pexels.com/photo/interior-of-light-dining-room-with-panoramic-balcony-doors-7061333/ |
+| `dining-corner-with-round-table.jpg` | Max Vakhtbovych | 7046002 | https://www.pexels.com/photo/modern-dining-room-interior-with-furniture-in-light-house-7046002/ |
 | `dining-room-apartment-minimal.jpg` | Max Vakhtbovych | 7195900 | https://www.pexels.com/photo/dining-room-in-apartment-with-minimalist-style-7195900/ |
+| `dining-room-with-long-table-and-cabinet.jpg` | Zyn Aly | 27822512 | https://www.pexels.com/photo/emaar-construction-homes-27822512/ |
+| `entrance-with-carved-door.jpg` | Sharath G. | 9209430 | https://www.pexels.com/photo/a-green-door-of-a-house-9209430/ |
 | `faisalabad-clock-tower-street.jpg` | Ali Haider | 37697365 | https://www.pexels.com/photo/faisalabad-clock-tower-street-view-in-punjab-37697365/ |
 | `faisalabad-empty-street-view.jpg` | Ali Haider | 37697355 | https://www.pexels.com/photo/empty-street-view-of-faisalabad-pakistan-37697355/ |
 | `guest-house-exterior-with-garden.jpg` | Thang Nguyen | 34056718 | https://www.pexels.com/photo/modern-apartment-exterior-with-lush-garden-34056718/ |
 | `hallway-apartment-wooden.jpg` | Max Vakhtbovych | 7166928 | https://www.pexels.com/photo/contemporary-hallway-in-an-apartment-with-wooden-elements-7166928/ |
 | `host-home-courtyard-villa-sunny.jpg` | Max Vakhtbovych | 7031593 | https://www.pexels.com/photo/courtyard-of-modern-villa-in-sunny-day-7031593/ |
 | `host-home-living-room-daylight.jpg` | Max Vakhtbovych | 7512039 | https://www.pexels.com/photo/interior-of-modern-living-room-with-sofa-and-coffee-table-7512039/ |
+| `house-facade-with-plants-and-terrace.jpg` | Fahad Puthawala | 31959779 | https://www.pexels.com/photo/charming-traditional-home-in-ahmedabad-31959779/ |
 | `house-frontage-with-garden.jpg` | Max Vakhtbovych | 8134817 | https://www.pexels.com/photo/frontage-of-a-residential-house-with-garden-8134817/ |
 | `is-f7-balcony.jpg` | Max Vakhtbovych | 7534285 | https://www.pexels.com/photo/chairs-and-coffee-table-placed-in-patio-of-contemporary-apartment-7534285/ |
 | `is-f7-bath.jpg` | Max Vakhtbovych | 7005268 | https://www.pexels.com/photo/interior-of-modern-bathroom-with-glass-shower-cabin-7005268/ |
@@ -55,6 +70,8 @@ approved gw-004 gallery ships unchanged.
 | `kitchen-bar-counter-contemporary.jpg` | Max Vakhtbovych | 6508353 | https://www.pexels.com/photo/contemporary-interior-of-kitchen-with-bar-counter-and-kettle-6508353/ |
 | `kitchen-modern-clean-counter.jpg` | Max Vakhtbovych | 7166942 | https://www.pexels.com/photo/modern-kitchen-interior-design-7166942/ |
 | `kitchen-white-cabinets-daylight.jpg` | Max Vakhtbovych | 6920452 | https://www.pexels.com/photo/white-furniture-in-kitchen-6920452/ |
+| `kitchen-with-marble-counter-and-tap.jpg` | Max Vakhtbovych | 6587908 | https://www.pexels.com/photo/kitchen-interior-with-counter-with-tap-and-sink-near-cabinets-6587908/ |
+| `kitchen-with-red-cabinets-and-gas-stove.jpg` | Fahad Puthawala | 31944365 | https://www.pexels.com/photo/traditional-indian-kitchen-interior-with-bright-colors-31944365/ |
 | `lahore-fort-citadel.jpg` | Irfan Arif | 13659051 | https://www.pexels.com/photo/lahore-fort-in-pakistan-13659051/ |
 | `lahore-shalimar-gardens.jpg` | MT Akhtar | 32562287 | https://www.pexels.com/photo/serene-view-of-shalimar-gardens-in-lahore-32562287/ |
 | `living-room-bright-open-plan.jpg` | Max Vakhtbovych | 6207817 | https://www.pexels.com/photo/light-and-modern-interior-of-big-living-room-6207817/ |
@@ -63,14 +80,19 @@ approved gw-004 gallery ships unchanged.
 | `living-room-home-interior-warm.jpg` | Max Vakhtbovych | 8082301 | https://www.pexels.com/photo/interior-design-of-a-home-living-room-8082301/ |
 | `living-room-interior-design-neutral.jpg` | hi room | 17240682 | https://www.pexels.com/photo/living-room-interior-design-17240682/ |
 | `living-room-light-couch-window.jpg` | Max Vakhtbovych | 6958125 | https://www.pexels.com/photo/comfortable-couch-in-light-room-6958125/ |
+| `living-room-with-ceiling-fan-and-tv-wall.jpg` | Liva Kitchens And Interiors | 33688058 | https://www.pexels.com/photo/modern-living-room-interior-with-neutral-tones-33688058/ |
+| `living-room-with-city-view-windows.jpg` | Sanjay Indiresh | 4792297 | https://www.pexels.com/photo/an-empty-living-room-4792297/ |
 | `living-room-with-kitchen-zone-flat.jpg` | Max Vakhtbovych | 6890400 | https://www.pexels.com/photo/light-living-room-with-small-kitchen-zone-in-contemporary-flat-6890400/ |
+| `living-room-with-timber-slat-wall.jpg` | The Funiture Studio | 33559373 | https://www.pexels.com/photo/modern-indian-living-room-with-sheesham-wood-accents-33559373/ |
 | `living-room-wooden-furniture-sofa-bed.jpg` | Max Vakhtbovych | 6890412 | https://www.pexels.com/photo/interior-of-contemporary-apartment-with-wooden-furniture-and-sofa-bed-6890412/ |
 | `pakistan-market-street-motorcycles.jpg` | Dr Photographer | 36006885 | https://www.pexels.com/photo/bustling-market-street-scene-with-motorcycles-36006885/ |
+| `patio-with-wicker-seating.jpg` | Naresh Babu | 8041135 | https://www.pexels.com/photo/an-empty-sofa-set-8041135/ |
 | `peshawar-college-building-green.jpg` | Raqeeb Ahmed | 5838486 | https://www.pexels.com/photo/brown-concrete-building-near-green-trees-5838486/ |
 | `peshawar-old-city-street.jpg` | Muhammad Shamaoon Malik | 33032698 | https://www.pexels.com/photo/bustling-street-scene-in-peshawar-pakistan-33032698/ |
 | `quiet-sector-road-autumn-trees.jpg` | Ali Hamza Tullah | 19995183 | https://www.pexels.com/photo/road-in-autumn-19995183/ |
 | `rawalpindi-truck-art-street.jpg` | Mr. Sami | 32753946 | https://www.pexels.com/photo/colorful-pakistani-truck-in-rawalpindi-street-32753946/ |
 | `residential-neighbourhood-aerial.jpg` | Aa Dil | 3742627 | https://www.pexels.com/photo/aerial-photography-of-concrete-houses-on-a-neighborhood-3742627/ |
+| `sitting-room-with-leather-sofas.jpg` | Zyn Aly | 27822509 | https://www.pexels.com/photo/emaar-construction-homes-27822509/ |
 | `studio-apartment-compact-interior.jpg` | Max Vakhtbovych | 6447384 | https://www.pexels.com/photo/interior-modern-apartment-with-kitchen-and-bedroom-6447384/ |
 | `studio-apartment-kitchen-and-bed.jpg` | Max Vakhtbovych | 6969987 | https://www.pexels.com/photo/interior-design-of-small-studio-apartment-6969987/ |
 | `terrace-seating-with-large-windows.jpg` | Max Vakhtbovych | 7534300 | https://www.pexels.com/photo/chairs-with-pillows-placed-in-patio-with-big-windows-7534300/ |
