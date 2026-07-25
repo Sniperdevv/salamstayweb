@@ -172,6 +172,16 @@ export function CalendarIcon(props: GlyphProps) {
   );
 }
 
+/** Pending / not-yet-set. The gw-010…gw-014 "Effective date" stamp glyph. */
+export function ClockIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.regular} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </Glyph>
+  );
+}
+
 export function InfoIcon(props: GlyphProps) {
   return (
     <Glyph stroke={iconStroke.thin} {...props}>
