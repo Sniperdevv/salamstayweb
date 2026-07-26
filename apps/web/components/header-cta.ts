@@ -12,9 +12,16 @@ import { routeByPath } from "@/lib/seo/route-registry";
  * outline/ink `btnOutline`; everywhere else it keeps the green fill, because
  * everywhere else it IS the surface's one primary CTA.
  *
- * The three demote routes, and what owns the green on each:
+ * The demote routes, and what owns the green on each:
  *  · `/stays-in-islamabad/f-7/is-f7-2bed` — the booking card's Reserve.
  *  · `/become-a-host` — the funnel hero pill's submit circle.
+ *  · `/trips` — the empty state's one action. `GUEST-SHELL.md` §8 budgets green
+ *    on a signed-in guest surface at three roles (the wordmark dot, the header
+ *    avatar's fill, and the surface's one enabled primary) and says outright
+ *    that on an empty state *"the green belongs on the one action the empty
+ *    state exists to offer"*. `lib/mode.ts` opens at `pending`, so the SERVER
+ *    render of `/trips` is the logged-out header — Sign up, green — and without
+ *    this row the first frame of that page ships two green primaries.
  *  · not-found — its "Go to the SalamStay homepage" `btnPrimary`.
  *
  * 404 DETECTION. `usePathname()` on a not-found render returns the URL that did
@@ -31,6 +38,7 @@ import { routeByPath } from "@/lib/seo/route-registry";
  */
 const CTA_OWNED_BY_PAGE: ReadonlySet<string> = new Set([
   "/become-a-host",
+  "/trips",
 ]);
 
 /**

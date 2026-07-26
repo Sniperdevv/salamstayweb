@@ -1,4 +1,4 @@
-import { focusRing, pressable } from "@/components/ui";
+import { btnPrimaryPill, focusRing, pressable } from "@/components/ui";
 
 /**
  * Control recipes the host APP shell needs and `components/ui.ts` does not have
@@ -36,11 +36,15 @@ import { focusRing, pressable } from "@/components/ui";
  * shares a baseline. The card draws the empty's own primary at the nav's 40px
  * scale; 48 is the rung the two controls can actually agree on, and a 40px
  * secondary would be the header-scale `.gbtn` in a body context.
+ *
+ * MOVED 2026-07-26, ALIASED HERE. The string now lives in `components/ui.ts` as
+ * `btnPrimaryPill`, because `GUEST-SHELL.md` §6 adopts §5's shape system
+ * verbatim for the signed-in guest surfaces and `/trips` needed the same pill.
+ * Two shells carrying two identical definitions of one role is the drift this
+ * whole file exists to argue against, so the definition moved and the reasoning
+ * above stayed where it was written. Call sites are unchanged.
  */
-export const hostPrimaryPill =
-  "inline-flex h-12 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full " +
-  "border border-interactive bg-interactive px-6 text-bodyMd font-semibold text-on-brand " +
-  `hover:border-interactive-hover hover:bg-interactive-hover ${focusRing} ${pressable}`;
+export const hostPrimaryPill = btnPrimaryPill;
 
 /**
  * The same pill at nav scale — `hw-001`'s `.btn.sm`, 13/600, `padding 8px 15px`.

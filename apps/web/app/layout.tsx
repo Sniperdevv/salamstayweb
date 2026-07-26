@@ -25,13 +25,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             no site footer (HOST-SHELL §1), and a host layout cannot unrender
             what this one rendered. The gate resolves during SSR, so the host
             routes never emit this chrome at all. */}
-        <GuestChrome>
+        <GuestChrome slot="header">
           <SiteHeader />
         </GuestChrome>
         <div id="main-content" tabIndex={-1} className="flex-1 outline-none">
           {children}
         </div>
-        <GuestChrome>
+        {/* `slot="footer"`: the signed-in guest surfaces keep this header and
+            drop this footer (GUEST-SHELL §2/§3, and `guest-chrome.tsx`). */}
+        <GuestChrome slot="footer">
           <SiteFooter />
         </GuestChrome>
         {/* GW-014 root-layout consent overlay. Client-only and mounted last, so

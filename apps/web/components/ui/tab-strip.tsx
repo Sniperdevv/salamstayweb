@@ -30,9 +30,9 @@ import { focusRing, tintTransition } from "@/components/ui";
  *     given `role="tablist"`, and putting a roving tabindex on them would take
  *     five of the six destinations out of the tab order.
  *
- *   `TabList` + `Tab` + `TabPanel` — IN-PAGE TABS. One panel visible at a time,
- *     no navigation. `role="tablist"` / `role="tab"` / `role="tabpanel"`, and
- *     THIS is where the roving tabindex lives: exactly one tab carries
+ *   `Tabs` + `TabList` + `Tab` + `TabPanel` — IN-PAGE TABS. One panel visible at
+ *     a time, no navigation. `role="tablist"` / `role="tab"` / `role="tabpanel"`,
+ *     and THIS is where the roving tabindex lives: exactly one tab carries
  *     `tabIndex=0` (the selected one), every other carries `-1`, and Arrow /
  *     Home / End move focus between them. Arrow direction reads the strip's
  *     computed `direction`, so Right Arrow means "previous" under RTL — the one
@@ -41,6 +41,17 @@ import { focusRing, tintTransition } from "@/components/ui";
  * Picking the wrong one is a real defect, not a preference: a tablist announces
  * "tab, 3 of 6" and promises a panel below it. If the click loads a page, it is
  * a link.
+ *
+ * WHY `Tabs` IS ITS OWN COMPONENT
+ * -------------------------------
+ * A `tabpanel` is a SIBLING of the `tablist`, never a child of it — a panel
+ * nested inside `role="tablist"` is invalid ARIA and would be laid out as if it
+ * were a tab. So the state the two halves share cannot live on the tablist
+ * element: `Tabs` holds it (the `useId()` base, the selected value, the change
+ * handler, the indicator colour) and renders NO DOM of its own, leaving the
+ * strip and the panels as the plain siblings the role demands. `TabList` keeps
+ * only what is genuinely the list's: its accessible name, its activation mode,
+ * the `role="tablist"` element and the keys that rove across it.
  *
  * THE ACTIVE UNDERLINE IS INK BY DEFAULT
  * --------------------------------------
@@ -187,9 +198,39 @@ const panelId = (baseId: string, value: string): string => `${baseId}panel-${idP
 
 export type TabActivation = "automatic" | "manual";
 
-export interface TabListProps {
+export interface TabsProps {
+  /** The selected tab's value. Controlled — `Tabs` stores nothing. */
   readonly value: string;
   readonly onChange: (value: string) => void;
+  readonly indicator?: TabIndicator;
+  /** A `TabList`, then the `TabPanel`s, as siblings. */
+  readonly children: ReactNode;
+}
+
+/**
+ * The provider, and deliberately not an element.
+ *
+ * Rendering a wrapper `<div>` here would insert a box between the strip and
+ * whatever lays the surface out, so `Tabs` returns its children untouched: the
+ * DOM is exactly the tablist and the panels the call site wrote, and dropping
+ * `Tabs` around an existing pair changes no layout at all.
+ *
+ * The context object is rebuilt on every render rather than memoised, and that
+ * is the honest shape: every field in it changes on the one event that
+ * re-renders this component, and the consumers below are its own children, so a
+ * `useMemo` here would never once avoid a re-render it did not already owe.
+ */
+export function Tabs({ value, onChange, indicator = "ink", children }: TabsProps) {
+  const baseId = useId();
+
+  return (
+    <TabsContext.Provider value={{ baseId, value, select: onChange, indicator }}>
+      {children}
+    </TabsContext.Provider>
+  );
+}
+
+export interface TabListProps {
   /** `aria-label` for the tablist. Use `labelledBy` when a visible heading exists. */
   readonly label?: string;
   readonly labelledBy?: string;
@@ -200,23 +241,24 @@ export interface TabListProps {
    * when a panel fetches, so arrowing past three tabs does not fire three loads.
    */
   readonly activation?: TabActivation;
-  readonly indicator?: TabIndicator;
   readonly children: ReactNode;
   readonly className?: string;
 }
 
 export function TabList({
-  value,
-  onChange,
   label,
   labelledBy,
   activation = "automatic",
-  indicator = "ink",
   children,
   className = "",
 }: TabListProps) {
-  const baseId = useId();
+  /* Both hooks run before the guard below, so the throw never changes the order
+     React sees on a subsequent render. */
   const list = useRef<HTMLDivElement>(null);
+  const ctx = useContext(TabsContext);
+  if (!ctx) {
+    throw new Error("TabList must be rendered inside Tabs.");
+  }
 
   /**
    * The roving tabindex's other half. `Tab` owns `tabIndex={selected ? 0 : -1}`;
@@ -274,24 +316,22 @@ export function TabList({
 
     if (activation === "automatic") {
       const nextValue = next.dataset["value"];
-      if (nextValue !== undefined) onChange(nextValue);
+      if (nextValue !== undefined) ctx.select(nextValue);
     }
   };
 
   return (
-    <TabsContext.Provider value={{ baseId, value, select: onChange, indicator }}>
-      <div
-        ref={list}
-        role="tablist"
-        aria-label={label}
-        aria-labelledby={labelledBy}
-        aria-orientation="horizontal"
-        onKeyDown={onKeyDown}
-        className={`${tabStrip} ${className}`}
-      >
-        {children}
-      </div>
-    </TabsContext.Provider>
+    <div
+      ref={list}
+      role="tablist"
+      aria-label={label}
+      aria-labelledby={labelledBy}
+      aria-orientation="horizontal"
+      onKeyDown={onKeyDown}
+      className={`${tabStrip} ${className}`}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -305,7 +345,7 @@ export interface TabProps {
 export function Tab({ value, disabled = false, children, className = "" }: TabProps) {
   const tabs = useContext(TabsContext);
   if (!tabs) {
-    throw new Error("Tab must be rendered inside a TabList.");
+    throw new Error("Tab must be rendered inside Tabs.");
   }
 
   const selected = tabs.value === value;
@@ -351,7 +391,7 @@ export interface TabPanelProps {
 export function TabPanel({ value, children, className = "" }: TabPanelProps) {
   const tabs = useContext(TabsContext);
   if (!tabs) {
-    throw new Error("TabPanel must be rendered inside a TabList.");
+    throw new Error("TabPanel must be rendered inside Tabs.");
   }
 
   const selected = tabs.value === value;

@@ -409,6 +409,16 @@ export default function ConfirmationStep() {
   return (
     <CheckoutStep
       step={null}
+      /*
+       * GO-LIVE A11. `step={null}` is the same value `/dates` passes, and the
+       * two need opposite answers on a cold load: step 0 must never bounce,
+       * and this screen must never render. Without this prop the shell reads
+       * `null` as "no gated step" and a deep link prints `SS-7F3K9Q` and a
+       * total at a guest who has booked nothing. The shell shows "Booking not
+       * found" instead — and does NOT redirect, because a confirmation URL a
+       * guest kept is not an invitation to start a new booking.
+       */
+      guard="post-flow"
       listing={draft.listing}
       heading="You're booked"
       sub={

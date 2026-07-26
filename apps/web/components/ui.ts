@@ -78,6 +78,32 @@ export const btnGhost =
   "border-border-default bg-transparent text-primary hover:border-border-strong";
 
 /**
+ * The primary CTA as a PILL — the shape every in-app primary takes.
+ *
+ * TASTE §4 puts primary CTAs on `radius.full`, and both app-shell contracts say
+ * it in the same words: `HOST-SHELL.md` §5 ("`radius.full` everywhere on this
+ * shell"), and `GUEST-SHELL.md` §6, which adopts §5's shape system wholesale —
+ * *"pills for primaries and chips · `radius.md` for secondaries, fields and
+ * strips · `radius.lg` for cards and banners · nothing else"*.
+ *
+ * It is written out rather than composed from `btnBase` + `btnPrimary` for the
+ * reason `btnSecondaryOnTint` and `btnSecondaryMd` both record: `btnBase`
+ * hard-codes `rounded-md`, both classes set `border-radius`, and which one wins
+ * is decided by their order in the emitted stylesheet rather than by their order
+ * in the string. A radius is therefore a whole recipe, not an append.
+ *
+ * Hoisted here 2026-07-26 from `components/host/host-ui.ts`, where it shipped as
+ * `hostPrimaryPill` because the host app shell was the first surface that needed
+ * it. `/trips` is the second, and the two shells must not carry two definitions
+ * of one role — `hostPrimaryPill` is now an alias for this string, and the long
+ * rationale for the pill over `btnBase` stays in that file where it was written.
+ */
+export const btnPrimaryPill =
+  "inline-flex h-12 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full " +
+  "border border-interactive bg-interactive px-6 text-bodyMd font-semibold text-on-brand " +
+  `hover:border-interactive-hover hover:bg-interactive-hover ${focusRing} ${pressable}`;
+
+/**
  * The demoted primary — an OUTLINE/INK button, for the one case where a green
  * fill would be the second green CTA on the surface.
  *

@@ -82,8 +82,28 @@ export const CREATE_LISTING_HREF = "/host/listings/new/property-type";
  */
 const CTA_OWNED_BY_PAGE: ReadonlySet<string> = new Set(["/host/today", "/host/listings"]);
 
+/**
+ * The same rule for a SUBTREE, because a dynamic route cannot be a member of a
+ * set of literal paths.
+ *
+ * `/host/reservations/{id}` renders `Accept request` — the surface's one green
+ * primary, and the only place in this product where a host commits to a
+ * booking. The trailing slash is load-bearing: it matches every reservation and
+ * NOT `/host/reservations` itself, whose list spends no green at all (the
+ * request cards' `Review request` is the §5 gray-fill secondary, precisely so
+ * two requests on screen cannot be two primaries).
+ *
+ * Added 2026-07-26 with the reservations surfaces. The list above is still the
+ * right shape for a fixed route; this is the one-line extension a dynamic one
+ * needs, rather than a second mechanism.
+ */
+const CTA_OWNED_BY_SUBTREE: readonly string[] = ["/host/reservations/"];
+
 export function hostNavCtaYields(pathname: string): boolean {
-  return CTA_OWNED_BY_PAGE.has(pathname);
+  return (
+    CTA_OWNED_BY_PAGE.has(pathname) ||
+    CTA_OWNED_BY_SUBTREE.some((prefix) => pathname.startsWith(prefix))
+  );
 }
 
 export function HostNav() {

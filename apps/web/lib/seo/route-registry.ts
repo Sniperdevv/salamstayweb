@@ -269,7 +269,7 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/login", "Log in — SalamStay"),
   stub("/signup", "Sign up — SalamStay"),
   stub("/account", "Your account — SalamStay"),
-  stub("/trips", "Your trips — SalamStay"),
+  page("/trips", "ga-070", "Your trips — SalamStay", "noindex,follow", null),
 
   /**
    * `BUILD-DECISIONS.md` ruling 7 — the fifteen hrefs the checkout cards emit
@@ -292,10 +292,12 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/trips/requests", "Booking requests — SalamStay"),
   stub("/trips/requests/is-f7-2bed-aug2026", "Your request — Margalla View Apartment"),
   stub("/trips/requests/is-f7-2bed-aug2026/cancel", "Withdraw your request — Margalla View Apartment"),
-  stub("/trips/is-f7-2bed-aug2026", "Your trip — Margalla View Apartment"),
-  stub("/trips/is-f7-2bed-aug2026/receipt", "Receipt — Margalla View Apartment"),
+  page("/trips/is-f7-2bed-aug2026", "ga-071", "Your trip — Margalla View Apartment", "noindex,follow", null),
+  page("/trips/is-f7-2bed-aug2026/receipt", "ga-134", "Receipt — Margalla View Apartment", "noindex,follow", null),
   stub("/trips/is-f7-2bed-aug2026/change", "Change your booking — Margalla View Apartment"),
-  stub("/trips/is-f7-2bed-aug2026/cancel", "Cancel your booking — Margalla View Apartment"),
+  page("/trips/is-f7-2bed-aug2026/cancel", "ga-105", "Cancel your booking — Margalla View Apartment", "noindex,follow", null),
+  // Not previously registered — the review surface is new this wave.
+  page("/trips/is-f7-2bed-aug2026/review", "ga-099", "Write a review — Margalla View Apartment", "noindex,follow", null),
   stub("/trips/is-f7-2bed-aug2026/arrival", "Getting there — Margalla View Apartment"),
   stub("/trips/is-f7-2bed-aug2026/booking.ics", "Add to calendar — Margalla View Apartment"),
   stub("/messages/host-margalla-view", "Message your host — Margalla View Apartment"),
@@ -326,7 +328,26 @@ export const ROUTES: readonly RouteEntry[] = [
   // deliberately — a `page()` entry ahead of its folder serves a live 404, which
   // is how four pages broke earlier in this project.
   stub("/host/calendar", "Your calendar — SalamStay hosting"),
-  stub("/host/reservations", "Your reservations — SalamStay hosting"),
+  /**
+   * Reservations, built 2026-07-26 — the first surface on which a host can see
+   * that a booking exists at all.
+   *
+   * Five detail rows because there is no booking store: they are a labelled
+   * fixture, and both surfaces say so ON SCREEN, permanently, rather than only
+   * in a code comment. Detail titles come from `reservationTitle()`, the same
+   * function that writes the `<h1>`, so G41 cannot see a drift between them.
+   *
+   * The four tabs (requests / upcoming / current / past) are ONE route — an
+   * in-page `TabList` over one fixture, not four pages. `tab-strip.tsx` draws
+   * the line itself: "if the click loads a page, it is a link." When a bucket
+   * needs to be linkable from an email these become four routes.
+   */
+  page("/host/reservations", "ha-047", "Your reservations — SalamStay hosting", "noindex,follow", null),
+  page("/host/reservations/fatima-gulberg2-aug2026", "ha-048", "Request from Fatima — SalamStay hosting", "noindex,follow", null),
+  page("/host/reservations/jonathan-canttview-aug2026", "ha-048", "Request from Jonathan — SalamStay hosting", "noindex,follow", null),
+  page("/host/reservations/bilal-gulberg2-aug2026", "ha-048", "Reservation for Bilal Khan — SalamStay hosting", "noindex,follow", null),
+  page("/host/reservations/omar-sana-canttview-aug2026", "ha-048", "Reservation for Omar & Sana — SalamStay hosting", "noindex,follow", null),
+  page("/host/reservations/ayesha-khan-gulberg2-jul2026", "ha-048", "Reservation for Ayesha Khan — SalamStay hosting", "noindex,follow", null),
   stub("/host/earnings", "Your earnings — SalamStay hosting"),
   stub("/host/insights", "Insights — SalamStay hosting"),
   /**
@@ -375,7 +396,35 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/host/listings/new/pricing", "hw-004", "Pricing and availability — list your place on SalamStay", "noindex,follow", null),
   // Step 9's `Review and publish` points here. `hw-007` draws it, nobody has
   // built it — and it is NOT a tenth step: post-flow surfaces carry no stepper.
-  stub("/host/listings/new/preview", "Review and publish — SalamStay hosting"),
+  /**
+   * The wizard's exit, built 2026-07-26. Both are pure Server Components — the
+   * panels are read-only apart from one form submit — so each takes its title
+   * from `pageMetadata(path)` and G41 drift is structurally impossible.
+   *
+   * Titles are the H1s, which also keeps G43 quiet: the old stub title
+   * "Review and publish" would have warned against an H1 beginning "How".
+   *
+   * NOT registered, deliberately: `/stays-in-rawalpindi/cantt/quiet-3-bed-portion`,
+   * which would light up the preview's "View it as a guest" button. The button is
+   * conditional on `routeByPath.has()` rather than shipping an href G37 rejects,
+   * so leaving it out costs a button and nothing else. Registering it would mint
+   * a listing in a city that `GO-LIVE.md` A3 already flags as having zero real
+   * supply, to make a fixture look more real. Not worth it.
+   */
+  page(
+    "/host/listings/new/preview",
+    "hw-007",
+    "How guests will see it — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
+  page(
+    "/host/listings/cantt-view-residence/published",
+    "hw-007",
+    "Your listing is live — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
 
   stub("/host/help/regulations/cantonment-noc", "Cantonment NOC — SalamStay hosting help"),
   // Linked from ha-001. HA-002 is a designed card awaiting its build wave;

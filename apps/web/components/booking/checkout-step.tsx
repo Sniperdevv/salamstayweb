@@ -2,16 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useId, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useId, type ReactNode } from "react";
 
 import { ArrowLeftIcon, LockIcon } from "@/components/icons";
 import { FeesReceiptIcon, ShieldCheckIcon } from "@/components/home-icons";
 import { CheckMark } from "@/components/ui/marks";
 import { Num } from "@/components/numerals";
-import { fieldLabel, focusRing, inlineAction, pressable } from "@/components/ui";
+import { btnSecondary, fieldLabel, focusRing, inlineAction, pressable } from "@/components/ui";
 import { formatPkr } from "@/lib/money";
-import { countedGuests, isOverCapacity, nights, staySubtotal } from "@/lib/booking/booking";
-import type { GuestCounts } from "@/lib/booking/booking";
+import {
+  canView,
+  countedGuests,
+  isOverCapacity,
+  nights,
+  reachedStep,
+  staySubtotal,
+} from "@/lib/booking/booking";
+import type { CheckoutStep as FlowStep, GuestCounts } from "@/lib/booking/booking";
 import { useBooking } from "@/lib/booking/booking-state";
 import {
   checkoutHref,
@@ -92,6 +100,19 @@ export interface CheckoutStepProps {
    * it needs no PRE branch. Post-flow shipping no stepper is §3's own rule.
    */
   readonly step: CheckoutStepNumber | null;
+  /**
+   * The two surfaces that REPORT AN OUTCOME rather than collect an answer —
+   * `/confirmation` and `/status` — pass `"post-flow"`. Nothing else passes
+   * anything: every other route's guard is derived from `step` (see the guard
+   * note below `CheckoutStepProps`).
+   *
+   * It is a separate prop rather than a third meaning for `step === null`
+   * because `null` already carries two: step 0 (`/dates`, which must never
+   * bounce) and post-flow. One value cannot distinguish "the guest has not
+   * started" from "the guest has finished", and those two need opposite
+   * answers on a cold load.
+   */
+  readonly guard?: "post-flow" | undefined;
   readonly listing: ListingContent;
   /** The page's one `<h1>`. Not an SEO artefact (§1) — its accessible title. */
   readonly heading: string;
@@ -214,8 +235,98 @@ const ctaDisabled = "cursor-default border border-border-default bg-raised text-
  *  after the wordmark dot and the verification shield. */
 const ctaEnabled = `bg-interactive text-on-brand hover:bg-interactive-hover ${pressable}`;
 
+/* ——— the cold-load guard ——————————————————————————————————————————————————
+ *
+ * GO-LIVE A11. `booking.ts` has shipped `reachedStep`/`canView` since the flow
+ * was written, and until now the only thing that consulted them was the PRIMARY
+ * BUTTON — which is a gate on going forward, not a gate on being here. A deep
+ * link, a bookmark or a reload lands on a step with an empty draft, the button
+ * is correctly disabled, and the page around it renders anyway: `/confirmation`
+ * printed `SS-7F3K9Q` and `PKR 42,350` for a booking nobody made.
+ *
+ * The guard therefore lives HERE, once, rather than in seven step clients. The
+ * shell is the component that already knows which step it is drawing, already
+ * holds the draft, and is the only place all seven routes pass through — seven
+ * copies of a redirect is seven chances for one of them to be forgotten, which
+ * is exactly how this shipped.
+ *
+ * THE DECISION RUNS DURING RENDER, NOT IN AN EFFECT. An effect fires after
+ * paint, so a guest would see the confirmation for a frame before it was taken
+ * away, and "you're booked" is the last sentence that may ever flash. The
+ * blocked branch returns before `children` is in the tree at all. The effect
+ * below then leaves for the step the draft HAS earned — so a slow navigation
+ * shows this recovery for longer, never the step it replaced.
+ *
+ * THE REDIRECT IS CLIENT-SIDE, AND HAS TO BE. The draft is React state that
+ * exists only in the browser (`booking-state.tsx`: nothing is persisted, on
+ * purpose), so the SERVER cannot know whether a request has earned a step —
+ * every cold request looks identical to it. A server redirect would also turn
+ * seventy-seven registered 200s into 307s and fail G5 on all of them. So the
+ * server renders this recovery, the client hydrates the same thing, and the
+ * navigation happens after. The served HTML is a complete page with one `<h1>`,
+ * which is what a crawler, a gate and a JS-disabled guest each get.
+ */
+
+/**
+ * Stepper circle N → the step `canView` is asked about.
+ *
+ * The two lists are one list: `STEP_NAMES` above is Party → Verify → Price →
+ * Confirm, and `booking.ts`'s step order is dates → party → verify → price →
+ * confirm, so circle N is element N of that order. Written out rather than
+ * indexed off a shared export, because the stepper's shape and the guard's
+ * shape are separate contracts that happen to agree today; a shared array would
+ * make them one thing that can only ever be changed together.
+ *
+ * `/dates` is absent because it is step 0 and carries no circle — and that is
+ * the mechanism, not an omission: `step === null` means "no gated step here",
+ * so the one screen a guest can always answer never bounces.
+ */
+const GATED_STEP: Record<CheckoutStepNumber, FlowStep> = {
+  1: "party",
+  2: "verify",
+  3: "price",
+  4: "confirm",
+};
+
+/** What the button back into the flow says, per step the draft HAS earned. */
+const RESUME_LABEL: Record<FlowStep, string> = {
+  dates: "Pick your dates",
+  party: "Say who is staying",
+  verify: "Verify who is staying",
+  price: "See your price breakdown",
+  confirm: "Review and confirm",
+};
+
+/**
+ * The frame a blocked step renders instead of itself: the wrap, one `<h1>`, a
+ * sentence, and a way on. No back row (there is no step behind an unearned
+ * one), no stepper (there is no progress to report), no rail and no mobile bar
+ * (both are summaries of a draft that does not exist). The header's
+ * `Save & exit` and the footer are the layout's and stay.
+ */
+function GuardBlock({
+  heading,
+  children,
+  actions,
+}: {
+  readonly heading: string;
+  readonly children: ReactNode;
+  readonly actions: ReactNode;
+}) {
+  return (
+    <div className={`${wrap} pb-16 pt-12 md:pt-16`}>
+      <h1 className="text-h3 font-semibold text-primary">
+        <Num>{heading}</Num>
+      </h1>
+      <p className="mt-3 max-w-[62ch] text-bodyMd leading-relaxed text-secondary">{children}</p>
+      <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4">{actions}</div>
+    </div>
+  );
+}
+
 export function CheckoutStep({
   step,
+  guard,
   listing,
   heading,
   sub,
@@ -232,6 +343,7 @@ export function CheckoutStep({
   children,
 }: CheckoutStepProps) {
   const { draft } = useBooking();
+  const router = useRouter();
   /**
    * TWO ids, not one. The primary is drawn twice at two widths — in the rail
    * above 1080, in the sticky bar below it — and each rendering needs its own
@@ -248,6 +360,90 @@ export function CheckoutStep({
   const datesHref = checkoutHref(slug, "dates");
   const subtotal = staySubtotal(draft);
   const span = nights(draft.dates);
+
+  /**
+   * The step this draft has earned, when it has NOT earned the one being drawn.
+   * `null` on `/dates` (nothing to earn), on post-flow (a different question,
+   * below) and whenever the guest genuinely got here through the flow.
+   */
+  const resumeAt: FlowStep | null =
+    guard === "post-flow" || step === null || canView(GATED_STEP[step], draft)
+      ? null
+      : reachedStep(draft);
+  const resumeHref = resumeAt === null ? null : checkoutHref(slug, resumeAt);
+
+  /**
+   * The post-flow question is not "how far did you get" but "is there a booking
+   * to report", and `canView` cannot answer it: its vocabulary stops at
+   * `confirm`, because `confirmation` is not a step a guest fills in — it is
+   * what the system says back. So the condition is stated here rather than by
+   * widening `booking.ts`'s step union, which would give four other call sites
+   * a sixth member they have no use for.
+   *
+   * Two clauses, and the second is the load-bearing one. `canView("confirm")`
+   * says the draft holds dates, a party and its documents; `rail !== null` says
+   * the guest actually chose how to pay on step 4, which is the last thing that
+   * happens before `/confirm` will hand out its Continue at all. Without it a
+   * guest who had filled in everything BUT the payment could type
+   * `/confirmation` and be told they were booked.
+   */
+  const noBookingToShow =
+    guard === "post-flow" && !(canView("confirm", draft) && draft.rail !== null);
+
+  /**
+   * The leaving. It runs after the recovery has already rendered, and nothing
+   * about it decides what the guest sees — that was settled above.
+   *
+   * `replace`, not `push`: the URL the guest could not view does not belong in
+   * their history, and pushing it would put Back on a route that redirects
+   * forward again.
+   *
+   * `resumeHref` is a string or `null`, so the dependency is a value rather than
+   * an object identity and the effect cannot re-fire on a re-render that changed
+   * nothing. Unconditional, above the early returns, because a hook is.
+   */
+  useEffect(() => {
+    if (resumeHref !== null) router.replace(resumeHref);
+  }, [resumeHref, router]);
+
+  if (resumeAt !== null && resumeHref !== null) {
+    return (
+      <GuardBlock
+        heading={heading}
+        actions={
+          <Link href={resumeHref} className={btnSecondary}>
+            {RESUME_LABEL[resumeAt]}
+          </Link>
+        }
+      >
+        There is nothing to show on this step yet. Checkout is held for one visit only and
+        nothing is saved to this browser, so a reload or a shared link starts over — no
+        booking was made and nothing was charged.
+      </GuardBlock>
+    );
+  }
+
+  if (noBookingToShow) {
+    return (
+      <GuardBlock
+        heading="Booking not found"
+        actions={
+          <>
+            <Link href="/trips" className={btnSecondary}>
+              Go to your trips
+            </Link>
+            <Link href={listing.path} className={`${inlineAction} text-bodyMd font-medium`}>
+              <Num>{`Back to ${listingName(listing)}`}</Num>
+            </Link>
+          </>
+        }
+      >
+        This browser has no record of a booking at this address. Checkout is held for one
+        visit only and nothing is saved here, so a reload or a shared link starts over.
+        Bookings you have made are listed under your trips.
+      </GuardBlock>
+    );
+  }
 
   return (
     <>

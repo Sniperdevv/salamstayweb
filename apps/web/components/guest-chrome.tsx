@@ -56,9 +56,45 @@ function isUnder(pathname: string | null, root: string): boolean {
 /** The trees that draw their own chrome. Adding one is adding a line here. */
 const REDUCED_CHROME_ROOTS = ["/host", "/book"] as const;
 
-export function GuestChrome({ children }: { readonly children: ReactNode }) {
+/**
+ * The trees that KEEP the marketing header and end at `</main>`.
+ *
+ * `GUEST-SHELL.md` §3 is the reason this is a second list rather than a third
+ * entry in the one above: *"There is no account shell and no five-tab web nav. A
+ * signed-in guest wears the same `SiteHeader` as everybody else, in its
+ * logged-in composition."* The account menu already reaches trips, messages,
+ * wishlists and the account tree, so a second persistent nav would put two
+ * navigations on one page for one set of destinations. The header stays.
+ *
+ * The FOOTER does not, and §2's row for it is one word — `none` — citing
+ * `HOST-SHELL.md` §1: an authenticated app shell ends at `</main>`. The quiet
+ * half of that rule is the one that actually bites: these routes are `noindex,
+ * follow`, and `follow` means ~20 marketing hrefs are followed out of a page
+ * that should be a leaf. The header's own links are a handful; the footer is a
+ * sitemap.
+ *
+ * §2 also says to add each new authenticated prefix here as it is built, so the
+ * boundary is structural rather than remembered: `/messages`, `/wishlists` and
+ * `/account` join this list when their folders land.
+ */
+const NO_FOOTER_ROOTS = ["/trips"] as const;
+
+/**
+ * `slot` is REQUIRED rather than defaulted. The two call sites in
+ * `app/layout.tsx` wrap different components and now answer to different lists,
+ * and a default would silently give one of them the other's behaviour the day a
+ * third call site is added.
+ */
+export function GuestChrome({
+  slot,
+  children,
+}: {
+  readonly slot: "header" | "footer";
+  readonly children: ReactNode;
+}) {
   const pathname = usePathname();
   if (REDUCED_CHROME_ROOTS.some((root) => isUnder(pathname, root))) return null;
+  if (slot === "footer" && NO_FOOTER_ROOTS.some((root) => isUnder(pathname, root))) return null;
   return <>{children}</>;
 }
 

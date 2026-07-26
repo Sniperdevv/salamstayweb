@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { HostAppShell } from "@/components/host/host-chrome";
-import { inlineAction } from "@/components/ui";
+import {
+  GUEST_STUB_LINKS,
+  RegistryStubBody,
+  stubLayout,
+} from "@/components/registry-stub";
 import { routeByPath } from "@/lib/seo/route-registry";
 
 /**
@@ -33,39 +36,23 @@ export async function generateMetadata({
 }
 
 /**
- * The stub body, without chrome. Wrapped differently depending on which side of
- * the product the path belongs to — see `StubPage`.
+ * The stub body, the layout string and the guest link pair now live in
+ * `components/registry-stub.tsx`, so a DYNAMIC route that sits over a registered
+ * stub can render the same thing rather than growing a second copy.
  *
- * The links are the fix for the copy defect this page shipped with: it said
- * "Everything linked from it already works", which is a claim about content this
- * page does not have. It now says what is true — the surface is unbuilt — and
- * offers routes that stay on the reader's own side of the product.
+ * That is not hypothetical. `app/trips/[id]/page.tsx` matches `/trips/requests`
+ * — a registered stub `app/book/{slug}/status` links as its back destination —
+ * and takes it away from this catch-all, which is the least specific route in
+ * the tree and therefore loses a path to every dynamic segment added above it.
+ * `validate-pages --all` only fetches `page` routes, so nothing reports it.
+ *
+ * The HOST branch below stays here: a `/host/*` stub has to wear `HostAppShell`
+ * (HOST-SHELL §2), and no guest dynamic segment can match a `/host/` path.
  */
-function StubBody({ title, links }: { readonly title: string; readonly links: readonly { readonly href: string; readonly label: string }[] }) {
-  return (
-    <>
-      <h1 className="text-h4 text-primary">{title}</h1>
-      <p className="text-bodyMd text-secondary">
-        This page is being written. Nothing is lost — carry on from one of these.
-      </p>
-      <p className="flex gap-4">
-        {links.map((l) => (
-          <Link key={l.href} className={inlineAction} href={l.href}>
-            {l.label}
-          </Link>
-        ))}
-      </p>
-    </>
-  );
-}
-
-const stubLayout = "mx-auto flex min-h-[60vh] max-w-2xl flex-col items-start justify-center gap-4 px-6 py-24";
 
 export default async function StubPage({ params }: { params: Promise<Params> }) {
   const entry = routeByPath.get(pathOf(await params));
   if (!entry || entry.status !== "stub") notFound();
-
-  const title = entry.title.replace(/ — SalamStay.*$/, "");
 
   /**
    * HOST STUBS WEAR THE HOST CHROME. Added 2026-07-26.
@@ -87,8 +74,8 @@ export default async function StubPage({ params }: { params: Promise<Params> }) 
     return (
       <HostAppShell>
         <div className={stubLayout}>
-          <StubBody
-            title={title}
+          <RegistryStubBody
+            entry={entry}
             links={[
               { href: "/host/today", label: "Back to hosting" },
               { href: "/host/listings", label: "Your listings" },
@@ -100,14 +87,8 @@ export default async function StubPage({ params }: { params: Promise<Params> }) 
   }
 
   return (
-    <main className={stubLayout}>
-      <StubBody
-        title={title}
-        links={[
-          { href: "/", label: "Go to the homepage" },
-          { href: "/help", label: "Help center" },
-        ]}
-      />
+    <main className={`co-main ${stubLayout}`}>
+      <RegistryStubBody entry={entry} links={GUEST_STUB_LINKS} />
     </main>
   );
 }

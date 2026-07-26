@@ -322,6 +322,19 @@ export default function StatusStep({
   return (
     <CheckoutStep
       step={null}
+      /*
+       * GO-LIVE A11, and the same reasoning as `/confirmation`: both panels
+       * here report on a request the guest is supposed to have made, and a
+       * cold load has made none. "Your request is with Ayesha now. Nothing is
+       * charged yet" is a statement about a real person's inbox.
+       *
+       * The `?state=` review affordance this file documents survives, with one
+       * more step in front of it: a reviewer walks the flow to the end and
+       * then edits the URL. That is the honest version of it — the panels
+       * render for a session that actually completed a checkout, and for no
+       * other.
+       */
+      guard="post-flow"
       listing={draft.listing}
       heading={
         declined
