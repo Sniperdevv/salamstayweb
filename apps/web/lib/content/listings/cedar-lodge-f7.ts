@@ -286,7 +286,7 @@ export const cedarLodgeF7: ListingContent = {
       text: "Free cancellation up to 7 days before check-in.",
       bold: ["7 days"],
     },
-    cta: { href: "/rooms/cedar-lodge-f7/reserve", label: "Reserve" },
+    cta: { href: "/book/cedar-lodge-f7/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

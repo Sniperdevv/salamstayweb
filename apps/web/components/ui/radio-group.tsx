@@ -73,11 +73,19 @@ export interface RadioGroupProps {
   readonly onChange: (value: string) => void;
   /** `id` of the `<h2>` the group answers — §5's heading, never a fresh label. */
   readonly labelledBy: string;
-  /** `id` of the `fieldErrorLine` below, when there is one. */
-  readonly describedBy?: string;
-  readonly invalid?: boolean;
+  /**
+   * `id` of the `fieldErrorLine` below, when there is one.
+   *
+   * `| undefined` is explicit because `exactOptionalPropertyTypes` is on: the
+   * caller computes this as `invalid ? errorId : undefined`, and a bare `?:`
+   * means "may be absent", not "may be undefined". Widening here rather than
+   * making four call sites spread a conditional object — the two are the same
+   * type at the boundary and only one of them is readable.
+   */
+  readonly describedBy?: string | undefined;
+  readonly invalid?: boolean | undefined;
   readonly children: ReactNode;
-  readonly className?: string;
+  readonly className?: string | undefined;
 }
 
 export function RadioGroup({

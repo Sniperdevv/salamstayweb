@@ -210,6 +210,28 @@ export function ClockIcon(props: GlyphProps) {
   );
 }
 
+/**
+ * A closed padlock — `gw-021`'s `.securenote` glyph, added 2026-07-26 with the
+ * checkout shell.
+ *
+ * It has exactly two call sites and they are the same statement twice: the
+ * reduced checkout header's "Your details are encrypted", and the summary
+ * rail's custody line. `text.secondary` on both — this is not a verification
+ * mark, so it does not take brand green (CHECKOUT-SHELL §7 budgets three green
+ * roles on checkout and the shield already holds the third).
+ *
+ * `regular`, matching the card's 1.7 stroke to the nearest token rung — the same
+ * rounding `AlertTriangleIcon` made for the same reason.
+ */
+export function LockIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.regular} {...props}>
+      <rect x="4" y="10" width="16" height="10" rx="2" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </Glyph>
+  );
+}
+
 export function InfoIcon(props: GlyphProps) {
   return (
     <Glyph stroke={iconStroke.thin} {...props}>

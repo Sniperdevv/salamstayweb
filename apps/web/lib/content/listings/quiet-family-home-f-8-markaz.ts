@@ -343,7 +343,7 @@ export const quietFamilyHomeF8Markaz: ListingContent = {
       text: "Free cancellation up to 5 days before check-in.",
       bold: ["5 days"],
     },
-    cta: { href: "/rooms/quiet-family-home-f-8-markaz/reserve", label: "Reserve" },
+    cta: { href: "/book/quiet-family-home-f-8-markaz/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

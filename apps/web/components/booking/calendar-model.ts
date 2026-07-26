@@ -387,3 +387,68 @@ export function selectionStatus(
 export function longDate(iso: string): string {
   return `${weekday(iso).long} ${Number(iso.slice(8, 10))} ${gregorianMonthName(iso)} ${iso.slice(0, 4)}`;
 }
+
+/**
+ * `Fri 14 Aug` — the RENDERED form, added 2026-07-26 with the checkout shell.
+ *
+ * `longDate` above is deliberately the spoken form and says so; these two are
+ * its visible siblings, and they live here rather than in the step that first
+ * needed them because three surfaces print the same date — `gw-021`'s two date
+ * cells, its nights line, and the summary rail every checkout step carries. A
+ * second `Aug` derived somewhere else is a second place for a date to disagree
+ * with itself.
+ *
+ * NOT `Intl.DateTimeFormat`. Every date in this module is string arithmetic
+ * over `YYYY-MM-DD` in UTC precisely so a grid rendered in Karachi and one
+ * rendered on a CI box west of Greenwich are the same grid; handing an ISO
+ * string to `Intl` means building a `Date` and reading it back through the
+ * host's zone, which is the exact bug the file note opens with.
+ *
+ * The caller wraps the result in `.num` — via `Num`, and inside ONE `<span>`
+ * when the parent is a flex row (BUILD-DECISIONS ruling 22).
+ */
+export function shortDayMonth(iso: string): string {
+  return `${shortWeekday(iso)} ${Number(iso.slice(8, 10))} ${gregorianMonthName(iso).slice(0, 3)}`;
+}
+
+/** `Fri 14 Aug 2026` — the same, with the year, for a date standing alone. */
+export function shortDate(iso: string): string {
+  return `${shortDayMonth(iso)} ${iso.slice(0, 4)}`;
+}
+
+/**
+ * `Fri`, from the long name — NOT `WEEKDAYS[i].short`.
+ *
+ * Those two-letter forms are COLUMN HEADERS. `Su Mo Tu We Th Fr Sa` is a seven-
+ * cell grid legend where every label has to be the same width and the column
+ * position carries most of the meaning; dropped into a sentence the same string
+ * reads as a typo ("Fr 14 Aug"). Three letters is the form a date takes when it
+ * is being read rather than scanned, and it is what `gw-021` prints.
+ */
+function shortWeekday(iso: string): string {
+  return weekday(iso).long.slice(0, 3);
+}
+
+/**
+ * `Fri 14 → Mon 17 Aug 2026` — a stay, with the parts the two ends share said
+ * once.
+ *
+ * A range that repeats its own month and year ("Fri 14 Aug 2026 → Mon 17 Aug
+ * 2026") is not more precise, it is just longer, and at the summary rail's 348px
+ * it is the difference between one line and two. The collapse is only ever
+ * applied to a component both dates genuinely share, so a stay across a month
+ * boundary or a new year states both — this shortens the common case without
+ * ever being ambiguous in the uncommon one.
+ *
+ * The arrow, not an en dash: it is directional (this range has a start and an
+ * end, and under RTL the layout mirrors around it), and it keeps every dash on
+ * this surface out of the running for decoration.
+ */
+export function dateRange(from: string, to: string): string {
+  const sameMonth = from.slice(0, 7) === to.slice(0, 7);
+  if (sameMonth) {
+    return `${shortWeekday(from)} ${Number(from.slice(8, 10))} → ${shortDate(to)}`;
+  }
+  const sameYear = from.slice(0, 4) === to.slice(0, 4);
+  return `${sameYear ? shortDayMonth(from) : shortDate(from)} → ${shortDate(to)}`;
+}

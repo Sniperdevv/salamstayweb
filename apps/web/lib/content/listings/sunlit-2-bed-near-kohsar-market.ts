@@ -323,7 +323,7 @@ export const sunlit2BedNearKohsarMarket: ListingContent = {
       text: "Free cancellation up to 48 hours before check-in.",
       bold: ["48 hours"],
     },
-    cta: { href: "/rooms/sunlit-2-bed-near-kohsar-market/reserve", label: "Reserve" },
+    cta: { href: "/book/sunlit-2-bed-near-kohsar-market/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

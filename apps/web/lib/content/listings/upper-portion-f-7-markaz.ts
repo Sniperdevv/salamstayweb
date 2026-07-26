@@ -365,7 +365,7 @@ export const upperPortionF7Markaz: ListingContent = {
       text: "Free cancellation up to 48 hours before check-in.",
       bold: ["48 hours"],
     },
-    cta: { href: "/rooms/upper-portion-f-7-markaz/reserve", label: "Reserve" },
+    cta: { href: "/book/upper-portion-f-7-markaz/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

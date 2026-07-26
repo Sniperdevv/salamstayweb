@@ -278,7 +278,7 @@ export const familyPortionJinnahSuper: ListingContent = {
       text: "Free cancellation up to 5 days before check-in.",
       bold: ["5 days"],
     },
-    cta: { href: "/rooms/family-portion-jinnah-super/reserve", label: "Reserve" },
+    cta: { href: "/book/family-portion-jinnah-super/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

@@ -555,7 +555,7 @@ export const isF72Bed: ListingContent = {
       text: "Free cancellation up to 48 hours before check-in.",
       bold: ["48 hours"],
     },
-    cta: { href: "/rooms/is-f7-2bed/reserve", label: "Reserve" },
+    cta: { href: "/book/is-f7-2bed/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

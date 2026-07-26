@@ -64,29 +64,30 @@ import type { ReactNode } from "react";
  * §1: no canonical, no hreflang pair, no JSON-LD, no breadcrumb, on any of the
  * nine.
  *
- * THE TITLE IS THE FUNNEL'S, AND IT IS HERE BECAUSE NO STEP CAN CARRY ONE
- * ----------------------------------------------------------------------
- * Every one of the nine steps gates a control on the host's own answers, so
- * every one of them is a Client Component — checked, not assumed: all nine
- * `page.tsx` files under this layout carry `"use client"` and none of them
- * exports `metadata`, because a Client Component cannot. A title declared here
- * is therefore the only title any of them has today.
+ * THE TITLE HERE IS THE FUNNEL'S NAME AND NOBODY'S SERVED TITLE
+ * -------------------------------------------------------------
+ * Every one of the nine steps gates a control on the host's own answers, so the
+ * body of every one of them is a Client Component, and a Client Component
+ * cannot export `metadata`. For a while that made this the only title any of
+ * them had, and all nine served it — a G41 failure (no two routes may share a
+ * `<title>`), because the gate compares served strings, not intent.
  *
- * `List your place — SalamStay hosting` is `lib/seo/route-registry.ts`'s entry
- * for step 1, byte for byte, so G41 compares like with like the moment that
- * entry is promoted from `stub()` to `page()`. It is also an honest title for
- * the funnel as a whole rather than a step-1 string that leaked upward — the
- * registry named the funnel, not the question ("What kind of place is it?" is
- * the H1). (`absolute` rather than `default`, which Next's `TemplateString`
- * type only accepts alongside a `template` this tree has no use for.)
+ * Fixed 2026-07-26 with the shape the App Router wants for an interactive page:
+ * each `{step}/page.tsx` is now a thin Server Component that exports its own
+ * `metadata` and renders the step's `"use client"` body from a co-located
+ * `step.tsx`. The nine titles live in those nine files, each matching its
+ * `lib/seo/route-registry.ts` entry byte for byte, and each declared `absolute`
+ * for the reason below. Adding a tenth step means adding that pair, not editing
+ * this file.
  *
- * **FLAGGED, and it is the whole wizard's problem, not this file's:** steps 2–9
- * currently serve this title too. Before their registry entries are promoted to
- * `page()`, each step needs either a registry title equal to this one, or a thin
- * Server Component `page.tsx` that exports its own `metadata` and renders the
- * step's Client Component as a co-located sibling — which is the shape the App
- * Router wants for an interactive page and the one fix that scales to nine.
- * Whoever owns that change owns nine files; this layout owns none of them.
+ * So this title is now served by nothing. `/host/listings/new` has no
+ * `page.tsx` and 404s into the root `not-found`, which sits outside this layout
+ * and carries its own title; every step below overrides this one. It stays for
+ * two reasons: it names the funnel, and it is the string a step would fall back
+ * to if its `metadata` export were ever dropped — a wrong-but-plausible title
+ * rather than a leaked neighbour's. (`absolute` rather than `default`, which
+ * Next's `TemplateString` type only accepts alongside a `template` this tree has
+ * no use for; `absolute` is also what stops the site template appending twice.)
  */
 export const metadata: Metadata = {
   robots: { index: false, follow: true },

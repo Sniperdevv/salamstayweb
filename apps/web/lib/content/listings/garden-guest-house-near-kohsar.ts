@@ -319,7 +319,7 @@ export const gardenGuestHouseNearKohsar: ListingContent = {
       text: "Free cancellation up to 48 hours before check-in.",
       bold: ["48 hours"],
     },
-    cta: { href: "/rooms/garden-guest-house-near-kohsar/reserve", label: "Reserve" },
+    cta: { href: "/book/garden-guest-house-near-kohsar/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

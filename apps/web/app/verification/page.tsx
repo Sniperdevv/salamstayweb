@@ -179,14 +179,22 @@ const MATRIX = [
     required: "Nikah Nama–verified couples' bookings",
     claim: true,
     authority: "Nikah registrar, as printed on your certificate",
-    why: "The host's own house rules, or a local zone rule",
+    // Was "The host's own house rules, or a local zone rule" until 2026-07-26.
+    // The founder ruled that hosts do NOT set document requirements and that the
+    // marriage certificate at booking is the only one SalamStay imposes, so
+    // attributing it to a host was both wrong and the more comfortable answer —
+    // it put the asking on someone else. SalamStay asks; SalamStay says so.
+    why: "SalamStay asks for it when a couple books together",
   },
   {
     party: "Mixed-gender family or siblings",
     required: "FRC-verified family bookings",
     claim: true,
     authority: "NADRA — Family Registration Certificate",
-    why: "The host's own house rules, or a local zone rule",
+    // Same correction. The grounds here are the ones COMPLIANCE_MAP actually
+    // documents — provincial guest registration (P1–P4) and cantonment zone
+    // rules (CB1–CB6) — never a host's preference.
+    why: "Provincial guest registration, and cantonment zone rules where they apply",
   },
   {
     party: "Children on the booking",

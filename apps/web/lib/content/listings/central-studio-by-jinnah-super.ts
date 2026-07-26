@@ -272,7 +272,7 @@ export const centralStudioByJinnahSuper: ListingContent = {
       text: "Free cancellation up to 48 hours before check-in.",
       bold: ["48 hours"],
     },
-    cta: { href: "/rooms/central-studio-by-jinnah-super/reserve", label: "Reserve" },
+    cta: { href: "/book/central-studio-by-jinnah-super/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

@@ -172,7 +172,36 @@ export const ROUTES: readonly RouteEntry[] = [
   // ——— Checkout (CHECKOUT-SHELL.md) ———
   // Seven noindex routes, no canonical on any of them, no JSON-LD on any of
   // them. See the `checkout` factory for why these are literal paths.
-  ...checkout("is-f7-2bed", "Margalla View Apartment"),
+  /**
+   * All eleven homes, 2026-07-26. Registering a listing's seven rows is the one
+   * act that opens its checkout — `bookableListing()` derives the bookable set
+   * from this registry — so this list and the eleven repointed Reserve CTAs are
+   * the same decision written twice.
+   *
+   * The comment above argued for registering one listing, and it was right at
+   * the time: nothing linked into any checkout, so seventy rows would have been
+   * seventy things for `--all` to fetch and seventy titles nobody had written.
+   * Ruling 9 changed that. Every listing page now has a live Reserve button, and
+   * a button that 404s is worse than a row that is merely fetched.
+   *
+   * THE TWO MARGALLA VIEWS CARRY THEIR SECTOR. There are two homes of that name
+   * — F-7 (`is-f7-2bed`) and E-7 (`margalla-view-apartment`) — and G41 compares
+   * titles byte-for-byte across an `--all` run. Bare names would have produced
+   * seven pairs of identical titles, which is the same duplicate-title failure
+   * the host wizard just cost us. The listing PAGES already solved this the same
+   * way, normalising each H1 with its area.
+   */
+  ...checkout("is-f7-2bed", "Margalla View Apartment, F-7"),
+  ...checkout("margalla-view-apartment", "Margalla View Apartment, E-7"),
+  ...checkout("cedar-lodge-f7", "Cedar Lodge"),
+  ...checkout("central-studio-by-jinnah-super", "Central Studio by Jinnah Super"),
+  ...checkout("family-portion-jinnah-super", "Family portion near Jinnah Super"),
+  ...checkout("quiet-1-bed-street-12", "Quiet 1-bed on Street 12"),
+  ...checkout("upper-portion-f-7-markaz", "Upper portion near F-7 Markaz"),
+  ...checkout("sunlit-2-bed-near-kohsar-market", "Sunlit 2-bed near Kohsar Market"),
+  ...checkout("quiet-family-home-f-8-markaz", "Quiet family home in F-8"),
+  ...checkout("business-studio-jinnah-avenue", "Business studio on Jinnah Avenue"),
+  ...checkout("garden-guest-house-near-kohsar", "Garden guest house near Kohsar"),
 
   // ——— Trust cluster + host funnel + guide ———
   page("/trust-and-safety", "gw-006", "Trust & safety — SalamStay"),
@@ -241,6 +270,42 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/signup", "Sign up — SalamStay"),
   stub("/account", "Your account — SalamStay"),
   stub("/trips", "Your trips — SalamStay"),
+
+  /**
+   * `BUILD-DECISIONS.md` ruling 7 — the fifteen hrefs the checkout cards emit
+   * that resolve nowhere. G37 fails the build on any internal href not in this
+   * registry, so the checkout cannot be built until these exist.
+   *
+   * `stub()`, deliberately, and the ruling says why: *"Do not invent the pages,
+   * and do not silently drop the links: a booking confirmation that cannot
+   * reach a receipt is a worse lie than a stub that says it is being written."*
+   *
+   * The ids are the cards' own literal fixtures (`is-f7-2bed-aug2026`,
+   * `host-margalla-view`) rather than a pattern, because G37 compares literal
+   * hrefs. They become real dynamic routes in the post-booking phase.
+   *
+   * NOT ADDED, on purpose: the `/ur/…` twins these same cards emit. Ruling 13
+   * is explicit — *"Do not add `/ur/` stubs to quiet the gate. A language switch
+   * that resolves to a 'being written' page is worse than one that visibly isn't
+   * ready yet."* اردو ships as an inert span; Urdu is tracked in GO-LIVE C2.
+   */
+  stub("/trips/requests", "Booking requests — SalamStay"),
+  stub("/trips/requests/is-f7-2bed-aug2026", "Your request — Margalla View Apartment"),
+  stub("/trips/requests/is-f7-2bed-aug2026/cancel", "Withdraw your request — Margalla View Apartment"),
+  stub("/trips/is-f7-2bed-aug2026", "Your trip — Margalla View Apartment"),
+  stub("/trips/is-f7-2bed-aug2026/receipt", "Receipt — Margalla View Apartment"),
+  stub("/trips/is-f7-2bed-aug2026/change", "Change your booking — Margalla View Apartment"),
+  stub("/trips/is-f7-2bed-aug2026/cancel", "Cancel your booking — Margalla View Apartment"),
+  stub("/trips/is-f7-2bed-aug2026/arrival", "Getting there — Margalla View Apartment"),
+  stub("/trips/is-f7-2bed-aug2026/booking.ics", "Add to calendar — Margalla View Apartment"),
+  stub("/messages/host-margalla-view", "Message your host — Margalla View Apartment"),
+  stub("/account/verification", "Your verification — SalamStay"),
+  stub("/legal/data-handling", "How we handle your documents — SalamStay"),
+  stub("/help/payments/cash-on-arrival", "Paying cash on arrival — SalamStay help"),
+  // A "similar stay" the confirmation card links. G-6 has no area page yet, so
+  // this is a stub for a listing in a sector we do not cover — which is what the
+  // card draws, and the honest rendering of it until supply exists there.
+  stub("/stays-in-islamabad/g-6/g6-family-house", "Family house in G-6, Islamabad"),
   // Both are rows in the account menu (`hw-007`). Unregistered, they rendered
   // `not-found` from a menu the header ships — a dead link out of live chrome,
   // which is worse than a stub that says the surface is coming.
@@ -275,31 +340,39 @@ export const ROUTES: readonly RouteEntry[] = [
    * a Today/Calendar/Insights strip across the top would be wrong, and the group
    * boundary is what prevents it rather than anyone remembering to.
    *
-   * EVERY STEP CARRIES THE SAME TITLE, and that is not an oversight. All nine
-   * pages are Client Components — each derives its disabled-primary state and
-   * its blocking-reason caption from what the host has ticked, which a Server
-   * Component cannot know — and a Client Component cannot export `metadata`. So
-   * `new/layout.tsx` supplies one title for the whole funnel and all nine serve
-   * it. The registry records what is ACTUALLY served, byte-for-byte, rather than
-   * nine titles that would each be a small lie. Per-step titles would need a
-   * server `page.tsx` wrapping a co-located client child, nine times over; worth
-   * doing when the funnel is instrumented, not before.
+   * EACH STEP CARRIES ITS OWN TITLE, and getting here took a correction worth
+   * recording.
+   *
+   * These nine shipped sharing ONE title — `List your place — SalamStay hosting`
+   * — on the reasoning that all nine pages are Client Components (each derives
+   * its disabled primary and its blocking caption from what the host has ticked,
+   * which a Server Component cannot know), a Client Component cannot export
+   * `metadata`, and so the registry should record what was ACTUALLY served
+   * rather than nine titles that would each be a small lie. The premise was
+   * right. The conclusion was wrong: **G41 is a HARD gate and it rejects
+   * duplicate titles**, so "what is actually served" was eight gate failures,
+   * and the fix was deferred as "worth doing when the funnel is instrumented".
+   *
+   * It is not deferrable. Each step is now a thin Server Component `page.tsx`
+   * exporting its own `metadata`, wrapping the untouched client component in a
+   * sibling `step.tsx`. Nine files, the standard App Router pattern, and the
+   * duplicate-title class is gone.
    */
   page(
     "/host/listings/new/property-type",
     "hw-002",
-    "List your place — SalamStay hosting",
+    "Property type — list your place on SalamStay",
     "noindex,follow",
     null,
   ),
-  page("/host/listings/new/location", "hw-006", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/capacity", "hw-004", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/amenities", "hw-003", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/practical-facts", "hw-001", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/photos", "hw-005", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/title-description", "hw-004", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/house-rules", "hw-003", "List your place — SalamStay hosting", "noindex,follow", null),
-  page("/host/listings/new/pricing", "hw-004", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/location", "hw-006", "Location — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/capacity", "hw-004", "Capacity — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/amenities", "hw-003", "Amenities — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/practical-facts", "hw-001", "Practical facts — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/photos", "hw-005", "Photos — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/title-description", "hw-004", "Title and description — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/house-rules", "hw-003", "House rules — list your place on SalamStay", "noindex,follow", null),
+  page("/host/listings/new/pricing", "hw-004", "Pricing and availability — list your place on SalamStay", "noindex,follow", null),
   // Step 9's `Review and publish` points here. `hw-007` draws it, nobody has
   // built it — and it is NOT a tenth step: post-flow surfaces carry no stepper.
   stub("/host/listings/new/preview", "Review and publish — SalamStay hosting"),

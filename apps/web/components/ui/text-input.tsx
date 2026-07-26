@@ -59,11 +59,18 @@ export interface TextInputProps {
    * on every field in the flow.
    */
   readonly inputMode?: "text" | "numeric" | "decimal" | "tel" | "email" | "url" | "search";
-  readonly autoComplete?: string;
-  readonly invalid?: boolean;
-  /** `id` of the `fieldErrorLine` below, when there is one. */
-  readonly describedBy?: string;
-  readonly className?: string;
+  readonly autoComplete?: string | undefined;
+  readonly invalid?: boolean | undefined;
+  /**
+   * `id` of the `fieldErrorLine` below, when there is one.
+   *
+   * `| undefined` is explicit because `exactOptionalPropertyTypes` is on: the
+   * caller computes this as `invalid ? errorId : undefined`, and a bare `?:`
+   * means "may be absent", not "may be undefined". Same widening as
+   * `RadioGroupProps`, for the same caller shape.
+   */
+  readonly describedBy?: string | undefined;
+  readonly className?: string | undefined;
 }
 
 export function TextInput({

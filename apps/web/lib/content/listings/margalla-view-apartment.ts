@@ -341,7 +341,7 @@ export const margallaViewApartment: ListingContent = {
       text: "Free cancellation up to 48 hours before check-in. Minimum stay 3 nights.",
       bold: ["48 hours", "3 nights"],
     },
-    cta: { href: "/rooms/margalla-view-apartment/reserve", label: "Reserve" },
+    cta: { href: "/book/margalla-view-apartment/dates", label: "Reserve" },
     note: "Dates and party type first, then the full price breakdown, before anything is charged.",
     trust: [
       { text: "CNIC-verified guests and hosts via NADRA Verisys" },

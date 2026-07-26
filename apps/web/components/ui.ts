@@ -239,14 +239,16 @@ export const gutter = "px-4 md:px-6";
  * otherwise poke square corners through a rounded box.
  *
  * On the width: §5 fixes the group at 520px, which is `overlaySize.dialogMd` to
- * the pixel. The Tailwind preset builds its `maxWidth` map from `container`
- * only, so that role is not reachable as a class and `max-w-lg` (512px, 32rem)
- * is the nearest rung — 8px under, on a scale, with no raw px in app code.
- * Wiring `overlaySize` into the preset's `maxWidth` is a one-line fix in the
- * tokens package and would let this read `max-w-dialogMd`.
+ * the pixel. That role was unreachable as a class when this was written, so it
+ * shipped `max-w-lg` (512px) — the nearest rung, 8px under. BUILD-DECISIONS
+ * ruling 17 fixed it at the token layer rather than working around it:
+ * `packages/design-tokens/src/tailwind-preset.ts` now folds `overlaySize` into
+ * `maxWidth` under an `overlay-` prefix, so the group is finally the width its
+ * spec says. Applied here 2026-07-26 with the checkout shell — the ruling was
+ * recorded but this call site, and `fieldErrorLine` below, were never moved.
  */
 export const fieldGroup =
-  "max-w-lg overflow-hidden rounded-md border border-border-default bg-canvas";
+  "max-w-overlay-dialogMd overflow-hidden rounded-md border border-border-default bg-canvas";
 
 /**
  * §5's invalid group: the border moves to `error.fg`.
@@ -335,7 +337,7 @@ export const hostFieldSub = "mt-2 block text-label font-regular leading-normal t
  * on a family document, ever.
  */
 export const fieldErrorLine =
-  "mt-3 flex max-w-lg items-start gap-2 text-label font-regular leading-normal text-error";
+  "mt-3 flex max-w-overlay-dialogMd items-start gap-2 text-label font-regular leading-normal text-error";
 
 /**
  * The ring overlay for a control whose real input is `sr-only` — a radio row, a
