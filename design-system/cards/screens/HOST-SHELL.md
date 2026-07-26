@@ -486,8 +486,9 @@ ruling. **These override the sections above where they disagree.**
   already correct: off by default, "any verified guest can book" / "guests of any gender can
   book".
 - **The wizard never asks or verifies a host's gender.** No such gate exists and none is to be
-  built. → *This leaves SEO-RULES §5 claim 5 ("Women-only stays hosted by women") asserting a
-  host-gender fact the product cannot verify. §5 claims are founder-gated; raised, not changed.*
+  built. → *Raised as `GO-LIVE` E1 and **RULED 2026-07-26**: the founder confirmed "we do not
+  have such policy", so SEO-RULES §5 slot 5 is retired and struck, and the string "hosted by
+  women" is banned on every surface. Removed from all nine live sites that carried it.*
 - **"Leave people out of the frame" stays** (`hw-005`), as plain photographic guidance. It
   arrived in `ha-027` hung off the retired cultural-attributes step; the repositioning retires
   the framing, not the practice, and the practice is ordinary listing-photo advice.

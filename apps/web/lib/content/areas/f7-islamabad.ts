@@ -267,7 +267,7 @@ export const f7Islamabad: AreaContent = {
       {
         question: "Is F-7 a good area for families or for women travelling alone?",
         answer:
-          "F-7 is quiet by day, walkable to the markaz for food and groceries, and busy enough in the evening to feel comfortable on foot. Family homes and women-only stays hosted by women both exist in the sector, and every booking runs on CNIC-verified guests and hosts via NADRA Verisys, so you know who you are staying with.",
+          "F-7 is quiet by day, walkable to the markaz for food and groceries, and busy enough in the evening to feel comfortable on foot. Family homes and women-only stays both exist in the sector, and every booking runs on CNIC-verified guests and hosts via NADRA Verisys, so you know who you are staying with.",
       },
       {
         question: "What should I know about power and internet in F-7?",

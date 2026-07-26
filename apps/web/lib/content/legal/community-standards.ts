@@ -181,7 +181,7 @@ export const communityStandardsPage: LegalPageContent = {
           kind: "p",
           text: [
             "The same logic covers the other options a host can set — ",
-            bold("Women-only stays hosted by women"),
+            bold("Women-only stays"),
             ", and family-only bookings. These are choices some hosts make for their home, stated on the listing as host policy — never assumed for you, never applied to your account.",
           ],
         },

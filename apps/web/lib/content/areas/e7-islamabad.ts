@@ -250,7 +250,7 @@ export const e7Islamabad: AreaContent = {
       {
         question: "Is E-7 a good area for a quiet or longer stay?",
         answer:
-          "It is the sector to choose if space and quiet matter more to you than walkability: residential and green, next to the diplomatic enclave, against the foothills, with the busier markaz sectors a short drive away for the days you want them. Women-only stays hosted by women and family homes both exist across Islamabad, and every booking runs on CNIC-verified guests and hosts via NADRA Verisys.",
+          "It is the sector to choose if space and quiet matter more to you than walkability: residential and green, next to the diplomatic enclave, against the foothills, with the busier markaz sectors a short drive away for the days you want them. Women-only stays and family homes both exist across Islamabad, and every booking runs on CNIC-verified guests and hosts via NADRA Verisys.",
       },
       {
         question: "What should I know about power and internet in E-7?",

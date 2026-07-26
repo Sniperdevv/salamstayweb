@@ -366,7 +366,7 @@ export default function TrustAndSafetyPage() {
                   "Ships limited by default. Nobody can message you out of the blue, and your profile stays visible only to the hosts of the stays you book.",
               },
               {
-                term: "Women-only stays hosted by women",
+                term: "Women-only stays",
                 detail:
                   "An option some hosts set for their home, stated on the listing as host policy — never assumed for you, never applied to your account.",
               },

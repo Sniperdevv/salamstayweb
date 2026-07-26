@@ -112,10 +112,6 @@ const CLAIMS = [
     note: "Hosts who allow alcohol must explicitly opt in and disclose it.",
   },
   {
-    claim: "Women-only stays hosted by women",
-    note: "An option a host sets for her own home, stated on the listing.",
-  },
-  {
     claim: "Listings show load-shedding hours and backup power",
     note: "Because the hours and the generator are what decide a stay in August.",
   },
@@ -194,8 +190,8 @@ export default function AboutPage() {
             <p>
               That is the design rule the whole product is built on. Load-shedding hours appear on
               a listing at exactly the visual weight of Wifi. A house rule is presented like a
-              check-in time. Women-only is a host&apos;s stated policy, not a mode we switch on for
-              you. Nothing is decorated, framed, or sold — it is simply <strong>stated</strong>,
+              check-in time — a fact about the home, set by the person who owns it, not a mode we
+              switch on for you. Nothing is decorated, framed, or sold — it is simply <strong>stated</strong>,
               because treating it as ordinary is the respectful move.
             </p>
             <p>

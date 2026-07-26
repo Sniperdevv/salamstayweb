@@ -11,7 +11,6 @@ import {
   FeesReceiptIcon,
   GuestHouseIcon,
   NoAlcoholIcon,
-  PersonIcon,
   PrivateRoomIcon,
   ShieldCheckIcon,
   VillaIcon,
@@ -76,7 +75,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *  5/6. Karachi and Lahore rails — the breadth made concrete. Two more cities
  *     of real cards is the difference between "six cities" as a claim and as a
  *     visible fact.
- *  7. Trust & safety — the eight §5 claims, verbatim, in a tight grid.
+ *  7. Trust & safety — the seven live §5 claims, verbatim, in a tight grid.
  *  8/9/10. Host band, guides, property-type chips.
  *
  * SEO contract (unchanged from the shipped page):
@@ -88,7 +87,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *    image on the page is `priority`: the featured card leading rail 1, which
  *    is now the LCP element. The old hero preload is gone with the hero photo.
  *
- * Copy: the eight registry claims appear once each, verbatim, in the trust
+ * Copy: the seven live registry claims appear once each, verbatim, in the trust
  * section. Everything else on the page is plain neutral descriptive text under
  * §5 — no paraphrased claims, no stats, no ratings, no counts, no "popular".
  *
@@ -112,11 +111,22 @@ export const metadata = pageMetadata(
  * reworded in the registry, not explained on the homepage — and the trust,
  * verification and help pages are where the explaining belongs.
  *
- * EIGHT, not nine, since 2026-07-26: claim 6 (halal kitchen / prayer space /
- * Qibla) is retired from the product and from the registry, so its row and its
- * glyph are gone rather than reworded (REPOSITIONING.md). The grid below moved
- * from three columns to four so eight items still fill their rows exactly —
- * 3-3-2 left a hole in the bottom-right where the ninth used to sit.
+ * SEVEN, not nine. Two slots of the registry's nine are retired, both on
+ * 2026-07-26 and both founder-ruled, and in each case the row and its glyph are
+ * GONE rather than reworded:
+ *
+ *  · **claim 6** — halal kitchen / prayer space / Qibla (REPOSITIONING.md).
+ *  · **claim 5** — "Women-only stays hosted by women". The platform has no
+ *    host-gender field and never asks for one, so it was vouching for something
+ *    it could not know. Founder: "we do not have such policy."
+ *
+ * The grid moved from three columns to four when the count went 9 → 8, because
+ * 3-3-2 left a hole in the bottom-right. At seven it runs 4-3: the last row is
+ * short, which is what a left-aligned list of an odd number looks like, and is
+ * not the same thing as a gap inside the block.
+ *
+ * Neither retired claim gets a replacement. A trust strip is not a shape to
+ * fill; the number of things worth promising is whatever it is.
  *
  * One glyph each, from the shipped homepage set. Claim 9 keeps `FeesReceiptIcon`
  * (the review fix that replaced a dollar-sign path — PKR is the currency here).
@@ -126,7 +136,6 @@ const CLAIMS = [
   { claim: "Nikah Nama–verified couples' bookings", Icon: DocumentDateIcon },
   { claim: "FRC-verified family bookings", Icon: FamilyIcon },
   { claim: "No-alcohol listings by default", Icon: NoAlcoholIcon },
-  { claim: "Women-only stays hosted by women", Icon: PersonIcon },
   { claim: "Listings show load-shedding hours and backup power", Icon: BoltIcon },
   { claim: "Two-way reviews and 24/7 Urdu + English support", Icon: ChatIcon },
   {

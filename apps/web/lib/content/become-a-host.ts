@@ -94,7 +94,7 @@ export const HOST_CONTROLS = [
     icon: "noAlcohol",
   },
   {
-    title: "Women-only stays hosted by women",
+    title: "Women-only stays",
     body: "An optional party-type setting — stated as your host policy, never assumed or pre-selected.",
     icon: "person",
   },
@@ -189,7 +189,7 @@ export const HOST_FAQ: readonly HostFaqEntry[] = [
   {
     question: "Can I choose who books my home?",
     answer:
-      "Yes. You set your own house rules and party-type acceptance — including women-only stays hosted by women — and no-alcohol listings by default, unless you explicitly opt in and disclose otherwise.",
+      "Yes. You set your own house rules and party-type acceptance — including women-only stays — and no-alcohol listings by default, unless you explicitly opt in and disclose otherwise.",
   },
 ];
 

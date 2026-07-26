@@ -37,7 +37,7 @@ A host may still write whatever they like in their own listing prose. **We do no
 | **Nikah Nama upload** | One of several NADRA documents establishing a relationship, alongside FRC and B-Form. Identity verification, **not observance**. |
 | **FRC / B-Form** | Same — NADRA records that establish who is travelling together. |
 | **No alcohol** | A **house rule**, presented at the exact weight of "no smoking" or "no parties". Default on; a host who allows it must opt in and disclose. |
-| **Women-only stays, women-hosted** | A **safety category**. Never a moral one. |
+| ~~**Women-only stays, women-hosted**~~ | **🚫 RETIRED 2026-07-26, founder-ruled: *"we do not have such policy."*** The "women-hosted" half was never verifiable — SalamStay has no host-gender field and the wizard is ruled never to ask for one. §5 slot 5 is struck. Whether a HOST may still set `Women guests only` as a house rule is a separate, open question. |
 | **Family-only listings** | A host restriction on who may book. |
 
 Why documents are asked for at all: **a stranger is handing you the keys to their home, and both

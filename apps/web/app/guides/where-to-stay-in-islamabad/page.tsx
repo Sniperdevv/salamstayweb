@@ -427,7 +427,7 @@ export default function WhereToStayInIslamabadGuide() {
                 Among those rules, two are worth knowing before you search. Homes are{" "}
                 <strong>no-alcohol listings by default</strong>, and a host who allows alcohol has
                 to opt in and say so. If you are travelling as a group of women,{" "}
-                <strong>women-only stays hosted by women</strong> are a filter rather than a phone
+                <strong>women-only stays</strong> are a filter rather than a phone
                 call.
               </p>
             </Prose>

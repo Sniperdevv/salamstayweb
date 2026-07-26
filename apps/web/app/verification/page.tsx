@@ -452,9 +452,9 @@ export default function VerificationPage() {
                   "Every home is alcohol-free unless its host explicitly opts in and discloses otherwise. The setting is already on when a host creates a listing, marked as standard on SalamStay.",
               },
               {
-                term: "Women-only stays hosted by women",
+                term: "Women-only stays",
                 detail:
-                  "A safety option a host sets for her own home, shown on the listing as her stated policy. It is never a mode applied to your account, and never assumed for you.",
+                  "A safety option a host sets for their own home, shown on the listing as their stated policy. It is never a mode applied to your account, and never assumed for you.",
               },
               {
                 term: "Family-only listings",
