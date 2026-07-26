@@ -286,6 +286,7 @@ export const quietFamilyHomeF8Markaz: ListingContent = {
     cancellation: {
       heading: "Cancellation: Moderate",
       body: "Free cancellation up to 5 days before check-in. After that the first night is non-refundable and the rest is refunded. Every rupee is shown before you confirm.",
+      bold: "5 days",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -295,6 +296,7 @@ export const quietFamilyHomeF8Markaz: ListingContent = {
     sub: "F-8, Islamabad · a few minutes' walk from F-8 Markaz",
     mapAlt:
       "Approximate location map: the home is inside a circle covering the residential blocks around F-8 Markaz, Islamabad",
+    mapLabels: ["F-8 Markaz", "District Courts", "Jinnah Avenue"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address is shared once your booking is confirmed.",

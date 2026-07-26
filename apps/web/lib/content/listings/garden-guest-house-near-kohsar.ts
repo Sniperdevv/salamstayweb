@@ -266,6 +266,7 @@ export const gardenGuestHouseNearKohsar: ListingContent = {
     cancellation: {
       heading: "Cancellation: Flexible",
       body: "Free cancellation up to 48 hours before check-in. After that the first night is non-refundable and the rest is refunded. Every rupee is shown before you confirm.",
+      bold: "48 hours",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -275,6 +276,7 @@ export const gardenGuestHouseNearKohsar: ListingContent = {
     sub: "F-6, Islamabad · near Kohsar Market",
     mapAlt:
       "Approximate location map: the home is inside a circle covering the residential streets near Kohsar Market, F-6, Islamabad",
+    mapLabels: ["Kohsar Market", "F-6 Markaz", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address is shared once your booking is confirmed.",

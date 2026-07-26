@@ -1,0 +1,1397 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — HW-003 Host wizard: multi-select and switch rows (amenities · house rules)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     HW-003 · MULTI-SELECT AND SWITCH ROWS — two steps, one card
+       step 4 of 9   /host/listings/new/amenities
+       step 8 of 9   /host/listings/new/house-rules
+
+     Inherits HW-001 and HOST-SHELL.md unchanged: wizard chrome, 640 column,
+     type ladder, nine thin bars, sticky action bar, token block, motion. Read
+     HOST-SHELL.md first. This card documents only what is NEW or DECIDED here.
+
+     TWO STEPS ON ONE CARD, for the same reason HW-001 puts two chromes on one
+     card: they are the two halves of one distinction, and the distinction is
+     the thing most likely to go wrong. A host who ticks "Air conditioning" is
+     DECLARING A FACT about the property. A host who turns on "No alcohol" is
+     SETTING A POLICY that changes what a guest is allowed to do. Same page
+     rhythm, deliberately different control. Drawn apart, they would converge.
+
+     ---------------------------------------------------------------------------
+     DECISION 1 — THE MULTI-SELECT IS THE OPTION CARD WITH A SQUARE MARK.
+       HOST-SHELL §5's `.ocard` anatomy, unchanged, in the `.ocards.two` grid,
+       with ONE difference: `.omark.sq` swaps `radius.full` for `radius.sm`.
+       Circle = one of these. Square = any of these. That is the only shape
+       convention in interface design that users already know, it costs one
+       token, and it means multi-select needs no second component. The ring, the
+       ink fill, the white check and the "no fill change" rule are all identical
+       to the radio card — BUILD-DECISIONS #20's check ships on both.
+
+       `.od` is OPTIONAL on a multi-select card and most amenities do not get
+       one. "TV — Guests can watch television" is padding, and padding on twelve
+       rows is 200px of nothing. A description appears only where the label is
+       genuinely ambiguous (`Hot water`, `Dedicated workspace`, `Rooftop
+       access`). Grid cells stretch, so the rows stay level anyway.
+
+     DECISION 2 — THE SWITCH ROW. NEW TO WEB; FOUR STEPS NEED IT.
+       HOST-SHELL has no switch. HA-022 and HA-030 both draw one on the phone
+       and BOTH FILL THE ON-STATE TRACK WITH BRAND GREEN. That is not copied
+       forward, for the same reason HA-019's brand-bordered option card is not:
+       TASTE §3 rules selection ink, and HOST-SHELL §7 allows the wizard exactly
+       three green roles (wordmark dot · bar state · the one enabled primary).
+       A green switch would be a fourth, repeated eight times down one page.
+
+       ANATOMY — the segmented control at switch scale, which is why it belongs:
+         track 44x26, `radius.full`
+         OFF   `bg.sunken` fill + `inset 0 0 0 1px border.default`, knob
+               `border.strong`      — exactly `.seg`'s resting track
+         ON    `interactive.selected` fill, no ring, knob
+               `interactive.selectedFg`  — exactly `.seg`'s selected segment
+         knob 20px, 3px inset, travel 18px, `radius.full`
+       Both states clear 3:1 against their own track in both themes, and the
+       knob is never a shadowed floating puck: HOST-SHELL §8 puts no shadow on
+       any host surface and a 20px disc does not earn the one exception.
+
+       THREE SIGNALS, ONLY ONE OF THEM COLOUR:
+         1. the knob's POSITION (start edge / end edge)
+         2. the track's WEIGHT (hairline outline / solid fill)
+         3. the row's SENTENCE, which is rewritten by state — "Guests see: …"
+            when on, "Off — …" when off. This is the one that actually matters:
+            a host never has to work out what a toggle means, because the row
+            tells them what the guest will read. HA-030 authors that grammar and
+            it is kept verbatim.
+
+       MARKUP is a native `<input type="checkbox" role="switch">` inside a
+       `<label class="swrow">`, styled through `:has()` — the same construction
+       as `.ocard` and `.chkrow`, so the whole row is a hit target, the browser
+       owns the state, and it works in a `<form>` with no script. HA-030 uses a
+       `<button role="switch">`; on web the input is better and the ARIA is the
+       same. The `<label>` swallows the description into the accessible name,
+       which is verbose and is exactly what `.chkrow` already does in HW-001.
+
+       MOTION — the knob travels, at `--dur-fast` / `--ease-standard`, transform
+       only. This is the one place on the wizard where an animation is honest:
+       it is an in-place state change the host just caused, not a page
+       navigation dressed up (which is why the progress bars still never
+       animate, HOST-SHELL §3). `.swrow:active .sw {scale(.97)}` for press.
+       Reduced motion drops both to `--dur-instant`.
+       Under RTL the travel inverts explicitly — `translateX` is physical, so
+       `.rtl .swrow:has(input:checked) .sw i` flips the sign. Without that rule
+       the knob leaves the track. This is the same class of bug as the `Back`
+       chevron's `scaleX(-1)` in HW-001.
+
+     DECISION 3 — HOW THE THREE SURVIVING HOUSE RULES ARE FRAMED.
+       SEO-RULES §3.6: "Host control is described as control, never as moral
+       endorsement." REPOSITIONING.md keeps three and states what each now is.
+       The framing is structural, not a disclaimer:
+
+       NO ALCOHOL sits in `Standard rules`, SECOND, between `No smoking inside`
+       and `No parties or events`. Same row, same anatomy, same type size, no
+       icon flourish, no note, no section of its own. REPOSITIONING says "at the
+       exact weight of no smoking or no parties" — the way to ship that is to
+       put it literally between them and then say nothing else about it.
+       Default on; a host who allows alcohol turns it off and the row's own
+       sentence becomes the disclosure a guest reads.
+
+       FAMILIES ONLY and WOMEN GUESTS ONLY sit in `Who can book`, both OFF by
+       default. Every line in that section is mechanical: what the switch does,
+       and what a guest will read. There is no sentence anywhere on this card
+       that recommends, approves, discourages, or explains why a host might
+       want one — because the platform has no view, and any sentence that
+       supplied one would be the platform judging who should travel with whom.
+       The section's sub-line does the §3.6 work in two clauses: these are
+       restrictions YOU set, and a guest reads them in the SAME list as every
+       other rule on the page.
+       Read aloud, the whole section is: "Off — any verified guest can book."
+
+     DECISION 4 — THE MULTI-SELECT'S EMPTY STATE NEEDS AN ESCAPE HATCH.
+       HOST-SHELL §11.2 requires a disabled primary that names its blocking
+       action, and "tick at least one amenity" is a dead end for a plain room
+       that genuinely has none of the twelve. So the step ships an explicit
+       `.chkrow` — `None of these apply to this place` — with the consequence
+       stated plainly, the same honesty affordance HW-001 gives load-shedding
+       ("Tick this and your listing reads … instead of a number", HOST-SHELL §6).
+       The gate is then "one amenity OR the escape hatch", which has no dead end.
+       INVENTED HERE and flagged: the corpus does not state what gates step 4.
+
+     DECISION 5 — WHAT AMENITIES DOES NOT COLLECT.
+       HA-022's `Practical` group ships `Generator / UPS`, and its Essentials
+       group ships `Free parking`. Both now belong to step 5, which collects
+       them properly — backup power as a four-way choice with a runtime, parking
+       as a three-way choice. Collecting them twice would let a listing
+       contradict itself. They are dropped here and the step's one `.ghint`
+       says where they went, so a host does not go hunting.
+       `Wi-Fi` stays, because step 5 collects the SPEED and this collects
+       whether it exists at all.
+
+     ---------------------------------------------------------------------------
+     ROUTES `/host/listings/new/amenities` and `/host/listings/new/house-rules`
+     · `noindex, follow` · `<main class="co-main wzbody">` · no canonical, no
+     hreflang, no JSON-LD, no breadcrumb, no footer. One `<h1>` on the card.
+
+     NOTE ON `co-main` — HOST-SHELL §1 and §2a require `class="co-main"` on
+     `<main>`; HW-001's Panel A ships `class="wzbody"` alone. The contract's own
+     skeleton writes `class="co-main wzbody"`, so that is what ships here.
+     FLAGGED for the sibling authors: HW-001 will mislead you on that one line.
+
+     CLAIMS: none. Claims 4 and 5 (no-alcohol, women-only) survive the
+     repositioning as registry entries, but a §5 claim is a sentence the SITE
+     makes to a reader — it is not a control label, and bending one to fit a
+     switch row would be the opposite of byte-exact. They belong on the pages
+     that claim them, not on the step that sets them.
+
+     REPOSITIONING.md (2026-07-26) governs content. None of the retired
+     observance vocabulary appears here in English or in Urdu — read the list in
+     that document rather than re-copying it into a card.
+
+     WORKED CASE — host Aqib, Cantt View Residence, Rawalpindi Cantonment (the
+     HA-014 / HA-018 / HA-019 / HW-001 thread). Every value is his own
+     disclosure about his own home.
+     INVENTED FOR THIS CARD: the twelve amenity labels' grouping, the check-in
+     window and quiet hours, and the custom rule's text — host-entered content
+     with no corpus source, present so the states are demonstrable.
+
+     CARD CONVENTION: panel A (light, house rules, filled) is the authoritative
+     semantic page — one h1, real landmarks, a real <form>. Panels B–H are
+     variants and renderings; all are `aria-hidden` with no headings or
+     landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role (DESIGN §13).
+     HW-001's block, copied verbatim (HOST-SHELL §9). No raw hex outside it.
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  ul,ol { list-style:none; }
+  fieldset { border:none; min-width:0; }
+  legend { padding:0; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.nar { max-width:820px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .note { font-size:12px; color:var(--text-tertiary); padding:8px 28px 16px; background:var(--bg-canvas); max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* =====================================================================
+     WIZARD CHROME — HW-001, unchanged.
+     ===================================================================== */
+  .wz { height:760px; overflow-y:auto; background:var(--bg-canvas); position:relative; }
+  .wz.rtl { direction:rtl; }
+
+  .wzhdr { display:flex; align-items:center; gap:14px; min-height:64px; padding:0 28px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .ctx { display:flex; align-items:center; gap:8px; padding-inline-start:14px; border-inline-start:1px solid var(--border-hairline); min-height:26px; }
+  .ctxlink { font-size:13px; font-weight:600; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .ctxlink:hover { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .ctxsep { font-size:12px; color:var(--text-tertiary); }
+  .ctxnow { font-size:13px; font-weight:600; color:var(--text-primary); white-space:nowrap; }
+  .hspacer { flex:1; }
+
+  .gbtn { display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:14px; font-weight:500; text-decoration:none; white-space:nowrap; cursor:pointer; }
+  .gbtn svg { width:16px; height:16px; flex:none; color:var(--text-secondary); }
+
+  /* HOST-SHELL §1 / §2a: the landmark carries `co-main`, never `indexable`. */
+  .co-main { display:block; }
+  .wzbody { display:block; background:var(--bg-canvas); }
+  .wzwrap { max-width:640px; margin:0 auto; padding:0 24px 32px; }
+  .pagehead { padding:44px 0 0; }
+  .pagehead h1, .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .psub { font-size:16px; color:var(--text-secondary); margin-top:10px; max-width:56ch; }
+
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); margin-top:28px; }
+  .fsec:first-of-type { margin-top:26px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  .ghint { display:flex; align-items:flex-start; gap:11px; margin-top:22px; font-size:13.5px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:17px; height:17px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+
+  .banner { display:flex; align-items:flex-start; gap:11px; margin-top:22px; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner .bico { flex:none; width:18px; height:18px; color:var(--warning-fg); margin-top:2px; }
+  .banner .bico svg { width:18px; height:18px; display:block; }
+  .banner.error { border-color:var(--error-border); background:var(--error-bg); }
+  .banner.error .bico { color:var(--error-fg); }
+  .banner .btxt { font-size:14px; color:var(--text-secondary); line-height:1.6; max-width:62ch; }
+  .banner .btxt b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+
+  /* ---- fields ---- */
+  .fld { margin-top:18px; }
+  .fld2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:7px; }
+  .fwrap { display:flex; align-items:center; gap:10px; min-height:48px; padding:0 14px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); }
+  .fwrap.err { border-color:var(--error-fg); }
+  /* multi-line variant — a rule in the host's own words is prose, not a value.
+     HOST-SHELL §5 has no multi-line field; step 7 will need this too. */
+  .fwrap.ta { align-items:flex-start; padding:12px 14px; min-height:98px; }
+  .ftext { display:block; flex:1; min-width:0; border:none; background:transparent; font-family:inherit; font-size:16px; font-weight:400; color:var(--text-primary); line-height:1.55; resize:vertical; min-height:72px; }
+  .ftext::placeholder { color:var(--text-secondary); }
+  .ftext:focus { outline:none; }
+  .fsub { display:block; font-size:13px; color:var(--text-tertiary); margin-top:7px; line-height:1.5; }
+  .fsub b { color:var(--text-secondary); font-weight:600; }
+  .sel { display:flex; align-items:center; gap:10px; width:100%; min-height:48px; padding:0 14px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); font-family:inherit; cursor:pointer; text-align:start; }
+  .sel .selv { flex:1; min-width:0; font-size:16px; color:var(--text-primary); }
+  .sel svg { width:17px; height:17px; color:var(--text-secondary); flex:none; }
+  /* HOST-SHELL §5 defines `.fwrap.err` but not `.sel.err`. Same treatment. */
+  .sel.err { border-color:var(--error-fg); }
+
+  /* checkbox row — the honesty escape hatch (HW-001's idiom, unchanged) */
+  .chkrow { display:flex; align-items:flex-start; gap:11px; margin-top:20px; cursor:pointer; }
+  .chkrow input { position:absolute; opacity:0; width:1px; height:1px; }
+  .chkbox { width:20px; height:20px; flex:none; margin-top:2px; border:1px solid var(--border-default); border-radius:var(--radius-sm); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; color:var(--int-selected-fg); }
+  .chkbox svg { width:13px; height:13px; opacity:0; transform:scale(.7); }
+  .chkrow input:checked + .chkbox { background:var(--int-selected); border-color:var(--int-selected); }
+  .chkrow input:checked + .chkbox svg { opacity:1; transform:scale(1); }
+  .chklab { font-size:14px; color:var(--text-primary); line-height:1.5; }
+
+  /* ---- option cards: 2px inset INK ring, no fill change, check mark ---- */
+  .ocards { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .ocards.two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ocard { position:relative; display:flex; align-items:flex-start; gap:13px; min-height:64px; padding:14px 15px; border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); cursor:pointer; }
+  .ocard input { position:absolute; opacity:0; width:1px; height:1px; }
+  .ocard .oic { width:36px; height:36px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .ocard .oic svg { width:18px; height:18px; }
+  /* top-aligned, exactly as HW-001: the icon disc, the title and the mark all
+     sit on the title's line box. In a stretched 2-up grid a label-only card's
+     spare height falls at the BOTTOM — centring the body instead leaves the
+     mark floating 10px above the word it belongs to. */
+  .ocard .obody { flex:1; min-width:0; }
+  .ocard .ot { display:block; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .ocard .od { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .ocard .omark { width:22px; height:22px; flex:none; margin-top:2px; border:1px solid var(--border-default); border-radius:var(--radius-full); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; color:var(--int-selected-fg); }
+  /* DECISION 1 — the ONE difference between single- and multi-select.
+     Circle = one of these. Square = any of these. */
+  .ocard .omark.sq { border-radius:var(--radius-sm); }
+  .ocard .omark svg { width:13px; height:13px; opacity:0; transform:scale(.7); }
+  .ocard:has(input:checked) { box-shadow:inset 0 0 0 2px var(--int-selected); }
+  .ocard:has(input:checked) .omark { background:var(--int-selected); border-color:var(--int-selected); }
+  .ocard:has(input:checked) .omark svg { opacity:1; transform:scale(1); }
+  .ocard:has(input:focus-visible) { box-shadow:var(--focus-ring); }
+
+  /* =====================================================================
+     DECISION 2 — THE SWITCH ROW. New to web; four wizard steps need it.
+     The segmented control at switch scale: `bg.sunken` + hairline when off,
+     ink fill when on. INK, never brand — HA-022 and HA-030 fill the on-state
+     with `interactive.primary` and that is not carried forward.
+     ===================================================================== */
+  .swlist { display:flex; flex-direction:column; margin-top:14px; }
+  .swrow { position:relative; display:flex; align-items:flex-start; gap:13px; padding:15px 2px; border-top:1px solid var(--border-hairline); cursor:pointer; }
+  .swlist .swrow:first-child { border-top:none; }
+  .swrow input { position:absolute; opacity:0; width:1px; height:1px; }
+  .swic { width:36px; height:36px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .swic svg { width:18px; height:18px; }
+  .swbody { flex:1; min-width:0; padding-top:1px; }
+  .swt { display:block; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .swd { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; line-height:1.45; }
+  .swd b { color:var(--text-primary); font-weight:600; }
+  .sw { position:relative; flex:none; width:44px; height:26px; margin-top:5px; border-radius:var(--radius-full); background:var(--bg-sunken); box-shadow:inset 0 0 0 1px var(--border-default); }
+  .sw i { position:absolute; top:3px; inset-inline-start:3px; width:20px; height:20px; border-radius:var(--radius-full); background:var(--border-strong); display:block; font-style:normal; }
+  .swrow:has(input:checked) .sw { background:var(--int-selected); box-shadow:none; }
+  .swrow:has(input:checked) .sw i { background:var(--int-selected-fg); transform:translateX(18px); }
+  /* translateX is physical, so RTL flips the sign or the knob leaves the track */
+  .rtl .swrow:has(input:checked) .sw i { transform:translateX(-18px); }
+  .swrow:has(input:focus-visible) { box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+
+  /* the sub-field a switch reveals — indented to the row's text column */
+  .subtime { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0 4px; margin-inline-start:49px; }
+  .subtime .sel { min-height:44px; }
+  .subtime .sel .selv { font-size:15px; }
+
+  .errline { display:flex; align-items:flex-start; gap:9px; margin-top:10px; font-size:13px; color:var(--error-fg); line-height:1.55; }
+  .errline svg { width:16px; height:16px; flex:none; margin-top:1px; }
+
+  /* ---- the sticky action bar ---- */
+  .wzfoot { position:sticky; bottom:0; background:var(--bg-canvas); }
+  .wbars { display:flex; gap:3px; height:4px; }
+  .wbars i { display:block; flex:1; height:4px; border-radius:var(--radius-full); background:var(--border-hairline); font-style:normal; }
+  .wbars i.done { background:var(--int-primary); }
+  .wbars i.now { background:var(--int-primary); opacity:.55; }
+  .footrow { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; padding:14px 28px 16px; }
+  .backbtn { justify-self:start; display:inline-flex; align-items:center; gap:8px; font-family:inherit; font-size:15px; font-weight:500; color:var(--text-primary); background:none; border:none; padding:6px 2px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+  .backbtn svg { width:15px; height:15px; flex:none; }
+  .rtl .backbtn svg { transform:scaleX(-1); }
+  .capstack { min-width:0; text-align:center; }
+  .cap { font-size:13px; color:var(--text-secondary); }
+  .cap b { color:var(--text-primary); font-weight:600; }
+  .capnote { font-size:12.5px; color:var(--text-tertiary); margin-top:3px; }
+  .wzcta { justify-self:end; display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 30px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; text-decoration:none; cursor:pointer; }
+  .wzcta[disabled], .wzcta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; }
+
+  /* =====================================================================
+     CARD-ONLY: the switch state ladder (panel B). `.is-focus` reproduces the
+     `:focus-visible` declaration so all three renderings sit in one
+     screenshot. Same device as the `.nar` panel scope. NOT PRODUCT MARKUP.
+     ===================================================================== */
+  .specwrap { padding:4px 28px 30px; background:var(--bg-canvas); max-width:720px; }
+  .states { display:flex; flex-direction:column; gap:6px; }
+  .stcol { display:block; }
+  .stlab { font-size:12px; font-weight:500; color:var(--text-tertiary); margin:14px 0 2px; }
+  .stlab code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .swrow.is-focus { box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+
+  /* =====================================================================
+     Motion — press feedback, plus the one honest state change on this
+     surface: the knob travels because the host just moved it. transform and
+     opacity only; hover gated; reduced motion dampens. The progress bars
+     still never animate.
+     ===================================================================== */
+  .wzcta, .gbtn, .ocard, .sel, .backbtn { transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard), border-color var(--dur-instant) var(--ease-standard); }
+  .omark svg, .chkbox svg { transition:opacity var(--dur-instant) var(--ease-standard), transform var(--dur-instant) var(--ease-standard); }
+  .sw { transition:background-color var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard), transform var(--dur-instant) var(--ease-standard); }
+  .sw i { transition:transform var(--dur-fast) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard); }
+  .wzcta:not([disabled]):not(.off):active, .gbtn:active { transform:scale(.98); }
+  .ocard:active, .sel:active { transform:scale(.995); }
+  .swrow:active .sw { transform:scale(.97); }
+  @media (hover:hover) and (pointer:fine) {
+    .wzcta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .gbtn:hover { background:var(--bg-sunken); }
+    .ocard:hover, .sel:hover { border-color:var(--border-strong); }
+    .swrow:hover .sw { box-shadow:inset 0 0 0 1px var(--border-strong); }
+    .swrow:has(input:checked):hover .sw { box-shadow:none; }
+    .backbtn:hover { color:var(--text-primary); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .wzcta, .gbtn, .ocard, .sel, .backbtn, .omark svg, .chkbox svg, .sw, .sw i { transition-duration:var(--dur-instant); }
+    .wzcta:active, .gbtn:active, .ocard:active, .sel:active { transform:none; }
+    .swrow:active .sw { transform:none; }
+    .omark svg, .chkbox svg { transform:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; line-height:1.95; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+
+  /* ---- narrow: the .nar panel scope mirrors this exactly ---- */
+  @media (max-width:820px) {
+    .footrow { grid-template-columns:auto 1fr; grid-template-areas:"cap cap" "back cta"; row-gap:10px; padding:12px 20px 14px; }
+    .capstack { grid-area:cap; text-align:start; }
+    .backbtn { grid-area:back; }
+    .wzcta { grid-area:cta; }
+    .wzwrap { padding:0 20px 28px; }
+    .fld2, .ocards.two { grid-template-columns:1fr; }
+    .subtime { margin-inline-start:0; }
+    .wzhdr { padding:0 20px; gap:10px; }
+  }
+  .nar .footrow { grid-template-columns:auto 1fr; grid-template-areas:"cap cap" "back cta"; row-gap:10px; padding:12px 20px 14px; }
+  .nar .capstack { grid-area:cap; text-align:start; }
+  .nar .backbtn { grid-area:back; }
+  .nar .wzcta { grid-area:cta; }
+  .nar .wzwrap { padding:0 20px 28px; }
+  .nar .fld2, .nar .ocards.two { grid-template-columns:1fr; }
+  .nar .subtime { margin-inline-start:0; }
+  .nar .wzhdr { padding:0 20px; gap:10px; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">HW-003 — Host wizard: multi-select and switch rows</div>
+    <p>Two steps on one card, because they are the two halves of one distinction. Step <code>4</code> (<code>/host/listings/new/amenities</code>) is a host <strong>declaring facts</strong> — the option card with a <strong>square</strong> mark, in the 2-up grid. Step <code>8</code> (<code>/host/listings/new/house-rules</code>) is a host <strong>setting policy</strong> — the <strong>switch row</strong>, new to web and needed by four steps, drawn here as the segmented control at switch scale with an <strong>ink</strong> on-state and a sentence that rewrites itself with the state. <code>No alcohol</code> sits between <code>No smoking</code> and <code>No parties</code>; <code>Families only</code> and <code>Women guests only</code> sit in <code>Who can book</code>, both off, described purely as mechanics. Panel A is the authoritative semantic page; B–H are variants.</p>
+  </div>
+
+  <div class="stack">
+    <!-- ================= PANEL A · LIGHT · STEP 8, HOUSE RULES, FILLED (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">A · Light — step 8 of 9 · House rules · filled, primary enabled</div>
+      <div class="note">The authoritative page: one <code>h1</code>, real landmarks, a real <code>&lt;form&gt;</code>, <code>&lt;main class="co-main wzbody"&gt;</code>. <b>Scroll it</b> — the action bar is really sticky. Every switch is a native <code>&lt;input type="checkbox" role="switch"&gt;</code> inside its row's <code>&lt;label&gt;</code>, so the whole row is the hit target and the browser owns the state. The on-state is <b>ink</b>, never green: this surface spends green on the wordmark dot, the bar state and the one enabled primary, and eight green switches would be eight more. <b>Read the second line of every row.</b> It is not a description of the control, it is the sentence a guest will read — which is why a host never has to work out what a toggle means, and why <code>No alcohol</code> needs no explanation beyond sitting between <code>No smoking inside</code> and <code>No parties or events</code> at the same weight.</div>
+      <div class="wz">
+
+        <header class="wzhdr">
+          <a class="wordmark" href="/host/today">Salam<span class="dot">.</span>Stay</a>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1 .9-1 1.6"/><path d="M12 16.6h.01"/></svg>
+            Questions?
+          </a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </header>
+
+        <main class="co-main wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <h1>Your house rules</h1>
+              <p class="psub">Guests read these before they book, and agree to them once at checkout. Keep them plain — the way you would say them at the gate.</p>
+            </div>
+
+            <p class="ghint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+              <span><b>These rules are yours.</b> Guests see exactly what you set here, and SalamStay adds nothing of its own to the list.</span>
+            </p>
+
+            <form id="house-rules-form" action="/host/listings/new/pricing" method="post">
+
+              <section class="fsec" aria-labelledby="times-h">
+                <h2 id="times-h">Checking in and out</h2>
+                <p class="sec-sub">Two times a guest plans a whole travel day around.</p>
+
+                <div class="fld fld2">
+                  <div>
+                    <span class="flabel" id="cin-l">Check-in window</span>
+                    <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cin-l">
+                      <span class="selv"><span class="num">2:00</span> PM to <span class="num">8:00</span> PM</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                  </div>
+                  <div>
+                    <span class="flabel" id="cout-l">Check-out by</span>
+                    <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cout-l">
+                      <span class="selv"><span class="num">11:00</span> AM</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="fsec" aria-labelledby="std-h">
+                <h2 id="std-h">Standard rules</h2>
+                <p class="sec-sub">Each one is on or off. The line under it is what a guest will read.</p>
+
+                <div class="swlist">
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-smoking" checked />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h12a3 3 0 1 0-3-3"/><path d="M18 13h3"/><path d="M3 3l18 18"/><path d="M3 17h9"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">No smoking inside</span>
+                      <span class="swd">Guests see: smoking is not permitted indoors.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-alcohol" checked />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1 5.5a4 4 0 0 1-8 0z"/><path d="M12 14v5"/><path d="M9 20h6"/><path d="M3 3l18 18"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">No alcohol</span>
+                      <span class="swd">Guests see: alcohol is not permitted in the home.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-parties" checked />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4-9 4 6 3-2 3 5"/><path d="M4 13h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M3 3l18 18"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">No parties or events</span>
+                      <span class="swd">Guests see: the home does not allow large gatherings.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-quiet" checked />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6L7 9.5H4v5h3L11 18z"/><path d="M15.5 9.5l4 5"/><path d="M19.5 9.5l-4 5"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">Quiet hours</span>
+                      <span class="swd">Guests see the window you set below.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+                </div>
+
+                <div class="subtime">
+                  <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Quiet hours start">
+                    <span class="selv">From <span class="num">10:00</span> PM</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                  <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Quiet hours end">
+                    <span class="selv">To <span class="num">6:00</span> AM</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                </div>
+
+                <div class="swlist">
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-shoes" />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-5h3l3 2h6a5 5 0 0 1 5 5v1H3z"/><path d="M6 11V8"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">Shoes off inside</span>
+                      <span class="swd">Off — guests may keep their shoes on.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="fsec" aria-labelledby="who-h">
+                <h2 id="who-h">Who can book</h2>
+                <p class="sec-sub">Restrictions you set on your own listing. Both are off unless you turn them on, and a guest reads them in the same list as every other rule on this page.</p>
+
+                <div class="swlist">
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-families" />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7.5" r="2.5"/><circle cx="16" cy="7.5" r="2.5"/><path d="M3.5 19v-2a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v2"/><path d="M14 14h3.5a3 3 0 0 1 3 3v2"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">Families only</span>
+                      <span class="swd">Off — any verified guest can book.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+
+                  <label class="swrow">
+                    <input type="checkbox" role="switch" name="rule-women" />
+                    <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="4.5"/><path d="M12 13v7"/><path d="M9 17.5h6"/></svg></span>
+                    <span class="swbody">
+                      <span class="swt">Women guests only</span>
+                      <span class="swd">Off — guests of any gender can book.</span>
+                    </span>
+                    <span class="sw" aria-hidden="true"><i></i></span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="fsec" aria-labelledby="own-h">
+                <h2 id="own-h">A rule in your own words</h2>
+                <p class="sec-sub">One thing the list above does not cover. Optional.</p>
+
+                <div class="fld">
+                  <label class="flabel" for="own-rule">Your rule</label>
+                  <span class="fwrap ta">
+                    <textarea class="ftext" id="own-rule" rows="3">Please message me if you will arrive after 10 PM — the gate is locked at night and I will come down to open it.</textarea>
+                  </span>
+                  <span class="fsub">Rules here are practical instructions, not a checklist of suspicion — a guest reads yours the same way they read your check-in time.</span>
+                </div>
+              </section>
+
+            </form>
+          </div>
+        </main>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+          <div class="footrow">
+            <a class="backbtn" href="/host/listings/new/title-description">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </a>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">8</span> of <span class="num">9</span> · House rules</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <button class="wzcta" type="submit" form="house-rules-form">Continue</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL B · THE SWITCH-ROW STATE LADDER ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">B · The switch row, all three renderings side by side</div>
+      <div class="note">The component this card introduces, drawn once at full size. <b>Off</b> is <code>.seg</code>'s resting track at switch scale: <code>bg.sunken</code> fill, <code>inset 0 0 0 1px border.default</code>, knob <code>border.strong</code>. <b>On</b> is <code>.seg</code>'s selected segment: <code>interactive.selected</code> fill, ring removed, knob <code>interactive.selectedFg</code>. That is the whole colour story, and it is the same story the option card and the segmented control already tell — <b>ink, never brand</b>. HA-022 and HA-030 both fill the on-state green; that is not carried forward, because HOST-SHELL §7 gives this surface three green roles and a page of switches would be eight more. <b>Focus</b> rings the whole row, because the whole row is the hit target. Three signals distinguish on from off and only one of them is colour: the knob's position, the track's weight, and the row's second line, which is rewritten by state. <code>.is-focus</code> is card-only and never reaches product markup.</div>
+      <div class="specwrap">
+        <div class="states">
+          <div class="stcol">
+            <p class="stlab">Off — <code>bg.sunken</code> track, hairline ring, knob at the reading-start edge</p>
+            <span class="swrow">
+              <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-5h3l3 2h6a5 5 0 0 1 5 5v1H3z"/><path d="M6 11V8"/></svg></span>
+              <span class="swbody">
+                <span class="swt">Shoes off inside</span>
+                <span class="swd">Off — guests may keep their shoes on.</span>
+              </span>
+              <span class="sw" aria-hidden="true"><i></i></span>
+            </span>
+          </div>
+          <div class="stcol">
+            <p class="stlab">On — <code>interactive.selected</code> fill, knob travels 18px, and <b>the sentence changes</b></p>
+            <label class="swrow">
+              <input type="checkbox" role="switch" checked />
+              <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-5h3l3 2h6a5 5 0 0 1 5 5v1H3z"/><path d="M6 11V8"/></svg></span>
+              <span class="swbody">
+                <span class="swt">Shoes off inside</span>
+                <span class="swd">Guests see: please leave shoes at the door.</span>
+              </span>
+              <span class="sw" aria-hidden="true"><i></i></span>
+            </label>
+          </div>
+          <div class="stcol">
+            <p class="stlab">Keyboard focus — the shared <code>--focus-ring</code> on the whole row, not the track</p>
+            <span class="swrow is-focus">
+              <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-5h3l3 2h6a5 5 0 0 1 5 5v1H3z"/><path d="M6 11V8"/></svg></span>
+              <span class="swbody">
+                <span class="swt">Shoes off inside</span>
+                <span class="swd">Off — guests may keep their shoes on.</span>
+              </span>
+              <span class="sw" aria-hidden="true"><i></i></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ================= PANEL C · LIGHT · STEP 4, AMENITIES, ANSWERED ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">C · Light — step 4 of 9 · Amenities · sectioned multi-select, six ticked</div>
+      <div class="note">The other half of the distinction. A host here is <b>declaring a fact about the property</b>, so the control is the option card, not a switch — same anatomy as step 1, with the mark's radius dropped from <code>full</code> to <code>sm</code>. <b>Circle = one of these. Square = any of these.</b> That is the only difference, and it means multi-select needs no second component. Grouping is the shell's own <code>.fsec</code> rhythm — three sections with a rule and a 22/600 heading — not HA-022's uppercase micro-label, which is an eyebrow and TASTE §7 has none of them anywhere. Descriptions appear only where the label is genuinely ambiguous; "TV — guests can watch television" is padding, and padding on twelve rows is a screenful of nothing. Note what is <b>not</b> collected here: backup power and parking, which step 5 collects properly, and which would let a listing contradict itself if both steps asked.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">Questions?</a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">What can guests use?</div>
+              <p class="psub">Tick everything this place actually has. Leave out anything a guest could not use on the day they arrive.</p>
+            </div>
+
+            <p class="ghint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+              <span>Load-shedding, backup power, water, sui gas, Wi-Fi speed and parking all have <b>their own step next</b> — you do not need them here.</span>
+            </p>
+
+            <div class="fsec">
+              <div class="h2">Essentials</div>
+              <div class="ocards two">
+                <label class="ocard">
+                  <input type="checkbox" name="am-wifi" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9a15 15 0 0 1 19 0"/><path d="M5.5 12.5a10.5 10.5 0 0 1 13 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><path d="M12 19.5h.01"/></svg></span>
+                  <span class="obody"><span class="ot">Wi-Fi</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-kitchen" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2.5 10h19"/><path d="M8 6.5V4M12 6.5V4M16 6.5V4"/></svg></span>
+                  <span class="obody"><span class="ot">Kitchen</span><span class="od">Guests can cook</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-hotwater" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5s4.5 5 4.5 8a4.5 4.5 0 0 1-9 0c0-3 4.5-8 4.5-8z"/><path d="M4 19c1.3-1 2.7-1 4 0s2.7 1 4 0 2.7-1 4 0 2.7 1 4 0"/></svg></span>
+                  <span class="obody"><span class="ot">Hot water</span><span class="od">Geyser or instant heater</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-washer" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13.5" r="4"/><path d="M7.5 6.5h.01M11 6.5h.01"/></svg></span>
+                  <span class="obody"><span class="ot">Washing machine</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Comfort</div>
+              <div class="ocards two">
+                <label class="ocard">
+                  <input type="checkbox" name="am-ac" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="7" rx="2"/><path d="M6.5 8.5h11"/><path d="M7 15c0 1.5 1 1.5 1 3M12 15c0 1.5 1 1.5 1 3M17 15c0 1.5 1 1.5 1 3"/></svg></span>
+                  <span class="obody"><span class="ot">Air conditioning</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-heater" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="11" rx="2"/><path d="M8 7v11M12 7v11M16 7v11"/><path d="M6 20v1.5M18 20v1.5"/><path d="M7 4.5c0 1 1.5 1 1.5 2"/></svg></span>
+                  <span class="obody"><span class="ot">Heater</span><span class="od">For colder winters</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-tv" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M9 20.5h6"/><path d="M12 17v3.5"/></svg></span>
+                  <span class="obody"><span class="ot">TV</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-desk" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h18"/><path d="M5 13v7M19 13v7"/><path d="M8 13V9.5a2 2 0 0 1 2-2h5"/><path d="M14 4.5h4v3.5h-4z"/></svg></span>
+                  <span class="obody"><span class="ot">Dedicated workspace</span><span class="od">A desk and a chair</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The building and outside</div>
+              <div class="ocards two">
+                <label class="ocard">
+                  <input type="checkbox" name="am-lift" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 3v18"/><path d="M8 9.5L9.5 7 11 9.5"/><path d="M15 14.5L16.5 17 18 14.5"/></svg></span>
+                  <span class="obody"><span class="ot">Lift</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-balcony" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M4.5 20v-7h15v7"/><path d="M8 13v7M12 13v7M16 13v7"/><path d="M7 9.5V6a5 5 0 0 1 10 0v3.5"/></svg></span>
+                  <span class="obody"><span class="ot">Balcony or terrace</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-garden" checked />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6"/><path d="M12 14c-3.5 0-5-2-5-4.5S9 4 12 4s5 2.5 5 5.5S15.5 14 12 14z"/><path d="M4 20h16"/></svg></span>
+                  <span class="obody"><span class="ot">Garden or lawn</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-roof" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5h18"/><path d="M5 8.5V20h14V8.5"/><path d="M8 20v-4h3v4"/><path d="M14 12.5h3"/><path d="M12 8.5V5"/></svg></span>
+                  <span class="obody"><span class="ot">Rooftop access</span><span class="od">Open to guests</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+              </div>
+
+              <label class="chkrow">
+                <input type="checkbox" />
+                <span class="chkbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="chklab">None of these apply to this place
+                  <span class="fsub">Your listing then shows <b>no amenities list at all</b>, rather than an empty one. You can still describe the place in your own words on a later step.</span>
+                </span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <a class="backbtn" href="/host/listings/new/capacity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </a>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">4</span> of <span class="num">9</span> · Amenities</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL D · LIGHT · EMPTY · PRIMARY DISABLED ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">D · Light — step 4 · nothing ticked · primary disabled but visible and in place</div>
+      <div class="note">The disabled primary keeps its size, its position and its label; only its fill and label colour change (<code>bg.raised</code> + <code>text.disabled</code>, TASTE §11.7). "Tick at least one" would be a <b>dead end</b> for a plain room that genuinely has none of the twelve, so the step ships an explicit escape hatch and the caption names both ways out. Same honesty affordance HW-001 gives load-shedding — the host is never forced to claim something that is not true, and the consequence of the honest answer is stated in plain words before they choose it. Panels 2–6 may abbreviate (HOST-SHELL §11); only the first group is drawn.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">Questions?</a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">What can guests use?</div>
+              <p class="psub">Tick everything this place actually has. Leave out anything a guest could not use on the day they arrive.</p>
+            </div>
+
+            <p class="ghint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+              <span>Load-shedding, backup power, water, sui gas, Wi-Fi speed and parking all have <b>their own step next</b> — you do not need them here.</span>
+            </p>
+
+            <div class="fsec">
+              <div class="h2">Essentials</div>
+              <div class="ocards two">
+                <label class="ocard">
+                  <input type="checkbox" name="am-wifi-d" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9a15 15 0 0 1 19 0"/><path d="M5.5 12.5a10.5 10.5 0 0 1 13 0"/><path d="M8.5 16a6 6 0 0 1 7 0"/><path d="M12 19.5h.01"/></svg></span>
+                  <span class="obody"><span class="ot">Wi-Fi</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-kitchen-d" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2.5 10h19"/><path d="M8 6.5V4M12 6.5V4M16 6.5V4"/></svg></span>
+                  <span class="obody"><span class="ot">Kitchen</span><span class="od">Guests can cook</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-hotwater-d" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5s4.5 5 4.5 8a4.5 4.5 0 0 1-9 0c0-3 4.5-8 4.5-8z"/><path d="M4 19c1.3-1 2.7-1 4 0s2.7 1 4 0 2.7-1 4 0 2.7 1 4 0"/></svg></span>
+                  <span class="obody"><span class="ot">Hot water</span><span class="od">Geyser or instant heater</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+                <label class="ocard">
+                  <input type="checkbox" name="am-washer-d" />
+                  <span class="oic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13.5" r="4"/><path d="M7.5 6.5h.01M11 6.5h.01"/></svg></span>
+                  <span class="obody"><span class="ot">Washing machine</span></span>
+                  <span class="omark sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                </label>
+              </div>
+
+              <label class="chkrow">
+                <input type="checkbox" />
+                <span class="chkbox" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="chklab">None of these apply to this place
+                  <span class="fsub">Your listing then shows <b>no amenities list at all</b>, rather than an empty one. You can still describe the place in your own words on a later step.</span>
+                </span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <a class="backbtn" href="/host/listings/new/capacity">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </a>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">4</span> of <span class="num">9</span> · Amenities</b></p>
+              <p class="capnote">Tick one amenity, or the box below them, to continue.</p>
+            </div>
+            <button class="wzcta" type="button" disabled>Continue</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- ================= PANEL E · LIGHT · ERROR — BOTH REGISTERS ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">E · Light — step 8 · Continue pressed with quiet hours switched on and no end time</div>
+      <div class="note">Both registers, as HOST-SHELL §11.3 requires: a page-level <code>.banner.error</code> above the form with a <b>named recovery action</b>, and an inline <code>.errline</code> under the field at fault, with <code>.sel.err</code> on that one control. This is the <b>error</b> register because it is a fact about the form; a document <i>review</i> outcome takes the warning register instead, and there is never a red mark on a person or a family document. <b>The primary stays enabled</b> — the host pressed it to get here, so it must stay pressable. Note the second recovery the error names: turning the switch off is as valid an answer as filling the field, and saying so is what stops a host inventing a time to get past a form.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">Questions?</a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Your house rules</div>
+              <p class="psub">Guests read these before they book, and agree to them once at checkout.</p>
+            </div>
+
+            <div class="banner error">
+              <span class="bico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>
+              </span>
+              <div class="btxt">
+                <p><b>Quiet hours has no end time.</b> You set the window to start at <span class="num">10:00</span> PM and left the end blank, so a guest would see a start and nothing after it.</p>
+                <a class="inlink" href="/host/listings/new/house-rules#quiet-e">Go to it</a>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Standard rules</div>
+              <p class="sec-sub">Each one is on or off. The line under it is what a guest will read.</p>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-alcohol-e" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1 5.5a4 4 0 0 1-8 0z"/><path d="M12 14v5"/><path d="M9 20h6"/><path d="M3 3l18 18"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">No alcohol</span>
+                    <span class="swd">Guests see: alcohol is not permitted in the home.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-quiet-e" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6L7 9.5H4v5h3L11 18z"/><path d="M15.5 9.5l4 5"/><path d="M19.5 9.5l-4 5"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Quiet hours</span>
+                    <span class="swd">Guests see the window you set below.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+
+              <div class="subtime" id="quiet-e">
+                <span class="sel">
+                  <span class="selv">From <span class="num">10:00</span> PM</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+                <span class="sel err">
+                  <span class="selv">To</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+              <p class="errline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>
+                <span>Pick the time quiet hours end, or turn <b>Quiet hours</b> off.</span>
+              </p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Who can book</div>
+              <p class="sec-sub">Restrictions you set on your own listing. Both are off unless you turn them on, and a guest reads them in the same list as every other rule on this page.</p>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-families-e" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7.5" r="2.5"/><circle cx="16" cy="7.5" r="2.5"/><path d="M3.5 19v-2a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v2"/><path d="M14 14h3.5a3 3 0 0 1 3 3v2"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Families only</span>
+                    <span class="swd">Off — any verified guest can book.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-women-e" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="4.5"/><path d="M12 13v7"/><path d="M9 17.5h6"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Women guests only</span>
+                    <span class="swd">Off — guests of any gender can book.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+          <div class="footrow">
+            <a class="backbtn" href="/host/listings/new/title-description">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </a>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">8</span> of <span class="num">9</span> · House rules</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL F · DARK ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">F · Dark — the switch inverts with the ink token, and stays legible either way</div>
+      <div class="note">Dark is a theme rendering, not a second design: no second <code>h1</code>, no landmarks. Watch the switch. <code>interactive.selected</code> flips from near-black to near-white and its knob flips with it, so an <b>on</b> switch stays the highest-contrast object in its row in both themes without ever reaching for green. The off track flips from <code>bg.sunken</code>-on-white to <code>bg.sunken</code>-on-near-black, which is nearly the canvas colour in dark — that is what the 1px <code>border.default</code> ring is for, and why the ring is removed only when the fill arrives to replace it. Both states clear <span class="num">3</span>:<span class="num">1</span> against their own track in both themes.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">Questions?</a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+            <div class="pagehead">
+              <div class="ptitle">Your house rules</div>
+              <p class="psub">Guests read these before they book, and agree to them once at checkout.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Standard rules</div>
+              <p class="sec-sub">Each one is on or off. The line under it is what a guest will read.</p>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-smoking-f" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h12a3 3 0 1 0-3-3"/><path d="M18 13h3"/><path d="M3 3l18 18"/><path d="M3 17h9"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">No smoking inside</span>
+                    <span class="swd">Guests see: smoking is not permitted indoors.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-alcohol-f" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1 5.5a4 4 0 0 1-8 0z"/><path d="M12 14v5"/><path d="M9 20h6"/><path d="M3 3l18 18"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">No alcohol</span>
+                    <span class="swd">Guests see: alcohol is not permitted in the home.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-shoes-f" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-5h3l3 2h6a5 5 0 0 1 5 5v1H3z"/><path d="M6 11V8"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Shoes off inside</span>
+                    <span class="swd">Off — guests may keep their shoes on.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Who can book</div>
+              <p class="sec-sub">Restrictions you set on your own listing. Both are off unless you turn them on, and a guest reads them in the same list as every other rule on this page.</p>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-families-f" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7.5" r="2.5"/><circle cx="16" cy="7.5" r="2.5"/><path d="M3.5 19v-2a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v2"/><path d="M14 14h3.5a3 3 0 0 1 3 3v2"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Families only</span>
+                    <span class="swd">Off — any verified guest can book.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-women-f" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="4.5"/><path d="M12 13v7"/><path d="M9 17.5h6"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Women guests only</span>
+                    <span class="swd">Off — guests of any gender can book.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">8</span> of <span class="num">9</span> · House rules</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- ================= PANEL G · RTL / اردو ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">G · اردو · RTL — the switch knob travels the other way, and it needs a rule to do it</div>
+      <div class="note">Direction demo, and the one place the switch needs an explicit rule. The track, the icon disc and the row all mirror for free because they are flex children. <b>The knob does not.</b> Its resting inset is logical (<code>inset-inline-start</code>) so it starts at the reading-start edge correctly, but its travel is <code>translateX</code>, which is physical — without <code>.rtl .swrow:has(input:checked) .sw i {translateX(-18px)}</code> the knob slides straight off the end of the track. Same class of bug as the <code>Back</code> chevron's <code>scaleX(-1)</code> in HW-001, and worth naming because the next author to build a toggle will hit it. Every digit run is <code>.num</code>-isolated and stays Western (Pass #31); the caption keeps HA-019's Urdu grammar, <code>مرحلہ N از 9 · {نام}</code>.</div>
+      <div class="wz rtl" dir="rtl" lang="ur">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink nastaliq" href="/ur/host/listings">میزبان سیٹ اپ</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow nastaliq">نئی لسٹنگ</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn nastaliq" href="/ur/host/help/creating-a-listing">سوالات؟</a>
+          <a class="gbtn nastaliq" href="/ur/host/listings">محفوظ کریں اور نکلیں</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+            <div class="pagehead">
+              <div class="ptitle nastaliq">آپ کے گھر کے قواعد</div>
+              <p class="psub nastaliq">مہمان بکنگ سے پہلے یہی پڑھتے ہیں اور چیک آؤٹ پر ایک بار ان سے اتفاق کرتے ہیں۔ انہیں سادہ رکھیں — جیسے آپ گیٹ پر بات کرتے ہیں۔</p>
+            </div>
+
+            <p class="ghint nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+              <span><b>یہ قواعد آپ کے اپنے ہیں۔</b> مہمانوں کو بالکل وہی نظر آتا ہے جو آپ یہاں طے کرتے ہیں، اور اس فہرست میں ہماری طرف سے کچھ شامل نہیں کیا جاتا۔</span>
+            </p>
+
+            <div class="fsec">
+              <div class="h2 nastaliq">عام قواعد</div>
+              <p class="sec-sub nastaliq">ہر ایک یا تو آن ہے یا بند۔ نیچے والی سطر وہی ہے جو مہمان پڑھے گا۔</p>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-smoking-g" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h12a3 3 0 1 0-3-3"/><path d="M18 13h3"/><path d="M3 3l18 18"/><path d="M3 17h9"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt nastaliq">اندر سگریٹ نوشی منع</span>
+                    <span class="swd nastaliq">مہمان دیکھیں گے: گھر کے اندر سگریٹ نوشی کی اجازت نہیں۔</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-alcohol-g" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1 5.5a4 4 0 0 1-8 0z"/><path d="M12 14v5"/><path d="M9 20h6"/><path d="M3 3l18 18"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt nastaliq">شراب کی اجازت نہیں</span>
+                    <span class="swd nastaliq">مہمان دیکھیں گے: گھر میں شراب کی اجازت نہیں۔</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-quiet-g" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6L7 9.5H4v5h3L11 18z"/><path d="M15.5 9.5l4 5"/><path d="M19.5 9.5l-4 5"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt nastaliq">خاموشی کے اوقات</span>
+                    <span class="swd nastaliq">مہمان وہی وقت دیکھیں گے جو آپ نیچے طے کریں گے۔</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+
+              <div class="subtime">
+                <span class="sel">
+                  <span class="selv nastaliq">رات <span class="num">10:00</span> بجے سے</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+                <span class="sel">
+                  <span class="selv nastaliq">صبح <span class="num">6:00</span> بجے تک</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-shoes-g" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16v-5h3l3 2h6a5 5 0 0 1 5 5v1H3z"/><path d="M6 11V8"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt nastaliq">اندر جوتے اتاریں</span>
+                    <span class="swd nastaliq">بند — مہمان جوتے پہنے رکھ سکتے ہیں۔</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2 nastaliq">کون بکنگ کر سکتا ہے</div>
+              <p class="sec-sub nastaliq">یہ پابندیاں آپ اپنی لسٹنگ پر خود لگاتے ہیں۔ جب تک آپ انہیں آن نہ کریں یہ بند رہتی ہیں، اور مہمان انہیں اسی فہرست میں پڑھتا ہے جس میں اس صفحے کے باقی سب قواعد ہیں۔</p>
+
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-families-g" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7.5" r="2.5"/><circle cx="16" cy="7.5" r="2.5"/><path d="M3.5 19v-2a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v2"/><path d="M14 14h3.5a3 3 0 0 1 3 3v2"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt nastaliq">صرف خاندان</span>
+                    <span class="swd nastaliq">بند — کوئی بھی شناخت شدہ مہمان بکنگ کر سکتا ہے۔</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-women-g" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="4.5"/><path d="M12 13v7"/><path d="M9 17.5h6"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt nastaliq">صرف خواتین مہمان</span>
+                    <span class="swd nastaliq">بند — کسی بھی جنس کے مہمان بکنگ کر سکتے ہیں۔</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              پیچھے
+            </span>
+            <div class="capstack">
+              <p class="cap nastaliq">مرحلہ <b><span class="num">8</span> از <span class="num">9</span> · گھر کے قواعد</b></p>
+              <p class="capnote nastaliq">آپ کی پیش رفت خودکار طور پر محفوظ ہوتی رہتی ہے۔</p>
+            </div>
+            <span class="wzcta nastaliq">جاری رکھیں</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL H · NARROW ================= -->
+    <div class="doc nar" aria-hidden="true">
+      <div class="panel-tag">H · Narrow — below <span class="num">820</span>px the switch row keeps its shape and the action bar wraps</div>
+      <div class="note">The switch row needs no narrow variant: the icon disc and the track are fixed, the body is the only flexible column, and the sentence simply wraps. That is the argument for a leading icon and a trailing control over any layout that puts the switch under the label. The quiet-hours sub-field drops its <span class="num">49</span>px indent and keeps its two columns. The caption takes the full first line and aligns to the reading-start; Back and the primary keep the row below and push to the two edges. Nine bars at any width, because the step count is a fact about the flow, not about the viewport.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+            <div class="pagehead">
+              <div class="ptitle">Your house rules</div>
+              <p class="psub">Guests read these before they book.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Standard rules</div>
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-alcohol-h" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10l-1 5.5a4 4 0 0 1-8 0z"/><path d="M12 14v5"/><path d="M9 20h6"/><path d="M3 3l18 18"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">No alcohol</span>
+                    <span class="swd">Guests see: alcohol is not permitted in the home.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-quiet-h" checked />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6L7 9.5H4v5h3L11 18z"/><path d="M15.5 9.5l4 5"/><path d="M19.5 9.5l-4 5"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Quiet hours</span>
+                    <span class="swd">Guests see the window you set below.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+              <div class="subtime">
+                <span class="sel">
+                  <span class="selv">From <span class="num">10:00</span> PM</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+                <span class="sel">
+                  <span class="selv">To <span class="num">6:00</span> AM</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Who can book</div>
+              <p class="sec-sub">Restrictions you set on your own listing. Both are off unless you turn them on.</p>
+              <div class="swlist">
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-families-h" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7.5" r="2.5"/><circle cx="16" cy="7.5" r="2.5"/><path d="M3.5 19v-2a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v2"/><path d="M14 14h3.5a3 3 0 0 1 3 3v2"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Families only</span>
+                    <span class="swd">Off — any verified guest can book.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+                <label class="swrow">
+                  <input type="checkbox" role="switch" name="rule-women-h" />
+                  <span class="swic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="4.5"/><path d="M12 13v7"/><path d="M9 17.5h6"/></svg></span>
+                  <span class="swbody">
+                    <span class="swt">Women guests only</span>
+                    <span class="swd">Off — guests of any gender can book.</span>
+                  </span>
+                  <span class="sw" aria-hidden="true"><i></i></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">8</span> of <span class="num">9</span> · House rules</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -84,7 +84,12 @@ export function ListingRules({ listing }: { readonly listing: ListingContent }) 
         <div>
           <h3 className={listingH3}>{rules.cancellation.heading}</h3>
           <p className={`mt-3 ${listingPara}`}>
-            <Copy text={rules.cancellation.body} bold={["48 hours"]} />
+            {/* The emphasis comes from the listing, not from here. This read
+                `bold={["48 hours"]}` until 2026-07-26 — correct for the seven
+                Flexible homes and wrong for the three Moderate ones, where it
+                either bolded nothing at all or, worse, bolded the phrase that
+                names what is NOT refunded as though it were the free window. */}
+            <Copy text={rules.cancellation.body} bold={[rules.cancellation.bold]} />
           </p>
           <Link
             href={rules.cancellation.link.href}

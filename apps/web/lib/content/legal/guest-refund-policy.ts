@@ -1,4 +1,4 @@
-import { bold, link, num, term } from "./types";
+import { bold, link, num } from "./types";
 import type { LegalPageContent } from "./types";
 
 /**
@@ -12,9 +12,9 @@ import type { LegalPageContent } from "./types";
  * This is the CANONICAL cancellation source (GATE 14 / F16), so it is composed
  * exclusively from figures already shipped — nothing is derived, rounded or
  * extrapolated. The three tier windows come from the HA-078 radiogroup, the
- * Ramadan extension and the Hijri sentence from HA-078 + GA-034, the wakala
- * sentence and the quiet no-refund line from GA-034, the timing rows from
- * GA-034 + GA-106.
+ * service-fee sentence and the quiet no-refund line from GA-034, the timing
+ * rows from GA-034 + GA-106. (The Ramadan/Eid extension and its Hijri callout
+ * were removed on 2026-07-26 — see the note where the section stood.)
  *
  * THE WORKED EXAMPLE IS ARITHMETIC, AND IT HAS TO BALANCE:
  *   25,000 refunded + 12,500 first night + 4,850 fee and taxes = 42,350 paid.
@@ -127,35 +127,23 @@ export const guestRefundPolicyPage: LegalPageContent = {
       ],
     },
 
-    {
-      id: "ramadan",
-      heading: "Ramadan and Eid",
-      blocks: [
-        {
-          kind: "p",
-          text: [
-            "A host can extend free cancellation to ",
-            bold(num("10"), " days before check-in"),
-            " for stays over Ramadan and the Eid holidays, when travel plans often shift. Where a host has set this, it's shown on the listing alongside their usual policy.",
-          ],
-        },
-        {
-          kind: "p",
-          text: [
-            "Not every host offers it. A host on Strict may keep the Strict schedule during Ramadan and Eid, with ",
-            bold("no extra exception"),
-            " — which is also stated on the listing.",
-          ],
-        },
-        {
-          kind: "callout",
-          title: ["How the dates are read"],
-          body: [
-            "Boundaries follow the Hijri calendar, which is approximate and may vary by moon sighting. The exact calendar date your window closes is always shown to you in the app before you confirm.",
-          ],
-        },
-      ],
-    },
+    // REMOVED 2026-07-26 — the "Ramadan and Eid" section (GO-LIVE A9).
+    //
+    // It promised a host-settable extension of free cancellation to 10 days for
+    // stays over Ramadan and Eid, with a callout explaining that the boundaries
+    // "follow the Hijri calendar". Three things were true of that promise and
+    // none of them survived scrutiny: the product ships no Hijri calendar (the
+    // founder's ruling dropped that layer from the date picker), no host UI
+    // exists to set the extension, and no guest surface could show it. A
+    // canonical refund page is the last place to describe an entitlement that
+    // cannot be exercised — a guest who cancelled at day 8 expecting a full
+    // refund would have been reading a policy the system cannot honour.
+    //
+    // The IDEA is good and specifically Pakistani: travel plans really do move
+    // around Eid. It is logged as a Phase-2 feature to build properly, with the
+    // window expressed in dates SalamStay publishes each year rather than in a
+    // calendar the product does not carry. Nothing replaces the section here —
+    // a labelled slot on a guest-facing legal page advertises an absence.
 
     {
       id: "notrefunded",
@@ -347,9 +335,11 @@ export const guestRefundPolicyPage: LegalPageContent = {
             {
               title: ["SalamStay mediates"],
               body: [
-                "Our team reviews both statements. The ",
-                term("amanah"),
-                " hold stays in place until the case resolves.",
+                // Was `term("amanah")` until 2026-07-26. REPOSITIONING.md's money
+                // table maps the term to plain English precisely because a guest
+                // reading a refund page needs to know where their money is, not
+                // learn a word. The mechanism is unchanged; only the label went.
+                "Our team reviews both statements. Your payment stays held in trust until the case resolves.",
               ],
             },
             {

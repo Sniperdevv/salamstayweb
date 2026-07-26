@@ -310,6 +310,7 @@ export const upperPortionF7Markaz: ListingContent = {
     cancellation: {
       heading: "Cancellation: Flexible",
       body: "Free cancellation up to 48 hours before check-in. After that the first night is non-refundable and the rest is refunded. Every rupee is shown before you confirm.",
+      bold: "48 hours",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -319,6 +320,7 @@ export const upperPortionF7Markaz: ListingContent = {
     sub: "F-7, Islamabad · a few streets from F-7 Markaz",
     mapAlt:
       "Approximate location map: the home is inside a circle covering the residential streets between F-7 Markaz and Jinnah Super Market, Islamabad",
+    mapLabels: ["F-7 Markaz", "Jinnah Super", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address is shared once your booking is confirmed.",

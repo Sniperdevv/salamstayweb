@@ -218,6 +218,7 @@ export const familyPortionJinnahSuper: ListingContent = {
     cancellation: {
       heading: "Cancellation: Moderate",
       body: "Free cancellation up to 5 days before check-in, which is what a three-night minimum needs in order to be fair to both sides. Inside 48 hours the first two nights are not refunded. Every rupee is shown before you confirm.",
+      bold: "5 days",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -227,6 +228,7 @@ export const familyPortionJinnahSuper: ListingContent = {
     sub: "F-7/2, Islamabad · a short walk from Jinnah Super Market",
     mapAlt:
       "Approximate location map: the portion is inside a circle covering the F-7/2 blocks near Jinnah Super Market, Islamabad",
+    mapLabels: ["Jinnah Super", "F-7 Markaz", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address and the side-gate lockbox code are shared once your booking is confirmed.",

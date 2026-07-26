@@ -297,6 +297,7 @@ export const businessStudioJinnahAvenue: ListingContent = {
     cancellation: {
       heading: "Cancellation: Flexible",
       body: "Free cancellation up to 48 hours before check-in. After that the first night is non-refundable and the rest is refunded. Every rupee is shown before you confirm, and the receipt matches it line for line.",
+      bold: "48 hours",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -306,6 +307,7 @@ export const businessStudioJinnahAvenue: ListingContent = {
     sub: "Blue Area, Islamabad · on the Jinnah Avenue commercial spine",
     mapAlt:
       "Approximate location map: the home is inside a circle covering a stretch of Jinnah Avenue in Blue Area, Islamabad, south-east of the F-sector grid",
+    mapLabels: ["Blue Area", "Fazl-ul-Haq Road", "Jinnah Avenue"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address is shared once your booking is confirmed.",

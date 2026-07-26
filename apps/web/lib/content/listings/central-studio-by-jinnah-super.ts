@@ -211,6 +211,7 @@ export const centralStudioByJinnahSuper: ListingContent = {
     cancellation: {
       heading: "Cancellation: Flexible",
       body: "Free cancellation up to 48 hours before check-in. Inside that window the first night is kept and the rest is refunded. A one-night minimum means most plans here change late, and the policy is written for that. Every rupee is shown before you confirm.",
+      bold: "48 hours",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -220,6 +221,7 @@ export const centralStudioByJinnahSuper: ListingContent = {
     sub: "F-7, Islamabad · one block from Jinnah Super Market",
     mapAlt:
       "Approximate location map: the studio is inside a circle covering the blocks around Jinnah Super Market, F-7, Islamabad",
+    mapLabels: ["Jinnah Super", "F-7 Markaz", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address and the building's entrance are shared once your booking is confirmed.",

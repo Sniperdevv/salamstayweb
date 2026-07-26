@@ -78,3 +78,25 @@ export function HouseRulesIcon(props: GlyphProps) {
     </Glyph>
   );
 }
+
+/**
+ * `＋` — the add mark, `hw-001`'s path (`M12 5v14M5 12h14`, stroke `bold`).
+ *
+ * PROMOTED HERE, NOT REDRAWN. It was private to `photo-upload.tsx`, which is
+ * correct while a glyph has one call site and wrong the moment it has two: the
+ * host nav's `Create a listing` draws the same mark on the same shell. Two
+ * private copies of one path is the fork the segmented control just had to be
+ * un-forked out of, at a smaller scale. `photo-upload.tsx` imports it from here
+ * now and its own copy is gone.
+ *
+ * It sits in the host set rather than `components/icons.tsx` because both call
+ * sites are host surfaces; if a guest surface ever needs a plus, that is the
+ * moment it moves up, not before.
+ */
+export function PlusIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.bold} {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Glyph>
+  );
+}

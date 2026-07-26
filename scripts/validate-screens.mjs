@@ -52,7 +52,11 @@ const CLAIM_PATTERNS = [
   /\bguaranteed\b/i,
   /\blowest price\b/i,
 ];
-const SCREEN_NAME = /^(ga|gw|ha)-\d{3}-[a-z0-9-]+\.html$/;
+// Namespaces are SCREENS.md §2's ID scheme: GA guest app · GW guest web-only ·
+// HA host app/both · HW host web-only. `hw` was a declared-but-empty namespace
+// until hw-001; registering it here is not a loosening, it is the pattern
+// catching up with the registry.
+const SCREEN_NAME = /^(ga|gw|ha|hw)-\d{3}-[a-z0-9-]+\.html$/;
 const HEX = /(?<![\w&#])#[0-9a-fA-F]{3,8}\b/g;      // color hex (post-filtered to 3/4/6/8)
 const HEX_OK_LEN = new Set([3, 4, 6, 8]);
 const ALWAYS_OK_HEX = new Set(['#fff', '#ffffff', '#000', '#000000']);
@@ -135,7 +139,7 @@ function validateFile(absPath) {
   const inScreens = absPath.split(sep).includes('screens') &&
     absPath.includes(join('cards', 'screens'));
   if (inScreens && !SCREEN_NAME.test(basename(absPath))) {
-    add('R10', 1, `filename '${basename(absPath)}' must match ^(ga|gw|ha)-\\d{3}-[a-z0-9-]+\\.html$`, 'ERROR');
+    add('R10', 1, `filename '${basename(absPath)}' must match ^(ga|gw|ha|hw)-\\d{3}-[a-z0-9-]+\\.html$`, 'ERROR');
   }
 
 

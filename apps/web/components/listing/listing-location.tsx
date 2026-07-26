@@ -11,8 +11,8 @@ import { anchorOffset, listingLink, listingPara, listingSection } from "./shell"
  * further into the site.
  *
  * **The map shows an area, never an address.** The dashed circle is the
- * published privacy radius around F-7 Markaz, and it is the SAME centroid the
- * page's `LodgingBusiness.geo` publishes (33.7167 / 73.05). The exact address
+ * published privacy radius around the home's own sector centroid, and it is the
+ * SAME centroid the page's `LodgingBusiness.geo` publishes. The exact address
  * is shared once a booking is confirmed, and nothing on this page or in its
  * structured data narrows it further. The note under the map says so in the
  * host's terms rather than the platform's.
@@ -35,6 +35,18 @@ import { anchorOffset, listingLink, listingPara, listingSection } from "./shell"
 
 const mapTag =
   "absolute bottom-4 left-4 inline-flex items-center rounded-full bg-canvas px-3 py-1 text-bodySm font-semibold text-primary shadow-on-media";
+
+/**
+ * Where the three names sit on the substrate above: beside the vertical road,
+ * right of it below the minor cross-street, and out on the horizontal road.
+ * The positions are properties of the drawing, so they live here; the names are
+ * properties of the home, so they live in its content file.
+ */
+const LABEL_ANCHORS = [
+  [316, 112],
+  [596, 242],
+  [20, 272],
+] as const;
 
 export function ListingLocation({ listing }: { readonly listing: ListingContent }) {
   const { location } = listing;
@@ -77,16 +89,19 @@ export function ListingLocation({ listing }: { readonly listing: ListingContent 
               placed on a drawing, sized to sit inside it without covering the
               roads they name, and read at a glance rather than in sequence.
               The whole substrate also carries `role="img"` with the card's
-              aria-label, so nothing here is the only route to any fact. */}
-          <text x={316} y={112} className="fill-secondary text-caption">
-            F-7 Markaz
-          </text>
-          <text x={596} y={242} className="fill-secondary text-caption">
-            Jinnah Super
-          </text>
-          <text x={20} y={272} className="fill-secondary text-caption">
-            Margalla Road
-          </text>
+              aria-label, so nothing here is the only route to any fact.
+
+              The NAMES come from the listing; only the anchors are fixed. They
+              were hard-coded to F-7's landmarks until 2026-07-26, which was
+              true while F-7 held the only listing and became a lie the moment
+              an F-8 home drew a map captioned "F-7 Markaz". The substrate is
+              a schematic either way — what makes it honest is that it names
+              the sector the home is actually in. */}
+          {LABEL_ANCHORS.map(([x, y], i) => (
+            <text key={x} x={x} y={y} className="fill-secondary text-caption">
+              {location.mapLabels[i]}
+            </text>
+          ))}
         </svg>
         <span className={mapTag}>{location.mapTag}</span>
       </div>

@@ -212,6 +212,7 @@ export const quiet1BedStreet12: ListingContent = {
     cancellation: {
       heading: "Cancellation: Flexible",
       body: "Free cancellation up to 48 hours before check-in. After that the first night is not refunded and the rest is. Every rupee is shown before you confirm.",
+      bold: "48 hours",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -221,6 +222,7 @@ export const quiet1BedStreet12: ListingContent = {
     sub: "F-7, Islamabad · off Street 12, north of F-7 Markaz",
     mapAlt:
       "Approximate location map: the flat is inside a circle covering the residential streets north of F-7 Markaz, Islamabad",
+    mapLabels: ["F-7 Markaz", "Street 12", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address and the door code are shared once your booking is confirmed, so there is nobody to meet on arrival.",

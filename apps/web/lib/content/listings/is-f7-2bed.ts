@@ -245,6 +245,13 @@ export interface ListingContent {
     readonly cancellation: {
       readonly heading: string;
       readonly body: string;
+      /**
+       * The free-cancellation window, emphasised inside `body` — the one number
+       * a reader is scanning this paragraph for. Per-listing because it is NOT
+       * always "48 hours": a Moderate home gives 5 or 7 days, and bolting the
+       * Flexible figure onto it emphasised the non-refundable phrase instead.
+       */
+      readonly bold: string;
       readonly link: { readonly href: string; readonly label: string };
     };
   };
@@ -253,6 +260,13 @@ export interface ListingContent {
     readonly heading: string;
     readonly sub: string;
     readonly mapAlt: string;
+    /**
+     * The three names drawn on the map substrate, in the substrate's own order:
+     * the landmark beside the vertical road, the one right of it, and the road
+     * along the bottom. Fixed positions, per-listing text — the drawing is a
+     * schematic, so what makes it true is that it names THIS home's sector.
+     */
+    readonly mapLabels: readonly [string, string, string];
     readonly mapTag: string;
     readonly privacy: string;
     readonly links: readonly { readonly href: string; readonly label: string }[];
@@ -488,6 +502,7 @@ export const isF72Bed: ListingContent = {
     cancellation: {
       heading: "Cancellation: Flexible",
       body: "Free cancellation up to 48 hours before check-in. After that the first night is non-refundable and the rest is refunded. Every rupee is shown before you confirm.",
+      bold: "48 hours",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -497,6 +512,7 @@ export const isF72Bed: ListingContent = {
     sub: "F-7, Islamabad · near F-7 Markaz and Jinnah Super Market",
     mapAlt:
       "Approximate location map: the home is inside a circle covering the blocks around F-7 Markaz, Islamabad",
+    mapLabels: ["F-7 Markaz", "Jinnah Super", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address is shared once your booking is confirmed.",

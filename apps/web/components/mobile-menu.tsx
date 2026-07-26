@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { duration } from "@salamstay/design-tokens/motion";
+import { isSignedIn, setSessionMode, signOut, useSessionMode } from "@/lib/mode";
 import { headerCtaYields } from "./header-cta";
 import { MenuBars } from "./icons";
 import { LanguageGroup } from "./language-group";
@@ -96,6 +97,9 @@ export function MobileMenu() {
   const panelId = `${useId()}-menu`;
   const pathname = usePathname();
   const ctaYields = headerCtaYields(pathname);
+  // Starts `"pending"`, which reads as signed-out — so the server render and the
+  // first client frame agree, exactly as `site-header.tsx` resolves it.
+  const session = useSessionMode();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -179,29 +183,66 @@ export function MobileMenu() {
         </ul>
       </nav>
 
-      <div className="border-t border-hairline px-5 py-5">
-        <ul className="flex flex-col gap-3">
-          <Row open={open} index={next()}>
-            <Link href="/login" className={`w-full ${btnBase} ${btnGhost} ${btnLg}`}>
-              Log in
-            </Link>
-          </Row>
-          {/* Same green doctrine as the bar this sheet opens from
-              (`header-cta.ts`): on a route whose body owns the primary CTA,
-              Sign up is outline/ink here too. The sheet covers the page, so
-              only one of the two is ever on screen — but the reader closes it
-              and finds the same control, and a control that changes colour
-              when a panel closes is two controls. */}
-          <Row open={open} index={next()}>
-            <Link
-              href="/signup"
-              className={`w-full ${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnLg}`}
-            >
-              Sign up
-            </Link>
-          </Row>
-        </ul>
-      </div>
+      {/* The sheet's foot follows the bar it opens from.
+          Until 2026-07-26 it rendered Log in / Sign up unconditionally, which
+          was correct while `site-header.tsx` had no signed-in branch either.
+          The moment the header grew one, this sheet became the one surface that
+          still offered a signed-in host a Sign up button. Same session source as
+          the header, so the two cannot disagree. */}
+      {isSignedIn(session) ? (
+        <div className="border-t border-hairline px-5 py-5">
+          <ul className="flex flex-col gap-3">
+            <Row open={open} index={next()}>
+              {/* The mode switch is the sheet's primary action, in the slot
+                  Sign up held — it is the same "where do you want to be" move.
+                  `ha-003`'s carry-over rule is stated in the header's own menu
+                  rather than repeated here: a full-width button in a sheet has
+                  no room for a two-line explanation, and shrinking that
+                  sentence to fit would be worse than siting it once, well. */}
+              <Link
+                href={session === "hosting" ? "/" : "/host/today"}
+                onClick={() => setSessionMode(session === "hosting" ? "travelling" : "hosting")}
+                className={`w-full ${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnLg}`}
+              >
+                {session === "hosting" ? "Switch to travelling" : "Switch to hosting"}
+              </Link>
+            </Row>
+            <Row open={open} index={next()}>
+              <button
+                type="button"
+                onClick={signOut}
+                className={`w-full ${btnBase} ${btnGhost} ${btnLg}`}
+              >
+                Log out
+              </button>
+            </Row>
+          </ul>
+        </div>
+      ) : (
+        <div className="border-t border-hairline px-5 py-5">
+          <ul className="flex flex-col gap-3">
+            <Row open={open} index={next()}>
+              <Link href="/login" className={`w-full ${btnBase} ${btnGhost} ${btnLg}`}>
+                Log in
+              </Link>
+            </Row>
+            {/* Same green doctrine as the bar this sheet opens from
+                (`header-cta.ts`): on a route whose body owns the primary CTA,
+                Sign up is outline/ink here too. The sheet covers the page, so
+                only one of the two is ever on screen — but the reader closes it
+                and finds the same control, and a control that changes colour
+                when a panel closes is two controls. */}
+            <Row open={open} index={next()}>
+              <Link
+                href="/signup"
+                className={`w-full ${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnLg}`}
+              >
+                Sign up
+              </Link>
+            </Row>
+          </ul>
+        </div>
+      )}
     </Dialog>
   );
 }

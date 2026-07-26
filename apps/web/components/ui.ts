@@ -53,6 +53,22 @@ export const pressable =
 export const pressableCircle =
   "transition-[transform,background-color,border-color,color] duration-instant ease-decelerate active:scale-[0.94] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
+/**
+ * The shallowest press — `HOST-SHELL.md` §10's third value, for LARGE surfaces.
+ *
+ * The same optical argument that makes `pressableCircle` deeper than `pressable`
+ * makes this one shallower, and it runs out at the top of the size range: 0.97
+ * on a 300px photo tile travels 9px, which does not read as a press at all — it
+ * reads as the grid lurching under the pointer. §10 budgets `.995` for exactly
+ * this case, and at 300px that is a 1.5px settle.
+ *
+ * Added 2026-07-26. The photo-grid author found the gap, used the wrong rung
+ * rather than invent a number, and said so — which is the correct order. A press
+ * depth is a motion-language decision, not a per-component choice.
+ */
+export const pressableSurface =
+  "transition-[transform,background-color,border-color,color] duration-instant ease-decelerate active:scale-[0.995] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+
 export const btnBase = `inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md border font-semibold ${focusRing} ${pressable}`;
 
 export const btnPrimary =
@@ -242,6 +258,34 @@ export const fieldName = "block text-bodyMd font-medium text-primary";
  * because the `label` role ships at 500 and this is body copy, not a label.
  */
 export const fieldHint = "mt-0.5 block text-label font-regular leading-normal text-secondary";
+
+/**
+ * The HOST wizard's field label — `HOST-SHELL.md` §5.
+ *
+ * A THIRD label role, and the reason it is not one of the two above is worth
+ * stating so nobody folds it back in. `fieldLabel` is the CHECKOUT shell's
+ * `overline`: 11px, uppercase, tracked, tertiary — a tiny caption over a value
+ * the guest reads rather than edits. A host filling in a nine-step wizard is
+ * answering questions, and a question asked in 11px uppercase reads as a
+ * caption on someone else's data. §5 gives it the `label` role at 600 in ink.
+ *
+ * Deduplicated here on 2026-07-26: `select.tsx` and `textarea.tsx` were built
+ * in parallel and each declared its own private copy. Peer primitives importing
+ * strings from one another is how a "shared" constant ends up living in
+ * whichever file happened to be written first.
+ */
+export const hostFieldLabel = "block text-label font-semibold text-primary";
+
+/**
+ * The note under a host field label — §5, 13/400 tertiary.
+ *
+ * `text.tertiary` here where `fieldHint` takes `text.secondary`, and the
+ * difference is real: `fieldHint` is prose a GUEST is expected to read, while
+ * this is guidance sitting under a label on the host's own form, ranked below
+ * the question it explains. See C7 in `GO-LIVE.md` — the tertiary ramp is under
+ * review for AA at body sizes, and this role is on that list.
+ */
+export const hostFieldSub = "mt-2 block text-label font-regular leading-normal text-tertiary";
 
 /**
  * The inline error under an invalid group — §5's `.errline`, 13px `error.fg`.

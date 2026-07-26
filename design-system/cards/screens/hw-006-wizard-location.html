@@ -1,0 +1,1341 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — HW-006 Host wizard: location, map pin and location precision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     HW-006 · HOST WIZARD — LOCATION.  /host/listings/new/location  (step 2 of 9)
+
+     The third shape in the HW- namespace. HW-001 drew the shell and the CHOOSING
+     step; HW-004 drew the TYPING step. This is the one step that carries a map,
+     and the map is the reason it needs its own card.
+
+     CONTRACT: design-system/cards/screens/HOST-SHELL.md. The chrome, the 640
+     column, the nine bars, the caption, the sticky bar, the field anatomy, the
+     segmented control and the class names are HW-001's, unchanged. Read that
+     card first; this one adds the map and the precision control.
+
+     `noindex, follow`. <main class="co-main">. No canonical, no hreflang, no
+     JSON-LD, no breadcrumb, no site footer. One <h1>.
+
+     Same correction to HW-001 as HW-004 makes: HW-001's Panel A ships
+     `<main class="wzbody">`; HOST-SHELL §1 and §2a both require `co-main`, and
+     §2a's skeleton writes `<main class="co-main wzbody">`. This card ships it,
+     and `.co-main` is styled so R13 stays clean.
+
+     ---------------------------------------------------------------------------
+     DECISION 1 — THE MAP NAMES NO PROVIDER, AND CLAIMS NO ACCURACY.
+
+       WHAT IS DRAWN HERE is an inline SVG on the muted map palette the corpus
+       already ships (`--map-*`, HA-020, ga-073 lineage). No tiles are fetched,
+       nothing is hotlinked, and the card is CSP-safe and offline-openable. It is
+       an illustration of a real component, not a screenshot of one.
+
+       WHAT THE BUILD USES is MapLibre — DESIGN §5 and §8.6 name it, and §5 notes
+       its style JSON is *generated from* `slateRamp` / `brandRamp` so no new
+       colours enter the system. THE TILE SOURCE IS UNDECIDED. No file in this
+       repository names one, so this card names none, in the comment or in the
+       markup. There is no attribution strip, no logo and no "powered by" line
+       drawn here, because drawing one would be picking the vendor by accident.
+
+       WHAT IS NOT CLAIMED, and the deletion is deliberate: HA-020 ships
+       "Placed within about 30 m of your address." That is a geocoding-accuracy
+       figure with no source in any file, and it is NOT carried forward. Nothing
+       here states how close the pin lands, how wide the circle is, or how far
+       the offset runs. The copy states the MECHANISM (we place the pin from your
+       address; drag it if it is not on your gate) and no number at all.
+
+     DECISION 2 — CENTRE-LOCK, NOT A DRAGGABLE PIN.
+
+       The pin does not move. It is fixed at the geometric centre of the map
+       viewport, standing on a small ground mark, and the MAP moves underneath it
+       (DESIGN §8.6: "drag/center-lock"). Three reasons this is the better half
+       of the same interaction:
+         · the target never leaves the screen, so there is no drag that ends off
+           the edge of the viewport and no scroll-while-dragging;
+         · one finger, one gesture, on a phone and on a trackpad alike;
+         · the exact point is always at a known place, so the crosshair can be
+           drawn once and be right forever.
+       `.dmap` carries `cursor:grab` / `:active{cursor:grabbing}`, and on press
+       the pin lifts by a few pixels — the one moment on this surface where
+       something should feel picked up rather than pressed. `transform` only,
+       `--dur-instant`, and `prefers-reduced-motion` removes it.
+
+       THE MAP IS NEVER THE ONLY PATH. The address fields above it are the
+       accessible input and the pin follows them (DESIGN §8.6: "a list view is
+       always the primary accessible path — no one is map-locked"). Dragging is
+       refinement. A host who never touches the map still finishes this step.
+
+     DECISION 3 — THE CIRCLE IS OFFSET FROM THE PIN, AND SAYS SO.
+
+       DESIGN §8.6 specifies the guest-facing privacy circle as drawn "on a
+       *jittered* center — never the exact pin". HA-020 draws it concentric with
+       the pin, which quietly promises the opposite: that the circle's middle is
+       the house. THIS CARD DRAWS THE OFFSET, visibly, and the caption under the
+       map says it in words. It costs one margin and it is the difference
+       between a preview and a diagram.
+
+       THE CIRCLE IS INK, NOT BRAND. DESIGN §8.6 calls it a "brand-subtle wash"
+       and HA-020 draws a brand-green pin. HOST-SHELL §7 caps the wizard surface
+       at three brand roles — the wordmark dot, the `.wbars` state and the one
+       enabled primary — and TASTE §2's four roles do not include a map overlay,
+       while TASTE §3 puts selection on ink. The pin is a selection of a point,
+       so both the pin and the circle resolve through `interactive.selectedFill`
+       and an ink alpha. They self-invert in dark, where a near-white pin on a
+       dark map reads better than a brightened green one would.
+
+     DECISION 4 — THE PRECISION CONTROL, AND WHAT IT HONESTLY CONTROLS.
+
+       It is HW-001's `.seg`, two segments, ink fill on the selected one. It
+       chooses HOW NARROWLY THE PUBLIC LOCATION LINE IS WRITTEN:
+         Neighbourhood → `Saddar, Rawalpindi Cantt`
+         City only     → `Rawalpindi`
+
+       It does NOT offer to reveal the exact pin before a booking, because
+       DESIGN §8.6 states flatly that a listing shows only the circle until a
+       booking is confirmed. A toggle that could switch that off would be a
+       product decision dressed as a design detail, and it is not this card's to
+       make. What the toggle changes is the label; what it cannot change — and
+       what the hint says under both positions — is that THE STREET ADDRESS IS
+       ONLY SHARED AFTER A BOOKING IS CONFIRMED, either way.
+
+     DECISION 5 — CANTONMENT DETECTION, KEPT, AND WHY IT IS AN `info` BANNER.
+
+       HA-020 surfaces a cantonment notice on this exact address and routes it to
+       the NOC upload. It is kept, verbatim in substance, because it is a real
+       Pakistani constraint with a real regulatory basis: COMPLIANCE_MAP.md
+       CB1–CB6 — Cantonment Boards in all six Day-1 cities carry foreigner-stay
+       restrictions, an NOC is required for foreigner accommodation, and some
+       zones are closed to foreigner stays entirely. SEO-RULES §3.9 requires any
+       surface that asks for a document to state its basis, and never a religious
+       one; this states the zone rule.
+
+       REGISTER: `.banner.info`, a documented addition to HOST-SHELL §11's pair.
+       §11's carve-out splits ERROR (a fact about the form) from WARNING (a
+       review outcome). This is neither. The host has done nothing wrong and
+       nothing is being judged — a true address has a consequence attached, and
+       the calm register is the honest one. It routes to the checklist and never
+       blocks Continue.
+
+     ---------------------------------------------------------------------------
+     GREEN RARITY — HOST-SHELL §7, three roles: the wordmark dot · the `.wbars`
+     done/now state (the sanctioned stepper carve-out) · the one ENABLED primary.
+     The map, the pin, the circle, the chips, the segmented control and the
+     banner are ink, gray or semantic. No gradients.
+
+     ELEVATION — HOST-SHELL §8 / TASTE §1. The map box takes a BORDER and no
+     shadow: it is a form control, not a floating thing. The two chips SITTING ON
+     the map take `elevation.onMedia` and an opaque `bg.canvas` fill, because a
+     map is media and legibility on unknowable ground is what that shadow is for
+     (TASTE §1, §10 map controls). Nothing else on this surface casts.
+
+     STEP-SPECIFIC STATES — HOST-SHELL §11 says a map's offline fallback is ADDED
+     to the six-state list, never substituted for it. Both non-ready states ship
+     as their own panels, and BOTH ARE THE SAME BOX at the same height, radius
+     and border as the ready map, so the page never jumps when the map resolves.
+
+     CLAIMS: none. Claim 7 belongs to step 5 and HW-001 carries it there. No
+     retired observance vocabulary in English or Urdu (REPOSITIONING.md) — note
+     in particular that HA-020's and HA-029's walking-distance-to-a-masjid lines
+     do not appear here.
+
+     WORKED CASE — host Aqib's second listing, Cantt View Residence: House 14-C,
+     Kashmir Road, Saddar, Rawalpindi Cantonment (HA-014 / HA-018 / HA-020, the
+     same address the corpus already uses for this property).
+
+     INVENTED FOR THIS CARD: nothing factual. The street schematic is an
+     illustration and is labelled as one.
+
+     CARD CONVENTION: panel A (light, filled) is the authoritative semantic page
+     — one h1, real landmarks, a real <form>. Panels B–I are variants and
+     renderings; all are `aria-hidden` and carry no headings or landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role (DESIGN §13).
+     HW-001's block, copied verbatim, plus three documented additions this
+     surface needs and HW-001 did not:
+       --map-*      the muted map palette (HA-020, ga-073 lineage, generated
+                    from slateRamp/brandRamp — DESIGN §5: no new colours)
+       --area-*     the guest-facing circle, ink alphas (DECISION 3 — HA-020's
+                    brand wash is not carried forward)
+       --el-onmedia elevation.onMedia, for the two chips sitting on the map
+                    (packages/design-tokens/src/elevation.ts)
+     No raw hex outside this block.
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-onmedia:0 1px 2px 0 rgba(16,25,27,.18),0 2px 6px 0 rgba(16,25,27,.12);
+    --shadow-card:var(--el-card);
+    --map-land:#EEF0F1; --map-water:#E4EDEC; --map-park:#E7F1EB; --map-road:#D3D7DA; --map-road2:#E7E9EA; --map-label:#5F676D;
+    --area-fill:rgba(22,25,27,.09); --area-ring:rgba(22,25,27,.34);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-onmedia:0 1px 2px 0 rgba(0,0,0,.5),0 2px 6px 0 rgba(0,0,0,.38);
+    --shadow-card:var(--el-card);
+    --map-land:#141918; --map-water:#101716; --map-park:#132019; --map-road:#39413F; --map-road2:#2A3230; --map-label:#A7AFAD;
+    --area-fill:rgba(237,239,239,.11); --area-ring:rgba(237,239,239,.40);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  ul,ol { list-style:none; }
+  fieldset { border:none; min-width:0; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.nar { max-width:820px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .note { font-size:12px; color:var(--text-tertiary); padding:8px 28px 16px; background:var(--bg-canvas); max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* =====================================================================
+     WIZARD CHROME — HW-001, verbatim.
+     ===================================================================== */
+  .wz { height:760px; overflow-y:auto; background:var(--bg-canvas); position:relative; }
+  .wz.rtl { direction:rtl; }
+
+  .wzhdr { display:flex; align-items:center; gap:14px; min-height:64px; padding:0 28px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .ctx { display:flex; align-items:center; gap:8px; padding-inline-start:14px; border-inline-start:1px solid var(--border-hairline); min-height:26px; }
+  .ctxlink { font-size:13px; font-weight:600; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .ctxlink:hover { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .ctxsep { font-size:12px; color:var(--text-tertiary); }
+  .ctxnow { font-size:13px; font-weight:600; color:var(--text-primary); white-space:nowrap; }
+  .hspacer { flex:1; }
+
+  .gbtn { display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:14px; font-weight:500; text-decoration:none; white-space:nowrap; cursor:pointer; }
+  .gbtn svg { width:16px; height:16px; flex:none; color:var(--text-secondary); }
+
+  /* HOST-SHELL §1: every host <main> is `co-main`, never `indexable`. */
+  .co-main { display:block; }
+  .wzbody { display:block; background:var(--bg-canvas); }
+  .wzwrap { max-width:640px; margin:0 auto; padding:0 24px 32px; }
+  .pagehead { padding:44px 0 0; }
+  .pagehead h1, .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .psub { font-size:16px; color:var(--text-secondary); margin-top:10px; max-width:56ch; }
+
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); margin-top:28px; }
+  .fsec:first-of-type { margin-top:26px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  .ghint { display:flex; align-items:flex-start; gap:11px; margin-top:22px; font-size:13.5px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:17px; height:17px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+
+  /* page-level banner — border, no shadow. `.info` is this card's documented
+     addition to HOST-SHELL §11's error/warning pair (DECISION 5). */
+  .banner { display:flex; align-items:flex-start; gap:11px; margin-top:22px; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner .bico { flex:none; width:18px; height:18px; color:var(--warning-fg); margin-top:2px; }
+  .banner .bico svg { width:18px; height:18px; display:block; }
+  .banner.error { border-color:var(--error-border); background:var(--error-bg); }
+  .banner.error .bico { color:var(--error-fg); }
+  .banner.info { border-color:var(--info-border); background:var(--info-bg); }
+  .banner.info .bico { color:var(--info-fg); }
+  .banner .btxt { font-size:14px; color:var(--text-secondary); line-height:1.6; max-width:62ch; }
+  .banner .btxt b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+
+  /* ---- fields — HW-001 / HOST-SHELL §5 ---- */
+  .fld { margin-top:18px; }
+  .fld2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .flabel { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:7px; }
+  .fwrap { display:flex; align-items:center; gap:10px; min-height:48px; padding:0 14px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); }
+  .fwrap.err { border-color:var(--error-fg); }
+  .finput { flex:1; min-width:0; border:none; background:transparent; font-family:inherit; font-size:16px; font-weight:400; color:var(--text-primary); }
+  .finput::placeholder { color:var(--text-secondary); }
+  .finput:focus { outline:none; }
+  /* `.ph` renders a placeholder at placeholder weight in the aria-hidden
+     panels, where a value is a span and ::placeholder cannot reach it. */
+  .finput.ph { color:var(--text-secondary); }
+  .fsub { display:block; font-size:13px; color:var(--text-tertiary); margin-top:7px; line-height:1.5; }
+  .fsub b { color:var(--text-secondary); font-weight:600; }
+  .sel { display:flex; align-items:center; gap:10px; width:100%; min-height:48px; padding:0 14px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-sunken); font-family:inherit; cursor:pointer; text-align:start; }
+  .sel.err { border-color:var(--error-fg); }
+  .sel .selv { flex:1; min-width:0; font-size:16px; color:var(--text-primary); }
+  .sel .selv.ph { color:var(--text-secondary); }
+  .sel svg { width:17px; height:17px; color:var(--text-secondary); flex:none; }
+
+  /* ---- segmented (≤4 segments) — the precision control (DECISION 4) ---- */
+  .seg { display:flex; gap:4px; margin-top:14px; padding:4px; background:var(--bg-sunken); border:1px solid var(--border-hairline); border-radius:var(--radius-md); }
+  .segopt { flex:1; position:relative; }
+  .segopt input { position:absolute; opacity:0; inset:0; width:100%; height:100%; margin:0; cursor:pointer; }
+  .segopt span { display:flex; align-items:center; justify-content:center; text-align:center; min-height:40px; padding:0 8px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:500; color:var(--text-secondary); line-height:1.3; }
+  .segopt:has(input:checked) span { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .segopt:has(input:focus-visible) span { box-shadow:var(--focus-ring); }
+  .seghint { font-size:13px; color:var(--text-tertiary); margin-top:9px; line-height:1.55; max-width:62ch; }
+  .seghint b { color:var(--text-secondary); font-weight:600; }
+
+  /* =====================================================================
+     THE MAP (DECISIONS 1–3)
+     An illustration on the corpus map palette — no tiles, no provider, no
+     attribution strip, nothing fetched. Border, no shadow: it is a form
+     control, not a floating thing (TASTE §1). The two chips that sit ON it
+     take elevation.onMedia and an opaque fill, because that is what that
+     shadow exists for.
+     ===================================================================== */
+  .dmap { position:relative; height:264px; margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-lg); overflow:hidden; background:var(--map-land); cursor:grab; }
+  .dmap:active { cursor:grabbing; }
+  .dmapart { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .m-park { fill:var(--map-park); }
+  .m-water { fill:var(--map-water); }
+  .m-road { stroke:var(--map-road); stroke-width:11; stroke-linecap:round; fill:none; }
+  .m-road2 { stroke:var(--map-road2); stroke-width:6; stroke-linecap:round; fill:none; }
+  .m-rail { stroke:var(--map-road); stroke-width:2.5; stroke-dasharray:9 7; fill:none; }
+  .mlbl { position:absolute; font-size:11px; font-weight:500; color:var(--map-label); letter-spacing:.02em; white-space:nowrap; }
+  .mlbl.l1 { top:26%; inset-inline-start:5%; }
+  .mlbl.l2 { top:80%; inset-inline-start:42%; }
+  .mlbl.l3 { top:80%; inset-inline-end:8%; }
+
+  /* the guest-facing circle — INK, and deliberately NOT centred on the pin */
+  .darea { position:absolute; left:50%; top:50%; width:186px; height:186px; margin-left:-123px; margin-top:-77px; border-radius:var(--radius-full); background:var(--area-fill); border:1.5px dashed var(--area-ring); }
+
+  /* the centre-locked mark: a zero-size point at the exact centre */
+  .dmark { position:absolute; left:50%; top:50%; width:0; height:0; }
+  /* the exact point, marked on the ground. DESIGN §8.6 calls this a crosshair;
+     a crosshair belongs to a reticle-only editor. With a pin STANDING on the
+     point its upper arm is permanently behind the pin's body, so the point
+     takes a flat ground mark instead — always visible, never half-drawn. */
+  .dspot { position:absolute; left:50%; top:50%; width:18px; height:6px; margin-left:-9px; margin-top:-3px; border-radius:var(--radius-full); background:var(--area-ring); }
+  .dpin { position:absolute; left:50%; bottom:0; width:26px; height:34px; margin-left:-13px; color:var(--int-selected); }
+  .dpin .pdot { fill:var(--int-selected-fg); }
+
+  /* chips over media — opaque fill + elevation.onMedia (TASTE §1, §10) */
+  .dchip { position:absolute; inset-block-end:12px; inset-inline-start:12px; font-size:13px; font-weight:600; color:var(--text-primary); background:var(--bg-canvas); border-radius:var(--radius-full); padding:6px 13px; box-shadow:var(--el-onmedia); white-space:nowrap; }
+  .dhint { position:absolute; inset-block-start:12px; inset-inline-end:12px; display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--text-secondary); background:var(--bg-canvas); border-radius:var(--radius-full); padding:6px 13px; box-shadow:var(--el-onmedia); white-space:nowrap; }
+  .dhint svg { width:14px; height:14px; flex:none; }
+
+  /* the caption under the map — open space, no box */
+  .dcap { display:flex; align-items:flex-start; gap:10px; margin-top:11px; font-size:13px; color:var(--text-tertiary); line-height:1.6; max-width:62ch; }
+  .dcap svg { width:15px; height:15px; flex:none; margin-top:2px; }
+  .dcap b { color:var(--text-secondary); font-weight:600; }
+
+  /* the three non-ready states — SAME box, same height, radius and border, so
+     the page never jumps when the map resolves (HOST-SHELL §11) */
+  .dmap.blank, .dmap.loading, .dmap.failed { background:var(--bg-sunken); border-style:dashed; border-color:var(--border-default); cursor:default; }
+  .dmsg { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; padding:24px; text-align:center; }
+  .dmsg svg { width:26px; height:26px; color:var(--text-tertiary); }
+  .dmsg .dt { font-size:14px; font-weight:600; color:var(--text-primary); }
+  .dmsg .dd { font-size:13px; color:var(--text-secondary); line-height:1.55; max-width:40ch; }
+  .dmsg .gbtn { margin-top:5px; }
+  /* loading: opacity only. No gradient, no shimmer sweep, no transform. */
+  .dmap.loading .dmsg { animation:dpulse 1600ms var(--ease-standard) infinite; }
+  @keyframes dpulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+
+  .errline { display:flex; align-items:flex-start; gap:9px; margin-top:10px; font-size:13px; color:var(--error-fg); line-height:1.55; }
+  .errline svg { width:16px; height:16px; flex:none; margin-top:1px; }
+
+  /* ---- the sticky action bar — HW-001, verbatim ---- */
+  .wzfoot { position:sticky; bottom:0; background:var(--bg-canvas); }
+  .wbars { display:flex; gap:3px; height:4px; }
+  .wbars i { display:block; flex:1; height:4px; border-radius:var(--radius-full); background:var(--border-hairline); font-style:normal; }
+  .wbars i.done { background:var(--int-primary); }
+  .wbars i.now { background:var(--int-primary); opacity:.55; }
+  .footrow { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; padding:14px 28px 16px; }
+  .backbtn { justify-self:start; display:inline-flex; align-items:center; gap:8px; font-family:inherit; font-size:15px; font-weight:500; color:var(--text-primary); background:none; border:none; padding:6px 2px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+  .backbtn svg { width:15px; height:15px; flex:none; }
+  .rtl .backbtn svg { transform:scaleX(-1); }
+  .capstack { min-width:0; text-align:center; }
+  .cap { font-size:13px; color:var(--text-secondary); }
+  .cap b { color:var(--text-primary); font-weight:600; }
+  .capnote { font-size:12.5px; color:var(--text-tertiary); margin-top:3px; }
+  .wzcta { justify-self:end; display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 30px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; text-decoration:none; cursor:pointer; }
+  .wzcta[disabled], .wzcta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; }
+
+  /* =====================================================================
+     Motion — press feedback, plus the one lift the map earns (DECISION 2).
+     transform + opacity only. Hover gated. Reduced motion removes every
+     transform and stops the loading pulse.
+     ===================================================================== */
+  .wzcta, .gbtn, .backbtn, .sel, .fwrap, .dpin { transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard), border-color var(--dur-instant) var(--ease-standard); }
+  .wzcta:not([disabled]):not(.off):active, .gbtn:active { transform:scale(.98); }
+  .sel:active { transform:scale(.995); }
+  /* the pin is picked up, not pressed — the only lift on this surface */
+  .dmap:not(.blank):not(.loading):not(.failed):active .dpin { transform:translateY(-3px); }
+  @media (hover:hover) and (pointer:fine) {
+    .wzcta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .gbtn:hover { background:var(--bg-sunken); }
+    .sel:hover, .fwrap:hover { border-color:var(--border-strong); }
+    .backbtn:hover { color:var(--text-primary); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .wzcta, .gbtn, .backbtn, .sel, .fwrap, .dpin { transition-duration:var(--dur-instant); }
+    .wzcta:active, .gbtn:active, .sel:active { transform:none; }
+    .dmap:active .dpin { transform:none; }
+    .dmap.loading .dmsg { animation:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; line-height:1.95; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+
+  /* ---- narrow: the .nar panel scope mirrors this exactly ---- */
+  @media (max-width:820px) {
+    .footrow { grid-template-columns:auto 1fr; grid-template-areas:"cap cap" "back cta"; row-gap:10px; padding:12px 20px 14px; }
+    .capstack { grid-area:cap; text-align:start; }
+    .backbtn { grid-area:back; }
+    .wzcta { grid-area:cta; }
+    .wzwrap { padding:0 20px 28px; }
+    .fld2 { grid-template-columns:1fr; }
+    .wzhdr { padding:0 20px; gap:10px; }
+    .dmap { height:220px; }
+    .seg { flex-direction:column; }
+  }
+  .nar .footrow { grid-template-columns:auto 1fr; grid-template-areas:"cap cap" "back cta"; row-gap:10px; padding:12px 20px 14px; }
+  .nar .capstack { grid-area:cap; text-align:start; }
+  .nar .backbtn { grid-area:back; }
+  .nar .wzcta { grid-area:cta; }
+  .nar .wzwrap { padding:0 20px 28px; }
+  .nar .fld2 { grid-template-columns:1fr; }
+  .nar .wzhdr { padding:0 20px; gap:10px; }
+  .nar .dmap { height:220px; }
+  .nar .seg { flex-direction:column; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">HW-006 — Host wizard: location, the map pin, and location precision</div>
+    <p>Step <strong>2 of 9</strong>: the address form, a map with a <strong>centre-locked pin</strong> the host moves by dragging the map underneath it, and a <strong>precision control</strong> that chooses how narrowly the public location line is written. The map is an inline-SVG illustration on the corpus map palette — <strong>no tiles are fetched, no provider is named, no attribution strip is drawn</strong>, and no accuracy or radius figure is stated anywhere. The guest-facing circle is drawn <strong>visibly off-centre from the pin</strong>, because that is what it is. Cantonment detection is kept and grounded in <code>COMPLIANCE_MAP.md</code> CB1–CB6. Every <code>/host/*</code> route is <strong>noindex, follow</strong>. Read the header comment, then <code>HOST-SHELL.md</code>. Panel A is the authoritative semantic page; B–I are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL A · LIGHT · FILLED, PIN PLACED, CANTONMENT DETECTED (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">A · Light — wizard, step 2 of 9 · Location · address filled, pin placed, cantonment detected</div>
+      <div class="note">The authoritative page: one <code>h1</code>, real landmarks, a real <code>&lt;form&gt;</code>, <code>&lt;main class="co-main wzbody"&gt;</code>. <b>The pin does not move; the map does.</b> It stands on a flat ground mark at the exact centre and lifts a few pixels while the map is being dragged — the one thing on this surface that should feel picked up rather than pressed. <b>The dashed circle is what guests see before they book, and it is deliberately not centred on the pin</b> (DESIGN §8.6 draws it on a jittered centre; the caption says so in words). Pin and circle are <b>ink</b>, not brand — HOST-SHELL §7 caps this surface at three green roles and a map overlay is not one of them. The map box takes a border and no shadow; the two chips sitting on it take <code>elevation.onMedia</code>, which is exactly what that shadow exists for.</div>
+      <div class="wz">
+
+        <header class="wzhdr">
+          <a class="wordmark" href="/host/today">Salam<span class="dot">.</span>Stay</a>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1 .9-1 1.6"/><path d="M12 16.6h.01"/></svg>
+            Questions?
+          </a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </header>
+
+        <main class="co-main wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <h1>Where is your place?</h1>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed. Before that, a listing shows the general area and nothing narrower.</p>
+            </div>
+
+            <form id="location-form" action="/host/listings/new/capacity" method="post">
+
+              <section class="fsec" aria-labelledby="addr-h">
+                <h2 id="addr-h">The address</h2>
+                <p class="sec-sub">Write it the way you would give it to a courier. We use it to place the pin and to work out which local rules apply.</p>
+
+                <div class="fld">
+                  <label class="flabel" for="street">House or flat, and street</label>
+                  <span class="fwrap">
+                    <input class="finput" id="street" type="text" dir="ltr" value="House 14-C, Kashmir Road" />
+                  </span>
+                </div>
+
+                <div class="fld">
+                  <label class="flabel" for="area">Area or sector</label>
+                  <span class="fwrap">
+                    <input class="finput" id="area" type="text" dir="ltr" value="Saddar, Rawalpindi Cantonment" />
+                  </span>
+                </div>
+
+                <div class="fld">
+                  <span class="flabel" id="city-l">City</span>
+                  <button class="sel" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="city-l">
+                    <span class="selv">Rawalpindi</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                  </button>
+                  <span class="fsub">One of our six beta cities: Islamabad, Karachi, Lahore, Peshawar, Faisalabad, Rawalpindi.</span>
+                </div>
+              </section>
+
+              <section class="fsec" aria-labelledby="pin-h">
+                <h2 id="pin-h">The pin</h2>
+                <p class="sec-sub">We place it from the address above. Drag the map if it is not sitting on your gate — a guest with a confirmed booking navigates to this point.</p>
+
+                <div class="dmap" role="img" aria-label="Schematic map of Saddar, Rawalpindi Cantonment. The pin sits at the centre of the view on Kashmir Road, with the wider circle guests see drawn off-centre around it.">
+                  <svg class="dmapart" viewBox="0 0 600 264" preserveAspectRatio="none" aria-hidden="true">
+                    <ellipse class="m-park" cx="512" cy="46" rx="120" ry="62"/>
+                    <ellipse class="m-water" cx="58" cy="234" rx="94" ry="42"/>
+                    <path class="m-road" d="M0 96 L600 96"/>
+                    <path class="m-road2" d="M0 196 L600 196"/>
+                    <path class="m-road2" d="M180 0 L180 264"/>
+                    <path class="m-road2" d="M420 96 L420 264"/>
+                    <path class="m-road2" d="M420 196 L600 236"/>
+                    <path class="m-rail" d="M0 26 L600 50"/>
+                  </svg>
+                  <span class="mlbl l1">Kashmir Rd</span>
+                  <span class="mlbl l2">Saddar</span>
+                  <span class="mlbl l3">The Mall</span>
+                  <span class="darea" aria-hidden="true"></span>
+                  <span class="dmark" aria-hidden="true">
+                    <span class="dspot"></span>
+                    <svg class="dpin" viewBox="0 0 26 34" fill="none"><path d="M13 1c6.1 0 11 4.9 11 11 0 7.6-11 21-11 21S2 19.6 2 12C2 5.9 6.9 1 13 1z" fill="currentColor"/><circle class="pdot" cx="13" cy="12" r="4.2"/></svg>
+                  </span>
+                  <span class="dchip">Saddar · Rawalpindi Cantt</span>
+                  <span class="dhint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg>
+                    Drag the map
+                  </span>
+                </div>
+
+                <p class="dcap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                  <span>The dashed circle is what guests see before they book, and <b>its middle is not your pin</b> — we shift it on purpose so the circle cannot be read backwards into an address.</span>
+                </p>
+              </section>
+
+              <section class="fsec" aria-labelledby="prec-h">
+                <h2 id="prec-h">How much of this is public</h2>
+                <p class="sec-sub">This sets the location line on your listing and in search results. It does not change what happens after a booking.</p>
+
+                <div class="seg" role="radiogroup" aria-label="How much of the location is public">
+                  <label class="segopt"><input type="radio" name="precision" checked /><span>Neighbourhood</span></label>
+                  <label class="segopt"><input type="radio" name="precision" /><span>City only</span></label>
+                </div>
+                <p class="seghint">Guests browsing will read <b>Saddar, Rawalpindi Cantt</b>. Either way, <b>your street address is only shared after a booking is confirmed</b> — that part is not a setting.</p>
+              </section>
+
+              <section class="fsec" aria-labelledby="cantt-h">
+                <h2 id="cantt-h">Local rules for this address</h2>
+
+                <div class="banner info">
+                  <span class="bico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                  </span>
+                  <div class="btxt">
+                    <p><b>This address is inside a cantonment.</b> Rawalpindi Cantonment asks for a No-Objection Certificate before a property can host guests from outside Pakistan, and some zones inside a cantonment are closed to those stays entirely. It is a rule about the land, not about you — we have added it to your checklist and it does not hold up the rest of this listing.</p>
+                    <a class="inlink" href="/host/listings/cantt-view-residence/compliance/noc">See what the certificate needs</a>
+                  </div>
+                </div>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                  <span>Guests from inside Pakistan are unaffected. You can publish, take bookings and be paid while the certificate is still with the board.</span>
+                </p>
+              </section>
+
+            </form>
+          </div>
+        </main>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <a class="backbtn" href="/host/listings/new/property-type">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </a>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <button class="wzcta" type="submit" form="location-form">Continue</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL B · LIGHT · EMPTY · PRIMARY DISABLED ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">B · Light — nothing entered · no pin to place · primary disabled but visible and in place</div>
+      <div class="note">The honest empty state: with no address there is nothing to draw, so the map box holds a sentence rather than a placeholder pretending to be a place. <b>It is the same box</b> — same height, same radius, same border, only dashed and <code>bg.sunken</code> — so the page does not jump when the pin arrives. The disabled primary keeps its size, position and label, and explains itself in the caption's second line, which is always populated so answering the question never shoves the page.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">Questions?</a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed. Before that, a listing shows the general area and nothing narrower.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The address</div>
+              <p class="sec-sub">Write it the way you would give it to a courier.</p>
+
+              <div class="fld">
+                <span class="flabel">House or flat, and street</span>
+                <span class="fwrap"><span class="finput ph">House number and street name</span></span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel">Area or sector</span>
+                <span class="fwrap"><span class="finput ph">The area, sector or locality</span></span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel">City</span>
+                <span class="sel">
+                  <span class="selv ph">Choose a city</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+                <span class="fsub">One of our six beta cities: Islamabad, Karachi, Lahore, Peshawar, Faisalabad, Rawalpindi.</span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+              <div class="dmap blank">
+                <div class="dmsg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  <span class="dt">No pin yet</span>
+                  <span class="dd">Fill in the address above and the pin appears here. You can move it afterwards.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Add the address and choose a city to continue.</p>
+            </div>
+            <span class="wzcta off">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL C · LIGHT · ERROR — BOTH REGISTERS ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">C · Light — the host pressed Continue with no city chosen</div>
+      <div class="note">Both registers, as HOST-SHELL §11.3 requires: a page-level <code>.banner.error</code> above the form with a <b>named recovery action</b>, and an inline <code>.errline</code> under the control at fault, whose border turns <code>error.fg</code>. Colour is never the only signal — icon and text carry it too. <b>The primary stays enabled</b>: the host pressed it to get here, so it must stay pressable. Note that the two banners on this step read in two different registers on purpose — a missing city is an <b>error</b>, a cantonment is <b>information</b>, and neither borrows the other's colour.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/creating-a-listing">Questions?</a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed.</p>
+            </div>
+
+            <div class="banner error">
+              <span class="bico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>
+              </span>
+              <div class="btxt">
+                <p><b>The city is still empty.</b> We need it before we can place the pin or work out which local rules apply to this address.</p>
+                <a class="inlink" href="/host/listings/new/location#city-c">Go to it</a>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The address</div>
+
+              <div class="fld">
+                <span class="flabel">House or flat, and street</span>
+                <span class="fwrap"><span class="finput">House 14-C, Kashmir Road</span></span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel">Area or sector</span>
+                <span class="fwrap"><span class="finput">Saddar, Rawalpindi Cantonment</span></span>
+              </div>
+
+              <div class="fld" id="city-c">
+                <span class="flabel">City</span>
+                <span class="sel err">
+                  <span class="selv ph">Choose a city</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+                <p class="errline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>
+                  <span>Choose one of the six cities we cover. If your place is somewhere else, <span class="inlink">tell us where</span> and we will come back to you when we open there.</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+              <div class="dmap blank">
+                <div class="dmsg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                  <span class="dt">No pin yet</span>
+                  <span class="dd">Choose a city and the pin appears here.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL D · LIGHT · PRECISION SET TO CITY ONLY ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">D · Light — the precision control's other position: City only</div>
+      <div class="note">The same control, the other segment selected. Selected is <b>ink fill with a white label</b> (TASTE §3), never brand. What changes is <b>the words on the listing and the words on the chip</b> — the map, the pin and the circle are identical, because the setting does not move the property. The hint's second half is byte-identical in both positions on purpose: the street address is not a setting, and the sentence that says so should not read as though it were negotiable.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+
+              <div class="dmap" role="img" aria-label="Schematic map of Saddar, Rawalpindi Cantonment, with the pin at the centre and the guest-facing circle drawn off-centre around it.">
+                <svg class="dmapart" viewBox="0 0 600 264" preserveAspectRatio="none" aria-hidden="true">
+                  <ellipse class="m-park" cx="512" cy="46" rx="120" ry="62"/>
+                  <ellipse class="m-water" cx="58" cy="234" rx="94" ry="42"/>
+                  <path class="m-road" d="M0 96 L600 96"/>
+                  <path class="m-road2" d="M0 196 L600 196"/>
+                  <path class="m-road2" d="M180 0 L180 264"/>
+                  <path class="m-road2" d="M420 96 L420 264"/>
+                  <path class="m-road2" d="M420 196 L600 236"/>
+                  <path class="m-rail" d="M0 26 L600 50"/>
+                </svg>
+                <span class="mlbl l1">Kashmir Rd</span>
+                <span class="mlbl l2">Saddar</span>
+                <span class="darea" aria-hidden="true"></span>
+                <span class="dmark" aria-hidden="true">
+                  <span class="dspot"></span>
+                  <svg class="dpin" viewBox="0 0 26 34" fill="none"><path d="M13 1c6.1 0 11 4.9 11 11 0 7.6-11 21-11 21S2 19.6 2 12C2 5.9 6.9 1 13 1z" fill="currentColor"/><circle class="pdot" cx="13" cy="12" r="4.2"/></svg>
+                </span>
+                <span class="dchip">Rawalpindi</span>
+                <span class="dhint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg>
+                  Drag the map
+                </span>
+              </div>
+
+              <p class="dcap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                <span>The dashed circle is what guests see before they book, and <b>its middle is not your pin</b>.</span>
+              </p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">How much of this is public</div>
+              <p class="sec-sub">This sets the location line on your listing and in search results.</p>
+
+              <div class="seg" role="radiogroup" aria-label="How much of the location is public">
+                <label class="segopt"><input type="radio" name="precision-d" /><span>Neighbourhood</span></label>
+                <label class="segopt"><input type="radio" name="precision-d" checked /><span>City only</span></label>
+              </div>
+              <p class="seghint">Guests browsing will read <b>Rawalpindi</b> and nothing narrower. Either way, <b>your street address is only shared after a booking is confirmed</b> — that part is not a setting.</p>
+
+              <p class="ghint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                <span><b>Fewer people will find you this way.</b> Most guests search by area, so a listing that names only its city turns up in fewer of those searches. It is a real trade and it is yours to make.</span>
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL E · LIGHT · THE MAP IS STILL LOADING ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">E · Light — step-specific state: the map has not arrived yet</div>
+      <div class="note">A geometry-matched skeleton, not a spinner: the same box at the same height, radius and border, so nothing below it moves when the map resolves. The only motion is an <b>opacity pulse</b> — no shimmer sweep, no gradient (TASTE §11.20 puts this product on zero gradients), no transform — and <code>prefers-reduced-motion</code> stops it dead while the box and its sentence stay exactly where they are. <b>The form above is fully usable while this is on screen</b>, and the primary is enabled, because the address is what actually sets the location. The map is refinement, never the gate.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The address</div>
+              <div class="fld">
+                <span class="flabel">Area or sector</span>
+                <span class="fwrap"><span class="finput">Saddar, Rawalpindi Cantonment</span></span>
+              </div>
+              <div class="fld">
+                <span class="flabel">City</span>
+                <span class="sel">
+                  <span class="selv">Rawalpindi</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+              <div class="dmap loading">
+                <div class="dmsg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4z"/><path d="M9 4v13M15 6.5v13"/></svg>
+                  <span class="dt">Bringing up the map</span>
+                  <span class="dd">The rest of this page works while you wait — the address is what sets your location.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL F · LIGHT · THE MAP DID NOT LOAD ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">F · Light — step-specific state: the map could not load</div>
+      <div class="note">HOST-SHELL §11 names the map's offline fallback as a state this step <b>adds</b> to the six, never substitutes for one. It is the same box again, with a retry on the one secondary component (TASTE §5, <code>radius.md</code> gray fill). <b>Nothing is blocked.</b> The address is the location; the pin is a refinement of it, and a host on a bad connection in Rawalpindi finishes this step and moves on. The copy does not apologise, does not blame the connection, and does not promise it will work in a moment — it says what happened and what the host can do.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The address</div>
+              <div class="fld">
+                <span class="flabel">Area or sector</span>
+                <span class="fwrap"><span class="finput">Saddar, Rawalpindi Cantonment</span></span>
+              </div>
+              <div class="fld">
+                <span class="flabel">City</span>
+                <span class="sel">
+                  <span class="selv">Rawalpindi</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+              <div class="dmap failed">
+                <div class="dmsg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4z"/><path d="M4 4l16 16"/></svg>
+                  <span class="dt">The map did not load</span>
+                  <span class="dd">Your address is saved and it is what places you on the site. You can come back and adjust the pin any time from your listing page.</span>
+                  <span class="gbtn">Try again</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">How much of this is public</div>
+              <div class="seg" role="radiogroup" aria-label="How much of the location is public">
+                <label class="segopt"><input type="radio" name="precision-f" checked /><span>Neighbourhood</span></label>
+                <label class="segopt"><input type="radio" name="precision-f" /><span>City only</span></label>
+              </div>
+              <p class="seghint">Guests browsing will read <b>Saddar, Rawalpindi Cantt</b>. Either way, <b>your street address is only shared after a booking is confirmed</b> — that part is not a setting.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL G · DARK ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">G · Dark — every role re-resolves, and the pin inverts with the theme</div>
+      <div class="note">Dark is a theme rendering, not a second design: no second <code>h1</code>, no landmarks. The map palette has its own dark values (<code>--map-*</code>, HA-020's, carried over). <b>Because the pin resolves through <code>interactive.selectedFill</code> it inverts for free</b> — near-black on a pale map, near-white on a dark one — which a brand-green pin could not do without being brightened into a fourth green role. The chips keep an opaque <code>bg.canvas</code> fill and the heavier dark <code>elevation.onMedia</code>, which is the whole reason that token sits off the ladder.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared with a guest after their booking is confirmed.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The address</div>
+              <div class="fld">
+                <span class="flabel">House or flat, and street</span>
+                <span class="fwrap"><span class="finput">House 14-C, Kashmir Road</span></span>
+              </div>
+              <div class="fld">
+                <span class="flabel">City</span>
+                <span class="sel">
+                  <span class="selv">Rawalpindi</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+
+              <div class="dmap" role="img" aria-label="Schematic map of Saddar, Rawalpindi Cantonment, dark theme, with the pin at the centre.">
+                <svg class="dmapart" viewBox="0 0 600 264" preserveAspectRatio="none" aria-hidden="true">
+                  <ellipse class="m-park" cx="512" cy="46" rx="120" ry="62"/>
+                  <ellipse class="m-water" cx="58" cy="234" rx="94" ry="42"/>
+                  <path class="m-road" d="M0 96 L600 96"/>
+                  <path class="m-road2" d="M0 196 L600 196"/>
+                  <path class="m-road2" d="M180 0 L180 264"/>
+                  <path class="m-road2" d="M420 96 L420 264"/>
+                  <path class="m-road2" d="M420 196 L600 236"/>
+                  <path class="m-rail" d="M0 26 L600 50"/>
+                </svg>
+                <span class="mlbl l1">Kashmir Rd</span>
+                <span class="mlbl l2">Saddar</span>
+                <span class="darea" aria-hidden="true"></span>
+                <span class="dmark" aria-hidden="true">
+                  <span class="dspot"></span>
+                  <svg class="dpin" viewBox="0 0 26 34" fill="none"><path d="M13 1c6.1 0 11 4.9 11 11 0 7.6-11 21-11 21S2 19.6 2 12C2 5.9 6.9 1 13 1z" fill="currentColor"/><circle class="pdot" cx="13" cy="12" r="4.2"/></svg>
+                </span>
+                <span class="dchip">Saddar · Rawalpindi Cantt</span>
+                <span class="dhint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg>
+                  Drag the map
+                </span>
+              </div>
+
+              <p class="dcap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                <span>The dashed circle is what guests see before they book, and <b>its middle is not your pin</b>.</span>
+              </p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Local rules for this address</div>
+              <div class="banner info">
+                <span class="bico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                </span>
+                <div class="btxt">
+                  <p><b>This address is inside a cantonment.</b> Rawalpindi Cantonment asks for a No-Objection Certificate before a property can host guests from outside Pakistan. It is a rule about the land, not about you.</p>
+                  <span class="inlink">See what the certificate needs</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL H · RTL / اردو ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">H · اردو · RTL — the whole shell mirrors, and so do the two chips on the map</div>
+      <div class="note">Direction demo. The chips use <code>inset-inline-start</code> / <code>inset-inline-end</code>, so the area chip and the drag hint swap corners with the reading direction and no rule is written twice. <b>The pin and its circle do not mirror</b> — they are geography, not layout, and the offset is a real direction on the ground. The street field keeps <code>dir="ltr"</code> because a house number and a road name are written left to right even inside an Urdu sentence; the area field takes Urdu directly. Every digit run is <code>.num</code>-isolated and stays Western (Pass #31).</div>
+      <div class="wz rtl" dir="rtl" lang="ur">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink nastaliq" href="/ur/host/listings">میزبان سیٹ اپ</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow nastaliq">نئی لسٹنگ</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn nastaliq" href="/ur/host/listings">محفوظ کریں اور نکلیں</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle nastaliq">آپ کی جگہ کہاں ہے؟</div>
+              <p class="psub nastaliq">آپ کا مکمل پتہ صرف بکنگ کی تصدیق کے بعد مہمان کو دیا جاتا ہے۔ اس سے پہلے لسٹنگ پر صرف عمومی علاقہ نظر آتا ہے۔</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2 nastaliq">پتہ</div>
+
+              <div class="fld">
+                <span class="flabel nastaliq">گھر یا فلیٹ، اور گلی</span>
+                <span class="fwrap"><span class="finput" dir="ltr">House 14-C, Kashmir Road</span></span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel nastaliq">علاقہ یا سیکٹر</span>
+                <span class="fwrap"><span class="finput nastaliq">صدر، راولپنڈی چھاؤنی</span></span>
+              </div>
+
+              <div class="fld">
+                <span class="flabel nastaliq">شہر</span>
+                <span class="sel">
+                  <span class="selv nastaliq">راولپنڈی</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+                <span class="fsub nastaliq">ہمارے چھ ابتدائی شہروں میں سے ایک: اسلام آباد، کراچی، لاہور، پشاور، فیصل آباد، راولپنڈی۔</span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2 nastaliq">پن</div>
+
+              <div class="dmap" role="img" aria-label="صدر، راولپنڈی چھاؤنی کا خاکہ، درمیان میں پن اور اس کے گرد مہمانوں کو نظر آنے والا دائرہ">
+                <svg class="dmapart" viewBox="0 0 600 264" preserveAspectRatio="none" aria-hidden="true">
+                  <ellipse class="m-park" cx="88" cy="46" rx="120" ry="62"/>
+                  <ellipse class="m-water" cx="542" cy="234" rx="94" ry="42"/>
+                  <path class="m-road" d="M0 96 L600 96"/>
+                  <path class="m-road2" d="M0 196 L600 196"/>
+                  <path class="m-road2" d="M420 0 L420 264"/>
+                  <path class="m-road2" d="M180 96 L180 264"/>
+                  <path class="m-road2" d="M0 236 L180 196"/>
+                  <path class="m-rail" d="M600 26 L0 50"/>
+                </svg>
+                <span class="mlbl l1 nastaliq">کشمیر روڈ</span>
+                <span class="mlbl l2 nastaliq">صدر</span>
+                <span class="darea" aria-hidden="true"></span>
+                <span class="dmark" aria-hidden="true">
+                  <span class="dspot"></span>
+                  <svg class="dpin" viewBox="0 0 26 34" fill="none"><path d="M13 1c6.1 0 11 4.9 11 11 0 7.6-11 21-11 21S2 19.6 2 12C2 5.9 6.9 1 13 1z" fill="currentColor"/><circle class="pdot" cx="13" cy="12" r="4.2"/></svg>
+                </span>
+                <span class="dchip nastaliq">صدر · راولپنڈی چھاؤنی</span>
+                <span class="dhint nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg>
+                  نقشہ گھسیٹیں
+                </span>
+              </div>
+
+              <p class="dcap nastaliq">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                <span>بکنگ سے پہلے مہمانوں کو یہی نقطہ دار دائرہ نظر آتا ہے، اور <b>اس کا مرکز آپ کا پن نہیں ہے</b> — ہم اسے جان بوجھ کر ہٹا کر رکھتے ہیں۔</span>
+              </p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2 nastaliq">کتنا حصہ عوامی ہوگا</div>
+              <div class="seg" role="radiogroup" aria-label="مقام کی تفصیل کتنی عوامی ہوگی">
+                <label class="segopt"><input type="radio" name="precision-h" checked /><span class="nastaliq">علاقہ</span></label>
+                <label class="segopt"><input type="radio" name="precision-h" /><span class="nastaliq">صرف شہر</span></label>
+              </div>
+              <p class="seghint nastaliq">مہمانوں کو <b>صدر، راولپنڈی چھاؤنی</b> نظر آئے گا۔ دونوں صورتوں میں <b>آپ کا مکمل پتہ صرف بکنگ کی تصدیق کے بعد دیا جاتا ہے</b> — یہ کوئی سیٹنگ نہیں ہے۔</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2 nastaliq">اس پتے پر لاگو مقامی ضابطے</div>
+              <div class="banner info">
+                <span class="bico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                </span>
+                <div class="btxt">
+                  <p class="nastaliq"><b>یہ پتہ چھاؤنی کی حدود میں ہے۔</b> راولپنڈی چھاؤنی میں بیرونِ ملک مہمانوں کی میزبانی سے پہلے نو-آبجیکشن سرٹیفکیٹ درکار ہوتا ہے۔ یہ ضابطہ زمین کے بارے میں ہے، آپ کے بارے میں نہیں — ہم نے اسے آپ کی چیک لسٹ میں شامل کر دیا ہے۔</p>
+                  <span class="inlink nastaliq">دیکھیں کہ سرٹیفکیٹ کے لیے کیا درکار ہے</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              پیچھے
+            </span>
+            <div class="capstack">
+              <p class="cap nastaliq">مرحلہ <b><span class="num">2</span> از <span class="num">9</span> · مقام</b></p>
+              <p class="capnote nastaliq">آپ کی پیش رفت خودکار طور پر محفوظ ہوتی رہتی ہے۔</p>
+            </div>
+            <span class="wzcta nastaliq">جاری رکھیں</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL I · NARROW ================= -->
+    <div class="doc nar" aria-hidden="true">
+      <div class="panel-tag">I · Narrow — below <span class="num">820</span>px the action bar wraps and the segments stack</div>
+      <div class="note">The caption takes the full first line and aligns to the reading-start; Back and the primary keep the row below and push to the two edges. <b>The segmented control stacks rather than shrinking</b> — two-line segment labels are banned by HOST-SHELL §5, and at this width "Neighbourhood" would wrap, so the track turns vertical and every label stays on one line. The map keeps its full width and loses a little height; the pin is still centre-locked, so the drag target does not move. The bars never change: nine segments at any width. The <code>.nar</code> scope mirrors the real <code>@media (max-width:820px)</code> rules exactly.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="ptitle">Where is your place?</div>
+              <p class="psub">Your street address is only shared after a booking is confirmed.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">The pin</div>
+
+              <div class="dmap" role="img" aria-label="Schematic map of Saddar, Rawalpindi Cantonment, with the pin at the centre.">
+                <svg class="dmapart" viewBox="0 0 600 264" preserveAspectRatio="none" aria-hidden="true">
+                  <ellipse class="m-park" cx="512" cy="46" rx="120" ry="62"/>
+                  <path class="m-road" d="M0 96 L600 96"/>
+                  <path class="m-road2" d="M0 196 L600 196"/>
+                  <path class="m-road2" d="M180 0 L180 264"/>
+                  <path class="m-rail" d="M0 26 L600 50"/>
+                </svg>
+                <span class="mlbl l1">Kashmir Rd</span>
+                <span class="darea" aria-hidden="true"></span>
+                <span class="dmark" aria-hidden="true">
+                  <span class="dspot"></span>
+                  <svg class="dpin" viewBox="0 0 26 34" fill="none"><path d="M13 1c6.1 0 11 4.9 11 11 0 7.6-11 21-11 21S2 19.6 2 12C2 5.9 6.9 1 13 1z" fill="currentColor"/><circle class="pdot" cx="13" cy="12" r="4.2"/></svg>
+                </span>
+                <span class="dchip">Saddar · Rawalpindi Cantt</span>
+                <span class="dhint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg>
+                  Drag
+                </span>
+              </div>
+
+              <p class="dcap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                <span>The dashed circle is what guests see before they book, and <b>its middle is not your pin</b>.</span>
+              </p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">How much of this is public</div>
+              <div class="seg" role="radiogroup" aria-label="How much of the location is public">
+                <label class="segopt"><input type="radio" name="precision-i" checked /><span>Neighbourhood</span></label>
+                <label class="segopt"><input type="radio" name="precision-i" /><span>City only</span></label>
+              </div>
+              <p class="seghint">Guests browsing will read <b>Saddar, Rawalpindi Cantt</b>. Either way, <b>your street address is only shared after a booking is confirmed</b>.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot">
+          <div class="wbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <div class="capstack">
+              <p class="cap">Step <b><span class="num">2</span> of <span class="num">9</span> · Location</b></p>
+              <p class="capnote">Your progress saves as you go.</p>
+            </div>
+            <span class="wzcta">Continue</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

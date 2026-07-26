@@ -85,6 +85,18 @@ const themedColors = {
   tertiary: v("text-tertiary"),
   "on-brand": v("text-on-brand"),
   "on-semantic": v("text-on-semantic"),
+  /**
+   * Ink laid on `bg.inverse` — the neutral toast, and any other dark plate that
+   * is not brand and not semantic.
+   *
+   * `colors.ts` has carried this role since the ramp was written, but neither
+   * the preset nor the generated CSS ever emitted it, so `text-on-inverse` was
+   * a class that did not exist and the only way to letter a dark neutral plate
+   * was to borrow `on-brand`. Identical in light (both `#FFFFFF`) and one rung
+   * off in dark, which is exactly the kind of near-miss that survives review.
+   * Same class of gap as the `overlaySize` fold.
+   */
+  "on-inverse": v("text-on-inverse"),
   disabled: v("text-disabled"),
 
   interactive: v("interactive-primary"),
@@ -269,6 +281,7 @@ function themeVars(
     "--ss-text-secondary": theme.text.secondary,
     "--ss-text-tertiary": theme.text.tertiary,
     "--ss-text-on-brand": theme.text.onBrand,
+    "--ss-text-on-inverse": theme.text.onInverse,
     "--ss-text-on-semantic": theme.text.onSemantic,
     "--ss-text-disabled": theme.text.disabled,
     "--ss-interactive-primary": theme.interactive.primary,

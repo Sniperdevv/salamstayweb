@@ -223,6 +223,7 @@ export const cedarLodgeF7: ListingContent = {
     cancellation: {
       heading: "Cancellation: Moderate",
       body: "Free cancellation up to 7 days before check-in. After that, half the stay is refunded, and nothing is refunded inside the last 48 hours. A house at six guests is not one a host can refill on two days' notice, which is the reason for the longer window. Every rupee is shown before you confirm.",
+      bold: "7 days",
       link: { href: "/legal/guest-refund-policy", label: "Read the guest refund policy" },
     },
   },
@@ -232,6 +233,7 @@ export const cedarLodgeF7: ListingContent = {
     sub: "F-7, Islamabad · a few streets behind F-7 Markaz",
     mapAlt:
       "Approximate location map: the house is inside a circle covering the residential streets behind F-7 Markaz, Islamabad",
+    mapLabels: ["F-7 Markaz", "Jinnah Super", "Margalla Road"],
     mapTag: "Approximate area",
     privacy:
       "For the host's privacy we show an approximate area. The exact address is shared once your booking is confirmed, and Imran meets you at the gate on the day.",

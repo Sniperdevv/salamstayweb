@@ -1,0 +1,1476 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — HW-007 Publish, go live, and the traveller ↔ host switch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     HW-007 · PUBLISH, GO LIVE, AND THE TRAVELLER ↔ HOST SWITCH
+     Routes drawn:
+       /host/listings/new/publish              publish preview   (WIZARD CHROME, post-flow)
+       /host/listings/{slug}/published         listing is live   (WIZARD CHROME, post-flow)
+       /host/today                             the host app      (APP CHROME)
+       the logged-in guest header + account menu, which is where the switch lives
+
+     INHERITS `hw-001-host-shell.html` AND `HOST-SHELL.md`. Read those first.
+
+     `noindex, follow`. `<main class="co-main">`. No canonical, no hreflang pair,
+     no JSON-LD, no breadcrumb. One `<h1>`, in panel A.
+
+     ---------------------------------------------------------------------------
+     WHY THE SWITCH IS ON THIS CARD AND NOT A CARD OF ITS OWN
+     `hw-001` put both chromes on one card because "if the two chromes were drawn
+     on separate cards nobody would ever see the seam, and the seam is the thing
+     most likely to go wrong." The switch is the OTHER seam — not between two
+     surfaces but between two modes of one account — and it has the same problem:
+     drawn apart, the guest header and the host header look like two products
+     belonging to two people. Panel B draws them one above the other, with the
+     account menu open on the guest side and the `Hosting` chip on the host side,
+     and the sentence that binds them in between.
+
+     THE RULE THAT IS LOAD-BEARING, FROM `ha-003`
+       "Your SalamStay account works for both — your guest verification carries
+       over." Its confirmation state says it again: "Carried over — no
+       re-verification needed." **THE SWITCH NEVER RE-RUNS VERIFICATION.** That is
+       not a nicety; it is the difference between one account and two, and it is
+       stated three times on panel B on purpose — in the menu row's second line,
+       in the mode block's first carried-over row, and in the closing line.
+
+       Three devices make "one account, two modes" legible rather than asserted:
+         1. THE SAME PERSON, DRAWN TWICE. Same initials, same avatar fill, same
+            `aria-label` ("Your account, Aqib") in both headers. If the avatar
+            changed between them, a reviewer would read two accounts, and no
+            amount of copy would fix that.
+         2. THE MODE IS THE ONLY DIFFERENCE. The host header adds a `Hosting`
+            chip and a section nav; nothing about the identity changes. The mode
+            block says so with two symmetrical cards — neither is the "real" one.
+         3. THE WAY BACK IS ALWAYS VISIBLE. `Switch to travelling` sits in the
+            host header at all times (`ha-046`, `HOST-SHELL.md` §2b). A door you
+            can see from the inside is what makes the room not a trap.
+
+       THE ASYMMETRY IS DELIBERATE, AND IT IS THE CORPUS': the guest header
+       carries `Switch to hosting` as a 14px secondary text link beside the
+       account control (`web-header-footer.html`, logged-in variant) AND as the
+       lead row of the account menu; the host header carries `Switch to
+       travelling` as a header link only. The guest header is a marketing-weight
+       header whose right side is already crowded, so the explanation lives in the
+       menu and the header keeps only the shortcut. The host header is an app
+       shell with room, so it needs no menu to say it.
+
+       `Switch to hosting` is the FIRST row of the account menu, above Trips. It
+       is the one row that changes what the whole site is; it does not belong
+       filed under Wishlists.
+
+     ---------------------------------------------------------------------------
+     TWO CORRECTIONS TO `web-header-footer.html`, BOTH FROM LATER RULINGS
+     That card predates `TASTE-RULES.md`. A reviewer diffing the two files should
+     know these are rulings, not drift:
+       · THE SEARCH PILL LOSES ITS BORDER AND GAINS `elevation.floating`. TASTE
+         §1 and §10 specify the pill as white, `radius.full`, floating, NO border,
+         with INSET hairlines dividing its segments and a green submit circle
+         whose diameter is the pill height minus 12. That card draws a
+         `border.default` outline with `elevation.subtle`.
+       · THE LANGUAGE SWITCH'S CURRENT ITEM IS INK-FILLED, NOT BRAND-FILLED —
+         TASTE §3, `CHECKOUT-SHELL.md` §7, `gw-021`, and `hw-001`'s own second
+         departure from `ha-046`. That card fills it green.
+     Not corrected, and flagged for the same reason `hw-001` flags them: the
+     brand-filled avatar — on both headers, in the account menu and in the mode
+     block, because it is one object — the `Hosting` chip, and the host nav's
+     brand underline are `ha-046`'s and `web-header-footer`'s own language, over
+     TASTE §2's four green roles, with no later ruling against them. Inherited
+     here unchanged — and, on this card specifically, the two avatars being
+     IDENTICAL is doing real work, so making one of them differ to save a green
+     role would cost more than it saved. Re-adjudicating is the corpus sweep's job.
+
+     ---------------------------------------------------------------------------
+     THE POST-FLOW FOOTER — and one thing `HOST-SHELL.md` does not settle
+     §15: "Publish preview and Published render AFTER 9 of 9 with no bars and no
+     caption… the footer's trailing control is `Publish` / `Done`." So `.wzfoot`
+     here carries neither `.wbars` nor `.capstack`.
+       THE CONSEQUENCE THE CONTRACT DOES NOT STATE: §8 says the footer casts no
+     shadow because "its top edge is the nine-bar track". Remove the bars and the
+     bar has no top edge at all — it would float on nothing. `.wzfoot.post`
+     therefore takes a plain `border.hairline` top. The bars WERE the hairline;
+     with the bars gone the hairline comes back. Nothing else changes.
+       AND ONE THING THE CONTRACT SETTLES WRONGLY FOR THE SECOND SURFACE. §15 says
+     "Back still goes one step back". On the preview that is exact: Back →
+     `/host/listings/new/pricing`, step 9. On PUBLISHED it cannot be: the step
+     behind it is "your listing is not published yet", and a listing that is live
+     does not go back there. Published's Back points at `/host/listings`. This is
+     flagged, not quietly resolved — it needs an owner.
+
+     ---------------------------------------------------------------------------
+     HONESTY — what is NOT on this card
+       · NO RATING AND NO REVIEW COUNT. `ha-046` ships `4.9 · 128 reviews` on its
+         listing tiles. Zero real reviews exist; that is an invented rating and it
+         is not copied. The honest equivalent, TASTE §12, is the `New listing`
+         chip, and that is what the preview carries.
+       · NO KPI ROW. `ha-046`'s dashboard opens with occupancy, earnings and a
+         sparkline. A host whose only listing has never been published has none of
+         those numbers, and rendering them at zero — or at all — would be
+         inventing. `/host/today` here is the state that actually exists: one
+         listing waiting, and no reservations.
+       · NO RETIRED VOCABULARY, in English or in Urdu, and none of it restated
+         here either — `HOST-SHELL.md` §12 says not to re-copy the list into a
+         card even in order to ban it, so read it in `REPOSITIONING.md`.
+         `ha-033`'s guest-eye preview opens its offers row with attributes that
+         document retires and builds a whole section on them; none of that comes
+         across. The preview leads with the practical facts instead, which is
+         what the repositioning made the lead differentiator.
+       · NO DATE OR TIME STRIP on the dashboard. `ha-046` heads it with
+         "Thursday, 24 July 2026 · 3 stays hosting in…"; TASTE §11.20 has no room
+         for a locale/time strip, and the line the host actually needs is what is
+         waiting for them.
+       · THE GREETING IS `Welcome back, Aqib`, where `ha-046` opens with a
+         religious greeting. Deliberate, and stated so a reviewer knows it is not
+         drift: `REPOSITIONING.md` makes this the home-sharing platform for
+         Pakistan and not a product marketed to a faith, and the host dashboard's
+         first line is the wrong place to assume one for every host in the
+         country. The tone stays warm — that document is explicit that dropping
+         the religious framing does not license a colder product.
+
+     CLAIMS: exactly one, byte-exact — SEO-RULES §5 claim 7, `Listings show
+     load-shedding hours and backup power`, on the preview, at the moment the host
+     sees their own practical facts rendered for a guest. `HOST-SHELL.md` §12: if a
+     claim appears on a host card it is that one. Everything else is plain neutral
+     description, including the payout line, which describes what happens rather
+     than paraphrasing claim 9.
+
+     MONEY: `PKR 12,000` — three-letter code, one space, thousands separator,
+     every digit run in `.num`. The bare rupee sign appears nowhere in this file.
+
+     TOKENS ADDED TO `hw-001`'s BLOCK — two, both real roles:
+       `--el-floating`  elevation.{light,dark}.floating — the search pill.
+       `--el-popover`   elevation.{light,dark}.popover  — the account menu.
+
+     WORKED CASE: host Aqib, second listing **Cantt View Residence, Rawalpindi
+     Cantonment** — `hw-001`'s thread, at `PKR 12,000` a night (`ha-033`'s figure
+     for this listing). Its practical facts are `hw-001` panel A's, unchanged. Its
+     photographs are `hw-005`'s, in `hw-005`'s order, so the two cards read as one
+     flow. Demo photography is the localized Pexels set, referenced relatively.
+
+     CARD CONVENTION: panel A is the authoritative semantic page — one `h1`, real
+     landmarks, a real `<form>` whose submit is `Publish listing`. B–H are
+     `aria-hidden` renderings.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role (DESIGN §13).
+     hw-001's block, plus the two elevation roles this card needs.
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-floating:0 2px 6px 0 rgba(16,25,27,.08),0 6px 16px 0 rgba(16,25,27,.12);
+    --el-popover:0 4px 8px -2px rgba(16,25,27,.08),0 12px 24px -4px rgba(16,25,27,.08);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px; --radius-sm:6px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-floating:0 2px 6px 0 rgba(0,0,0,.4),0 6px 16px 0 rgba(0,0,0,.36);
+    --el-popover:0 4px 8px -2px rgba(0,0,0,.44),0 12px 24px -4px rgba(0,0,0,.4);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+  ul,ol { list-style:none; }
+  fieldset { border:none; min-width:0; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:8px; max-width:960px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.nar { max-width:820px; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .note { font-size:12px; color:var(--text-tertiary); padding:8px 28px 16px; background:var(--bg-canvas); max-width:1040px; line-height:1.6; }
+  .note code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; color:var(--text-secondary); background:var(--bg-sunken); padding:1px 5px; border-radius:4px; }
+  .note b { color:var(--text-secondary); font-weight:600; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { font-family:'Inter',sans-serif; direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* =====================================================================
+     WIZARD CHROME — hw-001, unchanged, with a post-flow footer.
+     ===================================================================== */
+  .wz { height:760px; overflow-y:auto; background:var(--bg-canvas); position:relative; }
+  .wz.rtl { direction:rtl; }
+  .wz.tall { height:900px; }
+
+  .wzhdr { display:flex; align-items:center; gap:14px; min-height:64px; padding:0 28px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .ctx { display:flex; align-items:center; gap:8px; padding-inline-start:14px; border-inline-start:1px solid var(--border-hairline); min-height:26px; }
+  .ctxlink { font-size:13px; font-weight:600; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .ctxlink:hover { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .ctxsep { font-size:12px; color:var(--text-tertiary); }
+  .ctxnow { font-size:13px; font-weight:600; color:var(--text-primary); white-space:nowrap; }
+  .hspacer { flex:1; }
+
+  /* the ONE secondary component (TASTE §5) */
+  .gbtn { display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:14px; font-weight:500; text-decoration:none; white-space:nowrap; cursor:pointer; }
+  .gbtn svg { width:16px; height:16px; flex:none; color:var(--text-secondary); }
+
+  /* `.co-main` is the contract's own class (HOST-SHELL §1/§2a); `.wzbody` is the
+     wizard's scoping on top of it. hw-001's markup ships `.wzbody` alone even
+     though its comment and the contract both write `<main class="co-main">`. */
+  .co-main { display:block; }
+  .wzbody { display:block; background:var(--bg-canvas); }
+  .wzwrap { max-width:640px; margin:0 auto; padding:0 24px 32px; }
+  .pagehead { padding:44px 0 0; }
+  .pagehead h1, .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .psub { font-size:16px; color:var(--text-secondary); margin-top:10px; max-width:56ch; }
+
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); margin-top:28px; }
+  .fsec:first-of-type { margin-top:26px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  .ghint { display:flex; align-items:flex-start; gap:11px; margin-top:18px; font-size:13.5px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:17px; height:17px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+  .dnote { font-size:13px; color:var(--text-secondary); line-height:1.6; margin-top:14px; }
+  .dnote b { color:var(--text-primary); font-weight:600; }
+
+  /* =====================================================================
+     THE ONE ROW COMPONENT — glyph disc + title + description.
+     Carries the practical facts, the who-can-book states, what-happens-next
+     and the carried-over list. Four jobs, one anatomy (CHECKOUT-SHELL §13's
+     `.frows/.frow/.fdt/.fdd` names, reused rather than re-coined).
+
+     `.on` IS RATIONED. It marks a row that CONTRASTS with a `.pending` sibling —
+     who can book, and the single completeness row. It is deliberately NOT used
+     on the three carried-over rows, where every row would be `.on` and the tint
+     would therefore distinguish nothing while spending three green marks on one
+     block. `gw-023`'s rule: a done item is ink plus a check glyph plus the word;
+     a green tick per row is exactly the colour spend TASTE §1/§2 exist to stop.
+     ===================================================================== */
+  .frows { display:flex; flex-direction:column; margin-top:8px; }
+  .frow { display:flex; align-items:flex-start; gap:13px; padding:13px 0; border-top:1px solid var(--border-hairline); }
+  .frow:first-child { border-top:none; }
+  .fdic { width:32px; height:32px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .fdic svg { width:16px; height:16px; }
+  .frow.on .fdic { background:var(--success-bg); color:var(--success-fg); }
+  .frow.pending .fdic { background:var(--bg-sunken); color:var(--text-tertiary); }
+  .fdb { flex:1; min-width:0; }
+  .fdt { display:block; font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .fdd { display:block; font-size:13.5px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+  .fdd b { color:var(--text-primary); font-weight:600; }
+
+  /* =====================================================================
+     THE GUEST-EYE PREVIEW — a bordered container, no shadow (TASTE §1).
+     The mosaic follows TASTE §4's corner rule: the composition is ONE
+     object, so only its four outer corners are rounded and every interior
+     corner is square. (hw-005's manager grid is the opposite case — N
+     objects, each with its own radius.)
+     ===================================================================== */
+  .gpv { margin-top:16px; border:1px solid var(--border-hairline); border-radius:var(--radius-xl); background:var(--bg-canvas); overflow:hidden; }
+  /* the hero's 3:2 sizes the whole composition: it spans both rows, so the two
+     `1fr` rows split its height and the side tiles stretch to match. Without
+     that the side stack outgrows the hero and the block ends in a white step. */
+  .pvgrid { display:grid; grid-template-columns:1.7fr 1fr; grid-template-rows:1fr 1fr; gap:8px; }
+  .pvgrid > span { display:block; overflow:hidden; min-height:0; }
+  .pvhero { grid-row:1 / -1; aspect-ratio:3 / 2; }
+  .pvimg { display:block; width:100%; height:100%; object-fit:cover; }
+  .pvbody { padding:16px 18px 18px; }
+  .pvnew { display:inline-flex; align-items:center; height:24px; padding:0 10px; border-radius:var(--radius-full); border:1px solid var(--border-hairline); background:var(--bg-raised); font-size:12px; font-weight:600; color:var(--text-secondary); }
+  .pvtitle { display:block; font-size:18px; font-weight:600; color:var(--text-primary); margin-top:10px; }
+  .pvloc { display:flex; align-items:center; gap:7px; font-size:14px; color:var(--text-secondary); margin-top:5px; }
+  .pvloc svg { width:15px; height:15px; flex:none; color:var(--text-tertiary); }
+  .pvfacts { display:block; font-size:14px; color:var(--text-secondary); margin-top:6px; }
+  .pvprice { display:block; font-size:16px; color:var(--text-secondary); margin-top:12px; }
+  .pvprice b { font-size:18px; font-weight:600; color:var(--text-primary); }
+  .pvsec { padding:16px 18px; border-top:1px solid var(--border-hairline); }
+  .pvh { font-size:14px; font-weight:600; color:var(--text-primary); }
+
+  .rules { display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; }
+  /* the label is ALWAYS one <span>, never a bare text run: `.rule` is a flex
+     container with a gap, and a bare run beside a `.num` becomes a second flex
+     item, so the gap renders INSIDE the phrase — "Check-in after  2:00  PM".
+     BUILD-DECISIONS.md #22, the same failure that shipped "See all stays in F- 7". */
+  .rule { display:inline-flex; align-items:center; gap:7px; height:32px; padding:0 13px; border:1px solid var(--border-default); border-radius:var(--radius-full); background:var(--bg-canvas); font-size:13.5px; color:var(--text-primary); white-space:nowrap; }
+  .rule svg { width:15px; height:15px; flex:none; color:var(--text-secondary); }
+
+  .hostrow { display:flex; align-items:center; gap:12px; margin-top:11px; }
+  .hav { width:40px; height:40px; flex:none; border-radius:var(--radius-full); background:var(--bg-raised); color:var(--text-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; }
+  .hb { min-width:0; }
+  .hn { display:block; font-size:14.5px; font-weight:600; color:var(--text-primary); }
+  .hs { display:block; font-size:13px; color:var(--text-secondary); margin-top:1px; }
+
+  /* the verification mark — INK, with a shield glyph and the word.
+     gw-023's rule: a done check per row in green is exactly the colour spend
+     TASTE §1/§2 exist to prevent, and green here would be a fourth role. */
+  .vmark { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:500; color:var(--text-primary); }
+  .vmark svg { width:15px; height:15px; flex:none; }
+
+  /* =====================================================================
+     PUBLISHED — the calm payoff. No confetti, no counting spinner.
+     The tick uses the SEMANTIC success roles, not interactive.primary, so
+     it is a status mark and not a fourth brand-green role.
+     ===================================================================== */
+  .donewrap { padding:8px 0 4px; }
+  .tick { width:52px; height:52px; border-radius:var(--radius-full); background:var(--success-bg); color:var(--success-fg); display:flex; align-items:center; justify-content:center; }
+  .tick svg { width:26px; height:26px; }
+  .dh { display:block; font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); margin-top:16px; }
+  .dsub { display:block; font-size:16px; color:var(--text-secondary); margin-top:10px; max-width:56ch; }
+  .dsub b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- the post-flow action bar ---- */
+  .wzfoot { position:sticky; bottom:0; background:var(--bg-canvas); }
+  .wzfoot.post { border-top:1px solid var(--border-hairline); }
+  .footrow { display:grid; grid-template-columns:1fr auto; align-items:center; gap:20px; padding:14px 28px 16px; }
+  .backbtn { justify-self:start; display:inline-flex; align-items:center; gap:8px; font-family:inherit; font-size:15px; font-weight:500; color:var(--text-primary); background:none; border:none; padding:6px 2px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+  .backbtn svg { width:15px; height:15px; flex:none; }
+  .rtl .backbtn svg { transform:scaleX(-1); }
+  .wzcta { justify-self:end; display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 30px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; text-decoration:none; cursor:pointer; }
+
+  /* =====================================================================
+     THE LOGGED-IN GUEST HEADER — web-header-footer.html, with TASTE §10's
+     pill anatomy and the ink language switch (see the two corrections above).
+     ===================================================================== */
+  .ghdr { display:flex; align-items:center; gap:20px; min-height:64px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); position:relative; z-index:2; }
+  /* content-width and centred, not stretched: TASTE §10's collapsed header pill
+     carries summary text ONLY, so a fixed max-width leaves dead air between the
+     last segment and the submit circle, which must sit flush right. */
+  .searchpill { margin-inline:auto; display:flex; align-items:center; height:48px; padding:0 6px 0 20px; border-radius:var(--radius-full); background:var(--bg-canvas); box-shadow:var(--el-floating); }
+  .spseg { position:relative; padding:0 15px; font-size:14px; font-weight:500; color:var(--text-primary); white-space:nowrap; }
+  .spseg:first-child { padding-inline-start:0; }
+  .spseg + .spseg::before { content:""; position:absolute; inset-inline-start:0; top:50%; transform:translateY(-50%); width:1px; height:22px; background:var(--border-hairline); }
+  /* diameter = pill height − 12, flush right (TASTE §10) */
+  .spgo { flex:none; width:36px; height:36px; margin-inline-start:14px; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:flex; align-items:center; justify-content:center; }
+  .spgo svg { width:16px; height:16px; }
+  .gnav { display:flex; align-items:center; gap:16px; }
+  .txtlink { font-size:14px; color:var(--text-secondary); text-decoration:none; white-space:nowrap; }
+  .txtlink:hover { color:var(--text-primary); }
+  .langsw { display:inline-flex; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { font-size:13px; line-height:1; padding:7px 12px; color:var(--text-secondary); text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current] { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .curr { font-size:14px; color:var(--text-secondary); white-space:nowrap; }
+
+  /* the account control — the thing the menu hangs off */
+  .acct { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 6px 0 14px; border:1px solid var(--border-default); border-radius:var(--radius-full); background:var(--bg-canvas); font-family:inherit; cursor:pointer; text-decoration:none; }
+  .acct svg { width:18px; height:18px; color:var(--text-secondary); }
+  .acctpic { width:30px; height:30px; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; }
+
+  /* the page the menu floats over — deliberately empty. This card is about
+     the menu, not about what is behind it. */
+  .gpage { position:relative; background:var(--bg-canvas); height:398px; }
+
+  /* =====================================================================
+     THE ACCOUNT MENU — a popover, so it casts (TASTE §1) and takes no border.
+     ===================================================================== */
+  .amenu { position:absolute; inset-block-start:12px; inset-inline-end:24px; width:314px; padding:8px; border-radius:var(--radius-lg); background:var(--bg-canvas); box-shadow:var(--el-popover); }
+  .amhead { display:flex; align-items:center; gap:12px; padding:10px 10px 12px; }
+  .amav { width:42px; height:42px; flex:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; }
+  .amwho { min-width:0; }
+  .amname { display:block; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .amsep { display:block; height:1px; margin:4px 10px; background:var(--border-hairline); }
+  .ami { display:flex; align-items:center; gap:12px; width:100%; min-height:42px; padding:0 10px; border:none; border-radius:var(--radius-md); background:none; font-family:inherit; font-size:15px; font-weight:400; color:var(--text-primary); text-align:start; text-decoration:none; cursor:pointer; }
+  .ami svg { width:17px; height:17px; flex:none; color:var(--text-secondary); }
+  .ami.lead { align-items:flex-start; padding-top:11px; padding-bottom:12px; }
+  .ami.lead svg { margin-top:2px; }
+  .amb { flex:1; min-width:0; }
+  .amt { display:block; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .ams { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; line-height:1.45; }
+
+  /* =====================================================================
+     ONE ACCOUNT, TWO MODES — the block that binds the two headers.
+     ===================================================================== */
+  /* a hairline top, the same rule `.fsec` uses, so the explanation reads as a
+     section of the page rather than as something floating after the menu */
+  .switchwrap { max-width:1148px; margin:0 auto; padding:32px 24px 36px; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); }
+  .modes { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; margin-top:18px; }
+  .modecard { border:1px solid var(--border-default); border-radius:var(--radius-lg); background:var(--bg-canvas); padding:18px; }
+  .modehd { display:flex; align-items:center; gap:11px; }
+  .modeav { width:32px; height:32px; flex:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; }
+  .modename { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .modelist { margin-top:12px; }
+  .modeli { display:flex; align-items:flex-start; gap:9px; font-size:13.5px; color:var(--text-secondary); line-height:1.55; padding:4px 0; }
+  .modeli svg { width:15px; height:15px; flex:none; margin-top:3px; color:var(--text-tertiary); }
+  .modeswap { display:flex; flex-direction:column; align-items:center; gap:9px; padding:0 4px; }
+  .swapline { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--text-primary); white-space:nowrap; }
+  .swapline svg { width:16px; height:16px; flex:none; color:var(--text-tertiary); }
+  .rtl .swapline svg { transform:scaleX(-1); }
+
+  /* =====================================================================
+     APP CHROME — ha-046, matched, exactly as hw-001 carries it.
+     ===================================================================== */
+  .app { background:var(--bg-canvas); }
+  .app.rtl { direction:rtl; }
+  .hdr { display:flex; align-items:center; gap:16px; height:60px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .hostchip { font-size:12px; font-weight:600; color:var(--int-primary); background:var(--int-subtle); border-radius:var(--radius-full); padding:4px 11px; white-space:nowrap; }
+  .spacer { flex:1; }
+  .iconbtn { width:38px; height:38px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:inline-flex; align-items:center; justify-content:center; color:var(--text-secondary); text-decoration:none; }
+  .iconbtn svg { width:18px; height:18px; }
+  .avatar { width:38px; height:38px; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; text-decoration:none; }
+
+  .hostnav { display:flex; align-items:center; gap:4px; padding:0 24px; background:var(--bg-canvas); border-bottom:1px solid var(--border-hairline); }
+  .hostnav a.tab { font-size:15px; color:var(--text-secondary); text-decoration:none; padding:14px 12px; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; }
+  .hostnav a.tab:hover { color:var(--text-primary); }
+  .hostnav a.tab[aria-current] { color:var(--text-primary); font-weight:600; border-bottom-color:var(--int-primary); }
+  .navspacer { flex:1; }
+
+  .btn { font-family:inherit; font-size:14px; font-weight:600; border-radius:var(--radius-full); padding:10px 18px; cursor:pointer; text-decoration:none; white-space:nowrap; display:inline-flex; align-items:center; gap:7px; border:1px solid transparent; }
+  .btn.sm { font-size:13px; padding:8px 15px; }
+  .btn svg { width:15px; height:15px; }
+  .btn-primary { background:var(--int-primary); color:var(--text-on-brand); border-color:var(--int-primary); }
+  /* TASTE §2, the yielding rule: the chrome CTA gives up the green fill on a
+     route whose own body already spends the one-primary role. It happens on
+     exactly one surface here — the first-run empty, where the page's own
+     `Create a listing` IS the primary and the nav carries the same action. */
+  .btn.yield { background:var(--bg-canvas); color:var(--text-primary); border-color:var(--border-default); }
+
+  .main { max-width:1148px; margin:0 auto; padding:28px 24px 40px; }
+  .greet { margin-bottom:26px; }
+  .sechead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .sechead .h2 { font-size:22px; font-weight:600; color:var(--text-primary); }
+  .sechead .inlink { font-size:14px; }
+
+  .lrow { display:flex; align-items:center; gap:16px; padding:16px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); }
+  .lrow + .lrow { margin-top:12px; }
+  .lthumb { width:76px; height:64px; flex:none; border-radius:var(--radius-md); background:var(--bg-sunken); overflow:hidden; display:flex; align-items:center; justify-content:center; color:var(--text-tertiary); }
+  .lthumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .lthumb svg { width:24px; height:24px; }
+  .lbody { flex:1; min-width:0; }
+  .ltitle { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .lsub { font-size:13.5px; color:var(--text-secondary); margin-top:3px; }
+  .lmeta { display:flex; align-items:center; gap:10px; margin-top:9px; flex-wrap:wrap; }
+  .status { font-size:11.5px; font-weight:600; border-radius:var(--radius-full); padding:3px 10px; white-space:nowrap; }
+  .status.live { color:var(--success-fg); background:var(--success-bg); border:1px solid var(--success-border); }
+  .status.draft { color:var(--text-secondary); background:var(--bg-sunken); border:1px solid var(--border-hairline); }
+  .lprice { font-size:13.5px; color:var(--text-secondary); }
+  .lprice b { color:var(--text-primary); font-weight:600; }
+  .lact { flex:none; }
+  /* the wizard's own progress component at listing-row scale — the seam */
+  .minibars { display:flex; gap:2px; height:3px; width:132px; }
+  .minibars i { display:block; flex:1; height:3px; border-radius:var(--radius-full); background:var(--border-hairline); font-style:normal; }
+  .minibars i.done { background:var(--int-primary); }
+  .dstep { font-size:13px; color:var(--text-secondary); }
+  .dstep b { color:var(--text-primary); font-weight:600; }
+
+  /* empty states — calm, one next step, never a zero shouted at anyone */
+  .empty { text-align:center; padding:44px 24px 48px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-canvas); }
+  .empty.plain { border:none; padding:30px 24px 6px; }
+  .eglyph { width:52px; height:52px; margin:0 auto; border-radius:var(--radius-full); background:var(--bg-raised); color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; }
+  .eglyph svg { width:24px; height:24px; }
+  .eh { display:block; font-size:18px; font-weight:600; color:var(--text-primary); margin-top:16px; }
+  .ep { display:block; font-size:14.5px; color:var(--text-secondary); margin:8px auto 0; max-width:46ch; line-height:1.55; }
+  .ep b { color:var(--text-primary); font-weight:600; }
+  .eacts { display:flex; justify-content:center; gap:12px; margin-top:20px; flex-wrap:wrap; }
+
+  /* =====================================================================
+     Motion — press feedback only; hover gated; reduced motion dampens.
+     transform + opacity only. No entrance animation on a surface the host
+     will revisit, and no animation at all on the publish moment: the tick
+     states an outcome that has already happened.
+     ===================================================================== */
+  .wzcta, .gbtn, .btn, .acct, .ami, .backbtn, .inlink, .searchpill { transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard), border-color var(--dur-instant) var(--ease-standard); }
+  .wzcta:active, .gbtn:active, .btn:active, .acct:active { transform:scale(.98); }
+  @media (hover:hover) and (pointer:fine) {
+    .wzcta:hover, .btn-primary:hover { background:var(--int-hover); }
+    .gbtn:hover { background:var(--bg-sunken); }
+    .acct:hover, .iconbtn:hover { border-color:var(--border-strong); }
+    .ami:hover { background:var(--bg-raised); }
+    .backbtn:hover { color:var(--text-primary); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .wzcta, .gbtn, .btn, .acct, .ami, .backbtn, .inlink, .searchpill { transition-duration:var(--dur-instant); }
+    .wzcta:active, .gbtn:active, .btn:active, .acct:active { transform:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; line-height:1.95; }
+  .rtl .ptitle.nastaliq, .rtl .dh.nastaliq { line-height:1.6; font-weight:700; }
+
+  /* ---- narrow: the .nar panel scope mirrors this exactly ---- */
+  @media (max-width:820px) {
+    .footrow { grid-template-columns:auto 1fr; padding:12px 20px 14px; gap:12px; }
+    .wzwrap { padding:0 20px 28px; }
+    .wzhdr { padding:0 20px; gap:10px; }
+    .main, .switchwrap { padding-inline:20px; }
+    .modes { grid-template-columns:1fr; }
+    .pvgrid { grid-template-columns:1fr; grid-template-rows:auto; }
+    .pvgrid > span { aspect-ratio:3 / 2; }
+    .pvhero { grid-row:auto; }
+  }
+  .nar .footrow { grid-template-columns:auto 1fr; padding:12px 20px 14px; gap:12px; }
+  .nar .wzwrap { padding:0 20px 28px; }
+  .nar .wzhdr { padding:0 20px; gap:10px; }
+  .nar .main, .nar .switchwrap { padding-inline:20px; }
+  .nar .modes { grid-template-columns:1fr; }
+  .nar .pvgrid { grid-template-columns:1fr; grid-template-rows:auto; }
+  .nar .pvgrid > span { aspect-ratio:3 / 2; }
+  .nar .pvhero { grid-row:auto; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">HW-007 — Publish, go live, and the traveller ↔ host switch</div>
+    <p>Four surfaces and one seam. The <strong>publish preview</strong> and the <strong>published</strong> screen render after 9 of 9 with <strong>no progress bars and no caption</strong> — the post-flow rule, exactly as the guest post-book screens carry no stepper. <code>/host/today</code> shows the state that actually exists for a first-time host: one listing waiting to be published and no reservations yet. And panel B draws the thing the founder asked for — <strong>switching from traveller to host on your profile once you are logged in</strong> — as one account in two modes, with the account menu open on the guest header and the way back always visible on the host one. <strong>The switch never re-runs verification.</strong> Panel A is the authoritative semantic page; B–H are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL A · LIGHT · PUBLISH PREVIEW (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">A · Light — <code>/host/listings/new/publish</code> · after 9 of 9 · no bars, no caption</div>
+      <div class="note">The authoritative page: one <code>h1</code>, real landmarks, a real <code>&lt;form&gt;</code> whose submit is <b>Publish listing</b> — publishing is a POST, so the primary is a real submit and not a link dressed as one. <b>Scroll it</b>: the action bar is really sticky, and with the nine bars gone it takes a plain hairline top, because the bars <i>were</i> its top edge. The preview's photo composition is one object, so every interior corner in it is square and only the outer edge is rounded (TASTE §4) — the opposite call from <code>hw-005</code>'s manager grid, where every tile is its own object and carries its own radius. The one §5 claim on this card sits here, byte-exact, at the moment the host sees their own practical facts rendered for a guest. <b>No rating, no review count</b>: <code>ha-046</code>'s <code>4.9 · 128 reviews</code> is invented and the honest equivalent is the <code>New listing</code> chip.</div>
+      <div class="wz tall">
+
+        <header class="wzhdr">
+          <a class="wordmark" href="/host/today">Salam<span class="dot">.</span>Stay</a>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/help/publishing-a-listing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1 .9-1 1.6"/><path d="M12 16.6h.01"/></svg>
+            Questions?
+          </a>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </header>
+
+        <main class="co-main wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <h1>How guests will see it</h1>
+              <p class="psub">Cantt View Residence is not live yet. Read it the way a guest would, change anything that is not right, then publish.</p>
+            </div>
+
+            <form id="publish-form" action="/host/listings/cantt-view-residence/publish" method="post">
+
+              <section class="fsec" aria-labelledby="pv-h">
+                <h2 id="pv-h">Your listing</h2>
+                <p class="sec-sub">The photos are in the order you set on the previous step. <b>The first one is the cover.</b></p>
+
+                <div class="gpv">
+                  <div class="pvgrid">
+                    <span class="pvhero"><img class="pvimg" src="../../assets/photos/is-f7-living.jpg" alt="Living room with a low grey sofa, wooden floor and a dining zone beside tall daylight windows" data-prod-loading="lazy" /></span>
+                    <span><img class="pvimg" src="../../assets/photos/is-f7-bedroom.jpg" alt="Bedroom with a grey headboard, beige bedding and soft daylight" data-prod-loading="lazy" /></span>
+                    <span><img class="pvimg" src="../../assets/photos/is-f7-kitchen.jpg" alt="Kitchen with pale cabinets, an open counter and daylight from the left" data-prod-loading="lazy" /></span>
+                  </div>
+
+                  <div class="pvbody">
+                    <span class="pvnew">New listing</span>
+                    <span class="pvtitle">Quiet 3-bed portion in Rawalpindi Cantt</span>
+                    <span class="pvloc">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                      Rawalpindi Cantonment
+                    </span>
+                    <span class="pvfacts">Entire place · <span class="num">3</span> bedrooms · <span class="num">2</span> bathrooms · sleeps <span class="num">6</span></span>
+                    <span class="pvprice"><b>PKR <span class="num">12,000</span></b> a night</span>
+                  </div>
+
+                  <div class="pvsec">
+                    <div class="pvh">The practical facts</div>
+                    <p class="ghint">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+                      <span><b>Listings show load-shedding hours and backup power</b> — these six lines are yours, exactly as you gave them. Anything you left blank reads as “not stated by the host”, and we never fill it in for you.</span>
+                    </p>
+                    <div class="frows">
+                      <div class="frow">
+                        <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></span>
+                        <span class="fdb"><span class="fdt">Load-shedding</span><span class="fdd">About <b><span class="num">4</span> hours</b> on a typical day, usually between <span class="num">2</span> and <span class="num">5</span> PM.</span></span>
+                      </div>
+                      <div class="frow">
+                        <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 7V5h10v2"/><circle cx="9" cy="12.5" r="2.2"/><path d="M14 11h4M14 14h4"/></svg></span>
+                        <span class="fdb"><span class="fdt">Backup power</span><span class="fdd">Generator, everything including the AC. Runs about <b><span class="num">8</span> hours</b> on a full tank.</span></span>
+                      </div>
+                      <div class="frow">
+                        <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9V6.5a4 4 0 0 1 8 0V9"/><path d="M7.5 14.5h9"/></svg></span>
+                        <span class="fdb"><span class="fdt">Water</span><span class="fdd">Municipal supply with an underground tank, so a supply cut is not felt inside.</span></span>
+                      </div>
+                      <div class="frow">
+                        <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s4 4.5 4 8a4 4 0 0 1-8 0c0-3.5 4-8 4-8z"/></svg></span>
+                        <span class="fdb"><span class="fdt">Sui gas</span><span class="fdd">Connected, with low pressure on winter mornings.</span></span>
+                      </div>
+                      <div class="frow">
+                        <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 9.5a11 11 0 0 1 15 0"/><path d="M7.5 12.8a7 7 0 0 1 9 0"/><path d="M10.4 16a3 3 0 0 1 3.2 0"/><path d="M12 19h.01"/></svg></span>
+                        <span class="fdb"><span class="fdt">Wi-Fi</span><span class="fdd"><b><span class="num">25</span> Mbps</b>, measured on the guest room's own connection.</span></span>
+                      </div>
+                      <div class="frow">
+                        <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6" width="17" height="13" rx="2"/><path d="M3.5 10.5h17"/><path d="M8 15h3"/><path d="M12 6V3"/></svg></span>
+                        <span class="fdb"><span class="fdt">Parking</span><span class="fdd">Gated, inside the property, off the road.</span></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pvsec">
+                    <div class="pvh">House rules</div>
+                    <div class="rules">
+                      <span class="rule">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 22h8M12 15v7M17 3H7l1 8a4 4 0 0 0 8 0z"/><path d="M4 4l16 16"/></svg>
+                        <span>No alcohol</span>
+                      </span>
+                      <span class="rule">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15h14v3H3z"/><path d="M19 15h2v3h-2z"/><path d="M14 11V7"/><path d="M4 4l16 16"/></svg>
+                        <span>No smoking</span>
+                      </span>
+                      <span class="rule">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20l3-14 9 5-3 2 2 3z"/><path d="M4 4l16 16"/></svg>
+                        <span>No parties or events</span>
+                      </span>
+                      <span class="rule">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+                        <span>Check-in after <span class="num">2:00</span> PM</span>
+                      </span>
+                      <span class="rule">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l-3 2"/></svg>
+                        <span>Check-out by <span class="num">11:00</span> AM</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="pvsec">
+                    <div class="pvh">Your host</div>
+                    <div class="hostrow">
+                      <span class="hav" aria-hidden="true">AK</span>
+                      <span class="hb">
+                        <span class="hn">Hosted by Aqib</span>
+                        <span class="hs">Rawalpindi</span>
+                      </span>
+                      <span class="hspacer"></span>
+                      <span class="vmark">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                        CNIC verified
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="fsec" aria-labelledby="who-h">
+                <h2 id="who-h">Who can book</h2>
+                <p class="sec-sub">Cantt View Residence sits inside a cantonment, so one of these two opens later than the other. Both are stated on the listing itself; neither is hidden from a guest.</p>
+                <div class="frows">
+                  <div class="frow on">
+                    <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="fdb"><span class="fdt">Guests travelling on a CNIC</span><span class="fdd">Bookable the moment you publish.</span></span>
+                  </div>
+                  <div class="frow pending">
+                    <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8"/></svg></span>
+                    <span class="fdb"><span class="fdt">Guests travelling on a foreign passport</span><span class="fdd">Off until your cantonment NOC is verified. Nothing is lost while it is checked — the listing stays live for everyone else. <a class="inlink" href="/host/listings/cantt-view-residence/compliance/noc">Manage your NOC</a></span></span>
+                  </div>
+                </div>
+              </section>
+
+              <section class="fsec" aria-labelledby="chk-h">
+                <h2 id="chk-h">Before you publish</h2>
+                <div class="frows">
+                  <div class="frow on">
+                    <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                    <span class="fdb"><span class="fdt">All <span class="num">9</span> steps are filled in</span><span class="fdd">You can still change any of them after publishing, and the listing stays live while you do. <a class="inlink" href="/host/listings/new/property-type">Go back through the steps</a></span></span>
+                  </div>
+                </div>
+                <p class="dnote">Publishing does not lock anything. It makes the listing findable, and it is reversible from <b>Listings</b> at any time.</p>
+              </section>
+
+            </form>
+          </div>
+        </main>
+
+        <div class="wzfoot post">
+          <div class="footrow">
+            <a class="backbtn" href="/host/listings/new/pricing">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </a>
+            <button class="wzcta" type="submit" form="publish-form">Publish listing</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL B · LIGHT · THE SWITCH — ONE ACCOUNT, TWO MODES ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">B · Light — the guest header with the account menu open, the same person's host header below, and the rule that binds them</div>
+      <div class="note">This is the card's point. The <b>same initials, the same avatar fill and the same accessible name</b> appear in both headers — if those changed, a reviewer would read two accounts and no copy would fix it. The only difference between the two chromes is the <code>Hosting</code> chip and the section nav; the person does not change. <b>Switch to hosting</b> is the menu's <b>first</b> row, above Trips, because it is the one row that changes what the whole site is. Its second line carries <code>ha-003</code>'s load-bearing rule, and the mode block below states it again in the first carried-over row: <b>the switch never re-runs verification.</b> The page behind the menu is deliberately blank — this panel is about the menu, not about what is behind it. Two corrections to <code>web-header-footer.html</code> are visible here and are rulings, not drift: the search pill drops its border for <code>elevation.floating</code> (TASTE §1/§10) and the language switch's current item is ink, not brand (TASTE §3).</div>
+      <div class="app">
+
+        <div class="ghdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <div class="searchpill">
+            <span class="spseg">Lahore</span>
+            <span class="spseg"><span class="num">5</span> to <span class="num">9</span> Sep</span>
+            <span class="spseg"><span class="num">4</span> guests</span>
+            <span class="spgo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          </div>
+          <div class="gnav">
+            <span class="txtlink">Switch to hosting</span>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/" aria-current="true" lang="en">EN</a>
+              <a class="urdu" href="/ur/" lang="ur">اردو</a>
+            </div>
+            <span class="curr">PKR</span>
+            <span class="acct" aria-label="Your account, Aqib">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+              <span class="acctpic">AK</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="gpage">
+          <div class="amenu">
+            <div class="amhead">
+              <span class="amav" aria-hidden="true">AK</span>
+              <span class="amwho">
+                <span class="amname">Aqib Khan</span>
+                <span class="vmark">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  CNIC verified
+                </span>
+              </span>
+            </div>
+            <span class="amsep"></span>
+            <span class="ami lead">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg>
+              <span class="amb">
+                <span class="amt">Switch to hosting</span>
+                <span class="ams">Your SalamStay account works for both. Your guest verification carries over — you are not asked to verify again.</span>
+              </span>
+            </span>
+            <span class="amsep"></span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+              Trips
+            </span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+              Messages
+            </span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-9.2A4 4 0 0 1 12 8a4 4 0 0 1 7 2.8C19 15.6 12 20 12 20z"/></svg>
+              Wishlists
+            </span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+              Account settings
+            </span>
+            <span class="amsep"></span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1 .9-1 1.6"/><path d="M12 16.6h.01"/></svg>
+              Help centre
+            </span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5h3a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h9"/></svg>
+              Log out
+            </span>
+          </div>
+        </div>
+
+        <div class="switchwrap">
+          <div class="h2">One account, two modes</div>
+          <p class="sec-sub">Hosting is not a second account and not a second login. It is a mode your existing account moves into, and it moves back the same way.</p>
+
+          <div class="modes">
+            <div class="modecard">
+              <div class="modehd">
+                <span class="modeav" aria-hidden="true">AK</span>
+                <span class="modename">Travelling</span>
+              </div>
+              <div class="modelist">
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Search, trips and messages</span>
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Wishlists and saved payment methods</span>
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Your CNIC verification</span>
+              </div>
+            </div>
+
+            <div class="modeswap">
+              <span class="swapline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M14 7l5 5-5 5"/></svg>
+                Switch to hosting
+              </span>
+              <span class="swapline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M10 7l-5 5 5 5"/></svg>
+                Switch to travelling
+              </span>
+            </div>
+
+            <div class="modecard">
+              <div class="modehd">
+                <span class="modeav" aria-hidden="true">AK</span>
+                <span class="modename">Hosting</span>
+              </div>
+              <div class="modelist">
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Listings, calendar and reservations</span>
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Earnings and payouts</span>
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>The same CNIC verification</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="frows">
+            <div class="frow">
+              <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+              <span class="fdb"><span class="fdt">Your CNIC verification</span><span class="fdd"><b>Carried over as it is.</b> Switching modes never asks you to verify again, in either direction.</span></span>
+            </div>
+            <div class="frow">
+              <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="fdb"><span class="fdt">Your profile</span><span class="fdd">The same name, the same photo, the same account. Guests and hosts see the one person.</span></span>
+            </div>
+            <div class="frow">
+              <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="fdb"><span class="fdt">Your trips as a guest</span><span class="fdd">Still yours, still where you left them. Hosting is added to travelling — it does not replace it.</span></span>
+            </div>
+          </div>
+
+          <p class="dnote">Switching back is the same move in reverse: <b>Switch to travelling</b>, in the host header below, which is on screen the whole time you are hosting.</p>
+        </div>
+
+        <div class="hdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <span class="txtlink">Switch to travelling</span>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/today" aria-current="true" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/today" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR</span>
+          <a class="iconbtn" href="/help" aria-label="Help centre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+          </a>
+          <span class="avatar" aria-label="Your account, Aqib">AK</span>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings">Earnings</a>
+          <a class="tab" href="/host/insights">Insights</a>
+          <span class="navspacer"></span>
+          <a class="btn btn-primary sm" href="/host/listings/new/property-type">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Create a listing
+          </a>
+        </div>
+        <div class="main">
+          <div class="empty plain">
+            <span class="eh">Welcome back, Aqib</span>
+            <span class="ep">Same account, same verification. The nav above is the only thing that changed.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL C · LIGHT · PUBLISHED ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">C · Light — <code>/host/listings/cantt-view-residence/published</code> · fully post-flow, trailing control is <code>Done</code></div>
+      <div class="note">The calm payoff: no confetti, no counting spinner, and no animation on the tick — it states an outcome that has already happened. The tick uses the <b>semantic success</b> roles rather than <code>interactive.primary</code>, so it is a status mark and not a fourth brand-green role on a surface that already spends the wordmark dot and one primary. The gating rows are the same two the preview showed, restated because it is the first thing a host will want to check after the button. <b>What happens next</b> says only what genuinely happens — no projected bookings, no response-rate target, and the payout line describes the behaviour rather than paraphrasing a §5 claim. <b>Back points at Listings, not at the preview</b>: <code>HOST-SHELL.md</code> §15's "Back still goes one step back" cannot apply here, because the step behind a live listing is "not published yet" — flagged, not quietly resolved.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <a class="ctxlink" href="/host/listings">Host setup</a>
+            <span class="ctxsep" aria-hidden="true">·</span>
+            <span class="ctxnow">Published</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/today">Go to Today</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+
+            <div class="pagehead">
+              <div class="donewrap">
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                <span class="dh">Your listing is live</span>
+                <span class="dsub"><b>Cantt View Residence</b> is now findable by guests searching Rawalpindi.</span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="lrow">
+                <span class="lthumb"><img src="../../assets/photos/is-f7-living.jpg" alt="Living room with a low grey sofa, wooden floor and a dining zone beside tall daylight windows" data-prod-loading="lazy" /></span>
+                <div class="lbody">
+                  <div class="ltitle">Quiet 3-bed portion in Rawalpindi Cantt</div>
+                  <div class="lsub">Rawalpindi Cantonment · Entire place · sleeps <span class="num">6</span></div>
+                  <div class="lmeta">
+                    <span class="status live">Live</span>
+                    <span class="lprice"><b>PKR <span class="num">12,000</span></b> a night</span>
+                  </div>
+                </div>
+                <span class="lact"><a class="gbtn" href="/stays-in-rawalpindi/cantt/quiet-3-bed-portion">View it as a guest</a></span>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Who can book right now</div>
+              <div class="frows">
+                <div class="frow on">
+                  <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="fdb"><span class="fdt">Guests travelling on a CNIC</span><span class="fdd">Can find and book you from now.</span></span>
+                </div>
+                <div class="frow pending">
+                  <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h8"/></svg></span>
+                  <span class="fdb"><span class="fdt">Guests travelling on a foreign passport</span><span class="fdd">Opens once your cantonment NOC is verified. <a class="inlink" href="/host/listings/cantt-view-residence/compliance/noc">Manage your NOC</a></span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">What happens next</div>
+              <div class="frows">
+                <div class="frow">
+                  <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                  <span class="fdb"><span class="fdt">Guests find you in search</span><span class="fdd">Your listing appears in Rawalpindi results and on your own listing page.</span></span>
+                </div>
+                <div class="frow">
+                  <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></span>
+                  <span class="fdb"><span class="fdt">Requests arrive in your inbox</span><span class="fdd">You are notified for each one, and you answer from Reservations.</span></span>
+                </div>
+                <div class="frow">
+                  <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M16 15h3"/></svg></span>
+                  <span class="fdb"><span class="fdt">You are paid after each stay</span><span class="fdd">Your payout is shown line by line, with the fee and the tax on it, before it is sent.</span></span>
+                </div>
+              </div>
+              <p class="dnote">Nothing is locked. Editing a live listing keeps it live, and you can pause it from <b>Listings</b> whenever you need to.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="wzfoot post">
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back to listings
+            </span>
+            <span class="wzcta">Done</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL D · LIGHT · /host/today — WAITING TO PUBLISH ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">D · Light — <code>/host/today</code> · one listing filled in and waiting, and no reservations yet</div>
+      <div class="note">The state that actually exists for a first-time host, drawn instead of <code>ha-046</code>'s KPI row: a host whose only listing has never been published has no occupancy, no earnings and no sparkline, and rendering those — even at zero — would be inventing. The draft row is the <b>seam component</b> at its last state: <code>HOST-SHELL.md</code> §2c's nine-bar row, all nine filled, with <code>Review and publish</code> as the gray-fill secondary in place of <code>Continue setup</code>. §2c specifies the mid-flow caption (<code>Step N of 9 · {name}</code>) but not the terminal one — <b>flagged</b>. The reservations empty state names its next action and never shouts a zero. The greeting is <code>Welcome back</code> where <code>ha-046</code> opens with a religious greeting — deliberate, per <code>REPOSITIONING.md</code>, and warm rather than colder for it.</div>
+      <div class="app">
+        <div class="hdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <span class="txtlink">Switch to travelling</span>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/today" aria-current="true" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/today" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR</span>
+          <a class="iconbtn" href="/help" aria-label="Help centre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+          </a>
+          <span class="avatar" aria-label="Your account, Aqib">AK</span>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings">Earnings</a>
+          <a class="tab" href="/host/insights">Insights</a>
+          <span class="navspacer"></span>
+          <a class="btn btn-primary sm" href="/host/listings/new/property-type">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Create a listing
+          </a>
+        </div>
+
+        <div class="main">
+          <div class="greet">
+            <div class="ptitle">Welcome back, Aqib</div>
+            <p class="psub">Cantt View Residence is filled in and waiting for you to publish it.</p>
+          </div>
+
+          <div class="sechead">
+            <div class="h2">Ready to publish</div>
+            <a class="inlink" href="/host/listings">All your listings</a>
+          </div>
+
+          <div class="lrow">
+            <span class="lthumb"><img src="../../assets/photos/is-f7-living.jpg" alt="Living room with a low grey sofa, wooden floor and a dining zone beside tall daylight windows" data-prod-loading="lazy" /></span>
+            <div class="lbody">
+              <div class="ltitle">Cantt View Residence</div>
+              <div class="lsub">Rawalpindi Cantonment · Entire place · sleeps <span class="num">6</span></div>
+              <div class="lmeta">
+                <span class="status draft">Draft</span>
+                <span class="minibars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></span>
+                <span class="dstep">All <b><span class="num">9</span> steps filled in</b></span>
+              </div>
+            </div>
+            <span class="lact"><a class="gbtn" href="/host/listings/new/publish">Review and publish</a></span>
+          </div>
+
+          <div class="sechead" style="margin-top:32px">
+            <div class="h2">Today's reservations</div>
+          </div>
+          <div class="empty">
+            <span class="eglyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M8 3v3M16 3v3M3.5 9.5h17"/></svg>
+            </span>
+            <span class="eh">No reservations yet</span>
+            <span class="ep">Once <b>Cantt View Residence</b> is live, the day's arrivals, check-outs and messages appear here. Publishing it is the row above.</span>
+            <div class="eacts">
+              <a class="gbtn" href="/host/help/first-booking">What happens after you publish</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL E · LIGHT · /host/today — NOTHING YET ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">E · Light — <code>/host/today</code> · the first minute after switching, with no listing at all</div>
+      <div class="note">The deepest empty on this surface, and the one a host sees seconds after the switch in panel B: they have a host account, and nothing in it. One glyph, one warm line, one next step, and — the part that matters — the second line tells them the switch already did the work they might be bracing for. Never "0 listings", never a progress ring at zero, and never a dead end.</div>
+      <div class="app">
+        <div class="hdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <span class="txtlink">Switch to travelling</span>
+          <span class="curr">PKR</span>
+          <span class="avatar" aria-label="Your account, Aqib">AK</span>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <a class="tab" href="/host/earnings">Earnings</a>
+          <span class="navspacer"></span>
+          <a class="btn yield sm" href="/host/listings/new/property-type">Create a listing</a>
+        </div>
+        <div class="main">
+          <div class="empty">
+            <span class="eglyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>
+            </span>
+            <span class="eh">Welcome to hosting, Aqib</span>
+            <span class="ep">Your check-ins, guest messages and payouts will appear here once a listing is live. Your CNIC verification came across with you, so the first step is the place itself.</span>
+            <div class="eacts">
+              <a class="btn btn-primary" href="/host/listings/new/property-type">Create a listing</a>
+              <a class="gbtn" href="/host/help/what-hosting-involves">What hosting involves</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL F · DARK · THE SWITCH ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">F · Dark — the switch, every role re-resolved</div>
+      <div class="note">Dark is a theme rendering, not a second design: no second <code>h1</code>, no landmarks. Two things worth checking here. The account menu takes no border in either theme — in dark, <code>elevation.popover</code> does the separating work a border would otherwise be asked to do, which is exactly why the popover role exists. And the search pill keeps its floating shadow rather than gaining an outline: a pill that is bordered in dark and shadowed in light is two components.</div>
+      <div class="app">
+
+        <div class="ghdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <div class="searchpill">
+            <span class="spseg">Lahore</span>
+            <span class="spseg"><span class="num">5</span> to <span class="num">9</span> Sep</span>
+            <span class="spseg"><span class="num">4</span> guests</span>
+            <span class="spgo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          </div>
+          <div class="gnav">
+            <span class="txtlink">Switch to hosting</span>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/" aria-current="true" lang="en">EN</a>
+              <a class="urdu" href="/ur/" lang="ur">اردو</a>
+            </div>
+            <span class="curr">PKR</span>
+            <span class="acct" aria-label="Your account, Aqib">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+              <span class="acctpic">AK</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="gpage">
+          <div class="amenu">
+            <div class="amhead">
+              <span class="amav" aria-hidden="true">AK</span>
+              <span class="amwho">
+                <span class="amname">Aqib Khan</span>
+                <span class="vmark">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  CNIC verified
+                </span>
+              </span>
+            </div>
+            <span class="amsep"></span>
+            <span class="ami lead">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg>
+              <span class="amb">
+                <span class="amt">Switch to hosting</span>
+                <span class="ams">Your SalamStay account works for both. Your guest verification carries over — you are not asked to verify again.</span>
+              </span>
+            </span>
+            <span class="amsep"></span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+              Trips
+            </span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+              Messages
+            </span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+              Account settings
+            </span>
+            <span class="amsep"></span>
+            <span class="ami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5h3a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h9"/></svg>
+              Log out
+            </span>
+          </div>
+        </div>
+
+        <div class="switchwrap">
+          <div class="h2">One account, two modes</div>
+          <p class="sec-sub">Hosting is not a second account and not a second login. It is a mode your existing account moves into, and it moves back the same way.</p>
+          <div class="modes">
+            <div class="modecard">
+              <div class="modehd">
+                <span class="modeav" aria-hidden="true">AK</span>
+                <span class="modename">Travelling</span>
+              </div>
+              <div class="modelist">
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Search, trips and messages</span>
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Your CNIC verification</span>
+              </div>
+            </div>
+            <div class="modeswap">
+              <span class="swapline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M14 7l5 5-5 5"/></svg>
+                Switch to hosting
+              </span>
+              <span class="swapline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M10 7l-5 5 5 5"/></svg>
+                Switch to travelling
+              </span>
+            </div>
+            <div class="modecard">
+              <div class="modehd">
+                <span class="modeav" aria-hidden="true">AK</span>
+                <span class="modename">Hosting</span>
+              </div>
+              <div class="modelist">
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Listings, calendar and reservations</span>
+                <span class="modeli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>The same CNIC verification</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="hostchip">Hosting</span>
+          <span class="spacer"></span>
+          <span class="txtlink">Switch to travelling</span>
+          <span class="curr">PKR</span>
+          <span class="avatar" aria-label="Your account, Aqib">AK</span>
+        </div>
+        <div class="hostnav">
+          <a class="tab" href="/host/today" aria-current="page">Today</a>
+          <a class="tab" href="/host/calendar">Calendar</a>
+          <a class="tab" href="/host/listings">Listings</a>
+          <a class="tab" href="/host/reservations">Reservations</a>
+          <span class="navspacer"></span>
+          <a class="btn btn-primary sm" href="/host/listings/new/property-type">Create a listing</a>
+        </div>
+        <div class="main">
+          <div class="empty plain">
+            <span class="eh">Welcome back, Aqib</span>
+            <span class="ep">Same account, same verification. The nav above is the only thing that changed.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL G · اردو / RTL ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">G · اردو · RTL — the switch and the host header mirror; the two directional arrows flip, the identity does not</div>
+      <div class="note">Direction demo. The menu is anchored with logical properties, so it moves to the reading-end (left) with no mirroring rule of its own; the two swap arrows flip because they encode direction; the avatar, the initials and the shield do not, because they encode a person. Every digit run is <code>.num</code>-isolated and stays Western (Pass #31). Urdu reuses the corpus lexicon: Pass #31 fixes <code>شناخت</code> as Verify and <code>تصدیق</code> as Confirm <em>for stepper captions</em>, and this card carries no stepper — so the identity noun in the carried-over row is <code>شناخت</code>, while the menu's status line stays the ordinary Urdu for it. The ruling binds the caption vocabulary, not the language. No retired vocabulary appears, in either script.</div>
+      <div class="app rtl" dir="rtl" lang="ur">
+
+        <div class="ghdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <div class="searchpill">
+            <span class="spseg nastaliq">لاہور</span>
+            <span class="spseg nastaliq"><span class="num">5</span> تا <span class="num">9</span> ستمبر</span>
+            <span class="spseg nastaliq"><span class="num">4</span> مہمان</span>
+            <span class="spgo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+          </div>
+          <div class="gnav">
+            <span class="txtlink nastaliq">میزبانی پر جائیں</span>
+            <div class="langsw" role="group" aria-label="Language">
+              <a href="/" lang="en">EN</a>
+              <a class="urdu" href="/ur/" aria-current="true" lang="ur">اردو</a>
+            </div>
+            <span class="curr">PKR</span>
+            <span class="acct">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+              <span class="acctpic">AK</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="gpage">
+          <div class="amenu">
+            <div class="amhead">
+              <span class="amav" aria-hidden="true">AK</span>
+              <span class="amwho">
+                <span class="amname nastaliq">عاقب خان</span>
+                <span class="vmark nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+                  شناختی کارڈ تصدیق شدہ
+                </span>
+              </span>
+            </div>
+            <span class="amsep"></span>
+            <span class="ami lead">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l7.3-6.2a1 1 0 0 1 1.4 0L20 11"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-5h4v5"/></svg>
+              <span class="amb">
+                <span class="amt nastaliq">میزبانی پر جائیں</span>
+                <span class="ams nastaliq">آپ کا سلام اسٹے اکاؤنٹ دونوں کے لیے کام کرتا ہے۔ مہمان کے طور پر کی گئی شناخت ساتھ چلتی ہے — دوبارہ کرنے کی ضرورت نہیں۔</span>
+              </span>
+            </span>
+            <span class="amsep"></span>
+            <span class="ami nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+              سفر
+            </span>
+            <span class="ami nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+              پیغامات
+            </span>
+            <span class="ami nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+              اکاؤنٹ کی ترتیبات
+            </span>
+            <span class="amsep"></span>
+            <span class="ami nastaliq">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5h3a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h9"/></svg>
+              لاگ آؤٹ
+            </span>
+          </div>
+        </div>
+
+        <div class="switchwrap">
+          <div class="h2 nastaliq">ایک اکاؤنٹ، دو حالتیں</div>
+          <p class="sec-sub nastaliq">میزبانی کوئی دوسرا اکاؤنٹ یا دوسرا لاگ اِن نہیں۔ یہ آپ کے موجودہ اکاؤنٹ کی ایک حالت ہے، اور اسی طرح واپس بھی آ جاتی ہے۔</p>
+
+          <div class="modes">
+            <div class="modecard">
+              <div class="modehd">
+                <span class="modeav" aria-hidden="true">AK</span>
+                <span class="modename nastaliq">سفر</span>
+              </div>
+              <div class="modelist">
+                <span class="modeli nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>تلاش، سفر اور پیغامات</span>
+                <span class="modeli nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>آپ کی شناخت</span>
+              </div>
+            </div>
+            <div class="modeswap">
+              <span class="swapline nastaliq">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M14 7l5 5-5 5"/></svg>
+                میزبانی پر جائیں
+              </span>
+              <span class="swapline nastaliq">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M10 7l-5 5 5 5"/></svg>
+                سفر پر واپس جائیں
+              </span>
+            </div>
+            <div class="modecard">
+              <div class="modehd">
+                <span class="modeav" aria-hidden="true">AK</span>
+                <span class="modename nastaliq">میزبانی</span>
+              </div>
+              <div class="modelist">
+                <span class="modeli nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>لسٹنگز، کیلنڈر اور بکنگز</span>
+                <span class="modeli nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>وہی شناخت، دوبارہ نہیں</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="frows">
+            <div class="frow">
+              <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+              <span class="fdb"><span class="fdt nastaliq">آپ کی شناخت</span><span class="fdd nastaliq"><b>جوں کی توں ساتھ چلتی ہے۔</b> حالت بدلنے پر کسی بھی سمت میں دوبارہ شناخت نہیں مانگی جاتی۔</span></span>
+            </div>
+            <div class="frow">
+              <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="fdb"><span class="fdt nastaliq">آپ کی پروفائل</span><span class="fdd nastaliq">وہی نام، وہی تصویر، وہی اکاؤنٹ۔ مہمان اور میزبان دونوں ایک ہی شخص کو دیکھتے ہیں۔</span></span>
+            </div>
+            <div class="frow">
+              <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+              <span class="fdb"><span class="fdt nastaliq">مہمان کے طور پر آپ کے سفر</span><span class="fdd nastaliq">جہاں تھے وہیں محفوظ ہیں۔ میزبانی سفر کے ساتھ شامل ہوتی ہے، اس کی جگہ نہیں لیتی۔</span></span>
+            </div>
+          </div>
+
+          <p class="dnote nastaliq">واپسی اسی راستے سے ہے: نیچے میزبان ہیڈر میں <b>سفر پر واپس جائیں</b>، جو میزبانی کے دوران ہر وقت سامنے رہتا ہے۔</p>
+        </div>
+
+        <div class="hdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="hostchip nastaliq">میزبانی</span>
+          <span class="spacer"></span>
+          <span class="txtlink nastaliq">سفر پر واپس جائیں</span>
+          <div class="langsw" role="group" aria-label="Language">
+            <a href="/host/today" lang="en">EN</a>
+            <a class="urdu" href="/ur/host/today" aria-current="true" lang="ur">اردو</a>
+          </div>
+          <span class="curr">PKR</span>
+          <span class="avatar">AK</span>
+        </div>
+        <div class="hostnav">
+          <a class="tab nastaliq" href="/ur/host/today" aria-current="page">آج</a>
+          <a class="tab nastaliq" href="/ur/host/calendar">کیلنڈر</a>
+          <a class="tab nastaliq" href="/ur/host/listings">لسٹنگز</a>
+          <a class="tab nastaliq" href="/ur/host/reservations">بکنگز</a>
+          <a class="tab nastaliq" href="/ur/host/earnings">آمدنی</a>
+          <span class="navspacer"></span>
+          <a class="btn btn-primary sm nastaliq" href="/ur/host/listings/new/property-type">نئی لسٹنگ بنائیں</a>
+        </div>
+        <div class="main">
+          <div class="greet">
+            <div class="ptitle nastaliq">خوش آمدید، عاقب</div>
+            <p class="psub nastaliq">کینٹ ویو ریزیڈنس مکمل ہے اور آپ کے شائع کرنے کا انتظار کر رہی ہے۔</p>
+          </div>
+          <div class="lrow">
+            <span class="lthumb"><img src="../../assets/photos/is-f7-living.jpg" alt="روشن لاؤنج، نیچی صوفہ اور کھڑکیوں کے ساتھ کھانے کی جگہ" data-prod-loading="lazy" /></span>
+            <div class="lbody">
+              <div class="ltitle nastaliq">کینٹ ویو ریزیڈنس</div>
+              <div class="lsub nastaliq">راولپنڈی کینٹونمنٹ · پوری جگہ · <span class="num">6</span> افراد</div>
+              <div class="lmeta">
+                <span class="status draft nastaliq">ڈرافٹ</span>
+                <span class="minibars" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i></span>
+                <span class="dstep nastaliq">تمام <b><span class="num">9</span> مراحل مکمل</b></span>
+              </div>
+            </div>
+            <span class="lact"><a class="gbtn nastaliq" href="/ur/host/listings/new/publish">دیکھیں اور شائع کریں</a></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PANEL H · NARROW ================= -->
+    <div class="doc nar" aria-hidden="true">
+      <div class="panel-tag">H · Narrow — below <span class="num">820</span>px the preview's mosaic stacks and the post-flow bar keeps its two edges</div>
+      <div class="note">With the caption gone the action bar has nothing to centre, so it is a two-column grid at every width: Back owns the leading edge, the primary owns the trailing one, and the row never wraps to two lines. That is the one place the post-flow footer differs from the stepped one, which does wrap because it has a third thing to place. The mosaic stops being a mosaic below <span class="num">820</span>px and becomes a stack — its outer corners stay <code>radius.xl</code>, and the interior corners stay square, because it is still one object.</div>
+      <div class="wz">
+
+        <div class="wzhdr">
+          <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+          <span class="ctx">
+            <span class="ctxnow">New listing</span>
+          </span>
+          <span class="hspacer"></span>
+          <a class="gbtn" href="/host/listings">Save &amp; exit</a>
+        </div>
+
+        <div class="wzbody">
+          <div class="wzwrap">
+            <div class="pagehead">
+              <div class="ptitle">How guests will see it</div>
+              <p class="psub">Cantt View Residence is not live yet.</p>
+            </div>
+
+            <div class="fsec">
+              <div class="h2">Your listing</div>
+              <div class="gpv">
+                <div class="pvgrid">
+                  <span class="pvhero"><img class="pvimg" src="../../assets/photos/is-f7-living.jpg" alt="Living room with a low grey sofa, wooden floor and a dining zone beside tall daylight windows" data-prod-loading="lazy" /></span>
+                  <span><img class="pvimg" src="../../assets/photos/is-f7-bedroom.jpg" alt="Bedroom with a grey headboard, beige bedding and soft daylight" data-prod-loading="lazy" /></span>
+                </div>
+                <div class="pvbody">
+                  <span class="pvnew">New listing</span>
+                  <span class="pvtitle">Quiet 3-bed portion in Rawalpindi Cantt</span>
+                  <span class="pvloc">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                    Rawalpindi Cantonment
+                  </span>
+                  <span class="pvprice"><b>PKR <span class="num">12,000</span></b> a night</span>
+                </div>
+                <div class="pvsec">
+                  <div class="pvh">The practical facts</div>
+                  <div class="frows">
+                    <div class="frow">
+                      <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></svg></span>
+                      <span class="fdb"><span class="fdt">Load-shedding</span><span class="fdd">About <b><span class="num">4</span> hours</b> on a typical day.</span></span>
+                    </div>
+                    <div class="frow">
+                      <span class="fdic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 7V5h10v2"/><circle cx="9" cy="12.5" r="2.2"/><path d="M14 11h4M14 14h4"/></svg></span>
+                      <span class="fdb"><span class="fdt">Backup power</span><span class="fdd">Generator, about <b><span class="num">8</span> hours</b> on a full tank.</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wzfoot post">
+          <div class="footrow">
+            <span class="backbtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+              Back
+            </span>
+            <span class="wzcta">Publish listing</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -7,8 +7,10 @@ import { SearchIcon } from "./icons";
 import { Num } from "./numerals";
 import { LanguageGroup } from "./language-group";
 import { MobileMenu } from "./mobile-menu";
+import { AccountMenu } from "./account-menu";
 import { headerCtaYields } from "./header-cta";
 import { btnBase, btnGhost, btnMd, btnOutline, btnPrimary, focusRing, gutter } from "./ui";
+import { isSignedIn, setSessionMode, useSessionMode } from "@/lib/mode";
 
 /**
  * SiteHeader — the shipped web chrome (design corpus: the gw-001 light panel is
@@ -24,6 +26,33 @@ import { btnBase, btnGhost, btnMd, btnOutline, btnPrimary, focusRing, gutter } f
  * Height is deliberately NOT animated — the card condenses 64→56 on scroll, but
  * animating height thrashes layout every frame. The state change rides on
  * border-color + box-shadow only, which is paint-local and interruptible.
+ *
+ * THE SIGNED-IN BRANCH (`hw-007` panel B, `web-header-footer.html` logged-in)
+ * --------------------------------------------------------------------------
+ * This bar had no logged-in branch at all: it rendered Log in / Sign up
+ * unconditionally, on every route, to everybody. The corpus draws a second
+ * composition for the same bar — "logged-in collapses the auth pair into an
+ * avatar/account control" — and `hw-007` adds the thing the founder actually
+ * asked for beside it: `Switch to hosting`, a 14px secondary text link where
+ * `Become a host` used to sit.
+ *
+ * THREE SUBSTITUTIONS, NOT AN EXTRA ROW OF CHROME. Signed in, `Become a host`
+ * becomes `Switch to hosting` (you already can host — the offer becomes a
+ * shortcut); `Help` moves into the account menu as `Help centre`; and the auth
+ * pair becomes the account control. The bar keeps its item count, which is why
+ * the card can call the right side "already crowded" and put the explanation in
+ * the menu instead.
+ *
+ * GREEN (TASTE §2) BALANCES BY ITSELF HERE. The signed-in bar has no `Sign up`,
+ * so the brand-filled avatar the card inherits lands in the role the primary CTA
+ * just vacated rather than beside it. `headerCtaYields` therefore only ever
+ * governs the signed-out branch, which is the only branch that draws a CTA.
+ *
+ * HYDRATION. `useSessionMode` starts `pending`, so the server HTML and the first
+ * client frame both render the signed-out branch and agree by construction. The
+ * signed-in branch resolves one frame later, on the client only — it is never in
+ * the HTML the SEO gates parse, and the logged-out header stays the crawlable
+ * truth. See `lib/mode.ts`; a real, server-readable session removes the frame.
  */
 
 export interface SiteHeaderProps {
@@ -113,6 +142,8 @@ export function SiteHeader({ search }: SiteHeaderProps) {
   const pill = derivePill(pathname);
   const ctaYields = headerCtaYields(pathname);
   const pillSummary = search ?? pill?.summary;
+  const session = useSessionMode();
+  const signedIn = isSignedIn(session);
   const sentinel = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -188,33 +219,65 @@ export function SiteHeader({ search }: SiteHeaderProps) {
           ) : null}
 
           <nav aria-label="Primary" className="ml-auto flex items-center gap-2 md:gap-4">
-            <Link href="/become-a-host" className={`${navLink} ${focusRing}`}>
-              Become a host
-            </Link>
-            <Link href="/help" className={`${navLink} ${focusRing}`}>
-              Help
-            </Link>
+            {signedIn ? (
+              <>
+                {/* THE ASYMMETRY IS THE CARD'S AND IT IS KEPT: the guest side
+                    gets this header link AND the menu's lead row; the host side
+                    gets its header link only. Do not smooth it — the bar carries
+                    the shortcut, the menu carries the sentence that explains
+                    what the shortcut does to your verification.
 
-            <LanguageGroup className="hidden md:inline-flex" />
+                    It shares `navLink` with the signed-out pair, which hides it
+                    below `md`. That is the same argument one width down: at
+                    375px the bar has room for the wordmark, the person and the
+                    menu, and the row inside the menu is then the whole
+                    affordance. */}
+                <Link
+                  href="/host/today"
+                  onClick={() => setSessionMode("hosting")}
+                  className={`${navLink} ${focusRing}`}
+                >
+                  Switch to hosting
+                </Link>
 
-            {/* Below `md` the auth pair would leave a 375px bar with no room
-                for anything else, so Log in moves into the menu and Sign up —
-                the primary action — stays on the bar. Both are in the menu too;
-                a duplicated sign-up entry costs nothing and a missing one costs
-                a signup. */}
-            <Link href="/login" className={`hidden md:inline-flex ${btnBase} ${btnGhost} ${btnMd}`}>
-              Log in
-            </Link>
-            {/* Green doctrine: the header CTA yields to a page-owned primary.
-                See `header-cta.ts` — the same test drives the copy of this
-                button inside `MobileMenu`, so the control is one treatment at
-                both widths. */}
-            <Link
-              href="/signup"
-              className={`${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnMd}`}
-            >
-              Sign up
-            </Link>
+                <LanguageGroup className="hidden md:inline-flex" />
+
+                <AccountMenu />
+              </>
+            ) : (
+              <>
+                <Link href="/become-a-host" className={`${navLink} ${focusRing}`}>
+                  Become a host
+                </Link>
+                <Link href="/help" className={`${navLink} ${focusRing}`}>
+                  Help
+                </Link>
+
+                <LanguageGroup className="hidden md:inline-flex" />
+
+                {/* Below `md` the auth pair would leave a 375px bar with no room
+                    for anything else, so Log in moves into the menu and Sign up —
+                    the primary action — stays on the bar. Both are in the menu too;
+                    a duplicated sign-up entry costs nothing and a missing one costs
+                    a signup. */}
+                <Link
+                  href="/login"
+                  className={`hidden md:inline-flex ${btnBase} ${btnGhost} ${btnMd}`}
+                >
+                  Log in
+                </Link>
+                {/* Green doctrine: the header CTA yields to a page-owned primary.
+                    See `header-cta.ts` — the same test drives the copy of this
+                    button inside `MobileMenu`, so the control is one treatment at
+                    both widths. */}
+                <Link
+                  href="/signup"
+                  className={`${btnBase} ${ctaYields ? btnOutline : btnPrimary} ${btnMd}`}
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Sibling of the primary nav, not a child: the menu contains its own

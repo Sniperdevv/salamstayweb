@@ -241,7 +241,69 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/signup", "Sign up — SalamStay"),
   stub("/account", "Your account — SalamStay"),
   stub("/trips", "Your trips — SalamStay"),
+  // Both are rows in the account menu (`hw-007`). Unregistered, they rendered
+  // `not-found` from a menu the header ships — a dead link out of live chrome,
+  // which is worse than a stub that says the surface is coming.
+  stub("/messages", "Your messages — SalamStay"),
+  stub("/wishlists", "Your wishlists — SalamStay"),
   stub("/rooms/is-f7-2bed/reserve", "Reserve — Margalla View Apartment"),
+  // The two host surfaces built 2026-07-26. `page()`, not `stub()`, because both
+  // folders exist and render — `app/host/(app)/{today,listings}/page.tsx`. The
+  // group is naming-only, so it does not appear in the path.
+  //
+  // Both are `noindex, follow` with a null canonical: a signed-in host surface is
+  // not a document anyone should reach from search, and a canonical pointing at
+  // one would invite exactly that.
+  page("/host/today", "hw-007", "Today — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings", "hw-001", "Your listings — SalamStay hosting", "noindex,follow", null),
+
+  // Hrefs the host nav and empty states emit that have no folder yet. `stub()`
+  // deliberately — a `page()` entry ahead of its folder serves a live 404, which
+  // is how four pages broke earlier in this project.
+  stub("/host/calendar", "Your calendar — SalamStay hosting"),
+  stub("/host/reservations", "Your reservations — SalamStay hosting"),
+  stub("/host/earnings", "Your earnings — SalamStay hosting"),
+  stub("/host/insights", "Insights — SalamStay hosting"),
+  /**
+   * The nine listing-wizard steps (HOST-SHELL §15), built 2026-07-26. All nine
+   * folders exist under `app/host/listings/new/` and render — verified before
+   * these were flipped from `stub()`, because a `page()` entry ahead of its
+   * folder serves a live 404.
+   *
+   * They sit OUTSIDE the `(app)` route group deliberately, so they inherit
+   * `app/host/layout.tsx`'s noindex and NOT the host section nav. A wizard with
+   * a Today/Calendar/Insights strip across the top would be wrong, and the group
+   * boundary is what prevents it rather than anyone remembering to.
+   *
+   * EVERY STEP CARRIES THE SAME TITLE, and that is not an oversight. All nine
+   * pages are Client Components — each derives its disabled-primary state and
+   * its blocking-reason caption from what the host has ticked, which a Server
+   * Component cannot know — and a Client Component cannot export `metadata`. So
+   * `new/layout.tsx` supplies one title for the whole funnel and all nine serve
+   * it. The registry records what is ACTUALLY served, byte-for-byte, rather than
+   * nine titles that would each be a small lie. Per-step titles would need a
+   * server `page.tsx` wrapping a co-located client child, nine times over; worth
+   * doing when the funnel is instrumented, not before.
+   */
+  page(
+    "/host/listings/new/property-type",
+    "hw-002",
+    "List your place — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
+  page("/host/listings/new/location", "hw-006", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/capacity", "hw-004", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/amenities", "hw-003", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/practical-facts", "hw-001", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/photos", "hw-005", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/title-description", "hw-004", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/house-rules", "hw-003", "List your place — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/new/pricing", "hw-004", "List your place — SalamStay hosting", "noindex,follow", null),
+  // Step 9's `Review and publish` points here. `hw-007` draws it, nobody has
+  // built it — and it is NOT a tenth step: post-flow surfaces carry no stepper.
+  stub("/host/listings/new/preview", "Review and publish — SalamStay hosting"),
+
   stub("/host/help/regulations/cantonment-noc", "Cantonment NOC — SalamStay hosting help"),
   // Linked from ha-001. HA-002 is a designed card awaiting its build wave;
   // /host/help/fees is the payout breakdown the fees block points at.
