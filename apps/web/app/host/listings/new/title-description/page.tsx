@@ -4,8 +4,7 @@ import { useState } from "react";
 
 import { WizardStep } from "@/components/host/wizard-step";
 import { InfoIcon } from "@/components/icons";
-import { focusRing, hostFieldLabel, hostFieldSub, tintTransition } from "@/components/ui";
-import { CheckMark } from "@/components/ui/marks";
+import { TextField } from "@/components/ui/text-field";
 import { Textarea, countUnits } from "@/components/ui/textarea";
 
 /**
@@ -25,11 +24,17 @@ import { Textarea, countUnits } from "@/components/ui/textarea";
  * nothing on the page.
  *
  * `Textarea` already ships that counter, so the description simply uses it. The
- * title cannot: a title is one line, and a `<textarea rows={1}>` would let Enter
- * put a newline inside a listing name. So the field is written out here — and
- * the count comes from `countUnits`, the same exported function the field's own
- * counter calls, so the number the step gates on and the number the host is
- * reading can never be two different numbers.
+ * title cannot BE a textarea: a title is one line, and a `<textarea rows={1}>`
+ * would let Enter put a newline inside a listing name. It is `TextField` — §5's
+ * single-line `.fwrap` shell, carrying the SAME `TextareaCounter` contract, so a
+ * counted single-line field and a counted multi-line field are one idea rather
+ * than two counters that can drift apart. (Both the field and the counter row
+ * were written out longhand in this file until 2026-07-26, with a note asking
+ * for exactly that component; this is that note being paid off.)
+ *
+ * The gate still reads `countUnits` directly, the same exported function both
+ * fields' counters call, so the number the step gates on and the number the host
+ * is reading can never be two different numbers.
  *
  * THE TWO UNITS DIFFER ON PURPOSE
  * -------------------------------
@@ -77,21 +82,6 @@ const sectionSub = "mt-2 max-w-[62ch] text-bodySm font-regular leading-normal te
 const hintRow =
   "mt-6 flex items-start gap-3 text-bodySm font-regular leading-relaxed text-secondary";
 
-/**
- * `.cmeta` — the counter row, `Textarea`'s, byte for byte.
- *
- * Duplicated deliberately and flagged rather than hidden: the honest fix is a
- * single-line `TextField` primitive in `components/ui` carrying the same
- * `TextareaCounter` contract, at which point both fields import one counter and
- * this block disappears. That file is owned elsewhere in this wave, so the
- * duplication lands here where it is visible instead of as a racing edit into a
- * shared primitive. `items-baseline` + `justify-between` mirrors under RTL with
- * no rule of its own: the fact keeps the reading-start edge, the aim the
- * reading-end edge, in both directions.
- */
-const counterRow = "mt-2 flex items-baseline justify-between gap-4";
-const counterFact = "whitespace-nowrap text-label font-regular text-tertiary";
-
 /* ——— Page ———————————————————————————————————————————————————————————————— */
 
 export default function TitleDescriptionStepPage() {
@@ -99,15 +89,13 @@ export default function TitleDescriptionStepPage() {
   const [description, setDescription] = useState("");
 
   /**
-   * The same function the fields' own counters call.
+   * The same function both fields' own counters call.
    *
-   * The GATE reads the trimmed value and the DISPLAY reads the raw one, which
+   * The GATE reads the TRIMMED value and each counter reads the raw one, which
    * is the only place the two numbers can differ: a title of three spaces is
    * three characters and is not a title. Everywhere else they are the same
    * count, because they are the same count.
    */
-  const titleCount = countUnits(title, "characters");
-  const titleSettled = titleCount >= TITLE_SETTLES_AT;
   const hasTitle = countUnits(title.trim(), "characters") > 0;
 
   const descriptionSettled =
@@ -159,74 +147,55 @@ export default function TitleDescriptionStepPage() {
             flattering one.
           </p>
 
-          <div className="mt-5">
-            <label htmlFor="listing-title" className={hostFieldLabel}>
-              Listing title
-            </label>
+          {/*
+            HOST-SHELL §5's text field: `ha-017`'s shell at 48px minimum,
+            `radius.md`, `border.default`, `bg.sunken`, with the value at 16/400
+            — a form value is content, not a label. The label sits ABOVE it in
+            13/600 ink, which is the host shell's own label role and deliberately
+            not the checkout's `overline`: a host answering nine screens of
+            questions is not reading captions on someone else's data. That is
+            also why this is not `components/ui/text-input.tsx`, which is
+            `gw-024`'s promo cell — a different shell for a different flow.
 
-            {/*
-              HOST-SHELL §5's text field: `ha-017`'s shell at 48px minimum,
-              `radius.md`, `border.default`, `bg.sunken`, with the value at
-              16/400 — a form value is content, not a label. The label sits
-              ABOVE it in 13/600 ink (`hostFieldLabel`), which is the host
-              shell's own label role and deliberately not the checkout's
-              `overline`: a host answering nine screens of questions is not
-              reading captions on someone else's data.
+            NO `maxLength`, on purpose, and none available: `TextField` does not
+            expose one. A hard cap would be the gate `ha-028` refused; the range
+            below is encouragement and nothing here can be overspent, which is
+            the same reason its counter carries no denominator.
 
-              That is also why this is not `components/ui/text-input.tsx` — that
-              component is `gw-024`'s promo cell, an `overline` label INSIDE a
-              `bg.canvas` box, which is a different shell for a different flow.
+            `dir="ltr"` is `hw-004` DECISION 3: a prose field the host types into
+            carries an explicit direction so the caret and the first character
+            behave in the language being written. The `/ur/` mirror sets `rtl` in
+            the same slot. No `numeric` — that would force a prose field LTR and
+            put `.num` on a listing name.
 
-              NO `maxLength`, on purpose. A hard cap would be the gate `ha-028`
-              refused; the range below is encouragement and nothing here can be
-              overspent.
-
-              `dir="ltr"` is `hw-004` DECISION 3: a prose field the host types
-              into carries an explicit direction so the caret and the first
-              character behave in the language being written. The `/ur/` mirror
-              sets `rtl` in the same slot.
-            */}
-            <input
-              id="listing-title"
-              name="title"
-              type="text"
-              dir="ltr"
-              value={title}
-              placeholder="A short, plain name for your place"
-              onChange={(event) => setTitle(event.target.value)}
-              className={`mt-2 block min-h-12 w-full rounded-md border border-border-default bg-sunken px-4 text-bodyMd text-primary placeholder:text-secondary hover:border-border-strong ${tintTransition} ${focusRing}`}
-            />
-
-            <div className={counterRow}>
-              <span className={counterFact}>
-                <span className="num">{titleCount}</span> characters
-              </span>
-              <span
-                className={`inline-flex items-center gap-2 text-end text-label font-regular ${
-                  titleSettled ? "text-secondary" : "text-tertiary"
-                }`}
-              >
-                {/* In the DOM at rest and simply not painted, so the guidance
-                    never shifts sideways at the moment the host earns it. */}
-                <CheckMark
-                  className={`size-4 flex-none ${titleSettled ? "opacity-100" : "opacity-0"}`}
-                />
-                {titleSettled ? (
-                  "Good length"
-                ) : (
-                  <span>
-                    Aim for <span className="num">{TITLE_SETTLES_AT}</span> to{" "}
-                    <span className="num">{TITLE_RANGE_TOP}</span>
-                  </span>
-                )}
-              </span>
-            </div>
-
-            <span className={hostFieldSub}>
-              A range to aim for, not a hard limit — long enough to be specific, short enough to read
-              at a glance.
-            </span>
-          </div>
+            The guide is wrapped in ONE `<span>` rather than handed over as a
+            fragment. The row it lands in is an `inline-flex` with a `gap-2`, and
+            a fragment would make every text run and every `.num` span its own
+            flex item with 8px between them.
+          */}
+          <TextField
+            id="listing-title"
+            name="title"
+            className="mt-5"
+            label="Listing title"
+            dir="ltr"
+            value={title}
+            onChange={setTitle}
+            placeholder="A short, plain name for your place"
+            counter={{
+              unit: "characters",
+              countLabel: (count) => <>{count} characters</>,
+              guide: (
+                <span>
+                  Aim for <span className="num">{TITLE_SETTLES_AT}</span> to{" "}
+                  <span className="num">{TITLE_RANGE_TOP}</span>
+                </span>
+              ),
+              guideSettled: "Good length",
+              settledFrom: TITLE_SETTLES_AT,
+            }}
+            hint="A range to aim for, not a hard limit — long enough to be specific, short enough to read at a glance."
+          />
         </section>
 
         <section className={section} aria-labelledby="listing-description-h">

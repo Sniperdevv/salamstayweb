@@ -10,9 +10,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { iconStroke } from "@salamstay/design-tokens/icons";
 import { duration } from "@salamstay/design-tokens/motion";
 
+import { AlertCircleIcon, AlertTriangleIcon, InfoIcon } from "@/components/icons";
 import { focusRing } from "@/components/ui";
+import { CheckMark } from "@/components/ui/marks";
 
 /**
  * Toast — `design-system/cards/toast-banner.html`, with placement and behaviour
@@ -136,6 +139,58 @@ const TONE_ACTION: Record<ToastTone, string> = {
   info: "",
 };
 
+/**
+ * The leading glyph, per tone. GAP CLOSED 2026-07-26.
+ *
+ * This shipped as a caller prop with a doc note saying "pass one for any
+ * non-neutral tone", which is not a default — it is a rule every call site can
+ * forget, silently, and the failure is invisible in review because a toast with
+ * no glyph still looks deliberate. The component owns it now; `icon` stays as an
+ * override.
+ *
+ * WHAT THE CORPUS ACTUALLY DRAWS
+ * ------------------------------
+ * `design-system/cards/toast-banner.html` draws three marks across its toasts
+ * and banners: a bare check (success toast), a bang-in-a-circle (error toast AND
+ * error banner) and a bang-in-a-triangle (warning banner). Those are the three
+ * below. The other two glyphs on that card are NOT tone marks and are not
+ * treated as such: the ink toast's heart belongs to "Saved to Wishlist", and the
+ * info banner's padlock belongs to "Rate locked for 15 minutes" — the card even
+ * labels that panel "Info (with FX-lock)". A message-specific glyph promoted to
+ * a tone default is how a component starts lying about what it means.
+ *
+ * NEUTRAL HAS NO DEFAULT, AND THAT IS THE ANSWER, NOT A HOLE
+ * ----------------------------------------------------------
+ * "Draft saved", "Link copied", "Saved to Wishlist" have nothing in common to
+ * draw. There is no glyph that means neutral; there are only glyphs that mean
+ * the specific thing that happened, which is exactly what `icon` is for. So
+ * neutral renders text-only unless the call site knows better.
+ *
+ * `info` resolves to the shipped `InfoIcon` rather than a new drawing. It is the
+ * one mark on the site that already means "here is a fact you did not ask for",
+ * it is in the corpus (gw-015/gw-016), and drawing a second i-in-a-circle for
+ * this file would be the near-miss fork this wave exists to close.
+ *
+ * STROKE IS `bold` ON ALL FOUR, DELIBERATELY OFF THE SIZE PAIRING
+ * ---------------------------------------------------------------
+ * The card draws `.toast svg` at 20px/2 and `.banner svg` at 24px/1.75, so 2 is
+ * the card's own toast weight. It is also forced: `CheckMark` is fixed at `bold`
+ * (`marks.tsx` argues that case for the on-fill marks) and cannot be lightened,
+ * so a 1.75 bang would sit visibly lighter than the check beside it in the same
+ * stack. Four glyphs at one weight; the odd one out would be the compromise.
+ *
+ * These are elements, not components, because they never vary: same size, same
+ * stroke, same plate, every time. `size-5` matches the wrapper it lands in and
+ * the card's 20px box exactly.
+ */
+const TONE_ICON: Record<ToastTone, ReactNode> = {
+  neutral: null,
+  success: <CheckMark className="size-5" />,
+  warning: <AlertTriangleIcon className="size-5" stroke={iconStroke.bold} />,
+  error: <AlertCircleIcon className="size-5" stroke={iconStroke.bold} />,
+  info: <InfoIcon className="size-5" stroke={iconStroke.bold} />,
+};
+
 /** `error` and `warning` interrupt; everything else waits its turn. */
 const isAssertive = (tone: ToastTone): boolean => tone === "error" || tone === "warning";
 
@@ -154,14 +209,16 @@ export interface ToastOptions {
   readonly message: ReactNode;
   readonly tone?: ToastTone;
   /**
-   * The leading glyph. Decorative and `aria-hidden` at the call site — the
-   * message is the accessible content.
+   * The leading glyph — an OVERRIDE. Omit it and the tone supplies its own
+   * (`TONE_ICON`); pass one when the message has a mark of its own, which is the
+   * `neutral` case almost every time ("Saved to Wishlist" draws a heart).
    *
-   * There is no per-tone default, and that is a gap rather than a choice: the
-   * corpus draws a check, a bang-in-a-circle and a bang-in-a-triangle on these
-   * plates, and only the check exists in `components/ui/marks.tsx` today. The
-   * other two belong in `components/icons.tsx`, which this file does not own.
-   * Pass one for any tone that is not `neutral`.
+   * Decorative: the wrapper is `aria-hidden`, so the glyph needs no label of its
+   * own and must never be the only thing carrying the meaning. Size it `size-5`.
+   *
+   * `null` suppresses the tone's default; `undefined` (or omitting it) takes it.
+   * That is why the resolution below tests `!== undefined` rather than using
+   * `??` — with `??` a call site could not ask for no glyph at all.
    */
   readonly icon?: ReactNode;
   readonly action?: ToastAction;
@@ -323,7 +380,9 @@ export function ToastProvider({
           id,
           tone,
           message: options.message,
-          icon: options.icon ?? null,
+          // See `ToastOptions.icon`: `!== undefined`, never `??`, so that an
+          // explicit `icon={null}` can suppress the tone's own mark.
+          icon: options.icon !== undefined ? options.icon : TONE_ICON[tone],
           action,
           open: true,
         },

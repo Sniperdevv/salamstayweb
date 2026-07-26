@@ -364,7 +364,7 @@ const note = "mt-3 max-w-[62ch] text-label font-regular leading-relaxed text-sec
  * column with it so the step re-shapes once rather than twice. Written as the
  * arbitrary variant it is, exactly as the checkout calendar writes 1080.
  */
-const gridShape = "mt-4 grid grid-cols-1 gap-2 min-[820px]:grid-cols-2";
+const gridShape = "mt-4 grid grid-cols-1 gap-2 md:grid-cols-2";
 
 /* ——— Component ——————————————————————————————————————————————————————————— */
 
@@ -975,10 +975,22 @@ function PhotoTile({
       ref={(node) => {
         register(`${photo.id}:tile`, node);
       }}
-      // Above its siblings while its menu is open, and no higher: the wizard's
-      // sticky action bar sits at `z-sticky`, and pinned chrome must always win
-      // against content that scrolls under it.
-      className={`relative ${menuOpen ? "z-raised" : ""}`}
+      /*
+        `z-dropdown` (40) while the menu is open, not `z-raised` (10).
+        This read `z-raised` until 2026-07-26, reasoning that "pinned chrome must
+        always win against content that scrolls under it". That rule is right and
+        this is not its case: an open menu is not content scrolling under the
+        bar, it is a transient overlay, and `zIndex.dropdown` sits above
+        `zIndex.sticky` (20) precisely so one can cover the other for as long as
+        it is open.
+        The old value was not merely cosmetic. The wizard's action bar is opaque
+        `bg.canvas`, the menu is ~220px tall and drops downward, so any tile
+        within roughly 270px of the viewport bottom had its menu painted
+        underneath the bar — while the items stayed keyboard-focusable. Arrowing
+        through the menu moved focus onto controls that could not be seen, which
+        is worse than a menu that fails to open.
+      */
+      className={`relative ${menuOpen ? "z-dropdown" : ""}`}
       draggable
       onDragStart={onDragStart}
       onDragOver={onDragOver}

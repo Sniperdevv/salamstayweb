@@ -5,15 +5,9 @@ import { useState, type ReactNode } from "react";
 import { iconStroke } from "@salamstay/design-tokens/icons";
 
 import { InfoIcon } from "@/components/icons";
+import { OptionCard, OptionMark, optionMarkSlot } from "@/components/host/option-card";
 import { WizardStep } from "@/components/host/wizard-step";
-import {
-  controlRing,
-  controlRingSelected,
-  hostFieldSub,
-  pressableSurface,
-  tintTransition,
-} from "@/components/ui";
-import { CheckMark } from "@/components/ui/marks";
+import { controlRing, hostFieldSub } from "@/components/ui";
 
 /**
  * Step 4 of 9 — `/host/listings/new/amenities`.
@@ -27,9 +21,14 @@ import { CheckMark } from "@/components/ui/marks";
  * with exactly one difference — the mark swaps `radius.full` for `radius.sm`.
  * **Circle = one of these. Square = any of these.** That is the only shape
  * convention in interface design users already know, it costs one token, and it
- * means multi-select needs no second component. The ring, the ink fill, the
- * white check and the no-fill-change rule are identical to the radio card that
- * step 5 draws.
+ * means multi-select needs no second component.
+ *
+ * It is now literally no second component: `components/host/option-card.tsx`
+ * owns the shape for this step and for step 5, and `mark="checkbox"` is the whole
+ * of the difference (2026-07-26 — this file and step 5 each had a private copy,
+ * which was the right call while the two were being written in parallel and the
+ * wrong one to leave standing). The `OptionMark` under the escape hatch below is
+ * the same mark on a row that is not a card.
  *
  * A description appears only where the label is genuinely ambiguous. "TV —
  * guests can watch television" is padding, and padding on twelve rows is a
@@ -269,105 +268,6 @@ const AMENITY_GROUPS: readonly AmenityGroup[] = [
   },
 ];
 
-/* ── The option card, square-marked ──────────────────────────────────────────
- *
- * §5's `.ocard`: `radius.lg`, one `border.default`, `bg.canvas`, NO shadow —
- * TASTE §1 gives a form control a border and nothing to cast, and §8 puts no
- * shadow on any host surface at all.
- *
- * SELECTION IS A RING, NOT A FILL. `inset 0 0 0 2px interactive.selected`, ink
- * and never brand (TASTE §3), drawn as `ring-2 ring-inset` so the card's
- * contents never shift by the 1px a real border would cost (§5, and
- * `CHECKOUT-SHELL.md` §5's `.editing` reasoning). The same overlay carries
- * focus, because the focusable node is an `sr-only` input — see `controlRing`,
- * which compiles to `~` rather than `:has()` so a browser without `:has()` still
- * shows a focus state.
- *
- * The mark fades AND scales in from 75%, never from 0 (§10: nothing in the real
- * world appears from nothing). Reduced motion drops the transform and keeps the
- * fade. The glyph is in the DOM at rest and simply unpainted, so choosing
- * something reflows nothing.
- *
- * Sizes are rungs, not the card's px: the 36px icon disc becomes `size-10` (the
- * rung `SwitchRow` already rounded it to), the 22px mark becomes `size-5` (the
- * rung `Checkbox` and `RadioRow` already use for the same idiom), and §5's
- * 15/600 title becomes 16/600 — TASTE §7's "card titles 16/500-600", since 15 is
- * not on the type scale in either direction.
- */
-function AmenityCard({
-  amenity,
-  checked,
-  onChange,
-}: {
-  readonly amenity: Amenity;
-  readonly checked: boolean;
-  readonly onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label
-      /*
-        `pressableSurface` and NOT `pressableSurface` + `tintTransition`: both
-        set `transition-property`, so which one wins would be decided by the
-        order Tailwind happens to emit them in rather than by the order they are
-        written here (`host-ui.ts` documents the same trap for `rounded-*`).
-        `pressableSurface` already carries background, border, colour AND the
-        `scale(.995)` press §10 budgets for a surface this size.
-      */
-      className={`relative flex min-h-16 cursor-pointer items-start gap-3 rounded-lg border border-border-default bg-canvas p-4 hover:border-border-strong ${pressableSurface}`}
-    >
-      <input
-        type="checkbox"
-        className="peer sr-only"
-        name={`amenity-${amenity.id}`}
-        value={amenity.id}
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-      />
-
-      {/* Ring overlay — later sibling of the peer input, see `controlRing`. */}
-      <span
-        aria-hidden="true"
-        className={`${controlRing} rounded-lg ${checked ? controlRingSelected : ""}`}
-      />
-
-      <span
-        aria-hidden="true"
-        className="flex size-10 flex-none items-center justify-center rounded-full bg-raised text-secondary"
-      >
-        {amenity.icon}
-      </span>
-
-      <span className="min-w-0 flex-1">
-        <span className="block text-bodyMd font-semibold text-primary">{amenity.title}</span>
-        {amenity.description ? (
-          <span className="mt-1 block text-label font-regular leading-snug text-secondary">
-            {amenity.description}
-          </span>
-        ) : null}
-      </span>
-
-      {/* The mark sits in a 24px box — the title's own line box at 16/1.5 — so it
-          optically centres on the FIRST line of a card whose description wraps.
-          `radius.sm`, not `full`: square = any of these. */}
-      <span aria-hidden="true" className="flex h-6 flex-none items-center">
-        <span
-          className={`flex size-5 items-center justify-center rounded-sm border ${tintTransition} ${
-            checked
-              ? "border-selected bg-selected text-selected-fg"
-              : "border-border-default bg-canvas text-selected-fg"
-          }`}
-        >
-          <CheckMark
-            className={`size-3 transition-[opacity,transform] duration-instant ease-standard motion-reduce:scale-100 ${
-              checked ? "scale-100 opacity-100" : "scale-75 opacity-0"
-            }`}
-          />
-        </span>
-      </span>
-    </label>
-  );
-}
-
 /* ────────────────────────────────────────────────────────────────────────── */
 
 export default function AmenitiesStepPage() {
@@ -462,11 +362,18 @@ export default function AmenitiesStepPage() {
                 same collapse on `.fld2` and the card's `.nar` panel mirrors it. */}
             <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
               {group.items.map((amenity) => (
-                <AmenityCard
+                <OptionCard
                   key={amenity.id}
-                  amenity={amenity}
+                  mark="checkbox"
+                  name={`amenity-${amenity.id}`}
+                  value={amenity.id}
                   checked={ticked.includes(amenity.id)}
                   onChange={(next) => toggleAmenity(amenity.id, next)}
+                  icon={amenity.icon}
+                  title={amenity.title}
+                  {...(amenity.description === undefined
+                    ? {}
+                    : { description: amenity.description })}
                 />
               ))}
             </div>
@@ -486,20 +393,11 @@ export default function AmenitiesStepPage() {
 
                 <span aria-hidden="true" className={`${controlRing} rounded-md`} />
 
-                <span aria-hidden="true" className="flex h-6 flex-none items-center">
-                  <span
-                    className={`flex size-5 items-center justify-center rounded-sm border ${tintTransition} ${
-                      noneApply
-                        ? "border-selected bg-selected text-selected-fg"
-                        : "border-border-default bg-canvas text-selected-fg"
-                    }`}
-                  >
-                    <CheckMark
-                      className={`size-3 transition-[opacity,transform] duration-instant ease-standard motion-reduce:scale-100 ${
-                        noneApply ? "scale-100 opacity-100" : "scale-75 opacity-0"
-                      }`}
-                    />
-                  </span>
+                {/* The card's own mark on a row that is not a card — same
+                    square, same ink fill, same white check, same 24px slot so
+                    it centres on the sentence's first line. */}
+                <span aria-hidden="true" className={optionMarkSlot}>
+                  <OptionMark kind="checkbox" checked={noneApply} />
                 </span>
 
                 <span className="min-w-0 flex-1 text-bodySm text-primary">

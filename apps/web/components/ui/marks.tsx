@@ -5,13 +5,23 @@ import { iconStroke } from "@salamstay/design-tokens/icons";
  * corpus: the ± pair from gw-021's `.gstep` and the check from gw-022's
  * `.pmark` / gw-023's `.cbox`.
  *
- * WHY THESE ARE NOT IN `components/icons.tsx`
- * -------------------------------------------
+ * WHY THESE ARE STILL NOT IN `components/icons.tsx`
+ * -------------------------------------------------
  * They belong there and should move. `icons.tsx` carries every other corpus
  * glyph behind the same `<Glyph>` wrapper, and a second wrapper in a second file
- * is exactly the drift that file exists to prevent. It is owned by another agent
- * in this wave, so these land here rather than racing an edit into it — merge
- * candidate, flagged, not a design decision.
+ * is exactly the drift that file exists to prevent.
+ *
+ * The reason this note originally gave — icons.tsx belonged to another agent
+ * that wave — expired on 2026-07-26 and is not the reason any more. The real one
+ * is that the move is nine import sites wide (`checkbox`, `radio-group`,
+ * `textarea`, `guest-stepper`, `toast`, and four wizard steps), none of which is
+ * this file, and a glyph module that exports the same three marks from two paths
+ * mid-migration is strictly worse than one that exports them from the wrong one.
+ * It is a mechanical follow-up gated on touching those call sites in one pass —
+ * still flagged, still not a design decision.
+ *
+ * The chevron that used to sit privately in `select.tsx` for this same reason
+ * DID move (`ChevronDownIcon`), because it had exactly one call site.
  *
  * Stroke is `iconStroke.bold` (2), the role documented for "reversed (on-fill)
  * icons that need to hold up". The cards draw these at 3 in a 24 viewBox, which

@@ -2,9 +2,10 @@ import { iconStroke } from "@salamstay/design-tokens/icons";
 
 /**
  * Line glyphs lifted verbatim from the approved design corpus (gw-001,
- * gw-015, gw-016, web-header-footer). Paths are the cards' own paths; size is
- * set by the caller with a spacing-token class (`size-5` = iconSize.sm,
- * `size-6` = iconSize.md) and stroke comes from `iconStroke`, never a literal.
+ * gw-015, gw-016, web-header-footer, toast-banner, hw-003). Paths are the
+ * cards' own paths; size is set by the caller with a spacing-token class
+ * (`size-5` = iconSize.sm, `size-6` = iconSize.md) and stroke comes from
+ * `iconStroke`, never a literal.
  *
  * Every glyph is decorative here — it always sits beside a real text label —
  * so each carries aria-hidden and is invisible to assistive tech.
@@ -79,6 +80,33 @@ export function ChevronLeftIcon(props: GlyphProps) {
   return (
     <Glyph stroke={iconStroke.bold} {...props}>
       <path d="M15 6l-6 6 6 6" />
+    </Glyph>
+  );
+}
+
+/**
+ * The trailing chevron on a closed listbox — `hw-003`'s `.sel svg`, the corpus
+ * path. Hoisted here from `components/ui/select.tsx`, which drew it privately
+ * and flagged it as a merge candidate because this file was another agent's
+ * that wave. Merged 2026-07-26; `select.tsx` imports it now.
+ *
+ * IT DOES NOT MIRROR UNDER RTL. `ChevronRightIcon` and `ChevronLeftIcon` are
+ * directional — they mean "forward" and "back", and forward swaps sides with
+ * the reading direction. Down does not: a list that opens below its control
+ * opens below it in both directions. So this glyph carries no `rtl:` rule and
+ * must never be given one.
+ *
+ * `thin`, not the `bold` the two directional chevrons take. Those sit alone on
+ * a 44px circular rail control where a hairline would vanish; this one sits
+ * inside a bordered 48px field beside its own value, which is §11.3's "strokes
+ * uniformly thin" case. (The card draws 1.9 at 17px — off its own size→stroke
+ * pairing in the heavy direction; `thin` at the shipped `size-5` carries the
+ * same optical weight.)
+ */
+export function ChevronDownIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.thin} {...props}>
+      <path d="M6 9l6 6 6-6" />
     </Glyph>
   );
 }
@@ -187,6 +215,46 @@ export function InfoIcon(props: GlyphProps) {
     <Glyph stroke={iconStroke.thin} {...props}>
       <circle cx="12" cy="12" r="9" />
       <path d="M12 11v5M12 8h.01" />
+    </Glyph>
+  );
+}
+
+/* ── Status marks ────────────────────────────────────────────────────────────
+ *
+ * The two remaining glyphs from `design-system/cards/toast-banner.html`, added
+ * 2026-07-26 to close the gap `components/ui/toast.tsx` had flagged in prose:
+ * the card draws three marks on those plates — a check, a bang-in-a-circle and
+ * a bang-in-a-triangle — and only the check existed (`components/ui/marks.tsx`).
+ * Without these two, every non-neutral toast depended on its call site
+ * remembering to pass a glyph, which is a default the component should own.
+ *
+ * The card draws them at TWO pairings: 20px/2 on a `.toast`, 24px/1.75 on a
+ * `.banner`. `regular` (1.75) is the default here because it is the pairing for
+ * the larger box and the one a future `.banner` will want untouched; the toast
+ * passes `bold` explicitly, and says why at the map.
+ *
+ * Shape-named rather than tone-named on purpose. A triangle is the warning mark
+ * on a toast and could carry a different role on a surface that has no tones at
+ * all; naming it `WarningIcon` would make the toast's mapping look like a
+ * definition instead of a choice.
+ */
+
+/** Bang in a circle — the card's `error` toast and `error` banner mark. */
+export function AlertCircleIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.regular} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v4M12 16h.01" />
+    </Glyph>
+  );
+}
+
+/** Bang in a triangle — the card's `warning` banner mark. */
+export function AlertTriangleIcon(props: GlyphProps) {
+  return (
+    <Glyph stroke={iconStroke.regular} {...props}>
+      <path d="M10.3 3.9L1.8 18a1.5 1.5 0 0 0 1.3 2.2h17.8a1.5 1.5 0 0 0 1.3-2.2L13.7 3.9a1.5 1.5 0 0 0-2.6 0z" />
+      <path d="M12 9v4M12 17h.01" />
     </Glyph>
   );
 }

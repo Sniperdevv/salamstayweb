@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { PersonIcon } from "@/components/home-icons";
 import { HelpIcon } from "@/components/icons";
 import { LanguageGroup } from "@/components/language-group";
 import { focusRing, pressable } from "@/components/ui";
+import { HostAccountAvatar, SwitchToTravelling } from "./host-account-control";
 import { HostNav } from "./host-nav";
 import { hostChromeGutter } from "./host-ui";
 
@@ -58,26 +58,20 @@ const HOST_MAIN_ID = "host-main";
  * The account control, without a name.
  *
  * `ha-046` and both `hw-` cards draw a brand disc carrying the host's initials
- * and an `aria-label` of "Your account, Aqib". The initials and the name are
- * that host's data, and there is no session on this build to read them from —
- * so the disc keeps its role, its size and its fill, and the payload it cannot
- * honestly print becomes the neutral person glyph the corpus already uses.
- * Inventing "AK" would be the same class of thing as inventing a rating.
+ * and an `aria-label` of "Your account, Aqib".
  *
- * The label drops the name for the same reason and stays a complete sentence
- * without it.
+ * This drew a neutral person glyph and a nameless label for one pass, on the
+ * reasoning that there was no session to read a name from and inventing "AK"
+ * would be the same class of thing as inventing a rating. The reasoning was
+ * right; the premise stopped being true in the same wave. `lib/mode.ts` ships
+ * `SESSION_ACCOUNT`, whose own doc says it exists so the host header can import
+ * the same record — and the result of not doing so was a guest and a host who
+ * were visibly two different people, which is the one thing `hw-007` is built
+ * to prevent.
+ *
+ * It now lives in `host-account-control.tsx`, a client leaf, because reading the
+ * session needs one and this shell is otherwise a Server Component.
  */
-function AccountAvatar() {
-  return (
-    <Link
-      href="/account"
-      aria-label="Your account"
-      className={`grid size-10 shrink-0 place-items-center rounded-full bg-interactive text-on-brand ${focusRing} ${pressable}`}
-    >
-      <PersonIcon className="size-5" />
-    </Link>
-  );
-}
 
 export function HostHeader() {
   return (
@@ -120,12 +114,9 @@ export function HostHeader() {
         text actions inside prose. This is a chrome link, and the guest header's
         own nav links are drawn the same way.
       */}
-      <Link
-        href="/"
+      <SwitchToTravelling
         className={`shrink-0 rounded-md text-bodySm text-secondary transition-colors duration-instant ease-decelerate hover:text-primary motion-reduce:transition-[opacity,color] ${focusRing}`}
-      >
-        Switch to travelling
-      </Link>
+      />
 
       <LanguageGroup className="hidden md:inline-flex" />
 
@@ -145,7 +136,7 @@ export function HostHeader() {
         <HelpIcon className="size-5" />
       </Link>
 
-      <AccountAvatar />
+      <HostAccountAvatar />
     </header>
   );
 }

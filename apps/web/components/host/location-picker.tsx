@@ -269,7 +269,7 @@ export const locationPickerStringsEn: LocationPickerStrings = {
  * its own height the same way.
  */
 const mapBox =
-  "relative mt-4 aspect-[3/2] w-full overflow-hidden rounded-lg border min-[820px]:aspect-[600/264]";
+  "relative mt-4 aspect-[3/2] w-full overflow-hidden rounded-lg border md:aspect-[600/264]";
 
 /**
  * A chip sitting ON the map. Opaque `bg.canvas` plus `elevation.onMedia` —

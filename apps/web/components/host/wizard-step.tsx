@@ -340,7 +340,26 @@ export function WizardStep({
               type="button"
               aria-disabled="true"
               aria-describedby={WIZARD_PROGRESS_NOTE_ID}
-              className={`${wzctaShape} cursor-default justify-self-end bg-raised text-disabled`}
+              /*
+                THE BORDER IS NOT DECORATION — IT IS THE ONLY THING GIVING THIS
+                BUTTON A SHAPE. Added 2026-07-26 after measurement.
+                `bg.raised` against `bg.canvas` measures **1.06:1** in light and
+                1.08:1 in dark. That is not a subtle plate, it is no plate at
+                all: the control rendered as dim text floating in space, with no
+                edge anywhere. Every one of the nine steps opens with this button
+                disabled, so it was the first thing a host saw, nine times.
+                TASTE §1 and §11.7 both require a disabled control to stay
+                VISIBLE and in place; it was staying in place and vanishing.
+                `border.default` gives it an edge that reads in both themes
+                without making it look pressable.
+                The label keeps `text.disabled` (1.97:1) deliberately. That is
+                the house token for disabled text on every surface, and forking
+                it on one button would trade a visible inconsistency for an
+                invisible one. Its contrast is a system-level question — the same
+                class as GO-LIVE C7's tertiary ramp — and is logged there rather
+                than answered here.
+              */
+              className={`${wzctaShape} cursor-default justify-self-end border border-border-default bg-raised text-disabled`}
             >
               {nextLabel}
             </button>

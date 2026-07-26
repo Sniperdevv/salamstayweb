@@ -5,18 +5,12 @@ import { useState, type ReactNode } from "react";
 import { iconStroke } from "@salamstay/design-tokens/icons";
 
 import { InfoIcon } from "@/components/icons";
+import { OptionCard, OptionMark, optionMarkSlot } from "@/components/host/option-card";
 import { WizardStep } from "@/components/host/wizard-step";
-import {
-  controlRing,
-  controlRingSelected,
-  hostFieldLabel,
-  hostFieldSub,
-  pressableSurface,
-  tintTransition,
-} from "@/components/ui";
-import { CheckMark } from "@/components/ui/marks";
+import { controlRing, hostFieldLabel, hostFieldSub } from "@/components/ui";
 import { Segment, Segmented } from "@/components/ui/segmented";
 import { Select } from "@/components/ui/select";
+import { TextField } from "@/components/ui/text-field";
 
 /**
  * Step 5 of 9 — `/host/listings/new/practical-facts`. **The flagship step.**
@@ -185,187 +179,6 @@ const GatedParkingGlyph = (
     <path d="M12 6V3" />
   </Glyph>
 );
-
-/* ── The option card ─────────────────────────────────────────────────────────
- *
- * §5's `.ocard`, circular mark: `radius.lg`, one `border.default`, `bg.canvas`,
- * NO shadow — §8 puts no shadow on any host surface, and TASTE §1 gives a form
- * control a border and nothing to cast.
- *
- * SELECTION IS A RING, NOT A FILL. `inset 0 0 0 2px interactive.selected` — ink,
- * never brand (TASTE §3; §7 budgets this surface three greens and a chosen card
- * is not one of them) — drawn as `ring-2 ring-inset` so the card's contents
- * never shift by the 1px a real border costs. The same overlay carries focus,
- * because the focusable node is an `sr-only` input; `controlRing` compiles to
- * `~` rather than `:has()`, so a browser without `:has()` still shows focus.
- *
- * NATIVE RADIOS, HIDDEN, NOT REBUILT. The inputs share a `name`, which is what
- * buys one tab stop, arrow-key navigation, wrap-around, Home/End, the correct
- * announcement and RTL-correct arrow direction — all from the browser, none of
- * it re-implemented with a roving `tabIndex` that will be subtly wrong.
- * `radio-group.tsx` makes the same call for the checkout's rows.
- *
- * The mark fades AND scales in from 75%, never from 0 (§10). Reduced motion
- * drops the transform and keeps the fade. The glyph is in the DOM at rest and
- * simply unpainted, so choosing something reflows nothing.
- *
- * Sizes are rungs, not the card's px: the 36px disc becomes `size-10` (the rung
- * `SwitchRow` rounded it to), the 22px mark `size-5` (the rung `Checkbox` and
- * `RadioRow` use for the same idiom), §5's 15/600 title 16/600 — TASTE §7's
- * "card titles 16/500-600", since 15 is on the type scale in neither direction.
- */
-function OptionCard({
-  name,
-  value,
-  title,
-  description,
-  icon,
-  checked,
-  onChange,
-}: {
-  readonly name: string;
-  readonly value: string;
-  readonly title: string;
-  readonly description: string;
-  readonly icon: ReactNode;
-  readonly checked: boolean;
-  readonly onChange: (value: string) => void;
-}) {
-  return (
-    <label
-      /*
-        `pressableSurface` alone, never `pressableSurface` + `tintTransition`:
-        both set `transition-property`, so which one won would be decided by the
-        order Tailwind emits them in rather than the order written here
-        (`host-ui.ts` documents the same trap for `rounded-*`). It already
-        carries background, border, colour and §10's `scale(.995)` — the press
-        depth for a surface this size, not a button's `.97`.
-      */
-      className={`relative flex min-h-16 cursor-pointer items-start gap-3 rounded-lg border border-border-default bg-canvas p-4 hover:border-border-strong ${pressableSurface}`}
-    >
-      <input
-        type="radio"
-        className="peer sr-only"
-        name={name}
-        value={value}
-        checked={checked}
-        onChange={() => onChange(value)}
-      />
-
-      {/* Ring overlay — later sibling of the peer input, see `controlRing`. */}
-      <span
-        aria-hidden="true"
-        className={`${controlRing} rounded-lg ${checked ? controlRingSelected : ""}`}
-      />
-
-      <span
-        aria-hidden="true"
-        className="flex size-10 flex-none items-center justify-center rounded-full bg-raised text-secondary"
-      >
-        {icon}
-      </span>
-
-      <span className="min-w-0 flex-1">
-        <span className="block text-bodyMd font-semibold text-primary">{title}</span>
-        <span className="mt-1 block text-label font-regular leading-snug text-secondary">
-          {description}
-        </span>
-      </span>
-
-      {/* The mark sits in a 24px box — the title's own line box at 16/1.5 — so it
-          centres on the FIRST line of a card whose description wraps to two.
-          Circle = one of these; step 4's square mark = any of these. */}
-      <span aria-hidden="true" className="flex h-6 flex-none items-center">
-        <span
-          className={`flex size-5 items-center justify-center rounded-full border ${tintTransition} ${
-            checked
-              ? "border-selected bg-selected text-selected-fg"
-              : "border-border-default bg-canvas text-selected-fg"
-          }`}
-        >
-          <CheckMark
-            className={`size-3 transition-[opacity,transform] duration-instant ease-standard motion-reduce:scale-100 ${
-              checked ? "scale-100 opacity-100" : "scale-75 opacity-0"
-            }`}
-          />
-        </span>
-      </span>
-    </label>
-  );
-}
-
-/* ── The measured-value field ────────────────────────────────────────────────
- *
- * §5's `.fwrap` + `.finput` + `.funit`: a 48px `radius.md` shell on
- * `border.default` over `bg.sunken`, the value at 16/400 — "a form value is
- * content, not a label" — and the unit inside the field, trailing, at 14/400
- * secondary. **Never a second control**: the unit is a fact about the field, not
- * a thing to choose.
- *
- * `.num` goes on the INPUT (hw-001's `class="finput num"`), which is what makes
- * the run tabular and, under RTL, isolated back to LTR. §6 and BUILD-DECISIONS
- * #2 admit no carve-out here: an unisolated digit run reverses under RTL, and
- * these fields ship in Urdu.
- *
- * The focus ring is the `controlRing` overlay rather than `focusRing` on the
- * input, because the input is borderless inside the shell and a 2px ring hugging
- * a bare text line reads as a second, smaller field inside the first —
- * `TextInput` answers the identical shape the identical way.
- */
-function UnitField({
-  id,
-  label,
-  unit,
-  value,
-  onChange,
-  placeholder,
-  hint,
-}: {
-  readonly id: string;
-  readonly label: ReactNode;
-  readonly unit: string;
-  readonly value: string;
-  readonly onChange: (value: string) => void;
-  readonly placeholder: string;
-  readonly hint?: ReactNode;
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className={hostFieldLabel}>
-        {label}
-      </label>
-
-      <div
-        className={`relative mt-2 flex min-h-12 items-center gap-3 rounded-md border border-border-default bg-sunken px-4 ${tintTransition} hover:border-border-strong`}
-      >
-        <input
-          id={id}
-          name={id}
-          type="text"
-          inputMode="numeric"
-          className="peer num min-w-0 flex-1 border-none bg-transparent p-0 text-bodyMd font-regular text-primary outline-none placeholder:text-secondary"
-          value={value}
-          placeholder={placeholder}
-          /*
-            Digits and a single decimal point only. A measured figure is the one
-            thing this field is for, and letting prose in would put an
-            un-isolatable string inside a `.num` run.
-          */
-          onChange={(event) => onChange(event.target.value.replace(/[^0-9.]/g, ""))}
-        />
-
-        <span aria-hidden="true" className="flex-none text-bodySm text-secondary">
-          {unit}
-        </span>
-
-        {/* Later sibling of the peer input, see `controlRing`. */}
-        <span aria-hidden="true" className={`${controlRing} rounded-md`} />
-      </div>
-
-      {hint ? <span className={hostFieldSub}>{hint}</span> : null}
-    </div>
-  );
-}
 
 /* ── Data ────────────────────────────────────────────────────────────────────
  *
@@ -590,10 +403,20 @@ export default function PracticalFactsStepPage() {
 
           {/* `.fld2` — two up, collapsing to one column below `md`. */}
           <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <UnitField
+            {/*
+              §5's `.fwrap` + `.finput` + `.funit`, from `components/ui/text-field.tsx`.
+              `numeric` is what puts `.num` on the input and holds the value to a
+              measured figure — §6 and BUILD-DECISIONS #2 admit no carve-out here:
+              an unisolated digit run reverses under RTL, and these fields ship in
+              Urdu. The unit is INSIDE the field, trailing, and never a second
+              control: it is a fact about the field, not a thing to choose.
+            */}
+            <TextField
               id="load-shedding-hours"
+              name="load-shedding-hours"
               label="Load-shedding on a typical day"
               unit="hours"
+              numeric
               value={loadSheddingHours}
               onChange={setHours}
               placeholder="Hours a day"
@@ -623,20 +446,11 @@ export default function PracticalFactsStepPage() {
 
             <span aria-hidden="true" className={`${controlRing} rounded-md`} />
 
-            <span aria-hidden="true" className="flex h-6 flex-none items-center">
-              <span
-                className={`flex size-5 items-center justify-center rounded-sm border ${tintTransition} ${
-                  scheduleUnstated
-                    ? "border-selected bg-selected text-selected-fg"
-                    : "border-border-default bg-canvas text-selected-fg"
-                }`}
-              >
-                <CheckMark
-                  className={`size-3 transition-[opacity,transform] duration-instant ease-standard motion-reduce:scale-100 ${
-                    scheduleUnstated ? "scale-100 opacity-100" : "scale-75 opacity-0"
-                  }`}
-                />
-              </span>
+            {/* The option card's own mark on a row that is not a card — same
+                square, same ink fill, same white check, same 24px slot so it
+                centres on the sentence's first line. */}
+            <span aria-hidden="true" className={optionMarkSlot}>
+              <OptionMark kind="checkbox" checked={scheduleUnstated} />
             </span>
 
             <span className="min-w-0 flex-1 text-bodySm text-primary">
@@ -657,13 +471,14 @@ export default function PracticalFactsStepPage() {
               {BACKUP_OPTIONS.map((option) => (
                 <OptionCard
                   key={option.value}
+                  mark="radio"
                   name="backup"
                   value={option.value}
                   title={option.title}
                   description={option.description}
                   icon={option.icon}
                   checked={backup === option.value}
-                  onChange={chooseBackup}
+                  onChange={() => chooseBackup(option.value)}
                 />
               ))}
             </div>
@@ -671,10 +486,12 @@ export default function PracticalFactsStepPage() {
 
           {backupOnSite ? (
             <div className="mt-5">
-              <UnitField
+              <TextField
                 id="backup-hours"
+                name="backup-hours"
                 label="How long the backup runs"
                 unit="hours"
+                numeric
                 value={backupHours}
                 onChange={setBackupHours}
                 placeholder="Hours it runs"
@@ -699,13 +516,14 @@ export default function PracticalFactsStepPage() {
               {WATER_OPTIONS.map((option) => (
                 <OptionCard
                   key={option.value}
+                  mark="radio"
                   name="water"
                   value={option.value}
                   title={option.title}
                   description={option.description}
                   icon={option.icon}
                   checked={water === option.value}
-                  onChange={setWater}
+                  onChange={() => setWater(option.value)}
                 />
               ))}
             </div>
@@ -764,10 +582,12 @@ export default function PracticalFactsStepPage() {
           </p>
 
           <div className="mt-5">
-            <UnitField
+            <TextField
               id="wifi-speed"
+              name="wifi-speed"
               label="Wi-Fi speed"
               unit="Mbps"
+              numeric
               value={wifiSpeed}
               onChange={setWifiSpeed}
               placeholder="Measured speed"
@@ -781,13 +601,14 @@ export default function PracticalFactsStepPage() {
               {PARKING_OPTIONS.map((option) => (
                 <OptionCard
                   key={option.value}
+                  mark="radio"
                   name="parking"
                   value={option.value}
                   title={option.title}
                   description={option.description}
                   icon={option.icon}
                   checked={parking === option.value}
-                  onChange={setParking}
+                  onChange={() => setParking(option.value)}
                 />
               ))}
             </div>

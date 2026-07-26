@@ -193,7 +193,32 @@ function PrivateRoomGlyph() {
   );
 }
 
-/* ── The option card — `HOST-SHELL.md` §5's `.ocard` ───────────────────────── */
+/* ── The option card — `HOST-SHELL.md` §5's `.ocard` ─────────────────────────
+ *
+ * WHY THIS IS STILL LOCAL WHEN `components/host/option-card.tsx` EXISTS
+ * ---------------------------------------------------------------------
+ * Steps 4 and 5 folded their two private copies into that component on
+ * 2026-07-26. This one did not, and the reason is a real disagreement about §5
+ * rather than an oversight, so it is written down instead of quietly resolved.
+ *
+ * §5's `.ocard` is `padding:14px 15px` with a 36px icon disc, and `hw-001`,
+ * `hw-002` and `hw-003` all draw it byte-identically. None of 14, 15 or 36 is a
+ * rung on the `space` scale, which runs 12 → 16 → 20 and 32 → 40. **Two honest
+ * readings follow.** This file takes the card's own px through Tailwind's default
+ * rungs (`py-3.5` = 14, `size-9` = 36) — a named rung of the same value, never an
+ * arbitrary bracket, the precedent `host-chrome.tsx` and `wizard-step.tsx` set
+ * with `pt-7` for the same 28. Steps 4 and 5 take the nearest SalamStay token
+ * rungs instead (`p-4` = 16, `size-10` = 40) and say so, which is the letter of
+ * "consume the tokens by role".
+ *
+ * They differ by 4px on the disc and ~5px on the card's height. Folding this page
+ * in would therefore MOVE it, and a refactor that moves a shipped page is a
+ * redesign wearing a refactor's clothes. So the page that would move is the page
+ * that stays put until the reading is ruled on. Once it is, this block deletes
+ * and the two `<OptionCard mark="radio">` grids below take its place — nothing
+ * else in this file has to change, which is the test that this really is one
+ * decision and not two components.
+ */
 
 interface OptionCardProps {
   /** The shared `name` the browser groups the radios by. */

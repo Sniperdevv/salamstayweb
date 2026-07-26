@@ -2,8 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { iconStroke } from "@salamstay/design-tokens/icons";
-
+import { ChevronDownIcon } from "@/components/icons";
 import { fieldGroupInvalid, focusRing, hostFieldLabel, hostFieldSub } from "@/components/ui";
 
 /**
@@ -65,30 +64,13 @@ const fieldLabelBlock = hostFieldLabel;
 const fieldSub = hostFieldSub;
 
 /**
- * The trailing chevron — hw-003's `.sel svg`, the corpus path.
- *
- * It is here and not in `components/icons.tsx` for the same reason `marks.tsx`
- * exists: that file is owned by another agent in this wave and there is no
- * `ChevronDownIcon` in it yet. Merge candidate, flagged, not a design decision.
- * It does not mirror under RTL — it points down, and down is not directional.
+ * The trailing chevron — hw-003's `.sel svg` — was a private copy here, flagged
+ * as a merge candidate because `components/icons.tsx` had no `ChevronDownIcon`
+ * and belonged to another agent that wave. It is `ChevronDownIcon` there now,
+ * same path, same `thin` stroke, and this file imports it: one drawing, one
+ * home. The reason it needs no `rtl:` rule (down is not a directional chevron)
+ * moved with it, so it sits beside the two chevrons that DO mirror.
  */
-function ChevronDown({ className }: { readonly className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={iconStroke.thin}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-      className={className}
-    >
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
 
 export interface SelectOption {
   readonly value: string;
@@ -211,7 +193,7 @@ export function Select({
         {/* `pointer-events-none` so the whole field, chevron included, opens the
             list. `end-4` is logical, so it moves to the left edge under RTL with
             no rule of its own. */}
-        <ChevronDown className="pointer-events-none absolute end-4 top-1/2 size-5 -translate-y-1/2 text-secondary" />
+        <ChevronDownIcon className="pointer-events-none absolute end-4 top-1/2 size-5 -translate-y-1/2 text-secondary" />
       </div>
 
       {hint ? <span className={fieldSub}>{hint}</span> : null}

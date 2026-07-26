@@ -143,6 +143,42 @@ export const btnSecondary = `inline-flex h-12 select-none items-center justify-c
 export const btnSecondaryOnTint = `inline-flex h-12 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md bg-canvas px-6 text-bodyMd font-medium text-primary hover:bg-hairline ${focusRing} ${pressable}`;
 
 /**
+ * The §5 gray-fill button at HEADER scale — the `md` rung of `btnSecondary`.
+ *
+ * `HOST-SHELL.md` §5 names `Questions?` and `Save & exit` as the same component
+ * as `Show all N reviews` and `Message host`, and §2a puts the first two in a
+ * 64px chrome bar where a 48px button leaves 8px of air above and below. So the
+ * button steps down a rung — 40px and a 14px label, which is `btnMd`'s
+ * (`h-10 px-4 text-bodySm`) height and type role exactly — and changes nothing
+ * else: same `bg.raised` plate, same `radius.md`, same 500-weight ink label,
+ * same borderless and shadowless absences for the same §1 reasons.
+ *
+ * NOT `${btnSecondary} h-10 text-bodySm`. Tailwind emits `height` utilities in
+ * scale order, so `.h-12` lands after `.h-10` in the stylesheet and would win
+ * regardless of the order the two are written in the string — the same trap
+ * `btnSecondaryOnTint` documents for `bg-canvas` against `bg-raised`. A rung is
+ * therefore a whole string, not an append.
+ *
+ * TWO DELIBERATE ABSENCES AT THIS RUNG, BOTH LOAD-BEARING:
+ *
+ *   · NO HORIZONTAL PADDING. `Questions?` collapses to a 40px square below `sm`
+ *     and back to a labelled button above it (`w-10 sm:w-auto sm:px-4`), and a
+ *     `px-4` baked in here would beat a `px-0` at the call site by stylesheet
+ *     order rather than by string order. Every call site states its own padding.
+ *   · `shrink-0`, which `btnSecondary` does not carry. This rung lives in a flex
+ *     row of chrome, and `whitespace-nowrap` without `shrink-0` gives a button
+ *     that is squeezed narrower than the label it refuses to wrap. Harmless
+ *     outside a flex container. `btnSecondary` arguably wants it too; that is a
+ *     separate edit against separate call sites and is not made here.
+ *
+ * Added 2026-07-26, hoisted out of the private `gbtn` in
+ * `components/host/wizard-step.tsx`, whose author flagged it as belonging here.
+ */
+export const btnSecondaryMd =
+  "inline-flex h-10 shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap " +
+  `rounded-md bg-raised text-bodySm font-medium text-primary hover:bg-hairline ${focusRing} ${pressable}`;
+
+/**
  * Underline-at-rest (TASTE-RULES §8): every inline text action — Show more,
  * Learn more, Report, View all — is ink and underlined WHERE IT SITS, not on
  * hover. Brand green is not a link colour here (§2): green survives only on the

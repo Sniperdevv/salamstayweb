@@ -153,17 +153,51 @@ export function MobileMenu() {
       )}
     >
       <nav aria-label="Menu" className="flex-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-16">
+        {/*
+          The head follows the session too, and did not until 2026-07-26.
+          `site-header.tsx` performs three substitutions when signed in; the
+          sheet's FOOT was gated in the same pass and its head was missed — so a
+          signed-in host was still offered `Become a host`, one scroll above the
+          button that actually switches them into hosting. Two controls, one
+          intent, opposite assumptions about who is reading.
+
+          `Help` moves for the same reason: signed in, it lives in the account
+          menu, and a sheet is not a second place to keep it. Signed in, this
+          list is the reader's own surfaces; signed out, it is the proposition.
+        */}
         <ul>
-          <Row open={open} index={next()}>
-            <Link href="/become-a-host" className={`${menuLink} ${focusRing}`}>
-              Become a host
-            </Link>
-          </Row>
-          <Row open={open} index={next()}>
-            <Link href="/help" className={`${menuLink} ${focusRing}`}>
-              Help
-            </Link>
-          </Row>
+          {isSignedIn(session) ? (
+            <>
+              <Row open={open} index={next()}>
+                <Link href="/trips" className={`${menuLink} ${focusRing}`}>
+                  Trips
+                </Link>
+              </Row>
+              <Row open={open} index={next()}>
+                <Link href="/messages" className={`${menuLink} ${focusRing}`}>
+                  Messages
+                </Link>
+              </Row>
+              <Row open={open} index={next()}>
+                <Link href="/wishlists" className={`${menuLink} ${focusRing}`}>
+                  Wishlists
+                </Link>
+              </Row>
+            </>
+          ) : (
+            <>
+              <Row open={open} index={next()}>
+                <Link href="/become-a-host" className={`${menuLink} ${focusRing}`}>
+                  Become a host
+                </Link>
+              </Row>
+              <Row open={open} index={next()}>
+                <Link href="/help" className={`${menuLink} ${focusRing}`}>
+                  Help
+                </Link>
+              </Row>
+            </>
+          )}
         </ul>
 
         <ul className="mt-4 border-t border-hairline pt-4">

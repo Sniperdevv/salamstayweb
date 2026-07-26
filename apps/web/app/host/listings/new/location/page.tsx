@@ -13,8 +13,9 @@ import {
 } from "@/components/host/location-picker";
 import { WizardStep } from "@/components/host/wizard-step";
 import { InfoIcon } from "@/components/icons";
-import { controlRing, hostFieldLabel, inlineAction } from "@/components/ui";
+import { inlineAction } from "@/components/ui";
 import { Select } from "@/components/ui/select";
+import { TextField } from "@/components/ui/text-field";
 import { BETA_CITIES } from "@/lib/content/beta-cities";
 
 /**
@@ -106,21 +107,16 @@ const sectionH2 = "text-h5 text-primary";
 const sectionSub = "mt-2 max-w-[62ch] text-bodySm text-secondary";
 
 /**
- * The host wizard's single-line text field — §5's `.fwrap` + `.finput`, which
- * `components/ui/text-input.tsx` is NOT: that primitive is the checkout's
- * `overline`-label-inside-the-cell promo field (gw-024), and §5 gives the host
- * form a 13/600 ink label ABOVE a `bg.sunken` cell instead, because a host
- * filling in nine steps is answering questions rather than reading a summary.
- * Written here rather than added to `components/ui/` because that directory is
- * another agent's this wave; it is a merge candidate the moment a second step
- * needs a text field.
+ * The single-line text field is `components/ui/text-field.tsx` — §5's `.fwrap` +
+ * `.finput`, hoisted there on 2026-07-26. It used to be a `fieldShell` /
+ * `fieldInput` pair right here, flagged in this file as "a merge candidate the
+ * moment a second step needs a text field"; two other steps needed one, each
+ * wrote its own, and all three now import the one component.
+ *
+ * The distinction that note existed to make still holds and lives in that file:
+ * it is NOT `components/ui/text-input.tsx`, which is the checkout's
+ * `overline`-label-inside-the-cell promo field (gw-024).
  */
-const fieldShell =
-  "relative mt-2 flex min-h-12 items-center gap-3 rounded-md border border-border-default bg-sunken px-4 " +
-  "transition-[border-color] duration-instant ease-decelerate hover:border-border-strong";
-
-const fieldInput =
-  "peer w-full min-w-0 border-none bg-transparent p-0 text-bodyMd text-primary outline-none placeholder:text-secondary";
 
 /**
  * §11's `.banner.info` — `hw-006` DECISION 5's documented third register.
@@ -281,52 +277,34 @@ export default function LocationStepPage() {
             out which local rules apply.
           </p>
 
-          <div className="mt-4">
-            <label htmlFor="street" className={hostFieldLabel}>
-              House or flat, and street
-            </label>
-            <div className={fieldShell}>
-              {/*
-                `dir="ltr"` on this one field, in both languages: a house number
-                and a road name are written left to right even inside an Urdu
-                sentence, which is how `hw-006`'s RTL panel draws it. The area
-                field below takes Urdu directly and carries no `dir`.
-              */}
-              <input
-                id="street"
-                name="street"
-                type="text"
-                dir="ltr"
-                autoComplete="address-line1"
-                value={street}
-                onChange={(event) => setStreet(event.target.value)}
-                placeholder="House number and street name"
-                className={fieldInput}
-              />
-              {/* Later sibling of the peer input — see `controlRing`. The ring
-                  goes on the CELL because the input inside it is borderless. */}
-              <span aria-hidden="true" className={`${controlRing} rounded-md`} />
-            </div>
-          </div>
+          {/*
+            `dir="ltr"` on this one field, in both languages: a house number and
+            a road name are written left to right even inside an Urdu sentence,
+            which is how `hw-006`'s RTL panel draws it. The area field below
+            takes Urdu directly and carries no `dir`.
+          */}
+          <TextField
+            id="street"
+            name="street"
+            className="mt-4"
+            label="House or flat, and street"
+            dir="ltr"
+            autoComplete="address-line1"
+            value={street}
+            onChange={setStreet}
+            placeholder="House number and street name"
+          />
 
-          <div className="mt-4">
-            <label htmlFor="area" className={hostFieldLabel}>
-              Area or sector
-            </label>
-            <div className={fieldShell}>
-              <input
-                id="area"
-                name="area"
-                type="text"
-                autoComplete="address-level3"
-                value={area}
-                onChange={(event) => setArea(event.target.value)}
-                placeholder="The area, sector or locality"
-                className={fieldInput}
-              />
-              <span aria-hidden="true" className={`${controlRing} rounded-md`} />
-            </div>
-          </div>
+          <TextField
+            id="area"
+            name="area"
+            className="mt-4"
+            label="Area or sector"
+            autoComplete="address-level3"
+            value={area}
+            onChange={setArea}
+            placeholder="The area, sector or locality"
+          />
 
           <Select
             id="city"
