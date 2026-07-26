@@ -8,7 +8,7 @@ import { focusRing, gutter } from "./ui";
  * Link-dense and typographic, never decorated: an sr-only "Footer" heading, the
  * entity intro, then FOUR labelled navs whose grouping is the contract — Cities
  * (the six beta cities), Hosting, Company, Legal — and a bottom rule carrying
- * the editorial / corrections / standards / Shariah quartet. Every anchor is a
+ * the editorial and corrections pair. Every anchor is a
  * route registered in `lib/seo/route-registry.ts` (G37); routes flip from
  * stub/todo to real pages as the build waves land — see WEB-BUILD.md.
  *
@@ -52,7 +52,9 @@ const HOSTING = [
 const COMPANY = [
   { href: "/about", label: "About" },
   { href: "/trust-and-safety", label: "Trust & safety" },
-  { href: "/shariah-policy", label: "Shariah approach" },
+  // §3.12 trust cluster. Was "Shariah approach → /shariah-policy"; renamed
+  // 2026-07-26 with §3.9. The label is the rulebook's own string.
+  { href: "/verification", label: "How verification works" },
   { href: "/help", label: "Help center" },
 ] as const;
 
@@ -66,8 +68,9 @@ const LEGAL = [
 /**
  * The bottom rule carries the two links that have no column of their own.
  *
- * It used to carry four, and the other two — Community standards and Shariah
- * approach — are already printed above it, in Hosting and in Company. A link
+ * It used to carry four, and the other two — Community standards and the
+ * verification page — are already printed above it, in Hosting and in Company.
+ * A link
  * repeated eighty pixels below itself does not make the destination easier to
  * find; it makes the reader check whether the two are the same thing. §3.12's
  * inventory is unchanged: every href it names is still a real crawlable anchor

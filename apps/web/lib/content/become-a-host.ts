@@ -5,9 +5,13 @@
  * The whole file is card copy (design-system/cards/screens/ha-001-become-a-host.html),
  * reproduced byte-exact. That matters three different ways:
  *
- *  · **§5 claims.** Claims 1, 2, 3, 6, 8 and 9 appear on this page and each is
+ *  · **§5 claims.** Claims 1, 2, 3, 7, 8 and 9 appear on this page and each is
  *    byte-exact against the SEO-RULES §5 registry. Nothing here paraphrases a
- *    claim, and nothing states one the card does not.
+ *    claim, and nothing states one the card does not. (Claim 6 was retired from
+ *    the registry on 2026-07-26 per `REPOSITIONING.md`; it held the third slot
+ *    in `HOST_CLAIMS` and the second in `HOST_CONTROLS`. Claim 7 — now the
+ *    flagship — takes the first, and the second became a plain non-claim row
+ *    rather than a second rendering of the same sentence.)
  *  · **G49/G72.** `HOST_FAQ` is read BOTH by the visible FAQ block and by the
  *    FAQPage JSON-LD, so "schema ≡ visible, verbatim" is a property of the data
  *    rather than something a reviewer re-checks by eye.
@@ -36,8 +40,9 @@ export const HOST_CRUMBS: readonly Crumb[] = [
 ];
 
 /**
- * The card's hero claim strip — registry claims 1, 9 and 6, verbatim and in the
- * card's order.
+ * The hero claim strip — registry claims 1, 9 and 7, verbatim. The card's third
+ * slot held claim 6; it is retired, and claim 7 is the flagship claim that now
+ * leads wherever a claim leads.
  */
 export const HOST_CLAIMS = [
   { claim: "CNIC-verified guests and hosts via NADRA Verisys", icon: "shield" },
@@ -46,8 +51,8 @@ export const HOST_CLAIMS = [
     icon: "fees",
   },
   {
-    claim: "Halal-kitchen, prayer-space, and Qibla direction shown on listings",
-    icon: "halal",
+    claim: "Listings show load-shedding hours and backup power",
+    icon: "power",
   },
 ] as const;
 
@@ -79,9 +84,9 @@ export const HOST_CONTROLS = [
     icon: "rules",
   },
   {
-    title: "Halal-kitchen, prayer-space, and Qibla direction shown on listings",
-    body: "Declare the cultural and practical attributes that are true of your home — a plain, opt-in fact, never a sales pitch.",
-    icon: "qibla",
+    title: "The practical facts about your home",
+    body: "Load-shedding hours, what your backup power actually runs, water and gas — declared once and shown on your listing. Plain facts, never a sales pitch.",
+    icon: "power",
   },
   {
     title: "No-alcohol listings by default",
@@ -98,10 +103,10 @@ export const HOST_CONTROLS = [
 /** The three items that come off a booking before payout. Rates as the card states them. */
 export const HOST_FEES = [
   {
-    name: "Service fee (wakala)",
-    detail: "SalamStay's commission for listing, booking and holding payment in escrow",
+    name: "Service fee",
+    detail: "SalamStay's commission for listing, booking and holding payment until check-in",
     rate: "3%",
-    /** Only the wakala rate is a numeral run; `at cost` and the tax row are words. */
+    /** Only the service-fee rate is a numeral run; `at cost` and the tax row are words. */
     numeric: true,
   },
   {
@@ -133,7 +138,12 @@ export const EARNINGS = {
   total: "PKR 125,000",
   assumption:
     "This is a plain multiplication of a nightly rate and nights you choose — not a market average or a promise of what you'll earn. Your actual earnings depend on your listing and bookings.",
-  halal: "Hosting income is rent for the use of your home — never interest, never riba.",
+  /**
+   * Renamed from `halal` 2026-07-26 (`REPOSITIONING.md`). The line was always
+   * a plain statement of what the money IS — rent, not a return — and it keeps
+   * doing that job without the vocabulary a reader would have to look up.
+   */
+  natureOfIncome: "Hosting income is rent for the use of your home, and nothing else.",
   cta: "Estimate your own earnings",
 } as const;
 
@@ -167,14 +177,14 @@ export const HOST_FAQ: readonly HostFaqEntry[] = [
       "You confirm your identity through CNIC-verified guests and hosts via NADRA Verisys, just like every guest who books with you. It's a short, mutual formality — you're trusted by default, and if anything needs fixing we tell you exactly what and why.",
   },
   {
-    question: "Is the income I earn from hosting halal?",
+    question: "When do I get paid, and where does the money sit until then?",
     answer:
-      "The money you earn from hosting is rent for the use of your home — never interest, never riba. Guest payments are held in amanah, a trust, with Meezan Bank until your guest checks in, then released to you.",
+      "Your guest's payment is held in trust in a custody account at Meezan Bank until they check in, then released to you. It is not spent, not lent out, and earns nothing while it waits. The money you earn is rent for the use of your home, and nothing else.",
   },
   {
     question: "What fees does SalamStay charge hosts?",
     answer:
-      "A service fee (wakala) of 3% of the booking, payment processing (MDR) passed through at cost, and withholding tax at the filer or non-filer rate. Transparent fees and tax — every rupee shown before you book or earn.",
+      "A service fee of 3% of the booking, payment processing (MDR) passed through at cost, and withholding tax at the filer or non-filer rate. Transparent fees and tax — every rupee shown before you book or earn.",
   },
   {
     question: "Can I choose who books my home?",
@@ -185,4 +195,4 @@ export const HOST_FAQ: readonly HostFaqEntry[] = [
 
 /** The page's meta description, authored in the card's SEO header comment. */
 export const HOST_DESCRIPTION =
-  "List your home on SalamStay. Reach CNIC-verified guests, set your own house rules and cultural preferences, and see every rupee of fees and tax before you earn.";
+  "List your home on SalamStay. Reach CNIC-verified guests, set your own house rules, state your load-shedding hours and backup power, and see every rupee of fees and tax before you earn.";

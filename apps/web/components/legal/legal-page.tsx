@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ConsentResetButton } from "@/components/consent-banner";
+import { ConsentStateLine } from "@/components/legal/consent-state-line";
 import {
   blockTitle,
   bodyText,
@@ -28,7 +29,7 @@ import {
   tableRowHead,
 } from "@/components/editorial/prose";
 import { ArrowRightIcon, CalendarIcon, ClockIcon } from "@/components/icons";
-import { btnSecondary, focusRing, inlineAction } from "@/components/ui";
+import { btnSecondary, inlineAction } from "@/components/ui";
 import { JsonLdScript, breadcrumbList } from "@/lib/seo/jsonld";
 import type {
   Block,
@@ -117,6 +118,13 @@ function RunNode({ run }: { readonly run: Run }) {
   // `amanah`, `wakala` — set apart as terms, not emphasised as claims.
   if ("term" in run) return <em className="font-semibold italic text-primary">{run.term}</em>;
 
+  /* No `${focusRing}` appended here or on the on-this-page anchors: these two
+     inline links used to fall back to the browser's default outline while every
+     sibling control on the page drew the DESIGN.md §8 2px `focusRing` ring —
+     two focus languages on one tab route. `inlineAction` now composes the ring
+     itself (`ui.ts`), which is the right place for it: the rule is a property
+     of every inline text action, not of the two that happen to sit on a legal
+     page. */
   return (
     <Link href={run.href} className={inlineAction}>
       <Runs runs={run.label} />
@@ -270,8 +278,11 @@ function BlockNode({ block }: { readonly block: Block }) {
           <p className={`mt-1.5 ${bodyText}`}>
             <Runs runs={block.body} />
           </p>
+          {/* Legend below: `label` (13), not `caption` (12). §7's ladder bottoms out
+              at 13, and this legend is read-this-line copy — it defines the shape of
+              the inventory the slot promises. Missed by the 2026-07-25 sweep. */}
           {block.columns ? (
-            <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t border-hairline pt-3 text-caption text-secondary">
+            <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 border-t border-hairline pt-3 text-label text-secondary">
               {block.columns.map((c) => (
                 <span key={c}>{c}</span>
               ))}
@@ -427,6 +438,15 @@ function BlockNode({ block }: { readonly block: Block }) {
      * button — it is the same gray twice, which is exactly how it rendered on
      * the first pass. The strip states the record; the canvas underneath is
      * where the action can still read as one.
+     *
+     * THE STRIP'S MIDDLE LINE IS THE ONLY PER-READER SENTENCE ON THESE PAGES.
+     * It is a client island (`ConsentStateLine`) because the value it reports
+     * lives in the reader's browser and this template is a Server Component:
+     * rendered here, the record could only ever be a guess, and it was — a
+     * fixed "Essential only" served to everyone including everyone who had
+     * pressed Accept all. The content file keeps the two lines that are true
+     * for every reader (the title, and what the button underneath does); the
+     * island keeps the one that is not.
      */
     case "consentRecord":
       return (
@@ -435,6 +455,7 @@ function BlockNode({ block }: { readonly block: Block }) {
             <p className={blockTitle}>
               <Runs runs={block.title} />
             </p>
+            <ConsentStateLine />
             <p className={`mt-1.5 ${bodyText}`}>
               <Runs runs={block.body} />
             </p>
@@ -485,10 +506,15 @@ export function LegalPage({ page }: { readonly page: LegalPageContent }) {
                       {crumb.name}
                     </span>
                   ) : (
-                    <Link
-                      href={crumb.path}
-                      className={`rounded-sm text-secondary underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-primary hover:underline motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate ${focusRing}`}
-                    >
+                    /* §8: underlined AT REST, in ink. This was hand-rolled to
+                       underline on hover — the one link on the page that made
+                       the reader move the pointer to find out it was a link,
+                       and a second, quieter grammar for something `ui.ts`
+                       already defines. It is now the same `inlineAction` every
+                       other text action on the site uses; the current crumb
+                       keeps its distinction the way it always did, by being
+                       unlinked ink at 500. */
+                    <Link href={crumb.path} className={inlineAction}>
                       {crumb.name}
                     </Link>
                   )}

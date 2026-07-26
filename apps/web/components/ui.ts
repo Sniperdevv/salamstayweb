@@ -14,11 +14,19 @@
 
 /**
  * DESIGN.md §8 shared convention: a 2px `interactive.focusRing` ring, offset
- * `space-1`, keyboard-only. `interactive` resolves to brand-600 (light) /
- * brand-400 (dark) — byte-identical to the `focusRing` color token.
+ * `space-1`, keyboard-only.
+ *
+ * The colour names the dedicated `focus-ring` role, never the `interactive` one
+ * it happens to equal. The two resolve to the same value today (#2E7D6A light,
+ * #579D8B dark), which is exactly why the preset gives the ring its own name:
+ * the day the ring has to move off brand for contrast on some surface, that is
+ * one edit to `interactive.focusRing` in the token package rather than a grep
+ * across two apps. Every focus ring on the web app routes through here or
+ * through the one hand-rolled copy in `discovery/disclosure-card.tsx`, and both
+ * now name the role, so the indirection is live on both sides.
  */
 export const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interactive focus-visible:ring-offset-4 focus-visible:ring-offset-canvas";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-4 focus-visible:ring-offset-canvas";
 
 /**
  * Press feedback: a subtle scale-down so the control answers the pointer at
@@ -27,6 +35,23 @@ export const focusRing =
  */
 export const pressable =
   "transition-[transform,background-color,border-color,color] duration-instant ease-decelerate active:scale-[0.97] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+
+/**
+ * The same press, one rung firmer — CHECKOUT-SHELL §10's second motion value.
+ *
+ * §10 names exactly two press depths: `.cta:active {scale(.98)}` for the large
+ * pill, and `.gstep / .calnav:active {scale(.94)}` for the small circular
+ * controls (the ± stepper, the calendar's month arrows, a day cell's inner
+ * disc). This is that second rung, and it exists because scale is optical, not
+ * absolute: 0.97 on a 44px circle moves 1.3px, which reads as nothing, while
+ * the same 0.97 on a 320px CTA moves 10px. A small control needs a deeper
+ * factor to produce the same felt press.
+ *
+ * Everything else is byte-identical to `pressable`, including the reduced-motion
+ * collapse — this is one number, not a second motion language.
+ */
+export const pressableCircle =
+  "transition-[transform,background-color,border-color,color] duration-instant ease-decelerate active:scale-[0.94] motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 export const btnBase = `inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md border font-semibold ${focusRing} ${pressable}`;
 
@@ -112,9 +137,17 @@ export const btnSecondaryOnTint = `inline-flex h-12 select-none items-center jus
  * Hover dims the label to `text.secondary` rather than adding decoration — the
  * underline is already spent, and 120ms/decelerate is the same micro-feedback
  * rung every other control on the site answers a pointer with.
+ *
+ * Carries its own `${focusRing}`, exactly as `btnBase`, `btnSecondary` and
+ * `btnSecondaryOnTint` do. It always had the `rounded-sm` that SHAPES a ring
+ * without the ring itself, so a text action landed on the browser's default
+ * outline while the button beside it drew the DESIGN.md §8 2px `interactive`
+ * ring — two focus languages on one tab route. Call sites that already append
+ * `${focusRing}` are unaffected: duplicate utilities collapse in the emitted
+ * CSS, and appending it again is now a no-op rather than the only thing
+ * standing between a link and a visible focus state.
  */
-export const inlineAction =
-  "rounded-sm text-primary underline underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-secondary motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate";
+export const inlineAction = `rounded-sm text-primary underline underline-offset-4 transition-colors duration-instant ease-decelerate hover:text-secondary ${focusRing} motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate`;
 
 /** md — the header's auth pair. */
 export const btnMd = "h-10 px-4 text-bodySm";
@@ -124,3 +157,162 @@ export const btnLg = "h-12 px-5 text-bodyMd";
 
 /** Screen gutter: `layoutSpace.screenGutter` on mobile, `space-6` from md up. */
 export const gutter = "px-4 md:px-6";
+
+/* ——— Field anatomy (CHECKOUT-SHELL §5) ————————————————————————————————————
+ *
+ * Seven checkout cards draw the same form furniture under seven different class
+ * names — `.ggroup` / `.pgroup` / `.paygroup` / `.natgroup` are one group,
+ * `.grow` / `.prow` / `.payrow` are one row, `.gname` / `.pname` / `.payname`
+ * are one label. BUILD-DECISIONS ruling 0 says those collisions dissolve in
+ * React; these recipes are what they dissolve INTO, so a step never re-derives
+ * a border, a divider or a type role by hand.
+ *
+ * They are class strings rather than components on purpose: the group holding
+ * three `GuestStepper`s, the group holding six `RadioRow`s and the one-cell
+ * group holding a promo `TextInput` share an anatomy but not a shape, and a
+ * `<FieldGroup>` component would have to grow a prop for every one of them.
+ */
+
+/**
+ * The form group: `radius.md`, one `border.default`, no shadow.
+ *
+ * TASTE §1 decides both of those absences. A form group is a boundary, not a
+ * float, so it carries a border and casts nothing; the booking rail is the one
+ * sanctioned border-AND-shadow element on checkout and this is not it.
+ *
+ * `overflow-hidden` is load-bearing, not tidiness: it is what makes the §5
+ * "interior corners square" rule true for free. Rows draw square, and the
+ * group's own radius clips the first and last row's outer corners — including
+ * a selected row's 2px inset ring and a hovered row's fill, both of which would
+ * otherwise poke square corners through a rounded box.
+ *
+ * On the width: §5 fixes the group at 520px, which is `overlaySize.dialogMd` to
+ * the pixel. The Tailwind preset builds its `maxWidth` map from `container`
+ * only, so that role is not reachable as a class and `max-w-lg` (512px, 32rem)
+ * is the nearest rung — 8px under, on a scale, with no raw px in app code.
+ * Wiring `overlaySize` into the preset's `maxWidth` is a one-line fix in the
+ * tokens package and would let this read `max-w-dialogMd`.
+ */
+export const fieldGroup =
+  "max-w-lg overflow-hidden rounded-md border border-border-default bg-canvas";
+
+/**
+ * §5's invalid group: the border moves to `error.fg`.
+ *
+ * Append it — it does not replace `fieldGroup`. And it is never the only
+ * signal: §5 requires an `.errline` below the group (icon + text) alongside it,
+ * because a red edge alone fails anyone who cannot see the red.
+ */
+export const fieldGroupInvalid = "border-error";
+
+/**
+ * One cell of a group, divided from its neighbour by a FULL-BLEED hairline.
+ *
+ * Full-bleed is §5's word and it is the deliberate exception to TASTE §11.9
+ * ("inset dividers, never full-bleed inside a padded container"): §11.9 governs
+ * dividers inside a padded card, where an edge-to-edge rule cuts the padding in
+ * half. Here the group has no padding of its own — the cells carry it — so the
+ * hairline IS the cell edge and stopping it short would draw a floating stroke.
+ * The booking card's own field group ships the same way.
+ */
+export const fieldRow = "flex gap-4 border-t border-hairline px-4 py-3 first:border-t-0";
+
+/**
+ * The cell label — `overline`, and §7's one sanctioned use of it.
+ *
+ * `overline` is a FORM-LABEL token (CHECK-IN, GUESTS, PROMO CODE) and never a
+ * section eyebrow; TASTE §7 allows exactly two other exceptions site-wide (the
+ * hero search pill's segment labels, the error pages' status line) and neither
+ * is here. The preset's `fontSize` tuple carries 11/600/+0.04em but Tailwind's
+ * fontSize config has no slot for `text-transform`, so `uppercase` is spelled
+ * out rather than inherited from the token.
+ */
+export const fieldLabel = "block text-overline uppercase text-tertiary";
+
+/** A row's name — §5's `.gname` / `.pname` / `.payname`: 16/500, ink. */
+export const fieldName = "block text-bodyMd font-medium text-primary";
+
+/**
+ * The note under a name — §5's `.gage` / `.pdesc` / `.paysub`: 13/400, gray.
+ *
+ * `text.secondary`, not `text.tertiary`. §5 is explicit about the distinction
+ * on the value side ("placeholder = `text.secondary`, never `text.tertiary`,
+ * large-only per DESIGN §11") and it holds here too: tertiary is for the label
+ * ABOVE a value, secondary for prose a guest is expected to read. `font-regular`
+ * because the `label` role ships at 500 and this is body copy, not a label.
+ */
+export const fieldHint = "mt-0.5 block text-label font-regular leading-normal text-secondary";
+
+/**
+ * The inline error under an invalid group — §5's `.errline`, 13px `error.fg`.
+ *
+ * A flex row, because colour is never the only signal (§5): the caller puts a
+ * glyph in the first slot and the sentence in the second, so the message
+ * survives both a monochrome screen and a colour-blind reader. Register matters
+ * here — BUILD-DECISIONS ruling 11: the error register is for a fact about a
+ * FILE or a FIELD (an unsupported format, a code that does not exist). A
+ * document REVIEW outcome takes the warning register instead. There is no red X
+ * on a family document, ever.
+ */
+export const fieldErrorLine =
+  "mt-3 flex max-w-lg items-start gap-2 text-label font-regular leading-normal text-error";
+
+/**
+ * The ring overlay for a control whose real input is `sr-only` — a radio row, a
+ * consent checkbox, a labelled text group.
+ *
+ * WHY AN OVERLAY NODE AND NOT A VARIANT ON THE LABEL
+ * --------------------------------------------------
+ * The focusable element is the hidden `<input>`, so the ring has to be drawn by
+ * something else. `has-[:focus-visible]:` on the wrapping label would do it in
+ * one node, but it compiles to `:has()`, and a browser without `:has()` drops
+ * the whole rule — leaving a 1×1 clipped input with the UA outline on it, which
+ * is to say no visible focus at all. That is a keyboard user losing their place,
+ * on exactly the older Android WebViews this market still runs. `peer` compiles
+ * to `~`, which has worked since CSS 2. The cost is one `aria-hidden` span.
+ *
+ * WHY THE SELECTION RING AND THE FOCUS RING ARE THE SAME RING
+ * -----------------------------------------------------------
+ * Both are 2px inset (TASTE §3 / §11.18: selection is a 2px ink ring with NO
+ * fill change, so the row's contents never shift), so they occupy the same
+ * geometry and only the colour differs — ink at rest, `interactive.focusRing`
+ * while focused. Focus wins because it is the transient state answering the
+ * user's live action, and nothing is lost by it: the mark inside the row is
+ * already a solid ink disc with a white check, which is the non-colour signal
+ * that says "chosen" whatever the ring is doing.
+ *
+ * The cards draw two concentric rings here (an inset `box-shadow` for selection
+ * plus an `outline` at `-3px` for focus). One ring reads cleaner at this size
+ * and needs no offset scale we do not own; the divergence is deliberate.
+ *
+ * Usage — the overlay must be a LATER SIBLING of the `peer` input:
+ *
+ *   <label className="relative …">
+ *     <input type="radio" className="peer sr-only" … />
+ *     <span aria-hidden className={`${controlRing} ${checked ? controlRingSelected : ""}`} />
+ *     …
+ *   </label>
+ */
+export const controlRing =
+  "pointer-events-none absolute inset-0 ring-inset peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring";
+
+/** Appended to `controlRing` when the control is chosen: 2px ink, no fill change. */
+export const controlRingSelected = "ring-2 ring-selected";
+
+/**
+ * The colour-only micro-transition for a control that tints but does not press.
+ *
+ * CHECKOUT-SHELL §10 budgets press feedback to four controls — the CTA, the ±
+ * stepper, the calendar's nav and its day cells — and a choice row is not one of
+ * them: a row that scaled under the finger would make picking a payment rail
+ * feel like pressing a button, when it is a selection that stays made. So this
+ * carries the 120ms `duration.instant` / `easing.decelerate` tint and no
+ * `transform` at all.
+ *
+ * It needs no `motion-reduce` clause, unlike `pressable`: there is nothing here
+ * for reduced motion to remove. §10 says "dampen, never remove", and a colour
+ * interpolation at 120ms is already the damped form — killing it would make a
+ * hover snap, which is more motion, not less.
+ */
+export const tintTransition =
+  "transition-[background-color,border-color,color] duration-instant ease-decelerate";

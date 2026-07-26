@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ChevronRightIcon } from "@/components/icons";
+import { Num } from "@/components/numerals";
 import { focusRing, inlineAction } from "@/components/ui";
 import type { FeaturedStay } from "@/lib/content/featured-stays";
 import { RailControls } from "./rail-controls";
@@ -126,22 +127,41 @@ export function StayRail({
       <div className="flex items-center justify-between gap-4">
         {/* `h5` (20), not `h4` (24) — TASTE-RULES §7 puts content-page section
             headings at ≈22, and this is the role every other section heading
-            on every discovery surface reads from `components/discovery/shell`. */}
+            on every discovery surface reads from `components/discovery/shell`.
+
+            `Num` (§12): every heading this rail draws is sector-shaped —
+            "Stays in F-7, Islamabad", "Homes in DHA Phase 5" — so the section's
+            own title is a digit run on nearly every instance, and it is the
+            largest type on the row. An unisolated run reverses under RTL. Same
+            for the `sub` and the trailing label below. */}
         <h2 id={headingId} className="min-w-0 truncate text-h5 text-primary">
-          {heading}
+          <Num>{heading}</Num>
         </h2>
 
         <div className="flex shrink-0 items-center gap-4">
           {viewAll ? (
             <Link href={viewAll.href} className={`${viewAllLink} ${focusRing}`}>
-              {viewAll.label}
+              {/* The label is wrapped in ONE span, not left as `Num`'s bare output.
+                  `viewAllLink` is `inline-flex … gap-1`, and `Num` splits a sector
+                  label into several nodes — "See all stays in F-" + <span>7</span> —
+                  so as direct flex children the gap rendered BETWEEN them and the
+                  link read "See all stays in F- 7". The <h2> above is unaffected
+                  because it is a block. Any flex container taking `Num` output has
+                  this bug; give it a single child. */}
+              <span>
+                <Num>{viewAll.label}</Num>
+              </span>
               <ChevronRightIcon className="size-4" />
             </Link>
           ) : null}
           <RailControls scrollerId={scrollerId} label={heading} />
         </div>
       </div>
-      {sub ? <p className="mt-1 text-bodySm text-secondary">{sub}</p> : null}
+      {sub ? (
+        <p className="mt-1 text-bodySm text-secondary">
+          <Num>{sub}</Num>
+        </p>
+      ) : null}
 
       {/* `mt-5` is the shared heading-to-content gap; the scroller's own `mt-5`
           then becomes the gap from the lead card down to the row. One value,
@@ -166,7 +186,14 @@ export function StayRail({
           <li data-rail-edge="start" aria-hidden="true" className={`${edgeMarker} left-0`} />
           {stays.map((stay, i) => (
             <li
-              key={`${stay.href}-${stay.image}`}
+              /* Keyed on the photograph, not the route. `href` is null for
+                 every home that has no listing page yet, so the old
+                 `${stay.href}-${stay.image}` would key nine siblings on the
+                 same "null-" prefix and carry no identity of its own. The
+                 `ImageId` does: a rail may not draw one frame twice, and
+                 `verify-images.mjs` fails the build on a repeat
+                 (`CITY_STAY_CARDS[route]: repeats an image`). */
+              key={stay.image}
               data-rail-item=""
               className="w-rail-card shrink-0 snap-start"
             >

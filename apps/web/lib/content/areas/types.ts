@@ -15,9 +15,9 @@
  * - **`facts` is gone.** Four quick facts under the H1 cost roughly eighty
  *   vertical pixels on a page that also carries a breadcrumb, and every one of
  *   them is stated again below: the markaz and Jinnah Super in `about`, the
- *   four-minute masjid walk in `about` and FAQ answer 2, walkability and
- *   ride-hailing in `around`, and "PKR —" on every card in the rail. A strip
- *   that only repeats is a strip that only costs.
+ *   embassies and the hills in `about`, walkability and ride-hailing in
+ *   `around`, and "PKR —" on every card in the rail. A strip that only repeats
+ *   is a strip that only costs.
  * - **`intro: RichText` became `support: string`.** The old lede set two
  *   SEO-RULES §5 claims in `<strong>` inside a five-line paragraph. Claims are
  *   now stated once each, verbatim, where they are load-bearing (the FAQ), and
@@ -55,8 +55,17 @@
 import type { Crumb } from "@/lib/seo/jsonld";
 import type { FaqEntry, RelatedLink, StayCardContent } from "@/lib/content/stays";
 
-/** "About {area}" context-card glyphs. */
-export type AreaContextIcon = "market" | "masjid" | "civic" | "hills";
+/**
+ * "About {area}" context-card glyphs.
+ *
+ * `masjid` is RETIRED (REPOSITIONING.md): distance to the nearest masjid is not
+ * modelled, so no area page carries a card about it and the glyph role has no
+ * content to resolve. `family` replaces it in the vocabulary — "the sector
+ * families are usually sent to" is an area fact the corpus already asserts, and
+ * `family-friendly` survives as an attribute, so the mark is already in
+ * circulation. Four roles, four glyphs, none orphaned.
+ */
+export type AreaContextIcon = "market" | "civic" | "hills" | "family";
 
 /** "Getting around {area}" glyphs. */
 export type AreaNoteIcon = "walk" | "transit" | "power";

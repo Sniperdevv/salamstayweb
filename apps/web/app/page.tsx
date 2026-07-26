@@ -10,7 +10,6 @@ import {
   FarmhouseIcon,
   FeesReceiptIcon,
   GuestHouseIcon,
-  HalalKitchenIcon,
   NoAlcoholIcon,
   PersonIcon,
   PrivateRoomIcon,
@@ -77,7 +76,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *  5/6. Karachi and Lahore rails — the breadth made concrete. Two more cities
  *     of real cards is the difference between "six cities" as a claim and as a
  *     visible fact.
- *  7. Trust & safety — the nine §5 claims, verbatim, in a tight grid.
+ *  7. Trust & safety — the eight §5 claims, verbatim, in a tight grid.
  *  8/9/10. Host band, guides, property-type chips.
  *
  * SEO contract (unchanged from the shipped page):
@@ -89,7 +88,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *    image on the page is `priority`: the featured card leading rail 1, which
  *    is now the LCP element. The old hero preload is gone with the hero photo.
  *
- * Copy: the nine registry claims appear once each, verbatim, in the trust
+ * Copy: the eight registry claims appear once each, verbatim, in the trust
  * section. Everything else on the page is plain neutral descriptive text under
  * §5 — no paraphrased claims, no stats, no ratings, no counts, no "popular".
  *
@@ -103,15 +102,21 @@ import { pageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = pageMetadata(
   "/",
-  "Book verified homes and rooms across Pakistan. CNIC-verified guests and hosts via NADRA Verisys, no-alcohol listings by default, and load-shedding hours shown on every stay.",
+  "Book verified homes and rooms across Pakistan. Listings show load-shedding hours and backup power, and guests and hosts are CNIC-verified via NADRA Verisys.",
 );
 
 /**
- * All nine SEO-RULES §5 claims, verbatim and in registry order. The shipped
- * page carried six of them with a gloss paragraph each; the glosses are gone.
- * A claim that needs a paragraph to be understood is a claim that should be
+ * The SEO-RULES §5 claims, verbatim and in registry order. The shipped page
+ * carried six of them with a gloss paragraph each; the glosses are gone. A
+ * claim that needs a paragraph to be understood is a claim that should be
  * reworded in the registry, not explained on the homepage — and the trust,
- * Shariah and help pages are where the explaining belongs.
+ * verification and help pages are where the explaining belongs.
+ *
+ * EIGHT, not nine, since 2026-07-26: claim 6 (halal kitchen / prayer space /
+ * Qibla) is retired from the product and from the registry, so its row and its
+ * glyph are gone rather than reworded (REPOSITIONING.md). The grid below moved
+ * from three columns to four so eight items still fill their rows exactly —
+ * 3-3-2 left a hole in the bottom-right where the ninth used to sit.
  *
  * One glyph each, from the shipped homepage set. Claim 9 keeps `FeesReceiptIcon`
  * (the review fix that replaced a dollar-sign path — PKR is the currency here).
@@ -122,10 +127,6 @@ const CLAIMS = [
   { claim: "FRC-verified family bookings", Icon: FamilyIcon },
   { claim: "No-alcohol listings by default", Icon: NoAlcoholIcon },
   { claim: "Women-only stays hosted by women", Icon: PersonIcon },
-  {
-    claim: "Halal-kitchen, prayer-space, and Qibla direction shown on listings",
-    Icon: HalalKitchenIcon,
-  },
   { claim: "Listings show load-shedding hours and backup power", Icon: BoltIcon },
   { claim: "Two-way reviews and 24/7 Urdu + English support", Icon: ChatIcon },
   {
@@ -277,11 +278,17 @@ export default function HomePage() {
             on this page is the inventory itself. */}
         <section className={`${shell} pt-8 md:pt-10 ${rhythm}`}>
           <h1 className="text-h3 font-semibold text-primary md:text-h2">
-            Shariah-respectful stays across Pakistan
+            Verified stays across Pakistan
           </h1>
+          {/* Plain description, deliberately NOT a paraphrase of claim 7 — §12
+              keeps a claim byte-exact where it is claimed and plain everywhere
+              else, and the claim itself is printed once, further down. What the
+              line has to do here is lead with the practical facts, because that
+              is now the differentiator rather than a footnote. */}
           <p className="mt-3 max-w-prose text-bodyMd text-secondary">
-            Homes and rooms in six cities. Every listing shows its verification, alcohol
-            policy and load-shedding hours.
+            Homes and rooms in six cities, each listed with the facts that decide a stay here:
+            when the power goes out, what the backup runs, and the house rules you are booking
+            under.
           </p>
 
           <HomeSearchPill />
@@ -437,8 +444,13 @@ export default function HomePage() {
             <h2 id="trust-h" className={sectionH2}>
               Trust &amp; safety at SalamStay
             </h2>
+            {/* FOUR columns from `lg`, not three. Eight claims across three
+                columns is 3-3-2 and leaves a hole at the bottom right where the
+                retired ninth used to sit; across four it is two full rows. At
+                the 1232 shell that is ~290px a cell, which holds two lines of
+                14px for every claim in the set. */}
             <ul
-              className={`${headingGap} grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3`}
+              className={`${headingGap} grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4`}
             >
               {CLAIMS.map(({ claim, Icon }) => (
                 <li key={claim} className="flex items-start gap-3">

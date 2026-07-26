@@ -34,6 +34,15 @@ import type { CityContent } from "./types";
  * Deliberate absences, all load-bearing:
  * - NO area links. The registry carries no `/stays-in-peshawar/{area}` route,
  *   and a content file never mints one (G37/G5).
+ * - NO listing links, and so NO ItemList. Every stay here carries
+ *   `href: null`: the registry holds no `/stays-in-peshawar/{area}/{listing}`
+ *   route to point at, and the value this replaced was this page's own path —
+ *   nine cards linking to the page they sit on, and nine schema entries whose
+ *   `url` was this page's canonical. Both were invented (SEO-RULES §1.5), and
+ *   minting them is the doorway pattern §6 forbids: instances are earned, not
+ *   minted. The tiles are photographs, names and lines until the listing
+ *   pages exist; `CityLandingPage` then emits no ItemList for this city at
+ *   all, rather than an empty one.
  * - NO price figure, NO ratings, NO review counts, NO listing tallies.
  * - NO breadcrumb. A top-level city page is the head of its trail (§2/§3.2).
  * - NO verification FAQ: verification is nationwide, and restating Islamabad's
@@ -44,7 +53,7 @@ export const peshawar: CityContent = {
   path: "/stays-in-peshawar",
   name: "Peshawar",
   metaDescription:
-    "Verified Peshawar stays in Hayatabad, University Town, Saddar and the Old City. Filter by halal kitchen, prayer space and reliable backup power.",
+    "Verified Peshawar stays in Hayatabad, University Town, Saddar and the Old City. Filter by no-alcohol homes, women-only stays and reliable backup power.",
 
   h1: "Stays in Peshawar",
   /** Sixteen words. Runs the city west to east, which is how it is laid out. */
@@ -61,84 +70,84 @@ export const peshawar: CityContent = {
     heading: "Featured stays in Peshawar",
     items: [
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "City-centre flat in Saddar",
         areaPin: "Saddar",
         location: "Saddar, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][0],
-        attributes: ["halal-kitchen", "backup-power"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "City-centre flat in Saddar — Saddar, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Warm 1-bed in Gulbahar",
         areaPin: "Gulbahar",
         location: "Gulbahar, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][1],
-        attributes: ["no-alcohol", "backup-power"],
+        attributes: ["no-alcohol", "family-friendly"],
         schemaName: "Warm 1-bed in Gulbahar — Gulbahar, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Villa room in University Town",
         areaPin: "University Town",
         location: "University Town, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][2],
-        attributes: ["prayer-space", "halal-kitchen"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Villa room in University Town — University Town, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Whole portion in Hayatabad",
         areaPin: "Hayatabad Phase 3",
         location: "Hayatabad Phase 3, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][3],
-        attributes: ["family-friendly", "halal-kitchen"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Whole portion in Hayatabad — Hayatabad Phase 3, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Family apartment off Warsak Road",
         areaPin: "Warsak Road",
         location: "Warsak Road, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][4],
-        attributes: ["family-friendly", "backup-power"],
+        attributes: ["family-friendly", "no-alcohol"],
         schemaName: "Family apartment off Warsak Road — Warsak Road, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Balcony 2-bed in Hayatabad",
         areaPin: "Hayatabad Phase 6",
         location: "Hayatabad Phase 6, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][5],
-        attributes: ["halal-kitchen", "no-alcohol"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Balcony 2-bed in Hayatabad — Hayatabad Phase 6, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Single room off Dalazak Road",
         areaPin: "Dalazak Road",
         location: "Dalazak Road, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][6],
-        attributes: ["no-alcohol", "qibla-marked"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Single room off Dalazak Road — Dalazak Road, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Family portion near Board Bazaar",
         areaPin: "Board Bazaar",
         location: "Board Bazaar, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][7],
-        attributes: ["halal-kitchen", "qibla-marked"],
+        attributes: ["no-alcohol", "family-friendly"],
         schemaName: "Family portion near Board Bazaar — Board Bazaar, Peshawar",
       },
       {
-        href: "/stays-in-peshawar",
+        href: null,
         title: "Garden bungalow off Nasir Bagh Road",
         areaPin: "Nasir Bagh Road",
         location: "Nasir Bagh Road, Peshawar",
         image: CITY_STAY_CARDS["/stays-in-peshawar"][8],
-        attributes: ["family-friendly", "prayer-space"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Garden bungalow off Nasir Bagh Road — Nasir Bagh Road, Peshawar",
       },
     ],
@@ -192,11 +201,9 @@ export const peshawar: CityContent = {
   filters: {
     heading: "Popular filters in Peshawar",
     items: [
-      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=peshawar&no_alcohol=1" },
-      { icon: "halal-kitchen", label: "Halal kitchen", href: "/search?city=peshawar&halal_kitchen=1" },
-      { icon: "women-only", label: "Women-only stays", href: "/search?city=peshawar&women_only=1" },
-      { icon: "prayer-space", label: "Prayer space", href: "/search?city=peshawar&prayer_space=1" },
       { icon: "backup-power", label: "Backup power", href: "/search?city=peshawar&backup_power=1" },
+      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=peshawar&no_alcohol=1" },
+      { icon: "women-only", label: "Women-only stays", href: "/search?city=peshawar&women_only=1" },
       { icon: "family-friendly", label: "Family-friendly", href: "/search?city=peshawar&family=1" },
     ],
   },
@@ -251,7 +258,7 @@ export const peshawar: CityContent = {
         heading: "Trust & hosting",
         links: [
           { href: "/trust-and-safety", label: "Trust & safety" },
-          { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+          { href: "/verification", label: "How verification works" },
           { href: "/become-a-host", label: "Become a host in Peshawar" },
         ],
       },

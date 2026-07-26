@@ -45,8 +45,9 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *    card. No new city fact is introduced here. Area links go only to the four
  *    shipped Islamabad area routes plus the parent city page; Blue Area is
  *    described in prose and not linked, because its route is a stub.
- *  · Claims: §5 registry only, verbatim — 7 in the TL;DR, 6 / 4 / 5 in the
- *    prayer section, 1 in the verification note.
+ *  · Claims: §5 registry only, verbatim — 7 in the TL;DR, 4 and 5 in "What a
+ *    listing tells you before you book", 1 in the verification note. Claim 6 is
+ *    retired from the registry (REPOSITIONING.md) and its section with it.
  *
  * TASTE v2 (prose-page treatment). Copy verbatim, containers rebuilt:
  *  · The card's sketch "map" is GONE. It was a div with eleven absolutely
@@ -64,7 +65,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *  · Zero eyebrows (all eight), zero card plates, zero glyph chips. The five
  *    landmarks were bordered pills with hand-drawn icons; they are five names.
  *  · One `bg.raised` strip: the verification note, which is genuine
- *    strip-class content (a claim plus the Shariah-respectful boundary).
+ *    strip-class content (a claim plus the reason the check exists).
  *  · Green: the wordmark dot, the header's Sign up, and the header's search
  *    pill submit — the pill is derived from this route by the shared header.
  *    Three of the four §2 roles, none of them this page's own.
@@ -73,7 +74,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
 const PATH = "/guides/where-to-stay-in-islamabad";
 
 const META_DESCRIPTION =
-  "A sector-by-sector guide to where to stay in Islamabad — F-6, F-7, F-8 and E-7 — with Metrobus routes, walks to the nearest masjid, and load-shedding notes.";
+  "A sector-by-sector guide to where to stay in Islamabad — F-6, F-7, F-8 and E-7 — with Metrobus routes, load-shedding and backup-power notes, and what to expect at booking.";
 
 export const metadata = pageMetadata(PATH, META_DESCRIPTION);
 
@@ -205,7 +206,7 @@ const RELATED_COLUMNS = [
   {
     heading: "Before you book",
     links: [
-      { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+      { href: "/verification", label: "How verification works" },
       { href: "/trust-and-safety", label: "Trust & safety" },
       { href: "/help", label: "Help centre" },
     ],
@@ -235,9 +236,9 @@ const FAQ: readonly FaqItem[] = [
       "Spring and autumn are the most pleasant, with cool winters either side. Summers are hot, peaking near 40 °C in June, and the monsoon brings rain through July and August. The air is cleaner and cooler than the Punjab plains year-round, which is part of why the capital is an easy city to walk in.",
   },
   {
-    question: "What should I know about praying while staying in Islamabad?",
+    question: "Can I base myself in Islamabad and visit Rawalpindi, or should I book in both?",
     answer:
-      "Halal-kitchen, prayer-space, and Qibla direction shown on listings, so you can see before booking what a home offers. Each SalamStay listing also gives the walking distance to its nearest masjid. Faisal Mosque, at the foot of the Margalla Hills, is the city's best-known one and is open to visitors outside prayer times.",
+      "One base is usually enough. The Metrobus Red Line runs from Pak Secretariat in Islamabad to Saddar in Rawalpindi, so the two cities work as a single base for most trips, and ride-hailing covers whatever the route does not. Book in both only if your days are split evenly between them and you would rather not repeat the journey.",
   },
 ];
 
@@ -338,9 +339,9 @@ export default function WhereToStayInIslamabadGuide() {
               </p>
               <p>
                 SalamStay is a home-sharing marketplace for Pakistan, and the practical family
-                questions — is there a halal kitchen, is there somewhere to pray, how far is the
-                masjid, what happens when the power goes — are all answered on the listing itself
-                rather than left for you to ask on arrival.
+                questions — what happens when the power goes, how long the backup runs, whether
+                the parking is off the street, what the house rules are — are all answered on the
+                listing itself rather than left for you to ask on arrival.
               </p>
             </Prose>
           </ProseSection>
@@ -406,31 +407,26 @@ export default function WhereToStayInIslamabadGuide() {
             </Prose>
           </ProseSection>
 
-          <ProseSection id="prayer" heading="Masjids, prayer and everyday etiquette">
+          {/* Replaces the guide's old prayer-and-etiquette section, retired
+              with the framing (REPOSITIONING.md). The slot is not left empty:
+              what a reader at this point in a guide actually needs is what the
+              listing will tell them before they pay, which is also where the
+              new lead lives. Claims 4 and 5 are claimed here and nowhere else
+              on this page; claim 1 is in the strip. §12: byte-exact where
+              claimed, plain description everywhere else. */}
+          <ProseSection id="booking" heading="What a listing tells you before you book">
             <Prose>
               <p>
-                Every sector has masjids within walking distance of its residential streets, and
-                each SalamStay listing states the walk to its nearest one, so you can pick a home
-                around that if it matters to you. <strong>Faisal Mosque</strong>, at the foot of the
-                Margalla Hills, is the city&apos;s best-known and is open to visitors outside prayer
-                times — dress modestly and remove your shoes at the entrance, as you would
-                anywhere.
+                A stay here is decided by things a photograph will not show. Every listing states
+                the same set of facts whether or not a host thinks to mention them: what the backup
+                power runs and for how long, whether the tank fills, whether there is sui gas for
+                cooking, whether the parking is off the street, and the house rules the home is
+                booked under. You read all of it before you pay, not at the door.
               </p>
-              {/* The three practical facts, in plain neutral description — NOT
-                  as claim 6. The FAQ answer below states that claim byte-exact
-                  and G49 pins it there against the FAQPage JSON-LD; running the
-                  same sentence twice on one scroll, once as prose and once as
-                  the answer, made the page read as though it were padding for
-                  the phrase rather than for the reader. §12: a claim is
-                  byte-exact WHERE IT IS CLAIMED, and plain description
-                  everywhere else. Claims 4 and 5 stay — they are claimed here
-                  and nowhere else on this page. */}
               <p>
-                On the practical side of a stay, three things sit on the listing itself rather
-                than being left to chance: what the kitchen is set up for, whether there is a
-                place to pray, and which way Qibla faces. Homes are{" "}
-                <strong>no-alcohol listings by default</strong>, and a host who allows alcohol
-                has to opt in and say so. If you are travelling as a group of women,{" "}
+                Among those rules, two are worth knowing before you search. Homes are{" "}
+                <strong>no-alcohol listings by default</strong>, and a host who allows alcohol has
+                to opt in and say so. If you are travelling as a group of women,{" "}
                 <strong>women-only stays hosted by women</strong> are a filter rather than a phone
                 call.
               </p>
@@ -440,9 +436,10 @@ export default function WhereToStayInIslamabadGuide() {
               <p className="text-bodySm text-secondary [&_strong]:font-semibold [&_strong]:text-primary">
                 Islamabad is an easy city for visitors, and SalamStay&apos;s part of that is knowing
                 who you are staying with: bookings run on{" "}
-                <strong>CNIC-verified guests and hosts via NADRA Verisys</strong>. SalamStay is
-                Shariah-respectful, not a religious authority — the cultural facts on a listing are
-                stated plainly so you can decide for yourself.
+                <strong>CNIC-verified guests and hosts via NADRA Verisys</strong>. That check is
+                also what the guest registration filed with the Islamabad Capital Police is built
+                from — SalamStay submits it for you and your host, so there is nothing for either of
+                you to hand in on arrival.
               </p>
             </div>
           </ProseSection>

@@ -52,9 +52,7 @@ export const guestRefundPolicyPage: LegalPageContent = {
         {
           kind: "p",
           text: [
-            "Because your payment is held in ",
-            term("amanah"),
-            " until you check in, ",
+            "Because your payment is held in trust until you check in, ",
             "your refund comes straight back from that hold — ",
             bold("no waiting on the host"),
             " — for whatever the stay's cancellation policy allows.",
@@ -77,7 +75,7 @@ export const guestRefundPolicyPage: LegalPageContent = {
           kind: "table",
           captionId: "tiers-table",
           caption:
-            'Cancellation windows by policy. "Half" means half of your nightly total returns; the service fee (wakala) is kept.',
+            'Cancellation windows by policy. "Half" means half of your nightly total returns; the service fee is kept.',
           head: ["Policy", "Full refund", "Half refund", "No refund"],
           rows: [
             {
@@ -167,16 +165,17 @@ export const guestRefundPolicyPage: LegalPageContent = {
           kind: "p",
           text: [
             "Two things sit outside a partial refund, and both are visible on your price breakdown before you pay — ",
-            bold("Transparent fees and tax — every rupee shown before you book or earn."),
+            bold("Transparent fees and tax — every rupee shown before you book or earn"),
+            ".",
           ],
         },
         {
           kind: "facts",
           items: [
             {
-              title: ["The service fee (wakala)"],
+              title: ["The service fee"],
               body: [
-                "Half of your nightly total returns; the service fee (wakala) is kept. SalamStay acts as your booking agent and charges a fixed, disclosed commission for arranging and safeguarding your stay — it's a flat agency fee shown up front, not interest and not a hidden markup on the host's price.",
+                "Half of your nightly total returns; the service fee is kept. SalamStay acts as your booking agent and charges a fixed, disclosed commission for arranging and safeguarding your stay — it's a flat agency fee shown up front, not interest and not a hidden markup on the host's price.",
               ],
             },
             {
@@ -226,7 +225,7 @@ export const guestRefundPolicyPage: LegalPageContent = {
               muted: true,
             },
             {
-              title: ["Service fee (wakala) & taxes"],
+              title: ["Service fee & taxes"],
               note: ["Already earned · non-refundable"],
               value: ["PKR ", num("4,850")],
               muted: true,

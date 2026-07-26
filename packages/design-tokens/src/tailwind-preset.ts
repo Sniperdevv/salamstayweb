@@ -38,8 +38,8 @@ import {
   dropShadow as dropShadowTokens,
 } from "./elevation.js";
 import type { ElevationLevel } from "./elevation.js";
-import { container, zIndex } from "./layout.js";
-import { scrim } from "./backgrounds.js";
+import { container, overlaySize, zIndex } from "./layout.js";
+import { scrim, skeleton } from "./backgrounds.js";
 import { duration, easingCss } from "./motion.js";
 
 // --- Minimal structural type for a Tailwind preset (no dep on `tailwindcss`) --
@@ -67,6 +67,18 @@ const themedColors = {
   raised: v("bg-raised"),
   sunken: v("bg-sunken"),
   inverse: v("bg-inverse"),
+  /**
+   * The placeholder fill — the shape a value holds while it has none.
+   *
+   * Only `backgrounds.skeleton.*.base` is exposed. The token also carries a
+   * `highlight` and a `durationMs`, i.e. a sweep, and the sweep is not shipped:
+   * every call site on the web reached for this fill to stand in for data that
+   * is not arriving over any request this build can make, and an animated bar
+   * there is a loading state that never resolves. `bg-skeleton` is therefore a
+   * resting fill and nothing else. If a genuinely in-flight region ever needs
+   * the sweep, it gets its own role rather than quietly animating this one.
+   */
+  skeleton: v("bg-skeleton"),
 
   primary: v("text-primary"),
   secondary: v("text-secondary"),
@@ -136,9 +148,18 @@ const scrimColors = {
 } as const;
 
 // --- Max widths: container role → px string (`max-w-page`, `max-w-wide`) ---
+//
+// `overlaySize` joins `container` here (added 2026-07-26). The roles existed but
+// were unreachable as classes, so a form group specced at `dialogMd` (520) had to
+// settle for `max-w-lg` (512) and shipped 8px narrow. A role nothing can consume
+// is not a token; it is a comment. Names are namespaced with an `overlay-` prefix
+// so a future `container.md` cannot silently shadow `overlaySize.md`.
 const maxWidth: Record<string, string> = {};
 for (const [k, val] of Object.entries(container)) {
   maxWidth[k] = typeof val === "number" ? `${val}px` : val;
+}
+for (const [k, val] of Object.entries(overlaySize)) {
+  maxWidth[`overlay-${k}`] = typeof val === "number" ? `${val}px` : val;
 }
 
 // --- Z-index: the layer ladder as strings (`z-header`, `z-modal`) ---
@@ -230,6 +251,7 @@ function themeVars(
   theme: ThemeColors,
   dv: DatavizTheme,
   elevationTheme: Record<string, ElevationLevel>,
+  skeletonTheme: { readonly base: string },
 ): Record<string, string> {
   const shadows: Record<string, string> = {};
   for (const [level, e] of Object.entries(elevationTheme)) {
@@ -240,6 +262,9 @@ function themeVars(
     "--ss-bg-raised": theme.bg.raised,
     "--ss-bg-sunken": theme.bg.sunken,
     "--ss-bg-inverse": theme.bg.inverse,
+    // From `backgrounds.skeleton`, not `colors.ts` — the surface ramps carry no
+    // placeholder rung, and the fill is already specified there per theme.
+    "--ss-bg-skeleton": skeletonTheme.base,
     "--ss-text-primary": theme.text.primary,
     "--ss-text-secondary": theme.text.secondary,
     "--ss-text-tertiary": theme.text.tertiary,
@@ -288,8 +313,8 @@ function themeVars(
  * writes entries and never needs to know which foundation a variable came from.
  */
 export const cssVariables = {
-  light: themeVars(color.light, dataviz.light, elevationLight),
-  dark: themeVars(color.dark, dataviz.dark, elevationDark),
+  light: themeVars(color.light, dataviz.light, elevationLight, skeleton.light),
+  dark: themeVars(color.dark, dataviz.dark, elevationDark, skeleton.dark),
 } as const;
 
 /** The Tailwind preset. Add to a web app config via `presets: [tailwindPreset]`. */

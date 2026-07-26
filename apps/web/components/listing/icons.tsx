@@ -5,10 +5,14 @@ import { iconStroke } from "@salamstay/design-tokens/icons";
  * Line glyphs for the listing detail page (gw-004), lifted verbatim from the
  * card's own paths. Anything the card already shares with another surface is
  * imported from the existing sets instead of redrawn here — `home-icons` owns
- * the cultural attributes (halal kitchen, no-alcohol, Qibla, prayer space,
- * family) and the claim marks; `stays/icons` owns the masjid roof; `icons.tsx`
+ * the house-rule marks (no-alcohol, family) and the claim marks; `icons.tsx`
  * owns the chrome arrows, the pin, the calendar and the message bubble. Only
- * the eleven glyphs below have no home yet.
+ * the nine glyphs below have no home yet.
+ *
+ * Two left with the prayer block (REPOSITIONING.md): `PrayerMatIcon`, drawn
+ * flatter than the shipped `PrayerSpaceIcon` so it could not be mistaken for
+ * the padlock three rows under it, and `CompassIcon`, which drew the Qibla
+ * bearing. Neither had a second caller, so neither stayed.
  *
  * ONE glyph departs from the card, and it is the visual rule doing it:
  * `PhotoGridIcon`. The card draws four squares; TASTE-RULES §10 specifies a
@@ -79,27 +83,6 @@ export function AirConditioningIcon(props: GlyphProps) {
   );
 }
 
-/**
- * Prayer mat — the card's own mat glyph, NOT the shipped `PrayerSpaceIcon`.
- *
- * The lexicon glyph would normally win: a "Prayer space" pill on the city rail
- * and one here must be the same drawing. But the attribute on this page is
- * "Prayer mat provided", which the card draws differently for a reason that
- * only shows up on this page — `PrayerSpaceIcon` is a tall arched rectangle
- * with a centre mark, and three rows below it sits `LockIcon`, which is a tall
- * arched rectangle with a centre mark. Two padlocks in one eight-item grid, one
- * of them meaning "prayer". The card's mat is flatter and wider, has no
- * keyhole, and cannot be confused with the lock underneath it.
- */
-export function PrayerMatIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <rect x="3" y="8" width="18" height="9" rx="1.5" />
-      <path d="M7 8V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V8" />
-    </Glyph>
-  );
-}
-
 /** Self check-in — the card's padlock. */
 export function LockIcon(props: GlyphProps) {
   return (
@@ -107,18 +90,6 @@ export function LockIcon(props: GlyphProps) {
       <rect x="3" y="11" width="18" height="10" rx="2" />
       <path d="M7 11V8a5 5 0 0 1 10 0v3" />
       <path d="M10 16h4" />
-    </Glyph>
-  );
-}
-
-/* ── Prayer & Qibla ────────────────────────────────────────────────────── */
-
-export function CompassIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
-      <path d="M9 15l1.7-4.3L15 9l-1.7 4.3z" />
     </Glyph>
   );
 }

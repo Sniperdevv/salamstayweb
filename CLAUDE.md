@@ -1,7 +1,7 @@
 # CLAUDE.md — SalamStay web guardrails
 
 ## Model policy
-Opus is the default model for the session and all dispatched agent work. Fable 5 is opt-in only (never unless the founder explicitly asks). Sonnet is the cheap tier for read-only search/bulk and mechanical fixes.
+Fable 5 administrates, Opus 5 executes (founder-set 2026-07-25). The session runs on Fable 5 (`.claude/settings.json` sets `"model": "fable"`) — it plans, decides, specs, dispatches, and judges; it does not grind out bulk work itself. Every worker agent runs Opus 5 (`frontend-designer`, `design-reviewer`, `ss-implementer`, `ss-reviewer`, `ss-compliance-auditor`). Sole exception: `ss-scout` on Sonnet for read-only find/map/grep that never judges correctness. Audits are bounded — 2–3 agents, non-overlapping lenses, findings carry file:line + the rule broken; never reopen founder-parked items.
 
 ## Working economy (founder-mandated, 2026-07-24)
 Responses focused, brief, concise; substance-first. High-level summaries unless depth is asked. Documents sized to the task. Deliver at intended scope; routine judgment calls self-made; flag a mistaken request in one sentence then proceed as asked. Finish fully. Delegate only large, genuinely independent parallel work; never to verify your own work; one agent over several.
@@ -19,6 +19,7 @@ over it.
 - `SEO-RULES.md` + `gates/semantic-seo/` — binding for every indexable page; HARD gates block merge. The claims registry (§5) is verbatim-only; scope changes are founder-only.
 - `scripts/validate-screens.mjs` — deterministic card validator; runs in CI; ERRORs block.
 - `LOOP-COMPLETE.md` — open founder decisions; do not resolve them unilaterally.
+- **`GO-LIVE.md` — the production blocker list. This site is localhost/demo only.** Work may ship with known gaps, but nothing is deferred silently: anything knowingly left undone goes in there with a close condition, in the same commit. Read it before calling any surface "done", and never describe the site as production-ready while section A has open rows.
 
 ## Defaults
 TypeScript strict; workspace imports via `@salamstay/*`; tests next to source; comments only for non-obvious WHY. Next.js pages must reproduce the semantic contract of their `gw-*` card (one H1, `main.indexable`, breadcrumb, hreflang en-PK/ur-PK where specified).

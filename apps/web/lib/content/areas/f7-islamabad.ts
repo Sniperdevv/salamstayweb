@@ -5,22 +5,21 @@ import type { AreaContent } from "./types";
  * F-7, Islamabad: the GW-003 instance, at `/stays-in-islamabad/f-7`, on the
  * v2 inventory-first contract.
  *
- * Local facts trace to screens-research/sections/city-facts.md §1a and the
- * shipped prayer card (ga-030): real markets (F-7 Markaz, Jinnah Super
- * Market), real masjids with the shipped walking figures, real roads (Kashmir
- * Highway), real transport (Metrobus Red Line, Careem / inDrive / Yango).
+ * Local facts trace to screens-research/sections/city-facts.md §1a: real
+ * markets (F-7 Markaz, Jinnah Super Market), the diplomatic enclave alongside,
+ * real roads (Kashmir Highway), real transport (Metrobus Red Line, Careem /
+ * inDrive / Yango), and §1b's city landmarks.
  *
  * What moved in the v2 rewrite, string by string:
- * - The five-line lede is gone. Its two `<strong>` §5 claims are NOT restated
- *   in shorter words anywhere: "Halal-kitchen, prayer-space, and Qibla
- *   direction shown on listings" is already verbatim in FAQ answer 2, and
- *   "load-shedding hours and backup power" is verbatim in FAQ answer 4 and in
- *   the meta description. `support` is one plain line about where in the sector
- *   the homes are, and it still names F-7 in its first clause.
+ * - The five-line lede is gone. The §5 claim it set in `<strong>` and did not
+ *   restate in shorter words — "load-shedding hours and backup power" — is
+ *   verbatim in FAQ answer 4 and in the meta description. `support` is one
+ *   plain line about where in the sector the homes are, and it still names F-7
+ *   in its first clause.
  * - The four-fact strip is gone. F-7 Markaz and Jinnah Super are in `about`
- *   item 1 and FAQ answer 1; the four-minute masjid walk is in `about` item 2
- *   and FAQ answer 2; walkability and ride-hailing are in `around` items 1 and
- *   2; "PKR —" is on every card in the rail.
+ *   item 1 and FAQ answer 1; the embassies and the hills are in `about` items 2
+ *   and 3; walkability and ride-hailing are in `around` items 1 and 2; "PKR —"
+ *   is on every card in the rail.
  * - The two "About F-7" lede paragraphs are gone. FAQ answer 1 already carries
  *   the whole first one verbatim (central sector, the lettered-and-numbered
  *   grid, the Margalla Hills, the markaz built around Jinnah Super Market
@@ -56,12 +55,21 @@ import type { AreaContent } from "./types";
  *         b. Calm by day, livelier in the evening (city-facts §1a).
  *         c. Embassy-adjacent; the diplomatic enclave and E-7 sit west
  *            (city-facts §1a).
- *         d. Jamia Masjid, F-7 Markaz, about a 4-minute walk, ~300 m
- *            (ga-030 shipped figure).
- *         e. Street 12 Masjid, F-7/2, about a 9-minute walk, ~700 m, near
- *            Jinnah Super (ga-030 shipped figure).
- *       All five survive the v2 rewrite: a, c, d and e in `about.items` and in
- *       the FAQ; b in `about.items` item 3 and in FAQ answer 3.
+ *         d. The Margalla Hills sit directly above the sector, with
+ *            Daman-e-Koh and the viewpoints on them (city-facts §1b).
+ *         e. Blue Area and Centaurus are a short drive south (gw-009).
+ *       All five appear in `about.items`; a and b appear again in FAQ answers
+ *       1 and 2, c and e in FAQ answer 1.
+ *
+ *       WHAT CHANGED HERE, and it is a supply-gate change rather than a copy
+ *       edit: facts d and e used to be the two ga-030 masjid walking figures
+ *       (Jamia Masjid F-7 Markaz ~300 m; Street 12 Masjid F-7/2 ~700 m).
+ *       REPOSITIONING.md retires distance-to-masjid from the product — it is
+ *       not modelled, not badged and not published — so both figures leave the
+ *       page, and two facts the corpus already asserts about F-7 take their
+ *       slots. The count is still five and every one is still checkable; what
+ *       is gone is the religious layer, not the local specificity that earned
+ *       this route.
  *   Disposition if any condition fails: the GATE 19 six. Keep · improve ·
  *   merge into the city page · redirect · noindex temporarily · remove.
  *   "Never decide from word count alone."
@@ -86,7 +94,7 @@ export const f7Islamabad: AreaContent = {
   name: "F-7",
   cityName: "Islamabad",
   metaDescription:
-    "Verified stays in F-7, Islamabad. See halal-kitchen and women-only options, distance to the nearest masjid, and each home's load-shedding hours and backup power.",
+    "Verified stays in F-7, Islamabad. See women-only and family homes, and each home's own load-shedding hours, backup power and tested Wi-Fi speed.",
 
   crumbs: [
     { name: "Home", path: "/" },
@@ -110,7 +118,7 @@ export const f7Islamabad: AreaContent = {
         areaPin: "F-7 Markaz",
         location: "Entire apartment · 2 bedrooms · 6 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/is-f7-2bed"],
-        attributes: ["halal-kitchen", "no-alcohol", "backup-power"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Margalla View Apartment, F-7, Islamabad",
       },
       {
@@ -119,7 +127,7 @@ export const f7Islamabad: AreaContent = {
         areaPin: "F-7 Markaz",
         location: "Entire home · 3 bedrooms · 6 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/cedar-lodge-f7"],
-        attributes: ["qibla-marked", "halal-kitchen", "backup-power"],
+        attributes: ["backup-power", "family-friendly"],
         schemaName: "Cedar Lodge, F-7 Markaz, F-7, Islamabad",
       },
       {
@@ -128,7 +136,7 @@ export const f7Islamabad: AreaContent = {
         areaPin: "Jinnah Super",
         location: "Studio · 1 bedroom · 2 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
-        attributes: ["women-only", "halal-kitchen", "backup-power"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Central studio by Jinnah Super, F-7, Islamabad",
       },
       {
@@ -137,7 +145,7 @@ export const f7Islamabad: AreaContent = {
         areaPin: "F-7/2",
         location: "Whole portion · 3 bedrooms · 2 baths",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
-        attributes: ["family-friendly", "prayer-space", "halal-kitchen"],
+        attributes: ["family-friendly", "no-alcohol"],
         schemaName: "Family portion near Jinnah Super, F-7, Islamabad",
       },
       {
@@ -146,7 +154,7 @@ export const f7Islamabad: AreaContent = {
         areaPin: "Street 12",
         location: "Entire flat · 1 bedroom · 2 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
-        attributes: ["prayer-space", "no-alcohol", "backup-power"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Quiet 1-bed off Street 12, F-7, Islamabad",
       },
       {
@@ -155,7 +163,7 @@ export const f7Islamabad: AreaContent = {
         areaPin: "F-7 Markaz",
         location: "Upper portion · 2 bedrooms · 4 guests",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
-        attributes: ["women-only", "backup-power", "halal-kitchen"],
+        attributes: ["women-only", "no-alcohol"],
         schemaName: "Upper portion near F-7 Markaz, F-7, Islamabad",
       },
     ],
@@ -172,11 +180,6 @@ export const f7Islamabad: AreaContent = {
         body: "The sector’s dining and shopping core: restaurants, bakeries, pharmacies and a grocery run, all within the markaz block.",
       },
       {
-        icon: "masjid",
-        heading: "Jamia Masjid, F-7 Markaz",
-        body: "Roughly a four-minute walk, about 300 m, from the blocks around the markaz. Street 12 Masjid in F-7/2 is about nine minutes on foot, near Jinnah Super.",
-      },
-      {
         icon: "civic",
         heading: "Embassy-adjacent, quiet by day",
         body: "The diplomatic enclave and E-7 sit to the west, which keeps the residential streets orderly and calm outside markaz hours.",
@@ -184,7 +187,16 @@ export const f7Islamabad: AreaContent = {
       {
         icon: "hills",
         heading: "Margalla Hills at your back",
-        body: "Daman-e-Koh and the Margalla viewpoints sit above the sector; Faisal Mosque, the Pakistan Monument and Centaurus Mall are the wider city’s wayfinding anchors.",
+        body: "Daman-e-Koh and the Margalla viewpoints sit above the sector, and the walk up starts closer to F-7 than to most of the city.",
+      },
+      /* The fourth card is `civic` rather than a third glyph role because it is
+         the same kind of fact as the second — where this sector sits relative
+         to the rest of the city. `hills` between them keeps two identical marks
+         off adjacent columns, which is the rule the F-8 page states out loud. */
+      {
+        icon: "civic",
+        heading: "Blue Area and Centaurus, south",
+        body: "The Blue Area commercial spine along Jinnah Avenue and Centaurus Mall are both a short drive south, so a work day downtown does not mean staying downtown.",
       },
     ],
   },
@@ -248,9 +260,9 @@ export const f7Islamabad: AreaContent = {
           "F-7 is a central sector on Islamabad’s lettered-and-numbered grid, sitting below the Margalla Hills. Its markaz (F-7 Markaz, built around Jinnah Super Market) holds most of the sector’s food, groceries and shopping. Several embassies sit alongside it, and the Blue Area commercial spine and Centaurus Mall are a short drive south.",
       },
       {
-        question: "How far is the nearest masjid from a stay in F-7?",
+        question: "What is F-7 Markaz like for food and shopping?",
         answer:
-          "From the blocks around the markaz, Jamia Masjid at F-7 Markaz is roughly a four-minute walk, about 300 m. Street 12 Masjid in F-7/2 is about a nine-minute walk, some 700 m, near Jinnah Super. Each home lists its own walking distance, and halal-kitchen, prayer-space, and Qibla direction shown on listings apply to every stay here.",
+          "F-7 Markaz is built around Jinnah Super Market and holds most of the sector’s food, groceries and shopping: restaurants, bakeries, pharmacies and a grocery run, all inside the markaz block. It is calm by day and livelier in the evening, and it is a walk rather than a drive from the residential streets around it.",
       },
       {
         question: "Is F-7 a good area for families or for women travelling alone?",

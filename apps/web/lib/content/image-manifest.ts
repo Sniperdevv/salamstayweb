@@ -1269,6 +1269,607 @@ export const IMAGES = {
     category: "gallery",
     authentic: true,
   },
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Galleries — the ten beta listings that had a card face and nothing
+  // behind it (gw-004 template, four tiles each)
+  //
+  // `LISTING_THUMBS` already gave each of these homes one photograph, and one
+  // photograph is a card, not a listing. Each home gains four here.
+  //
+  // The four were chosen as a HOME, not as four separate stock interiors.
+  // Every hero in `LISTING_THUMBS` is a frame from some photographer's shoot
+  // of one real building, and a shoot usually covers the whole building — so
+  // wherever the hero's own shoot contained the other rooms, the tiles were
+  // taken from that shoot. That is why these galleries hold together: the
+  // white brick and the hexagonal floor tile in `quiet-1-bed-*`, the patterned
+  // floor and rattan pendants in `upper-portion-*`, the red brick and the
+  // orange sofa in `central-studio-*`, the brick pier and the brown curtain in
+  // `business-studio-*` are the same materials in five frames because they are
+  // the same building in five frames. `margalla-view-bedroom` looks onto the
+  // very balcony furniture the listing's own card face is standing on.
+  //
+  // Where a shoot had no bathroom or no kitchen — the two rooms this corpus
+  // was shortest of, one and six respectively before this batch — the
+  // substitute was matched on palette AND on fixtures a Pakistani home
+  // actually has: a washing machine in the bathroom, a gas hob under the
+  // extractor, granite and terrazzo worktops, ceiling fans, split air
+  // conditioning, mosaic and marble tiling.
+  //
+  // Room mix follows what each listing already claims about itself. The studio
+  // gets one sleeping corner rather than four bedrooms; the guest house gets a
+  // garden room rather than a high-rise balcony; the two-bedroom portions get
+  // two beds; the home with "2 baths" on its card gets the bathroom that claim
+  // implies. Four frames were cut at review rather than shipped: an indoor
+  // swimming pool that would have promised a pool no listing here has, two
+  // frames carrying a legible Spanish-language letting banner in the window,
+  // and a home office papered in English fashion slogans.
+  //
+  // Every frame below is `authentic: false`. None is a photograph of a real
+  // SalamStay home, and `UNCOVERED_SUBJECTS` at the foot of this file now
+  // names all ten of these interiors as photography still owed.
+  // ─────────────────────────────────────────────────────────────────────
+
+  // ——— Cedar Lodge — entire home, 3 bedrooms, garden ———
+  "cedar-lodge-kitchen": {
+    id: "cedar-lodge-kitchen",
+    file: "/images/cedar-lodge-kitchen.jpg",
+    subject:
+      "Open kitchen and dining room with dark timber units, a marble floor and glazed doors at the far end",
+    alt: "Open kitchen and dining room with dark timber units — marble floor running to the glazed doors",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/cedar-lodge-f7"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "cedar-lodge-bedroom": {
+    id: "cedar-lodge-bedroom",
+    file: "/images/cedar-lodge-bedroom.jpg",
+    subject: "Bedroom with a sliding wardrobe, a carpeted floor and a tall curtained window",
+    alt: "Bedroom with a sliding wardrobe — tall curtained window above the carpeted floor",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/cedar-lodge-f7"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "cedar-lodge-bath": {
+    id: "cedar-lodge-bath",
+    file: "/images/cedar-lodge-bath.jpg",
+    subject: "Bathroom tiled in black and white with a corner bath below a frosted window",
+    alt: "Bathroom tiled in black and white — corner bath set below a frosted window",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/cedar-lodge-f7"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "cedar-lodge-terrace": {
+    id: "cedar-lodge-terrace",
+    file: "/images/cedar-lodge-terrace.jpg",
+    subject:
+      "Covered veranda running along the house with cane rocking chairs and a garden beyond the railing",
+    alt: "Covered veranda with cane rocking chairs — garden and trees beyond the railing",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/cedar-lodge-f7"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_EXTERIOR,
+  },
+
+  // ——— Central studio by Jinnah Super — studio, 2 guests ———
+  "central-studio-sitting": {
+    id: "central-studio-sitting",
+    file: "/images/central-studio-sitting.jpg",
+    subject: "Sitting corner with a grey sofa, an exposed brick wall and a wall-mounted television",
+    alt: "Sitting corner with a grey sofa — wall-mounted television facing the exposed brick wall",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "central-studio-sleeping": {
+    id: "central-studio-sleeping",
+    file: "/images/central-studio-sleeping.jpg",
+    subject:
+      "Sleeping area with a double bed, wall-mounted air conditioning and potted plants at the window",
+    alt: "Sleeping area with potted plants at the window — wall-mounted air conditioning above the bed",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "central-studio-kitchenette": {
+    id: "central-studio-kitchenette",
+    file: "/images/central-studio-kitchenette.jpg",
+    subject: "Kitchenette with grey units, a timber worktop and a strip light under the wall cabinets",
+    alt: "Kitchenette with a timber worktop — strip light under the grey wall cabinets",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "central-studio-bath": {
+    id: "central-studio-bath",
+    file: "/images/central-studio-bath.jpg",
+    subject:
+      "Bathroom with a shower over the bath, a wall-hung basin and a heated towel rail on tiled walls",
+    alt: "Bathroom with a wall-hung basin — shower over the bath beside a heated towel rail",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Family portion near Jinnah Super — 3 bedrooms, 2 baths ———
+  "family-portion-bedroom": {
+    id: "family-portion-bedroom",
+    file: "/images/family-portion-bedroom.jpg",
+    subject:
+      "Bedroom with a woven runner across the bed, a boarded ceiling and a cushioned window seat",
+    alt: "Bedroom with a woven runner across the bed — cushioned window seat under the boarded ceiling",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "family-portion-bedroom-2": {
+    id: "family-portion-bedroom-2",
+    file: "/images/family-portion-bedroom-2.jpg",
+    subject:
+      "Bedroom under a sloping boarded ceiling with a television and doors opening onto a balcony",
+    alt: "Bedroom under a sloping boarded ceiling — doors opening onto a balcony beside the television",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "family-portion-kitchen": {
+    id: "family-portion-kitchen",
+    file: "/images/family-portion-kitchen.jpg",
+    subject:
+      "Kitchen with white units, a walnut splashback and stools drawn up to a long island below hanging pendants",
+    alt: "Kitchen with a walnut splashback — stools drawn up to a long island below hanging pendants",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "family-portion-bath": {
+    id: "family-portion-bath",
+    file: "/images/family-portion-bath.jpg",
+    subject: "Bathroom with a tiled band across white brick walls, a toilet and a radiator by the door",
+    alt: "Bathroom with a tiled band across white brick walls — radiator beside the toilet",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Quiet 1-bed off Street 12 — entire flat, 2 guests ———
+  "quiet-1-bed-bedroom": {
+    id: "quiet-1-bed-bedroom",
+    file: "/images/quiet-1-bed-bedroom.jpg",
+    subject: "Bedroom with a timber-clad wall, a quilted bedspread and a lamp on each bedside table",
+    alt: "Bedroom with a quilted bedspread — a lamp on each bedside table against the timber-clad wall",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "quiet-1-bed-kitchen": {
+    id: "quiet-1-bed-kitchen",
+    file: "/images/quiet-1-bed-kitchen.jpg",
+    subject: "Kitchen with white units, a built-in oven and a timber worktop against a white brick wall",
+    alt: "Kitchen with a built-in oven — timber worktop running along the white brick wall",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "quiet-1-bed-bath": {
+    id: "quiet-1-bed-bath",
+    file: "/images/quiet-1-bed-bath.jpg",
+    subject: "Shower room with marble-effect tiling, a wide washbasin and a glazed shower door",
+    alt: "Shower room with a wide washbasin — glazed shower door beside the marble-effect tiling",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "quiet-1-bed-entrance": {
+    id: "quiet-1-bed-entrance",
+    file: "/images/quiet-1-bed-entrance.jpg",
+    subject:
+      "Entrance hall with a white brick wall, a hexagonal tiled floor and a timber-panelled return",
+    alt: "Entrance hall with a hexagonal tiled floor — timber-panelled return beside the white brick wall",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Upper portion near F-7 Markaz — 2 bedrooms, 4 guests ———
+  "upper-portion-bedroom": {
+    id: "upper-portion-bedroom",
+    file: "/images/upper-portion-bedroom.jpg",
+    subject:
+      "Bedroom with an oak chest at the foot of the bed, wall lamps and grey curtains at the window",
+    alt: "Bedroom with wall lamps and grey curtains — oak chest standing at the foot of the bed",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "upper-portion-bedroom-2": {
+    id: "upper-portion-bedroom-2",
+    file: "/images/upper-portion-bedroom-2.jpg",
+    subject:
+      "Bedroom with a woven pendant shade, a long oak chest of drawers and a window over the rooftops",
+    alt: "Bedroom with a woven pendant shade — long oak chest below a window over the rooftops",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "upper-portion-kitchen": {
+    id: "upper-portion-kitchen",
+    file: "/images/upper-portion-kitchen.jpg",
+    subject: "Kitchen with white units, a tiled splashback and a solid oak table laid for two",
+    alt: "Kitchen with a tiled splashback — solid oak table laid for two beside the white units",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "upper-portion-bath": {
+    id: "upper-portion-bath",
+    file: "/images/upper-portion-bath.jpg",
+    subject: "Bathroom with a hand shower on tiled walls, a basin on an oak counter and a lit mirror",
+    alt: "Bathroom with a lit mirror — basin on an oak counter across from the hand shower",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Sunlit 2-bed near Kohsar Market — 2 bedrooms ———
+  "sunlit-2-bed-bedroom": {
+    id: "sunlit-2-bed-bedroom",
+    file: "/images/sunlit-2-bed-bedroom.jpg",
+    subject:
+      "Bedroom with a buttoned headboard, rose-coloured drapes and an upholstered ottoman at the foot",
+    alt: "Bedroom with a buttoned headboard — rose-coloured drapes behind an upholstered ottoman",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "sunlit-2-bed-bedroom-2": {
+    id: "sunlit-2-bed-bedroom-2",
+    file: "/images/sunlit-2-bed-bedroom-2.jpg",
+    subject: "Bedroom with a timber headboard panel, a ring pendant and tall doors onto a balcony",
+    alt: "Bedroom with a ring pendant above the bed — tall doors onto a balcony beside the timber headboard",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "sunlit-2-bed-kitchen": {
+    id: "sunlit-2-bed-kitchen",
+    file: "/images/sunlit-2-bed-kitchen.jpg",
+    subject:
+      "Kitchen with taupe handleless units, tall cupboards and a round glass table with soft pink chairs",
+    alt: "Kitchen with tall taupe cupboards — round glass table and soft pink chairs in the corner",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "sunlit-2-bed-bath": {
+    id: "sunlit-2-bed-bath",
+    file: "/images/sunlit-2-bed-bath.jpg",
+    subject:
+      "Bathroom tiled in grey marble with a vessel basin on the vanity and a glazed shower alongside",
+    alt: "Bathroom tiled in grey marble — vessel basin on the vanity beside a glazed shower",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Garden guest house near Kohsar — family guest house ———
+  "garden-guest-house-garden-room": {
+    id: "garden-guest-house-garden-room",
+    file: "/images/garden-guest-house-garden-room.jpg",
+    subject:
+      "Glazed garden room with a patterned tile floor, cane dining chairs and doors folded back to the lawn",
+    alt: "Glazed garden room with a patterned tile floor — cane chairs and doors folded back to the lawn",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "garden-guest-house-bedroom": {
+    id: "garden-guest-house-bedroom",
+    file: "/images/garden-guest-house-bedroom.jpg",
+    subject: "Bedroom with a ceiling fan above a timber sleigh bed and a bookcase beside the window",
+    alt: "Bedroom with a ceiling fan — timber sleigh bed beside a bookcase and a window",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
+    credit: "Curtis Adams",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "garden-guest-house-kitchen": {
+    id: "garden-guest-house-kitchen",
+    file: "/images/garden-guest-house-kitchen.jpg",
+    subject: "Kitchen with cream units, a granite worktop and a tall fridge beside the built-in ovens",
+    alt: "Kitchen with a granite worktop — tall fridge standing beside the built-in ovens",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "garden-guest-house-bath": {
+    id: "garden-guest-house-bath",
+    file: "/images/garden-guest-house-bath.jpg",
+    subject: "Bathroom with grey metro tiling, a glazed shower enclosure and a wall-hung basin",
+    alt: "Bathroom with grey metro tiling — glazed shower enclosure beside the wall-hung basin",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Quiet family home, F-8 Markaz — family house ———
+  "family-home-f8-bedroom": {
+    id: "family-home-f8-bedroom",
+    file: "/images/family-home-f8-bedroom.jpg",
+    subject: "Bedroom with a ceiling fan, a timber bed frame and an armchair by the window",
+    alt: "Bedroom with a ceiling fan — timber bed frame and an armchair beside the window",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
+    credit: "Peter Vang",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "family-home-f8-kitchen": {
+    id: "family-home-f8-kitchen",
+    file: "/images/family-home-f8-kitchen.jpg",
+    subject: "Kitchen with dark timber units below white cupboards and a round table by a tall window",
+    alt: "Kitchen with dark timber units below white cupboards — round table set by a tall window",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "family-home-f8-bath": {
+    id: "family-home-f8-bath",
+    file: "/images/family-home-f8-bath.jpg",
+    subject: "Bathroom with mosaic tiling, a washing machine beside the toilet and a glazed shower",
+    alt: "Bathroom with mosaic tiling — washing machine beside the toilet and a glazed shower",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "family-home-f8-veranda": {
+    id: "family-home-f8-veranda",
+    file: "/images/family-home-f8-veranda.jpg",
+    subject:
+      "Upper gallery with a timber railing, potted plants along the tiled floor and glazing on one side",
+    alt: "Upper gallery with a timber railing — potted plants along the tiled floor beside the glazing",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Margalla-view apartment, E-7 — apartment above a city ———
+  "margalla-view-living": {
+    id: "margalla-view-living",
+    file: "/images/margalla-view-living.jpg",
+    subject: "Living room with a long grey sofa, green armchairs and wraparound glazing onto a terrace",
+    alt: "Living room with a long grey sofa — green armchairs beside wraparound glazing onto a terrace",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/e-7/margalla-view-apartment"],
+    credit: "Image Hunter",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "margalla-view-bedroom": {
+    id: "margalla-view-bedroom",
+    file: "/images/margalla-view-bedroom.jpg",
+    subject:
+      "Bedroom with a timber headboard and rose linen, sliding doors open onto a furnished balcony",
+    alt: "Bedroom with a timber headboard and rose linen — sliding doors open onto a furnished balcony",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/e-7/margalla-view-apartment"],
+    credit: "Atlantic Ambience",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "margalla-view-kitchen": {
+    id: "margalla-view-kitchen",
+    file: "/images/margalla-view-kitchen.jpg",
+    subject:
+      "Kitchen with timber-veneer units, a black granite peninsula and a gas hob under the extractor",
+    alt: "Kitchen with a black granite peninsula — gas hob under the extractor beside the timber units",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/e-7/margalla-view-apartment"],
+    credit: "Waqas ilyas",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "margalla-view-bath": {
+    id: "margalla-view-bath",
+    file: "/images/margalla-view-bath.jpg",
+    subject:
+      "Bathroom with grey stone tiling, a glazed shower cabin and a dark vanity below a wide mirror",
+    alt: "Bathroom with grey stone tiling — glazed shower cabin beside a dark vanity and wide mirror",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/e-7/margalla-view-apartment"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+
+  // ——— Business studio on Jinnah Avenue, Blue Area — studio let ———
+  "business-studio-sleeping": {
+    id: "business-studio-sleeping",
+    file: "/images/business-studio-sleeping.jpg",
+    subject:
+      "Sleeping area with an upholstered bed against a brick pier and a counter at the full-height window",
+    alt: "Sleeping area with an upholstered bed against a brick pier — counter at the full-height window",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "business-studio-counter": {
+    id: "business-studio-counter",
+    file: "/images/business-studio-counter.jpg",
+    subject:
+      "Work counter with two stools at a full-height window, a brick pier alongside and a pendant above",
+    alt: "Work counter with two stools at a full-height window — pendant above and a brick pier alongside",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "business-studio-entrance": {
+    id: "business-studio-entrance",
+    file: "/images/business-studio-entrance.jpg",
+    subject: "Entrance hall with a brick wall, a walnut tall unit housing the oven and a mirror by the door",
+    alt: "Entrance hall with a brick wall — walnut tall unit housing the oven beside a mirror",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
+  "business-studio-bath": {
+    id: "business-studio-bath",
+    file: "/images/business-studio-bath.jpg",
+    subject:
+      "Bathroom with a basin on a dark vanity, a washing machine and a glazed shower on mosaic tiling",
+    alt: "Bathroom with a basin on a dark vanity — washing machine set beside the glazed shower",
+    width: 1880,
+    height: 1253,
+    pages: ["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
+    credit: "Max Vakhtbovych",
+    category: "gallery",
+    authentic: false,
+    note: STOCK_INTERIOR,
+  },
 } as const satisfies Record<string, ImageEntry>;
 
 export type ImageId = keyof typeof IMAGES;
@@ -1506,6 +2107,100 @@ export const IS_F7_GALLERY: readonly ImageId[] = [
   "is-f7-view",
 ];
 
+/**
+ * Listing route → that home's gallery, in display order, hero first.
+ *
+ * One import per home: a listing page takes `LISTING_GALLERIES[route]` and has
+ * the whole set, in order, with no second lookup and no chance of drawing a
+ * frame another listing already owns. The first id is always the same frame
+ * `LISTING_THUMBS` puts on the card — it is read from that map rather than
+ * retyped, so the card face and the gallery's opening frame cannot drift.
+ *
+ * Every id appears in exactly one gallery, and no gallery frame is drawn by
+ * any other group in this file. That is the property that keeps the same
+ * photograph off a Karachi card and an Islamabad listing at once. It is also
+ * why each entry's `pages` names exactly one listing route: `verify-images`
+ * already fails on a `LISTING_THUMBS` frame whose `pages` omits its route, so
+ * a frame that drifted into a second home would have to be given a second
+ * route to stay green, and that edit is visible.
+ */
+export const LISTING_GALLERIES = {
+  "/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market": [
+    LISTING_THUMBS["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
+    "sunlit-2-bed-bedroom",
+    "sunlit-2-bed-bedroom-2",
+    "sunlit-2-bed-kitchen",
+    "sunlit-2-bed-bath",
+  ],
+  "/stays-in-islamabad/f-6/garden-guest-house-near-kohsar": [
+    LISTING_THUMBS["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
+    "garden-guest-house-garden-room",
+    "garden-guest-house-bedroom",
+    "garden-guest-house-kitchen",
+    "garden-guest-house-bath",
+  ],
+  "/stays-in-islamabad/f-7/cedar-lodge-f7": [
+    LISTING_THUMBS["/stays-in-islamabad/f-7/cedar-lodge-f7"],
+    "cedar-lodge-bedroom",
+    "cedar-lodge-kitchen",
+    "cedar-lodge-bath",
+    "cedar-lodge-terrace",
+  ],
+  "/stays-in-islamabad/f-7/central-studio-by-jinnah-super": [
+    LISTING_THUMBS["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
+    "central-studio-sitting",
+    "central-studio-sleeping",
+    "central-studio-kitchenette",
+    "central-studio-bath",
+  ],
+  "/stays-in-islamabad/f-7/family-portion-jinnah-super": [
+    LISTING_THUMBS["/stays-in-islamabad/f-7/family-portion-jinnah-super"],
+    "family-portion-bedroom",
+    "family-portion-bedroom-2",
+    "family-portion-kitchen",
+    "family-portion-bath",
+  ],
+  "/stays-in-islamabad/f-7/quiet-1-bed-street-12": [
+    LISTING_THUMBS["/stays-in-islamabad/f-7/quiet-1-bed-street-12"],
+    "quiet-1-bed-bedroom",
+    "quiet-1-bed-kitchen",
+    "quiet-1-bed-bath",
+    "quiet-1-bed-entrance",
+  ],
+  "/stays-in-islamabad/f-7/upper-portion-f-7-markaz": [
+    LISTING_THUMBS["/stays-in-islamabad/f-7/upper-portion-f-7-markaz"],
+    "upper-portion-bedroom",
+    "upper-portion-bedroom-2",
+    "upper-portion-kitchen",
+    "upper-portion-bath",
+  ],
+  "/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz": [
+    LISTING_THUMBS["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
+    "family-home-f8-bedroom",
+    "family-home-f8-kitchen",
+    "family-home-f8-bath",
+    "family-home-f8-veranda",
+  ],
+  "/stays-in-islamabad/e-7/margalla-view-apartment": [
+    LISTING_THUMBS["/stays-in-islamabad/e-7/margalla-view-apartment"],
+    "margalla-view-living",
+    "margalla-view-bedroom",
+    "margalla-view-kitchen",
+    "margalla-view-bath",
+  ],
+  "/stays-in-islamabad/blue-area/business-studio-jinnah-avenue": [
+    LISTING_THUMBS["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
+    "business-studio-sleeping",
+    "business-studio-counter",
+    "business-studio-entrance",
+    "business-studio-bath",
+  ],
+  /* The eleventh home. Its ten-frame set predates this map and is unchanged;
+     it is listed here so a listing page can look up ANY beta listing by route
+     rather than special-casing the one home that already had a gallery. */
+  "/stays-in-islamabad/f-7/is-f7-2bed": IS_F7_GALLERY,
+} as const satisfies Record<string, readonly ImageId[]>;
+
 /** Become-a-host surfaces. */
 export const HOST_IMAGES = {
   homeTeaser: "host-home-living-room-daylight",
@@ -1534,4 +2229,20 @@ export const UNCOVERED_SUBJECTS: readonly string[] = [
   "Blue Area, Islamabad — street-level business district (the aerial frame is real, a street-level one is not available)",
   "Rawalpindi — Saddar and the Raja Bazaar streets (only a truck-art side street is verified)",
   "Any interior of a real Pakistani home (the entire listing and gallery set is licensed stock)",
+  // ——— added with the ten listing galleries ———
+  // This list is the commissioned-photo shopping list, so shipping forty more
+  // stand-ins makes it LONGER, not shorter. Each line below is one home whose
+  // five-frame gallery now exists and is entirely licensed stock.
+  "Cedar Lodge, F-7 Markaz, Islamabad — every room of it; the gallery is a licensed shoot of one house photographed abroad",
+  "Central studio by Jinnah Super, F-7, Islamabad — every room of it",
+  "Family portion near Jinnah Super, F-7, Islamabad — every room of it, including the second bathroom the card claims",
+  "Quiet 1-bed off Street 12, F-7, Islamabad — every room of it",
+  "Upper portion near F-7 Markaz, Islamabad — every room of it, and the roof terrace an upper portion normally has",
+  "Sunlit 2-bed near Kohsar Market, F-6, Islamabad — every room of it",
+  "Garden guest house near Kohsar, F-6, Islamabad — every room of it, and its actual garden",
+  "Quiet family home, F-8 Markaz, Islamabad — every room of it, including the sitting room the card claims",
+  "Margalla-view apartment, E-7, Islamabad — every room of it, and one balcony frame in which the Margalla range is genuinely the view rather than a stand-in horizon",
+  "Business studio on Jinnah Avenue, Blue Area, Islamabad — every room of it",
+  "A bathroom in any real Pakistani home. The corpus went from one bathroom to eleven in this batch and not one of the eleven was photographed in Pakistan",
+  "A kitchen in any real Pakistani home — gas hob, mesh window over the sink, marble or granite worktop. One South Asian kitchen is verified; the other thirteen are European stock",
 ];

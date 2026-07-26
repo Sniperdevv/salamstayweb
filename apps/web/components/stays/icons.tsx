@@ -4,7 +4,7 @@ import { iconStroke } from "@salamstay/design-tokens/icons";
 /**
  * Line glyphs for the stays-discovery surfaces, lifted verbatim from the
  * approved cards: sun, bus and civic landmark from gw-002 (city template);
- * masjid, markaz market, hills and walking figure from gw-003 (area template).
+ * markaz market, hills and walking figure from gw-003 (area template).
  *
  * They live together because the two templates share them — an area page's bus
  * mark must be byte-identical to a city page's — and because a glyph the corpus
@@ -98,16 +98,6 @@ export function LandmarkIcon(props: GlyphProps) {
 }
 
 /* ── gw-003 (area) ─────────────────────────────────────────────────────── */
-
-/** Masjid — the pitched roof the card draws for both masjid rows. */
-export function MasjidIcon(props: GlyphProps) {
-  return (
-    <Glyph {...props}>
-      <path d="M4 21V10l8-6 8 6v11" />
-      <path d="M9 21v-6h6v6" />
-    </Glyph>
-  );
-}
 
 /** Markaz market — an awning over a shopfront. */
 export function MarketIcon(props: GlyphProps) {

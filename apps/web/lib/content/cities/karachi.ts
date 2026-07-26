@@ -28,6 +28,15 @@ import type { CityContent } from "./types";
  * - NO area links. `lib/seo/route-registry.ts` carries no `/stays-in-karachi/
  *   {area}` route, and G37/G5 mean a link is minted by the registry, never by
  *   a content file. The six tiles are names and lines, not anchors.
+ * - NO listing links, and so NO ItemList. Every stay here carries
+ *   `href: null`: the registry holds no `/stays-in-karachi/{area}/{listing}`
+ *   route to point at, and the value this replaced was this page's own path —
+ *   nine cards linking to the page they sit on, and nine schema entries whose
+ *   `url` was this page's canonical. Both were invented (SEO-RULES §1.5), and
+ *   minting them is the doorway pattern §6 forbids: instances are earned, not
+ *   minted. The tiles are photographs, names and lines until the listing
+ *   pages exist; `CityLandingPage` then emits no ItemList for this city at
+ *   all, rather than an empty one.
  * - NO price figure, NO ratings, NO review counts, NO listing tallies.
  * - NO breadcrumb. A top-level city page is the head of its trail (§2/§3.2).
  * - NO verification FAQ. Verification is a nationwide product fact, identical
@@ -57,61 +66,61 @@ export const karachi: CityContent = {
     heading: "Featured stays in Karachi",
     items: [
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Bright 2-bed in Clifton",
         areaPin: "Clifton Block 2",
         location: "Clifton Block 2, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][0],
-        attributes: ["halal-kitchen", "no-alcohol"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Bright 2-bed in Clifton — Clifton Block 2, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Quiet 1-bed near Bahadurabad",
         areaPin: "Bahadurabad",
         location: "Bahadurabad, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][1],
-        attributes: ["no-alcohol", "backup-power"],
+        attributes: ["no-alcohol", "family-friendly"],
         schemaName: "Quiet 1-bed near Bahadurabad — Bahadurabad, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Family portion in PECHS",
         areaPin: "PECHS Block 6",
         location: "PECHS Block 6, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][2],
-        attributes: ["family-friendly", "halal-kitchen"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Family portion in PECHS — PECHS Block 6, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Whole apartment in DHA Phase 5",
         areaPin: "DHA Phase 5",
         location: "DHA Phase 5, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][3],
-        attributes: ["halal-kitchen", "backup-power"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Whole apartment in DHA Phase 5 — DHA Phase 5, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Twin room in Gulshan-e-Iqbal",
         areaPin: "Gulshan-e-Iqbal",
         location: "Gulshan-e-Iqbal, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][4],
-        attributes: ["women-only", "halal-kitchen"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Twin room in Gulshan-e-Iqbal — Gulshan-e-Iqbal, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Garden guest house in North Nazimabad",
         areaPin: "North Nazimabad",
         location: "North Nazimabad, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][5],
-        attributes: ["family-friendly", "backup-power"],
+        attributes: ["family-friendly", "no-alcohol"],
         schemaName: "Garden guest house in North Nazimabad — North Nazimabad, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Balcony flat in Gulistan-e-Johar",
         areaPin: "Gulistan-e-Johar",
         location: "Gulistan-e-Johar, Karachi",
@@ -120,21 +129,21 @@ export const karachi: CityContent = {
         schemaName: "Balcony flat in Gulistan-e-Johar — Gulistan-e-Johar, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Veranda portion in DHA Phase 6",
         areaPin: "DHA Phase 6",
         location: "DHA Phase 6, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][7],
-        attributes: ["halal-kitchen", "prayer-space"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Veranda portion in DHA Phase 6 — DHA Phase 6, Karachi",
       },
       {
-        href: "/stays-in-karachi",
+        href: null,
         title: "Air-conditioned 1-bed in Nazimabad",
         areaPin: "Nazimabad",
         location: "Nazimabad, Karachi",
         image: CITY_STAY_CARDS["/stays-in-karachi"][8],
-        attributes: ["no-alcohol", "qibla-marked"],
+        attributes: ["no-alcohol", "women-only"],
         schemaName: "Air-conditioned 1-bed in Nazimabad — Nazimabad, Karachi",
       },
     ],
@@ -189,11 +198,9 @@ export const karachi: CityContent = {
   filters: {
     heading: "Popular filters in Karachi",
     items: [
-      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=karachi&no_alcohol=1" },
-      { icon: "halal-kitchen", label: "Halal kitchen", href: "/search?city=karachi&halal_kitchen=1" },
-      { icon: "women-only", label: "Women-only stays", href: "/search?city=karachi&women_only=1" },
-      { icon: "prayer-space", label: "Prayer space", href: "/search?city=karachi&prayer_space=1" },
       { icon: "backup-power", label: "Backup power", href: "/search?city=karachi&backup_power=1" },
+      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=karachi&no_alcohol=1" },
+      { icon: "women-only", label: "Women-only stays", href: "/search?city=karachi&women_only=1" },
       { icon: "family-friendly", label: "Family-friendly", href: "/search?city=karachi&family=1" },
     ],
   },
@@ -248,7 +255,7 @@ export const karachi: CityContent = {
         heading: "Trust & hosting",
         links: [
           { href: "/trust-and-safety", label: "Trust & safety" },
-          { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+          { href: "/verification", label: "How verification works" },
           { href: "/become-a-host", label: "Become a host in Karachi" },
         ],
       },

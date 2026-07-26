@@ -1,0 +1,1497 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Verify: consent, documents and review, Margalla View Apartment F-7 (GW-023)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     GW-023 · VERIFY — consent, documents, review (WEB CHECKOUT, step 2 of 4)
+     route "/book/is-f7-2bed/verify" (en) + "/ur/book/is-f7-2bed/verify"
+     Web twin of the app verify family: ga-040 (intro), ga-041 (CNIC capture,
+     pilot), ga-043 (review states), ga-075 (NADRA consent), ga-114 (why we
+     ask), ga-115 (resume). Reached from gw-022; hands off to the Price step.
+
+     SHELL: inherits design-system/cards/screens/CHECKOUT-SHELL.md unchanged.
+     gw-021-reserve.html is the reference implementation; its token block,
+     chrome, rail, type ladder and class names are copied verbatim here.
+
+     ---------------------------------------------------------------------------
+     STEP DECISION 1 — THE TWO STEPPER RENDERINGS, ON ONE SCREEN, UNMIXED.
+       HANDOFF §7.6a locks exactly two renderings and forbids inventing a third.
+       This is the one surface where both are correct at once, so both ship, in
+       a fixed reading order inside the single `.stepblk` slot:
+
+         1. the NAMED-CIRCLES stepper — the JOURNEY. Party is `.done` (a brand
+            check), Verify is `.cur` (a brand ring + aria-current="step"), Price
+            and Confirm are upcoming. Identical geometry, tokens and classes to
+            gw-021 and gw-022.
+         2. the caption — `Step 2 of 4 · Verify`, always, on every sub-state and
+            in both languages (`مرحلہ 2 از 4 · شناخت`). It also names, in words,
+            which part of the step the guest is on, so the bars below it are
+            never read as a second journey.
+         3. the THIN BARS — SUB-progress inside Verify: consent → documents →
+            review. Three bars, `aria-hidden`, `.done` / `.now` / bare, inherited
+            token-for-token from ga-041/ga-043 (`--int-primary`, `.now` at .55
+            opacity, 4px tall, equal segments with gaps — TASTE §10 "progress =
+            segmented phases"). THE BAR COUNT IS NOT THE STEP COUNT. Three bars
+            is correct and must not be "fixed" to four.
+
+       Nothing is blended: the circles never lose their labels, the bars never
+       gain any, and the sentence between them says which is which.
+
+       FLAGGED FOR THE SHELL: CHECKOUT-SHELL §7's green-rarity grep exempts
+       "the `.steps li.done/.cur` rules, which are stepper state". The sub-bars
+       are the second tier of that same locked component (§3's last bullet
+       imports them into the shell unchanged), so their brand fill is the same
+       carve-out. §7's parenthetical was written before any Verify card existed
+       and should be widened to "`.steps` and `.subbar` state".
+
+     STEP DECISION 2 — A DOCUMENT UPLOAD ON THE WEB IS NOT A PHONE CAMERA.
+       This is the load-bearing web adaptation, and it inverts the app.
+       ga-041 makes the camera the primary path with "Upload from files instead"
+       as an always-present fallback, and ships a framing guide, a live lighting
+       hint, a blur check and an on-device downscale — four things that exist
+       because the app owns the capture pipeline.
+       The web owns none of them. `<input type="file" capture="environment">`
+       hands the guest off to a bare OS camera: no guide, no lighting hint, no
+       pre-flight blur check, and on a desktop it either does nothing or opens a
+       webcam pointed at the wrong thing. So on web:
+
+         · FILE UPLOAD IS THE PRIMARY AND COMMITTED PATH. One `radius.md`
+           `border.default` drop zone per document (a form boundary: border, NO
+           shadow — TASTE §1), wrapping a real `<input type="file">` inside a
+           `<label>`, so click, keyboard and drag all reach the same control.
+         · THE CAMERA IS A SECOND, DEVICE-DEPENDENT AFFORDANCE, offered as the
+           §5 gray-fill secondary button beside the zone, and the screen SAYS SO
+           in plain words rather than letting it silently vanish: "Use camera
+           appears on a phone or tablet that has one. On a computer, upload the
+           file." A control that is present on one device and absent on another
+           must explain itself, or the guest on a laptop assumes something is
+           broken.
+         · ga-041's BLUR CHECK SURVIVES, moved after the fact. The app checks
+           before the guest commits; the web checks after the file lands and
+           reports it in the same words ("Looks clear — the text is readable and
+           the whole card is in frame"), with the same fixable-reason register if
+           it does not pass.
+         · ga-041's DATA-COST PROMISE SURVIVES, translated honestly: the app
+           compresses on the phone, the web resizes in the browser before the
+           bytes leave. Same promise, correct mechanism.
+         · THE SELFIE is the one item that genuinely wants a camera, and ga-040
+           already rules that "a photo works too" — so the upload path is a real
+           path for it, not a degraded one, and no liveness claim is made here.
+
+       Accepted formats are stated (JPG, PNG, PDF). NO FILE-SIZE CAP IS PRINTED:
+       no card in the corpus carries one, and inventing "10 MB" would be a
+       product decision dressed as a design detail. It is called out in the
+       return notes as a real gap for the build to fill.
+
+     STEP DECISION 3 — NADRA IS A REGULATOR, SO NOTHING ABOUT IT IS AUTHORED.
+       ga-075's consent gate is carried over whole: the checkbox ships UNCHECKED,
+       "Agree and continue" is disabled until it is ticked, the "what is shared"
+       disclosure lists exactly the three fields ga-075 lists (name, CNIC number,
+       date of birth) and nothing else, and declining routes to ga-075's
+       dignified hard stop with its reason and its open door, verbatim in
+       substance. No response time, no failure mode, no retention window, no
+       data-handling promise beyond what ga-040/ga-075/ga-114 already ship.
+       The single time phrase on this card is ga-043's "usually within a few
+       hours", and — as on ga-043 — it appears exactly ONCE.
+
+     STEP DECISION 4 — REVIEW OUTCOMES USE THE SEMANTIC REGISTERS, NOT ERROR RED.
+       DESIGN §0.2 and §10.6: there is no X-of-shame, no "Failed", no "Denied".
+       So: `--success-*` (declared in the shell token block, unused until now)
+       carries the verified state; `--warning-*` carries needs-attention, whose
+       sentence is always about the DOCUMENT and never about the person; and the
+       `error` register is reserved for a genuine form fault — an unsupported
+       file type — where red is about the file and nothing else. The error panel
+       ships both registers the shell requires: a page-level `.banner` and an
+       inline `.errline` under the offending group.
+
+     ---------------------------------------------------------------------------
+     THE THREAD — WHOSE DOCUMENTS THESE ARE, AND WHY THERE IS NO NIKAH NAMA HERE.
+       gw-021 opens the booking with 6 guests: 4 adults and 2 children. Two
+       adults cannot produce that party, so gw-022 selects FAMILY, and gw-024 /
+       025 / 026 carry Family · FRC downstream. This card therefore verifies the
+       FRC, not a Nikah Nama.
+
+       The document set is FOUR, and it is the exact set gw-022's consequence
+       section promises: CNIC · selfie · FRC · B-Form. The FRC is gw-007's
+       document for a mixed-gender family (ga-045 is the app screen, and the
+       Bayan-e-Halfi affidavit is its equal path); the B-Form is asked for
+       because 2 children are on this booking — one NADRA B-Form alongside the
+       adults' verification, exactly as ga-046 collects it. FOUR DOCUMENTS,
+       THREE SUB-BARS: the bars are consent → documents → review, and they have
+       never counted documents. Do not reconcile the two numbers.
+
+       NO NIKAH NAMA PANEL SHIPS ON THIS CARD, and that is a deliberate trade.
+       The couples' path is a genuinely distinctive SalamStay surface, but this
+       card already carries seven panels and a four-document set; an eighth
+       panel showing the same guest holding a different document is the exact
+       misreading this thread was corrected to remove. Couple → Nikah Nama lives
+       where it reads correctly: gw-022's party ladder (all panels), gw-022's
+       overseas-couple panel, gw-007's public matrix, and ga-044 in the app
+       corpus. Correctness beats coverage.
+
+     ---------------------------------------------------------------------------
+     ROBOTS: noindex, follow. No class="indexable", no canonical, no hreflang, no
+       JSON-LD, no breadcrumb. One h1, as the page's accessible title only. Back
+       link goes one step back, to Party.
+
+     MONEY: the stay subtotal only. PKR 12,500 × 3 nights = PKR 37,500, then the
+       deferral strip naming step 3 · Price. No total renders here. The bare
+       rupee sign (U+20A8) appears nowhere in this file — not in markup, not in
+       copy, not in this comment.
+
+     REPOSITIONED 2026-07-26 (REPOSITIONING.md, founder decision — the record of
+       what changed, kept so a reader of the old card can see the delta).
+       THE DOCUMENT SET DOES NOT CHANGE. Still CNIC · selfie · FRC · B-Form,
+       still four documents and three sub-bars, still the set gw-022 promises.
+       What changed is the REASON, and it is now said out loud on the two
+       surfaces where a guest asks it: the consent section (why NADRA at all)
+       and the documents hint (why these four). Both give the same human answer
+       — a stranger is handing you the keys to their home, and both sides should
+       know who the other is, the same reason a hotel takes your ID.
+
+       TWO GROUNDS, KEPT APART, exactly as on gw-022. The CNIC is grounded in
+       LAW: short-stay guest registration is a routine legal requirement in
+       Pakistan, the same formality any hotel or guest house completes, and
+       SalamStay files it for the guest and the host (COMPLIANCE_MAP.md; the
+       sentence is gw-006 / ga-077 / gw-011's, reused rather than re-worded).
+       The FRC and the B-Form are NOT part of that registration — they are here
+       because THIS BOOKING'S PARTY is Family, and elsewhere they follow a
+       host's house rule or a specific local regulation. Never present them as
+       required by law, and never as an observance or a statement about the
+       guest. The dignity
+       registers are untouched: no red on a family document, no "Failed", no
+       verdict on a person, the warning register for a review outcome and the
+       error register only for a fault in the file.
+       Money vocabulary: "held in trust" and "How your payment is held"; the
+       structure behind it is unchanged.
+
+     CLAIMS: SEO-RULES §5 registry only, verbatim.
+       #1 CNIC-verified guests and hosts via NADRA Verisys   (consent section)
+       #9 Transparent fees and tax — every rupee shown before you book or earn
+       Urdu claim strings reuse the corpus translations (gw-007, gw-021).
+       Claim #3 (FRC-verified family bookings) is claimed on gw-022, where the
+       guest chooses the party. Here the FRC is named as a document, plainly, and
+       naming a document is not a claim.
+
+     INVENTED FOR THIS CARD: nothing about NADRA, documents, review timing, or
+       data handling. The worked booking (Fri 14 – Mon 17 Aug 2026, 6 guests,
+       4 adults + 2 children, Family, PKR 12,500/night) is carried from gw-021
+       and gw-022 unchanged. Two presentational facts are local to the demo: the
+       file names and the "today, 9:30 AM" submission stamp, both carried from
+       ga-043's pattern.
+
+     PANELS: 1 documents (authoritative, light) · 2 consent, unchecked (the empty
+       state) · 3 in review · 4 needs attention + an unsupported file (the error
+       state, both registers) · 5 dark, verified · 6 Urdu / RTL · 7 mobile 390.
+       Panel 1 is the authoritative semantic page — one h1, real landmarks, a
+       real <form>. Panels 2-7 are variants; dark, Urdu/RTL and mobile are
+       aria-hidden and carry no headings or landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role.
+     Copied verbatim from gw-021-reserve.html (CHECKOUT-SHELL §9).
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-floating:0 2px 6px 0 rgba(16,25,27,.08),0 6px 16px 0 rgba(16,25,27,.12);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-floating:0 2px 6px 0 rgba(0,0,0,.4),0 6px 16px 0 rgba(0,0,0,.36);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.mob { max-width:390px; margin:0 auto; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* ---- reduced checkout header (CHECKOUT-SHELL §2) ---- */
+  .co-header { display:flex; align-items:center; gap:16px; height:64px; padding:0 28px; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; z-index:2; }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hspacer { flex:1; }
+  .securenote { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); white-space:nowrap; }
+  .securenote svg { width:15px; height:15px; flex:none; }
+  .langsw { display:inline-flex; align-items:stretch; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { border:none; background:transparent; font-family:inherit; font-size:13px; line-height:1; padding:7px 13px; color:var(--text-secondary); cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:14px; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current="page"] { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .exitlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
+
+  /* ---- page frame ---- */
+  .co-main { display:block; background:var(--bg-canvas); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+  .backrow { padding:20px 0 0; }
+  .backlink { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .backlink svg { width:15px; height:15px; flex:none; }
+  .rtl .backlink svg { transform:scaleX(-1); }
+  .pagehead { padding:20px 0 22px; }
+  .pagehead h1 { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .pagehead .psub { font-size:16px; color:var(--text-secondary); margin-top:8px; max-width:56ch; }
+  .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+
+  /* ---- the two-column shell ---- */
+  .cols2 { display:grid; grid-template-columns:minmax(0,1fr) 348px; gap:48px; align-items:start; border-top:1px solid var(--border-hairline); padding-bottom:8px; }
+  .lmain { padding-top:4px; }
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); }
+  .fsec:first-child { border-top:none; padding-top:24px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+  .sec-sub a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- STEPPER TIER 1: the locked 4 named circles, step 2 CURRENT ---- */
+  .stepblk { padding:0 0 26px; }
+  .steps { display:flex; align-items:flex-start; list-style:none; max-width:440px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:13px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .scirc { width:28px; height:28px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .scirc svg { width:14px; height:14px; }
+  .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:8px; letter-spacing:.02em; }
+  .steps li.done .scirc { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .scirc { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+  .scap { font-size:13px; color:var(--text-secondary); margin-top:14px; max-width:62ch; }
+  .scap b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- STEPPER TIER 2: thin bars = sub-progress INSIDE Verify (§7.6a) ----
+     Inherited token-for-token from ga-041/ga-043. Three bars, never four.
+     Equal segments with gaps, 4px tall (TASTE §10 progress = phases). ---- */
+  .subbars { display:flex; gap:4px; max-width:440px; margin-top:12px; }
+  .subbars i { height:4px; flex:1; border-radius:var(--radius-full); background:var(--bg-sunken); }
+  .subbars i.done, .subbars i.now { background:var(--int-primary); }
+  .subbars i.now { opacity:.55; }
+
+  /* ---- document rows: the upload surface (STEP DECISION 2) ---- */
+  .dsec { margin-top:20px; max-width:560px; }
+  /* Each document is a CONTENT block in open space — no box, no card, no second
+     border (TASTE §1's "carries NEITHER"). The upload control below it is the
+     one bordered object in the section, because it is the form boundary.
+     A bordered group holding a bordered drop zone holding a bordered status row
+     is box-in-box three deep, and it is what makes an upload form look cheap. */
+  .dgroup { padding:22px 0; border-top:1px solid var(--border-hairline); }
+  .dgroup:first-child { border-top:none; padding-top:4px; }
+  .dhead { display:flex; align-items:flex-start; gap:12px; }
+  .dhead > svg { width:20px; height:20px; flex:none; color:var(--text-secondary); margin-top:2px; }
+  .dlab { flex:1; min-width:0; }
+  .dname { display:block; font-size:16px; font-weight:500; color:var(--text-primary); }
+  .dwhat { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; }
+  .dstate { flex:none; font-size:13px; font-weight:500; color:var(--text-secondary); white-space:nowrap; display:inline-flex; align-items:center; gap:6px; }
+  .dstate svg { width:15px; height:15px; flex:none; }
+  /* a done document is INK + a check glyph + the word, never a green tick per
+     row: four success marks on one panel is exactly the kind of colour spend
+     TASTE §1/§2 exist to prevent. The single `.okdisc` below is the one
+     semantic-success mark on the verified surface. */
+  .dstate.ok { color:var(--text-primary); }
+  .dstate.wait { color:var(--text-tertiary); font-weight:400; }
+
+  /* the drop zone: a form boundary — border, NO shadow (TASTE §1) */
+  .drop { display:flex; align-items:center; gap:14px; margin-top:14px; padding:16px; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-canvas); cursor:pointer; }
+  .drop.invalid { border-color:var(--error-fg); }
+  .drop:focus-within { outline:2px solid var(--border-brand); outline-offset:-3px; }
+  .dropic { width:38px; height:38px; border-radius:var(--radius-full); background:var(--bg-raised); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .dropic svg { width:19px; height:19px; }
+  .dropt { flex:1; min-width:0; }
+  .dropt b { display:block; font-size:15px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .dropt span { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; }
+
+  /* the §5 gray-fill secondary — here: the device-dependent camera affordance.
+     Same geometry as gw-026/gw-027's `.gbtn` (the name and shape those two cards
+     established); this card only adds the leading-glyph and disabled rules. */
+  .gbtn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:48px; padding:0 20px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; text-decoration:none; }
+  .gbtn svg { width:18px; height:18px; flex:none; color:var(--text-secondary); }
+  .gbtn[disabled] { color:var(--text-disabled); cursor:default; }
+  .gbtn[disabled] svg { color:var(--text-disabled); }
+  .drow { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px; }
+  .dnote { font-size:13px; color:var(--text-secondary); line-height:1.6; margin-top:12px; }
+  .dnote b { color:var(--text-primary); font-weight:600; }
+  /* the note inherits 13px, so its inline action is a plain <a> rather than
+     `.inlink` (14px) — same ink + underline-at-rest treatment, TASTE §8 */
+  .dnote a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* an uploaded / uploading file */
+  .file { display:flex; align-items:center; gap:12px; margin-top:14px; padding:12px 14px; border-radius:var(--radius-md); background:var(--bg-raised); }
+  .fileic { width:34px; height:34px; border-radius:var(--radius-md); background:var(--bg-canvas); border:1px solid var(--border-hairline); flex:none; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); }
+  .fileic svg { width:17px; height:17px; }
+  .fbody { flex:1; min-width:0; }
+  .fname { display:block; font-size:14px; font-weight:500; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .fmeta { display:block; font-size:13px; color:var(--text-secondary); margin-top:1px; }
+  .progress { height:4px; border-radius:var(--radius-full); background:var(--bg-sunken); overflow:hidden; margin-top:10px; }
+  .progress i { display:block; height:100%; background:var(--int-selected); border-radius:var(--radius-full); }
+
+  /* status rows: the ga-041 blur check and its fixable-reason twin */
+  .chk { display:flex; align-items:flex-start; gap:10px; margin-top:14px; padding:12px 13px; border-radius:var(--radius-md); font-size:13px; line-height:1.55; }
+  .chk svg { width:16px; height:16px; flex:none; margin-top:2px; }
+  .chk b { display:block; font-weight:600; }
+  .chk span { color:var(--text-secondary); }
+  .chk.ok { background:var(--success-bg); border:1px solid var(--success-border); }
+  .chk.ok svg, .chk.ok b { color:var(--success-fg); }
+  .chk.warn { background:var(--warning-bg); border:1px solid var(--warning-border); }
+  .chk.warn svg, .chk.warn b { color:var(--warning-fg); }
+  .chk.info { background:var(--info-bg); border:1px solid var(--info-border); }
+  .chk.info svg, .chk.info b { color:var(--info-fg); }
+
+  /* ---- consent (ga-075, carried over whole) ---- */
+  .consent { display:flex; align-items:flex-start; gap:13px; margin-top:18px; max-width:560px; padding:16px; border:1px solid var(--border-default); border-radius:var(--radius-md); cursor:pointer; }
+  .consent:focus-within { outline:2px solid var(--border-brand); outline-offset:-3px; }
+  .cbox { width:22px; height:22px; border-radius:5px; border:1.5px solid var(--border-default); flex:none; display:flex; align-items:center; justify-content:center; color:transparent; margin-top:1px; }
+  .cbox svg { width:13px; height:13px; }
+  .consent.on .cbox { background:var(--int-selected); border-color:var(--int-selected); color:var(--int-selected-fg); }
+  .ctext { flex:1; min-width:0; font-size:15px; color:var(--text-primary); line-height:1.55; }
+  .shared { margin-top:18px; max-width:560px; }
+  .srow { display:flex; align-items:baseline; gap:14px; padding:11px 0; border-top:1px solid var(--border-hairline); }
+  .srow:first-child { border-top:none; }
+  .sfield { flex:none; width:132px; font-size:14px; font-weight:500; color:var(--text-primary); }
+  .swhat { flex:1; min-width:0; font-size:14px; color:var(--text-secondary); }
+
+  /* ---- the review track (ga-043) ---- */
+  .track { list-style:none; margin-top:20px; max-width:560px; }
+  .trow { display:flex; gap:14px; }
+  .trail { flex:none; width:22px; display:flex; flex-direction:column; align-items:center; }
+  .tdot { width:22px; height:22px; border-radius:var(--radius-full); border:1.5px solid var(--border-default); background:var(--bg-canvas); flex:none; display:flex; align-items:center; justify-content:center; color:transparent; }
+  .tdot svg { width:12px; height:12px; }
+  .trow.done .tdot { background:var(--int-selected); border-color:var(--int-selected); color:var(--int-selected-fg); }
+  .trow.now .tdot { border:2px solid var(--int-selected); }
+  .trail i { display:block; flex:1; width:2px; background:var(--border-hairline); margin:4px 0; min-height:20px; }
+  .trow:last-child .trail i { display:none; }
+  .tbody { flex:1; min-width:0; padding-bottom:20px; }
+  .trow:last-child .tbody { padding-bottom:0; }
+  .tname { display:block; font-size:16px; font-weight:500; color:var(--text-primary); }
+  .tdesc { display:block; font-size:14px; color:var(--text-secondary); margin-top:3px; line-height:1.55; }
+  .twhen { display:block; font-size:13px; color:var(--text-tertiary); margin-top:4px; }
+  .byperson { display:inline-flex; align-items:center; gap:8px; margin-top:16px; font-size:13px; color:var(--text-secondary); }
+  .byperson svg { width:16px; height:16px; flex:none; color:var(--text-tertiary); }
+
+  /* ---- verified summary (semantic success, not brand green) ---- */
+  .okhero { display:flex; align-items:center; gap:14px; margin-top:20px; }
+  .okdisc { width:48px; height:48px; border-radius:var(--radius-full); background:var(--success-bg); border:1px solid var(--success-border); color:var(--success-fg); flex:none; display:flex; align-items:center; justify-content:center; }
+  .okdisc svg { width:24px; height:24px; }
+  .oktitle { font-size:20px; font-weight:600; color:var(--text-primary); }
+  .oksub { font-size:14px; color:var(--text-secondary); margin-top:3px; }
+
+  /* ---- shared small parts (from the shell) ---- */
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+  .inlink[disabled] { color:var(--text-disabled); text-decoration:none; cursor:default; }
+  .errline { display:flex; align-items:flex-start; gap:9px; margin-top:12px; max-width:560px; font-size:13px; color:var(--error-fg); line-height:1.55; }
+  .errline svg { width:16px; height:16px; flex:none; margin-top:1px; }
+  .errline b { font-weight:600; }
+  .ghint { display:flex; align-items:flex-start; gap:10px; margin-top:18px; max-width:62ch; font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:16px; height:16px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+  .ghint a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- page-level banner ---- */
+  .banner { display:flex; align-items:flex-start; gap:11px; margin:20px 0 0; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner svg { width:18px; height:18px; color:var(--warning-fg); flex:none; margin-top:2px; }
+  .banner p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .banner p b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+
+  /* ---- the summary rail (CHECKOUT-SHELL §4) ---- */
+  .railwrap { position:sticky; top:24px; padding:24px 0 0; }
+  .railcard { border:1px solid var(--border-default); border-radius:var(--radius-xl); background:var(--bg-canvas); box-shadow:var(--el-floating); padding:20px; }
+  .ident { display:flex; gap:12px; align-items:center; }
+  .thumb { width:56px; height:56px; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .iname { display:block; font-size:16px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .iarea { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .railrule { height:1px; background:var(--border-hairline); margin:16px 0; }
+  .sumrow { display:flex; align-items:baseline; gap:12px; }
+  .sumrow + .sumrow { margin-top:14px; }
+  .sumrow .sbody { flex:1; min-width:0; }
+  .overline { display:block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sval { display:block; font-size:14px; color:var(--text-primary); margin-top:4px; }
+  .sval.empty { color:var(--text-secondary); }
+  .pline { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:14px; color:var(--text-secondary); }
+  .pline .pamt { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .strip { margin-top:14px; padding:11px 13px; border-radius:var(--radius-md); background:var(--bg-raised); font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .strip b { color:var(--text-primary); font-weight:600; }
+  .cta { display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; margin-top:16px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .cta:active { transform:scale(0.98); }
+  .cta[disabled], .cta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; transform:none; }
+  .ctanote { font-size:13px; color:var(--text-secondary); text-align:center; margin-top:11px; line-height:1.5; }
+  .trust { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:12px; }
+  .tline { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text-secondary); line-height:1.55; }
+  .tline svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .tline.verified svg { color:var(--int-primary); }
+  .tline b { color:var(--text-primary); font-weight:600; }
+  .tline a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- reduced footer ---- */
+  .co-footer { background:var(--bg-raised); border-top:1px solid var(--border-hairline); padding:22px 28px; margin-top:16px; }
+  .fbar { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; font-size:13px; color:var(--text-secondary); }
+  .flegal { display:flex; gap:14px 20px; flex-wrap:wrap; }
+  .flegal a { color:var(--text-primary); text-decoration:none; }
+  .flegal a:hover { color:var(--text-primary); text-decoration:underline; }
+
+  /* ---- mobile collapse ---- */
+  .mobstrip { display:flex; gap:11px; align-items:center; padding:12px 0 0; }
+  .mobbar { position:sticky; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 20px 14px; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); }
+  .mobsum { display:flex; flex-direction:column; }
+  .mobsum .ms-t { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .mobsum .ms-s { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+  .mobbar .cta { width:auto; margin-top:0; padding:0 22px; flex:none; }
+  .mob .wrap { padding:0 20px; }
+  .mob .cols2 { grid-template-columns:1fr; gap:0; }
+  .mob .railwrap { display:none; }
+  .mob .co-header { padding:0 20px; gap:12px; }
+  .mob .steps, .mob .subbars { max-width:none; }
+  .mob .dsec, .mob .consent, .mob .shared, .mob .track, .mob .errline { max-width:none; }
+  .mob .drop { flex-wrap:wrap; }
+  .mob .gbtn { width:100%; }
+  .mob .pagehead h1, .mob .ptitle { font-size:22px; }
+
+  /* ---- interaction: press feedback + hover gating + reduced motion ---- */
+  .drop, .gbtn, .consent, .exitlink, .backlink, .inlink { transition:transform var(--dur-instant) var(--ease-standard), border-color var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .gbtn:not([disabled]):active { transform:scale(0.98); }
+  @media (hover:hover) and (pointer:fine) {
+    .cta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .drop:hover { border-color:var(--border-strong); }
+    .gbtn:not([disabled]):hover { background:var(--bg-sunken); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .cta, .drop, .gbtn, .consent, .exitlink, .backlink, .inlink { transition-duration:var(--dur-instant); }
+    .cta:active, .gbtn:active { transform:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl { direction:rtl; }
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+  .rtl .scap.nastaliq, .rtl .ghint.nastaliq, .rtl .tdesc.nastaliq, .rtl .dnote.nastaliq { line-height:1.9; }
+  .rtl .sfield { width:150px; }
+  /* a file name is a Latin run, not a digit run: it stays LTR internally but
+     must sit at the RTL reading-start edge, so it is isolated here rather than
+     wrapped in `.num` (which would also left-align it inside an RTL block) */
+  .rtl .fname { direction:ltr; unicode-bidi:isolate; text-align:right; }
+
+  /* ---- real viewport collapse (matches the .mob panel exactly) ---- */
+  @media (max-width:1080px) {
+    .cols2 { grid-template-columns:1fr; gap:0; }
+    .railwrap { position:static; padding:0 0 28px; }
+    .drop { flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">GW-023 — Verify · consent, documents and review (web checkout, step 2 of 4)</div>
+    <p>Route <code>/book/is-f7-2bed/verify</code>, <strong>noindex, follow</strong>. Web twin of <code>ga-040</code>, <code>ga-041</code>, <code>ga-043</code>, <code>ga-075</code>, <code>ga-114</code> and <code>ga-115</code>. This is the one surface that carries <strong>both</strong> locked stepper renderings at once — the named circles for the journey (<code>Step 2 of 4 · Verify</code>) and thin bars for sub-progress inside Verify (consent → documents → review, three bars, never four). It is also where the app's camera-first capture flow is deliberately inverted for the web: <strong>file upload is the primary path</strong> and the camera is a device-dependent extra that says so. The booking is the one <code>gw-021</code> opened and <code>gw-022</code> answered — <strong>Family</strong>, <span class="num">6</span> guests, <span class="num">4</span> adults and <span class="num">2</span> children — so the four documents here are CNIC, selfie, <strong>FRC</strong> and B-Form, the exact set <code>gw-022</code> promises. Nothing about NADRA, documents, review timing or data handling is authored here. Panel 1 is the authoritative semantic page; panels 2–7 are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL 1 · LIGHT · DOCUMENTS (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">Light · documents — the authoritative page (one h1, real landmarks, a real form). Sub-step 2 of 3: consent done, documents in progress. Upload is primary; the camera is the device-dependent extra.</div>
+
+      <header class="co-header">
+        <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+        <span class="hspacer"></span>
+        <span class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Your details are encrypted
+        </span>
+        <div class="langsw" role="group" aria-label="Language">
+          <a href="/book/is-f7-2bed/verify" aria-current="page" lang="en">EN</a>
+          <a class="urdu" href="/ur/book/is-f7-2bed/verify" lang="ur">اردو</a>
+        </div>
+        <a class="exitlink" href="/stays-in-islamabad/f-7/is-f7-2bed">Save &amp; exit</a>
+      </header>
+
+      <main class="co-main">
+        <div class="wrap">
+          <div class="backrow">
+            <a class="backlink" href="/book/is-f7-2bed/party">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              Back to your party
+            </a>
+          </div>
+
+          <div class="pagehead">
+            <h1>Verify who is staying</h1>
+            <p class="psub">Four documents, once. Future bookings skip this step entirely, and nothing is charged yet.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <!-- STEPPER — tier 1 (journey circles), caption, tier 2 (sub-bars). STEP DECISION 1 -->
+              <div class="stepblk">
+                <ol class="steps" aria-label="Checkout progress">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="cur" aria-current="step"><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b>2 of 4 · Verify</b> — consent, then documents, then a check. You are on <b>documents</b>.</p>
+                <div class="subbars" aria-hidden="true"><i class="done"></i><i class="now"></i><i></i></div>
+              </div>
+
+              <form id="verify-form" action="/book/is-f7-2bed/verify/submit" method="post">
+
+                <!-- HOW UPLOADING WORKS ON THE WEB (STEP DECISION 2) -->
+                <section class="fsec" aria-labelledby="docs-h">
+                  <h2 id="docs-h">Your documents</h2>
+                  <p class="sec-sub">Upload a photo or a scan of each one. JPG, PNG and PDF all work, and large photos are resized in your browser before they are sent, so this uses as little data as possible.</p>
+
+                  <div class="dsec">
+
+                    <!-- 1 · CNIC — done, blur check passed -->
+                    <div class="dgroup">
+                      <div class="dhead">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>
+                        <span class="dlab">
+                          <span class="dname">CNIC</span>
+                          <span class="dwhat">Front and back</span>
+                        </span>
+                        <span class="dstate ok">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                          Added
+                        </span>
+                      </div>
+                      <div class="file">
+                        <span class="fileic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-4 4 3 3-2 4 3"/></svg></span>
+                        <span class="fbody">
+                          <span class="fname">cnic-front-back.jpg</span>
+                          <span class="fmeta">Resized in your browser · sent</span>
+                        </span>
+                        <button class="inlink" type="button">Replace</button>
+                      </div>
+                      <p class="chk ok" role="status">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>
+                        <span><b>Looks clear</b>The text is readable and the whole card is in frame.</span>
+                      </p>
+                    </div>
+
+                    <!-- 2 · SELFIE — the one item that wants a camera -->
+                    <div class="dgroup">
+                      <div class="dhead">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="3.4"/><path d="M5.5 20v-.8a6.5 6.5 0 0 1 13 0v.8"/></svg>
+                        <span class="dlab">
+                          <span class="dname">Selfie</span>
+                          <span class="dwhat">Confirms the CNIC is yours</span>
+                        </span>
+                        <span class="dstate wait">Not added</span>
+                      </div>
+                      <label class="drop">
+                        <input class="sr-only" type="file" name="selfie" accept="image/jpeg,image/png,application/pdf" />
+                        <span class="dropic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                        <span class="dropt">
+                          <b>Choose a file, or drag one here</b>
+                          <span>JPG, PNG or PDF</span>
+                        </span>
+                      </label>
+                      <div class="drow">
+                        <button class="gbtn" type="button">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                          Use camera
+                        </button>
+                        <span class="inlink">Why is a selfie needed?</span>
+                      </div>
+                      <p class="dnote"><b>Use camera</b> appears on a phone or tablet that has one. On a computer, take a photo with any camera and upload the file — it is checked in exactly the same way.</p>
+                    </div>
+
+                    <!-- 3 · FRC — uploading -->
+                    <div class="dgroup">
+                      <div class="dhead">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                        <span class="dlab">
+                          <span class="dname">FRC</span>
+                          <span class="dwhat">Because you booked as a family</span>
+                        </span>
+                        <span class="dstate">Sending</span>
+                      </div>
+                      <div class="file">
+                        <span class="fileic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                        <span class="fbody">
+                          <span class="fname">frc-nadra.pdf</span>
+                          <span class="fmeta">Sending · <span class="num">62%</span></span>
+                        </span>
+                        <button class="inlink" type="button">Cancel</button>
+                      </div>
+                      <div class="progress" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" aria-label="FRC upload progress"><i style="width:62%"></i></div>
+                      <p class="dnote">No FRC to hand? A <b>Bayan-e-Halfi</b> (affidavit) is an equal path, not a lesser one, and it is checked the same way. <a href="/help/verification/what-is-an-frc">What is an FRC, and how do I get one?</a></p>
+                    </div>
+
+                    <!-- 4 · B-FORM — not added; asked for because 2 children are on the booking -->
+                    <div class="dgroup">
+                      <div class="dhead">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                        <span class="dlab">
+                          <span class="dname">B-Form</span>
+                          <span class="dwhat">For the <span class="num">2</span> children on this booking</span>
+                        </span>
+                        <span class="dstate wait">Not added</span>
+                      </div>
+                      <label class="drop">
+                        <input class="sr-only" type="file" name="bform" accept="image/jpeg,image/png,application/pdf" />
+                        <span class="dropic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                        <span class="dropt">
+                          <b>Choose a file, or drag one here</b>
+                          <span>JPG, PNG or PDF</span>
+                        </span>
+                      </label>
+                      <div class="drow">
+                        <button class="gbtn" type="button">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                          Use camera
+                        </button>
+                      </div>
+                      <p class="chk info" role="status">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                        <span><b>Encrypted, used only for verification</b>Your family documents are reviewed privately by our team, then stored securely. No host and no other guest can view them at any point.</span>
+                      </p>
+                    </div>
+
+                  </div>
+
+                  <p class="ghint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <span><b>This works both ways.</b> A stranger is handing you the keys to their home, and both sides should know who the other is — the same reason a hotel takes your ID. Your host verifies exactly as you do; it is a short formality for both of you, not a judgment. Your progress is saved as you go, so a dropped connection does not lose your work. <a href="/legal/data-handling">How we handle your data</a></span>
+                  </p>
+                </section>
+
+              </form>
+            </div>
+
+            <!-- SUMMARY RAIL (CHECKOUT-SHELL §4) -->
+            <aside class="railwrap" aria-label="Booking summary">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span>
+                    <span class="iname">Margalla View Apartment</span>
+                    <span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span>
+                  </span>
+                </div>
+
+                <div class="railrule"></div>
+
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Dates</span>
+                    <span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/dates">Change</a>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Guests</span>
+                    <span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/dates">Change</a>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Party</span>
+                    <span class="sval">Family · <span class="num">1</span> of <span class="num">4</span> documents added</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/party">Change</a>
+                </div>
+
+                <div class="railrule"></div>
+
+                <p class="pline">
+                  <span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span>
+                  <span class="pamt num">PKR 37,500</span>
+                </p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+
+                <button class="cta" type="submit" form="verify-form" disabled>Send for review</button>
+                <p class="ctanote">Add your selfie and B-Form, and finish the FRC upload, to continue.</p>
+
+                <div class="trust">
+                  <span class="tline verified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg>
+                    <span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                    <span>Your dates and price stay held while your documents are reviewed. <a href="/help/verification">Verification and documents</a></span>
+                  </span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
+
+      <footer class="co-footer">
+        <h2 class="sr-only">Footer</h2>
+        <div class="fbar">
+          <span>© <span class="num">2026</span> SalamStay</span>
+          <nav class="flegal" aria-label="Legal">
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/guest-refund-policy">Guest refund policy</a>
+            <a href="/help">Help center</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ================= PANEL 2 · LIGHT · CONSENT, UNCHECKED (the empty state) ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · consent — sub-step 1 of 3 · the checkbox ships unchecked, the CTA is disabled but visible and in place, and declining is stated plainly rather than hidden (ga-075, carried over whole)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/verify" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/verify">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your party</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Verify who is staying</div>
+            <p class="psub">Four documents, once. Future bookings skip this step entirely, and nothing is charged yet.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="cur"><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b>2 of 4 · Verify</b> — consent, then documents, then a check. You are on <b>consent</b>.</p>
+                <div class="subbars"><i class="now"></i><i></i><i></i></div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your consent for CNIC verification</div>
+                <p class="sec-sub">SalamStay runs on <b>CNIC-verified guests and hosts via NADRA Verisys</b> — a mutual formality, for you and for your host. A stranger is handing you the keys to their home, and both sides should know who the other is. Short-stay guest registration is also a routine legal requirement in Pakistan — the same formality any hotel completes — and SalamStay files it for you and your host.</p>
+
+                <p class="chk info">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                  <span><b>Encrypted, and used only for this one-time match</b>Hosts and guests never see these details.</span>
+                </p>
+
+                <div class="shared">
+                  <div class="srow"><span class="sfield">Name</span><span class="swhat">As it appears on your CNIC</span></div>
+                  <div class="srow"><span class="sfield">CNIC number</span><span class="swhat">Your <span class="num">13</span>-digit identity number</span></div>
+                  <div class="srow"><span class="sfield">Date of birth</span><span class="swhat">Confirms the match against NADRA's record</span></div>
+                </div>
+                <p class="dnote">Nothing beyond this is sent, and none of it is shown to hosts or other guests.</p>
+
+                <div class="consent">
+                  <span class="cbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span class="ctext">I agree to share these details with NADRA Verisys to verify my identity.</span>
+                </div>
+
+                <div class="drow">
+                  <span class="gbtn">I do not consent</span>
+                </div>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span><b>Without this check, booking is not possible.</b> You can still browse stays — you just will not be able to book until you consent, and you can consent any time from Verification. <a href="/stays-in-islamabad">Browse stays in Islamabad</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval empty">Family · no documents added yet</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+                <span class="cta off">Agree and continue</span>
+                <p class="ctanote">Tick the box to continue.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your dates and price stay held while your documents are reviewed. <a href="/help/verification">Verification and documents</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 3 · LIGHT · IN REVIEW ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · in review — sub-step 3 of 3 · a real track, reviewed by a person, and the one time phrase this card is allowed, used exactly once</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/verify" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/verify">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your party</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Everything is with our team</div>
+            <p class="psub">All submitted. We will message you the moment it is reviewed; you do not need to wait here.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="cur"><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b>2 of 4 · Verify</b> — consent, then documents, then a check. You are on <b>the check</b>.</p>
+                <div class="subbars"><i class="done"></i><i class="done"></i><i class="now"></i></div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Where your documents are</div>
+                <span class="byperson">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20v-.8a6.5 6.5 0 0 1 13 0v.8"/></svg>
+                  Reviewed by a person, not automatically
+                </span>
+
+                <ol class="track">
+                  <li class="trow done">
+                    <span class="trail"><span class="tdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><i></i></span>
+                    <span class="tbody">
+                      <span class="tname">Submitted</span>
+                      <span class="tdesc">CNIC, selfie, FRC and B-Form received.</span>
+                      <span class="twhen">Today, <span class="num">9:30 AM</span></span>
+                    </span>
+                  </li>
+                  <li class="trow now">
+                    <span class="trail"><span class="tdot"></span><i></i></span>
+                    <span class="tbody">
+                      <span class="tname">In review</span>
+                      <span class="tdesc">A member of our team is checking it now — usually within a few hours.</span>
+                    </span>
+                  </li>
+                  <li class="trow">
+                    <span class="trail"><span class="tdot"></span><i></i></span>
+                    <span class="tbody">
+                      <span class="tname">Verified</span>
+                      <span class="tdesc">Then you go straight on to the price breakdown.</span>
+                    </span>
+                  </li>
+                </ol>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span><b>You can close this page.</b> Your dates and price stay held while it is reviewed, and the link in your email brings you back to exactly this point. <a href="/account/verification">See all my verifications</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · <span class="num">4</span> of <span class="num">4</span> documents in review</span></span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+                <span class="cta off">Continue to price</span>
+                <p class="ctanote">We will email you when the check is done.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your dates and price stay held while your documents are reviewed. <a href="/help/verification">Verification and documents</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 4 · LIGHT · NEEDS ATTENTION + AN UNSUPPORTED FILE TYPE ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · needs attention — both registers. The review outcome is the WARNING register and its sentence is about the document; the ERROR register is reserved for a real form fault, an unsupported file type. No red cross and no verdict on the guest, anywhere.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/verify" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/verify">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your party</span></div>
+          <div class="pagehead">
+            <div class="ptitle">One clearer photo and you are done</div>
+            <p class="psub">Three of your four documents are through. One needs a second shot.</p>
+          </div>
+
+          <div class="banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <span>
+              <p><b>The FRC photo was blurry.</b> A clearer one will do it — nothing else needs to change, and nothing is wrong with the document itself. Your CNIC, selfie and B-Form stay verified; they are not re-checked.</p>
+              <span class="inlink">Upload a clearer photo</span>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="cur"><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b>2 of 4 · Verify</b> — consent, then documents, then a check. You are back on <b>documents</b> for one file.</p>
+                <div class="subbars"><i class="done"></i><i class="now"></i><i></i></div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your documents</div>
+                <p class="sec-sub">Upload a photo or a scan. JPG, PNG and PDF all work, and large photos are resized in your browser before they are sent.</p>
+
+                <div class="dsec">
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>
+                      <span class="dlab"><span class="dname">CNIC</span><span class="dwhat">No need to send this again</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.4"/><path d="M5.5 20v-.8a6.5 6.5 0 0 1 13 0v.8"/></svg>
+                      <span class="dlab"><span class="dname">Selfie</span><span class="dwhat">No need to send this again</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname">B-Form</span><span class="dwhat">No need to send this again</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname">FRC</span><span class="dwhat">Because you booked as a family</span></span>
+                      <span class="dstate">Needs one more</span>
+                    </div>
+
+                    <p class="chk warn" role="alert">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                      <span><b>The photo was blurry</b>Lay it flat in good light — daylight near a window works better than a room light — and wait for the text to look sharp before you upload.</span>
+                    </p>
+
+                    <label class="drop invalid">
+                      <span class="dropic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                      <span class="dropt">
+                        <b>Choose a file, or drag one here</b>
+                        <span>JPG, PNG or PDF</span>
+                      </span>
+                    </label>
+                    <div class="drow">
+                      <span class="gbtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                        Use camera
+                      </span>
+                    </div>
+                    <p class="errline">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                      <span><b>frc-nadra.docx cannot be read.</b> Save it as a JPG, PNG or PDF, or photograph the printed certificate instead.</span>
+                    </p>
+                  </div>
+                </div>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>Nothing is wrong with your FRC itself — only this photo needs to be clearer. If the check still does not pass, a person can look at it with you. <a href="/help/contact">Talk to a person</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · <span class="num">3</span> of <span class="num">4</span> verified</span></span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+                <span class="cta off">Send for review</span>
+                <p class="ctanote">Upload a clearer FRC photo to continue.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your dates and price stay held while your documents are reviewed. <a href="/help/verification">Verification and documents</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 5 · DARK · VERIFIED ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">Dark · verified — a tick and three plain rows. No confetti, no score, no badge ceremony. The green here is the semantic <code>success</code> role, not brand: brand stays on the wordmark dot, the one enabled CTA, and the rail shield.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/verify" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/verify">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your party</span></div>
+          <div class="pagehead">
+            <div class="ptitle">You are verified</div>
+            <p class="psub">All done, and done for good. Future bookings skip this step entirely.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="cur"><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b>2 of 4 · Verify</b> — consent, then documents, then a check. All three are done.</p>
+                <div class="subbars"><i class="done"></i><i class="done"></i><i class="done"></i></div>
+              </div>
+
+              <div class="fsec">
+                <div class="okhero">
+                  <span class="okdisc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                  <span>
+                    <div class="oktitle">Verification complete</div>
+                    <div class="oksub">Checked by a person on Fri <span class="num">31</span> Jul, <span class="num">1:12 PM</span></div>
+                  </span>
+                </div>
+
+                <div class="dsec">
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>
+                      <span class="dlab"><span class="dname">CNIC</span><span class="dwhat">Checked against NADRA Verisys</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.4"/><path d="M5.5 20v-.8a6.5 6.5 0 0 1 13 0v.8"/></svg>
+                      <span class="dlab"><span class="dname">Selfie</span><span class="dwhat">Matched to your CNIC photo</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname">FRC</span><span class="dwhat">Confirmed for this booking</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname">B-Form</span><span class="dwhat">For the <span class="num">2</span> children on this booking</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Verified</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>Your documents stay private. Only a <b>Verified</b> badge is shown on your profile — never the document or its number. <a href="/account/verification">See all my verifications</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · <span class="num">4</span> of <span class="num">4</span> verified</span></span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+                <span class="cta">Continue to price</span>
+                <p class="ctanote">You will not be charged yet.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 6 · URDU / RTL · DOCUMENTS ================= -->
+    <div class="doc rtl" aria-hidden="true" lang="ur" dir="rtl">
+      <div class="panel-tag" style="direction:ltr">Urdu · RTL — layout &amp; direction demo. Western digits inside <code>.num</code>, Urdu prose around them (Pass #31). Both stepper tiers mirror; the bars are direction-agnostic. Locked lexicon: پارٹی / شناخت / قیمت / تصدیق, caption <span class="num">مرحلہ 2 از 4</span> · شناخت. Claims #1 and #9 reuse the corpus-established Urdu strings verbatim (gw-021); all other Urdu here is a direction demo and is human-translated for production.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>آپ کی معلومات محفوظ ہیں</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/verify">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/verify" aria-current="page">اردو</a></div>
+        <span class="exitlink nastaliq">محفوظ کر کے باہر</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>اپنی پارٹی پر واپس</span></div>
+          <div class="pagehead">
+            <div class="ptitle nastaliq">تصدیق کریں کہ کون ٹھہر رہا ہے</div>
+            <p class="psub nastaliq">چار دستاویزات، ایک بار۔ آئندہ بکنگ میں یہ مرحلہ نہیں آئے گا، اور ابھی کوئی رقم وصول نہیں کی جائے گی۔</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab nastaliq">پارٹی</span></li>
+                  <li class="cur"><span class="scirc num">2</span><span class="slab nastaliq">شناخت</span></li>
+                  <li><span class="scirc num">3</span><span class="slab nastaliq">قیمت</span></li>
+                  <li><span class="scirc num">4</span><span class="slab nastaliq">تصدیق</span></li>
+                </ol>
+                <p class="scap nastaliq">مرحلہ <b><span class="num">2</span> از <span class="num">4</span> · شناخت</b> — رضامندی، پھر دستاویزات، پھر جانچ۔ آپ <b>دستاویزات</b> پر ہیں۔</p>
+                <div class="subbars"><i class="done"></i><i class="now"></i><i></i></div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">آپ کی دستاویزات</div>
+                <p class="sec-sub nastaliq">ہر دستاویز کی تصویر یا اسکین اپ لوڈ کریں۔ JPG، PNG اور PDF سب چلتے ہیں، اور بڑی تصویریں بھیجنے سے پہلے آپ ہی کے براؤزر میں چھوٹی کر دی جاتی ہیں تاکہ ڈیٹا کم سے کم خرچ ہو۔</p>
+
+                <div class="dsec">
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>
+                      <span class="dlab"><span class="dname nastaliq">شناختی کارڈ</span><span class="dwhat nastaliq">آگے اور پیچھے</span></span>
+                      <span class="dstate ok nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>شامل ہو گیا</span>
+                    </div>
+                    <div class="file">
+                      <span class="fileic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-4 4 3 3-2 4 3"/></svg></span>
+                      <span class="fbody"><span class="fname">cnic-front-back.jpg</span><span class="fmeta nastaliq">براؤزر میں چھوٹی کی گئی · بھیج دی گئی</span></span>
+                      <span class="inlink nastaliq">تبدیل کریں</span>
+                    </div>
+                    <p class="chk ok">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>
+                      <span class="nastaliq"><b>تصویر واضح ہے</b>تحریر پڑھی جا سکتی ہے اور پورا کارڈ فریم میں ہے۔</span>
+                    </p>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.4"/><path d="M5.5 20v-.8a6.5 6.5 0 0 1 13 0v.8"/></svg>
+                      <span class="dlab"><span class="dname nastaliq">سیلفی</span><span class="dwhat nastaliq">تصدیق کرتی ہے کہ کارڈ آپ ہی کا ہے</span></span>
+                      <span class="dstate wait nastaliq">شامل نہیں</span>
+                    </div>
+                    <span class="drop">
+                      <span class="dropic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                      <span class="dropt nastaliq">
+                        <b>فائل منتخب کریں، یا یہاں گھسیٹ کر لائیں</b>
+                        <span>JPG, PNG, PDF</span>
+                      </span>
+                    </span>
+                    <div class="drow">
+                      <span class="gbtn nastaliq">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                        کیمرہ استعمال کریں
+                      </span>
+                    </div>
+                    <p class="dnote nastaliq"><b>کیمرہ استعمال کریں</b> صرف اُس فون یا ٹیبلٹ پر نظر آتا ہے جس میں کیمرہ ہو۔ کمپیوٹر پر کسی بھی کیمرے سے تصویر لے کر فائل اپ لوڈ کریں — جانچ بالکل ویسی ہی ہوتی ہے۔</p>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname nastaliq">ایف آر سی</span><span class="dwhat nastaliq">کیونکہ آپ نے خاندان کے طور پر بکنگ کی</span></span>
+                      <span class="dstate nastaliq">بھیجی جا رہی ہے</span>
+                    </div>
+                    <div class="file">
+                      <span class="fileic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                      <span class="fbody"><span class="fname">frc-nadra.pdf</span><span class="fmeta nastaliq">بھیجی جا رہی ہے · <span class="num">62%</span></span></span>
+                      <span class="inlink nastaliq">منسوخ کریں</span>
+                    </div>
+                    <div class="progress"><i style="width:62%"></i></div>
+                    <p class="dnote nastaliq">ایف آر سی دستیاب نہیں؟ <b>بیانِ حلفی</b> ایک برابر کا راستہ ہے، کم تر نہیں، اور اس کی جانچ بھی ویسی ہی ہوتی ہے۔ <a href="/ur/help/verification/what-is-an-frc">ایف آر سی کیا ہے، اور کیسے بنتا ہے؟</a></p>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname nastaliq">ب فارم</span><span class="dwhat nastaliq">اس بکنگ میں شامل <span class="num">2</span> بچوں کے لیے</span></span>
+                      <span class="dstate wait nastaliq">شامل نہیں</span>
+                    </div>
+                    <span class="drop">
+                      <span class="dropic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                      <span class="dropt nastaliq">
+                        <b>فائل منتخب کریں، یا یہاں گھسیٹ کر لائیں</b>
+                        <span>JPG, PNG, PDF</span>
+                      </span>
+                    </span>
+                    <div class="drow">
+                      <span class="gbtn nastaliq">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                        کیمرہ استعمال کریں
+                      </span>
+                    </div>
+                    <p class="chk info">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                      <span class="nastaliq"><b>محفوظ، اور صرف تصدیق کے لیے</b>آپ کی خاندانی دستاویزات ہماری ٹیم نجی طور پر دیکھتی ہے، پھر محفوظ رکھی جاتی ہیں۔ کوئی میزبان یا دوسرا مہمان انہیں کسی بھی مرحلے پر نہیں دیکھ سکتا۔</span>
+                    </p>
+                  </div>
+                </div>
+
+                <p class="ghint nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span><b>یہ دونوں طرف سے ہے۔</b> آپ کے میزبان کی تصدیق بھی اسی طرح ہوتی ہے۔ یہ ایک مختصر رسمی کارروائی ہے، دونوں کے لیے — کوئی فیصلہ نہیں۔ آپ کی پیش رفت ساتھ ساتھ محفوظ ہوتی رہتی ہے، اس لیے رابطہ ٹوٹنے سے کام ضائع نہیں ہوتا۔ <a href="/ur/legal/data-handling">ہم آپ کا ڈیٹا کیسے محفوظ رکھتے ہیں</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname nastaliq">مارگلہ ویو اپارٹمنٹ</span><span class="iarea nastaliq">پورا اپارٹمنٹ · <span class="num">F-7</span>، اسلام آباد</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">تاریخیں</span><span class="sval nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">مہمان</span><span class="sval nastaliq"><span class="num">6</span> مہمان · <span class="num">4</span> بالغ، <span class="num">2</span> بچے</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">پارٹی</span><span class="sval nastaliq">خاندان · <span class="num">4</span> میں سے <span class="num">1</span> دستاویز شامل</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="railrule"></div>
+                <p class="pline nastaliq"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> راتیں</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip nastaliq">سروس فیس، ادائیگی کی پروسیسنگ اور سیلز ٹیکس <b>مرحلہ <span class="num">3</span> · قیمت</b> پر شامل اور تفصیل سے دکھائے جاتے ہیں — کسی چارج سے پہلے۔</p>
+                <span class="cta off nastaliq">جائزے کے لیے بھیجیں</span>
+                <p class="ctanote nastaliq">جاری رکھنے کے لیے سیلفی اور ب فارم شامل کریں، اور ایف آر سی کا اپ لوڈ مکمل کریں۔</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span class="nastaliq"><b>مہمان اور میزبان دونوں کی تصدیق نادرا ویری سِس کے ذریعے کی جاتی ہے</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span class="nastaliq"><b>شفاف فیس اور ٹیکس — بکنگ یا کمائی سے پہلے ہر روپیہ ظاہر۔</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span class="nastaliq">جائزے کے دوران آپ کی تاریخیں اور قیمت محفوظ رہتی ہیں۔ <a href="/ur/help/verification">تصدیق اور دستاویزات</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 7 · MOBILE 390 · DOCUMENTS ================= -->
+    <div class="doc mob" aria-hidden="true">
+      <div class="panel-tag">Mobile <span class="num">390</span> · documents — rail leaves the flow; identity folds to a top strip; the CTA moves to a hairline-topped sticky bottom bar (no shadow, ever). This is the one viewport where <b>Use camera</b> is the likelier path, so it sits full width under the zone rather than beside it.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="langsw"><a href="/book/is-f7-2bed/verify" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/verify">اردو</a></div>
+        <span class="exitlink">Exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your party</span></div>
+
+          <div class="mobstrip">
+            <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+            <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+          </div>
+
+          <div class="pagehead">
+            <div class="ptitle">Verify who is staying</div>
+            <p class="psub">Four documents, once.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="cur"><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b>2 of 4 · Verify</b>. You are on <b>documents</b>.</p>
+                <div class="subbars"><i class="done"></i><i class="now"></i><i></i></div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your documents</div>
+                <p class="sec-sub">JPG, PNG and PDF all work. Large photos are resized in your browser first.</p>
+
+                <div class="dsec">
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>
+                      <span class="dlab"><span class="dname">CNIC</span><span class="dwhat">Front and back</span></span>
+                      <span class="dstate ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Added</span>
+                    </div>
+                    <div class="file">
+                      <span class="fileic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-4 4 3 3-2 4 3"/></svg></span>
+                      <span class="fbody"><span class="fname">cnic-front-back.jpg</span><span class="fmeta">Resized · sent</span></span>
+                      <span class="inlink">Replace</span>
+                    </div>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.4"/><path d="M5.5 20v-.8a6.5 6.5 0 0 1 13 0v.8"/></svg>
+                      <span class="dlab"><span class="dname">Selfie</span><span class="dwhat">Confirms the CNIC is yours</span></span>
+                      <span class="dstate wait">Not added</span>
+                    </div>
+                    <div class="drow">
+                      <span class="gbtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                        Use camera
+                      </span>
+                    </div>
+                    <span class="drop">
+                      <span class="dropic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                      <span class="dropt"><b>Choose a file instead</b><span>JPG, PNG or PDF</span></span>
+                    </span>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname">FRC</span><span class="dwhat">Because you booked as a family</span></span>
+                      <span class="dstate">Sending</span>
+                    </div>
+                    <div class="file">
+                      <span class="fileic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg></span>
+                      <span class="fbody"><span class="fname">frc-nadra.pdf</span><span class="fmeta">Sending · <span class="num">62%</span></span></span>
+                    </div>
+                    <div class="progress"><i style="width:62%"></i></div>
+                  </div>
+
+                  <div class="dgroup">
+                    <div class="dhead">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 9h6M9 13h6"/></svg>
+                      <span class="dlab"><span class="dname">B-Form</span><span class="dwhat">For the <span class="num">2</span> children on this booking</span></span>
+                      <span class="dstate wait">Not added</span>
+                    </div>
+                    <div class="drow">
+                      <span class="gbtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+                        Use camera
+                      </span>
+                    </div>
+                    <span class="drop">
+                      <span class="dropic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+                      <span class="dropt"><b>Choose a file instead</b><span>JPG, PNG or PDF</span></span>
+                    </span>
+                  </div>
+                </div>
+
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+              </div>
+            </div>
+            <div class="railwrap"></div>
+          </div>
+        </div>
+
+        <div class="mobbar">
+          <span class="mobsum">
+            <span class="ms-t num">PKR 37,500</span>
+            <span class="ms-s"><span class="num">1</span> of <span class="num">4</span> documents added</span>
+          </span>
+          <span class="cta off">Send</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

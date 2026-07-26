@@ -39,6 +39,15 @@ import type { CityContent } from "./types";
  * Deliberate absences, all load-bearing:
  * - NO area links. The registry carries no `/stays-in-rawalpindi/{area}` route,
  *   and a content file never mints one (G37/G5).
+ * - NO listing links, and so NO ItemList. Every stay here carries
+ *   `href: null`: the registry holds no `/stays-in-rawalpindi/{area}/{listing}`
+ *   route to point at, and the value this replaced was this page's own path —
+ *   nine cards linking to the page they sit on, and nine schema entries whose
+ *   `url` was this page's canonical. Both were invented (SEO-RULES §1.5), and
+ *   minting them is the doorway pattern §6 forbids: instances are earned, not
+ *   minted. The tiles are photographs, names and lines until the listing
+ *   pages exist; `CityLandingPage` then emits no ItemList for this city at
+ *   all, rather than an empty one.
  * - NO price figure, NO ratings, NO review counts, NO listing tallies.
  * - NO breadcrumb. A top-level city page is the head of its trail (§2/§3.2).
  * - NO verification FAQ: verification is nationwide, and restating Islamabad's
@@ -49,7 +58,7 @@ export const rawalpindi: CityContent = {
   path: "/stays-in-rawalpindi",
   name: "Rawalpindi",
   metaDescription:
-    "Verified stays in Saddar, Satellite Town, Bahria Town and Raja Bazaar, on the Metrobus line into Islamabad. Filter by no-alcohol and halal kitchen.",
+    "Verified stays in Saddar, Satellite Town, Bahria Town and Raja Bazaar, on the Metrobus line into Islamabad. Filter by no-alcohol homes and backup power.",
 
   h1: "Stays in Rawalpindi",
   /** Fourteen words. Says where the inventory sits and, in four words, why
@@ -67,79 +76,79 @@ export const rawalpindi: CityContent = {
     heading: "Featured stays in Rawalpindi",
     items: [
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Whole flat in Satellite Town",
         areaPin: "Satellite Town",
         location: "Satellite Town, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][0],
-        attributes: ["halal-kitchen", "no-alcohol"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Whole flat in Satellite Town — Satellite Town, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Quiet 1-bed in Bahria Town",
         areaPin: "Bahria Town Phase 4",
         location: "Bahria Town Phase 4, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][1],
-        attributes: ["backup-power", "halal-kitchen"],
+        attributes: ["no-alcohol", "family-friendly"],
         schemaName: "Quiet 1-bed in Bahria Town — Bahria Town Phase 4, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Twin room in Chaklala Scheme 3",
         areaPin: "Chaklala Scheme 3",
         location: "Chaklala Scheme 3, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][2],
-        attributes: ["no-alcohol", "backup-power"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Twin room in Chaklala Scheme 3 — Chaklala Scheme 3, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Plain 1-bed in Westridge",
         areaPin: "Westridge",
         location: "Westridge, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][3],
-        attributes: ["halal-kitchen", "backup-power"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Plain 1-bed in Westridge — Westridge, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Whole portion in DHA Phase 2",
         areaPin: "DHA Phase 2",
         location: "DHA Phase 2, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][4],
-        attributes: ["family-friendly", "halal-kitchen"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Whole portion in DHA Phase 2 — DHA Phase 2, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Terrace apartment near Saddar",
         areaPin: "Saddar",
         location: "Saddar, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][5],
-        attributes: ["qibla-marked", "halal-kitchen"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Terrace apartment near Saddar — Saddar, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "High-floor flat in Askari 14",
         areaPin: "Askari 14",
         location: "Askari 14, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][6],
-        attributes: ["backup-power", "prayer-space"],
+        attributes: ["backup-power", "family-friendly"],
         schemaName: "High-floor flat in Askari 14 — Askari 14, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Upper room in Gulraiz",
         areaPin: "Gulraiz",
         location: "Gulraiz, Rawalpindi",
         image: CITY_STAY_CARDS["/stays-in-rawalpindi"][7],
-        attributes: ["women-only", "halal-kitchen"],
+        attributes: ["women-only", "no-alcohol"],
         schemaName: "Upper room in Gulraiz — Gulraiz, Rawalpindi",
       },
       {
-        href: "/stays-in-rawalpindi",
+        href: null,
         title: "Whole portion on Peshawar Road",
         areaPin: "Peshawar Road",
         location: "Peshawar Road, Rawalpindi",
@@ -199,11 +208,9 @@ export const rawalpindi: CityContent = {
   filters: {
     heading: "Popular filters in Rawalpindi",
     items: [
-      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=rawalpindi&no_alcohol=1" },
-      { icon: "halal-kitchen", label: "Halal kitchen", href: "/search?city=rawalpindi&halal_kitchen=1" },
-      { icon: "women-only", label: "Women-only stays", href: "/search?city=rawalpindi&women_only=1" },
-      { icon: "prayer-space", label: "Prayer space", href: "/search?city=rawalpindi&prayer_space=1" },
       { icon: "backup-power", label: "Backup power", href: "/search?city=rawalpindi&backup_power=1" },
+      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=rawalpindi&no_alcohol=1" },
+      { icon: "women-only", label: "Women-only stays", href: "/search?city=rawalpindi&women_only=1" },
       { icon: "family-friendly", label: "Family-friendly", href: "/search?city=rawalpindi&family=1" },
     ],
   },
@@ -258,7 +265,7 @@ export const rawalpindi: CityContent = {
         heading: "Trust & hosting",
         links: [
           { href: "/trust-and-safety", label: "Trust & safety" },
-          { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+          { href: "/verification", label: "How verification works" },
           { href: "/become-a-host", label: "Become a host in Rawalpindi" },
         ],
       },

@@ -21,6 +21,7 @@
  *   G49/G72 FAQPage ⇒ visible FAQ text matches schema verbatim
  *   G40 visible breadcrumb ≡ BreadcrumbList presence (deep pages yes; / and city pages no)
  *   G37 every internal href resolves in the route registry
+ *   G79 ItemList entries are real, distinct, resolvable pages — never the page itself
  *   G57 content images: descriptive filename, alt present, width+height
  *   G5  route returns 200 (page/stub) — 404 route check via --check-404
  *   G53/G69 claim/stuffing heuristics: forbidden superlatives; primary phrase counts
@@ -42,10 +43,47 @@ const SCHEMA_MATRIX = {
   "/stays-in-faisalabad": ["ItemList", "FAQPage"],
   "/stays-in-rawalpindi": ["ItemList", "FAQPage"],
   "/stays-in-islamabad/f-7": ["BreadcrumbList", "ItemList", "FAQPage"],
+  // F-7's four siblings, same gw-003 template, same three types.
+  "/stays-in-islamabad/f-6": ["BreadcrumbList", "ItemList", "FAQPage"],
+  "/stays-in-islamabad/f-8": ["BreadcrumbList", "ItemList", "FAQPage"],
+  "/stays-in-islamabad/e-7": ["BreadcrumbList", "ItemList", "FAQPage"],
+  "/stays-in-islamabad/blue-area": ["BreadcrumbList", "ItemList", "FAQPage"],
   "/stays-in-islamabad/f-7/is-f7-2bed": ["BreadcrumbList", "LodgingBusiness"],
+  // The ten listings shipped 2026-07-26. Same contract as the first: a listing
+  // describes a place, never an offer — `Offer`/`AggregateOffer`/`priceRange` are
+  // in FORBIDDEN_TYPES, and every one of these carries a nightly rate on screen.
+  "/stays-in-islamabad/blue-area/business-studio-jinnah-avenue": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-7/cedar-lodge-f7": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-7/central-studio-by-jinnah-super": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-7/family-portion-jinnah-super": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-6/garden-guest-house-near-kohsar": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/e-7/margalla-view-apartment": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-7/quiet-1-bed-street-12": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market": ["BreadcrumbList", "LodgingBusiness"],
+  "/stays-in-islamabad/f-7/upper-portion-f-7-markaz": ["BreadcrumbList", "LodgingBusiness"],
   "/search": [],
+  // ——— Checkout: no structured data at all ———
+  // An empty array is not the same as a missing row, and the difference is the
+  // whole point. A missing row means "this page emits JSON-LD nobody has ruled
+  // on" and fails on sight of a single block; an empty row means "ruled on, and
+  // the answer is none". CHECKOUT-SHELL §1 gives that answer: no canonical, no
+  // hreflang, no JSON-LD of any kind, because a noindex route describes nothing
+  // to a crawler. A price on the Price step is the sharpest case — it renders,
+  // it never gets marked up, and `Offer`/`AggregateOffer` are in
+  // FORBIDDEN_TYPES below so the attempt fails everywhere, not only here.
+  // `/search` is the precedent directly above.
+  "/book/is-f7-2bed/dates": [],
+  "/book/is-f7-2bed/party": [],
+  "/book/is-f7-2bed/verify": [],
+  "/book/is-f7-2bed/price": [],
+  "/book/is-f7-2bed/confirm": [],
+  "/book/is-f7-2bed/confirmation": [],
+  "/book/is-f7-2bed/status": [],
   "/trust-and-safety": ["BreadcrumbList", "WebPage"],
-  "/shariah-policy": ["BreadcrumbList", "WebPage", "FAQPage"],
+  // Renamed from /shariah-policy 2026-07-26 (REPOSITIONING.md). Same three
+  // types: the matrix page still ships a genuine FAQ block.
+  "/verification": ["BreadcrumbList", "WebPage", "FAQPage"],
   "/about": ["BreadcrumbList", "AboutPage"],
   "/become-a-host": ["BreadcrumbList", "FAQPage"],
   "/guides/where-to-stay-in-islamabad": ["BreadcrumbList", "Article", "FAQPage"],
@@ -75,6 +113,14 @@ const FORBIDDEN_TYPES = [
 ];
 
 // Breadcrumb presence per §2: homepage + top-level city pages carry NONE.
+//
+// Checkout joins them, and this TIGHTENS G40 rather than relaxing it. The gate's
+// second branch only inspects `index,follow` pages, so a noindex route could
+// previously ship a breadcrumb and no gate would notice. CHECKOUT-SHELL §1 is
+// unambiguous — "Breadcrumb: none. One ink, underlined back link" — and a trail
+// on a page a crawler never reads is a trail that exists to look like SEO. Naming
+// the routes here is what makes the contract checkable. `/search` was already in
+// this set on the same reasoning.
 const NO_BREADCRUMB = new Set([
   "/",
   "/stays-in-islamabad",
@@ -84,6 +130,13 @@ const NO_BREADCRUMB = new Set([
   "/stays-in-faisalabad",
   "/stays-in-rawalpindi",
   "/search",
+  "/book/is-f7-2bed/dates",
+  "/book/is-f7-2bed/party",
+  "/book/is-f7-2bed/verify",
+  "/book/is-f7-2bed/price",
+  "/book/is-f7-2bed/confirm",
+  "/book/is-f7-2bed/confirmation",
+  "/book/is-f7-2bed/status",
 ]);
 
 const FORBIDDEN_COPY =
@@ -148,6 +201,24 @@ const decodeEntities = (s) =>
 
 const stripTags = (html) => decodeEntities(html.replace(/<[^>]+>/g, " "));
 
+// The text a READER actually sees, for gates that must match visible copy verbatim.
+//
+// `stripTags` is wrong for that job in two ways, and both made G49 pass vacuously
+// until 2026-07-25: it is applied to the whole document, so a string in a
+// <script type="application/ld+json"> block was found by matching ITSELF; and it
+// replaces every tag with a space, so a digit-isolation span — the shipped `.num`
+// canon — split "F-7" into "F- 7" and no isolated run could ever match.
+//
+// So: drop <script>/<style> bodies whole, then remove tags with the EMPTY string
+// so an inline span inside a sentence rejoins, then decode and collapse.
+const visibleText = (html) =>
+  decodeEntities(
+    html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, ""),
+  );
+
 const collectTypes = (node, out) => {
   if (Array.isArray(node)) return node.forEach((n) => collectTypes(n, out));
   if (node && typeof node === "object") {
@@ -158,6 +229,31 @@ const collectTypes = (node, out) => {
     Object.values(node).forEach((v) => collectTypes(v, out));
   }
 };
+
+/** Every node of a given @type anywhere in a JSON-LD tree, in document order. */
+const collectNodes = (node, type, out) => {
+  if (Array.isArray(node)) return node.forEach((n) => collectNodes(n, type, out));
+  if (node && typeof node === "object") {
+    const t = node["@type"];
+    if (t && (Array.isArray(t) ? t : [t]).includes(type)) out.push(node);
+    Object.values(node).forEach((v) => collectNodes(v, type, out));
+  }
+};
+
+/**
+ * The URL a ListItem points at, as written. `url` is what this site's builder
+ * emits; `item` as a bare string is the other shape schema.org permits, and it
+ * is accepted here so a hand-written list cannot dodge G79 by using it. An
+ * `item` OBJECT is a nested node and gets walked as one, not read as a link.
+ */
+const listItemUrl = (li) => {
+  if (typeof li?.url === "string") return li.url;
+  if (typeof li?.item === "string") return li.item;
+  return null;
+};
+
+/** Trailing slash is not a difference for the purposes of "same page". */
+const sameUrl = (a, b) => a.replace(/\/+$/, "") === b.replace(/\/+$/, "");
 
 for (const route of routesToCheck) {
   console.log(`— ${route}`);
@@ -280,7 +376,10 @@ for (const route of routesToCheck) {
   }
 
   // ——— G49/G72: FAQPage ⇒ visible verbatim ———
+  // Matches against visibleText, NOT stripTags — see the note on visibleText for
+  // why the old check could never fail.
   if (types.has("FAQPage")) {
+    const visible = visibleText(html);
     for (const b of ldBlocks) {
       let parsed;
       try { parsed = JSON.parse(b[1]); } catch { continue; }
@@ -289,7 +388,7 @@ for (const route of routesToCheck) {
         if (n["@type"] === "FAQPage") {
           for (const q of n.mainEntity ?? []) {
             const qText = q.name ?? "";
-            if (qText && !stripTags(html).includes(qText))
+            if (qText && !visible.includes(qText))
               fail(route, "G49", `FAQ question in schema not visible verbatim: "${qText.slice(0, 60)}…"`);
           }
         }
@@ -315,6 +414,63 @@ for (const route of routesToCheck) {
   for (const href of hrefs) {
     if (href.startsWith("/") && !href.startsWith("//")) {
       if (!resolvesInternally(href)) fail(route, "G37", `internal link not in registry: ${href}`);
+    }
+  }
+
+  // ——— G79: ItemList entries are real, distinct pages ———
+  //
+  // G37 covers the anchors a reader can click; nothing covered the URLs a
+  // crawler reads out of an ItemList, and that is where five city pages shipped
+  // nine ListItems whose `url` was the page's own canonical, nine times over.
+  // Rendered, that is a page claiming to list nine things and naming itself
+  // every time: a fabricated schema value (SEO-RULES §1.5) and the doorway
+  // signature SCREENS §6 forbids — instances are earned, not minted.
+  //
+  // Four HARD conditions, each the negation of a way to fake a list:
+  //   · an empty ItemList         — claims a list, delivers none
+  //   · a repeated url            — one page counted twice to look deeper
+  //   · the page's own canonical  — the self-listing above
+  //   · an unresolvable url       — a route the router cannot serve (G37's rule
+  //                                 applied to schema)
+  //
+  // Sits after G37 so it reads the resolver that block already imported. Only
+  // same-origin and root-relative urls are resolved: a foreign origin is
+  // outside the registry's knowledge, and this gate does not guess.
+  const itemLists = [];
+  for (const b of ldBlocks) {
+    let parsed;
+    try { parsed = JSON.parse(b[1]); } catch { continue; }
+    collectNodes(parsed, "ItemList", itemLists);
+  }
+  const pageCanonical =
+    (canonicals.length === 1 ? attr(canonicals[0][0], "href") : null) ??
+    entry.canonical ??
+    `${ORIGIN}${route}`;
+
+  for (const list of itemLists) {
+    const elements = Array.isArray(list.itemListElement) ? list.itemListElement : [];
+    if (elements.length === 0) {
+      fail(route, "G79", "empty ItemList — omit the block rather than listing nothing");
+      continue;
+    }
+    const seen = new Set();
+    for (const li of elements) {
+      const url = listItemUrl(li);
+      if (url === null) {
+        fail(route, "G79", `ItemList entry has no url: ${JSON.stringify(li).slice(0, 80)}`);
+        continue;
+      }
+      if (seen.has(url)) fail(route, "G79", `ItemList repeats a url: ${url}`);
+      seen.add(url);
+      if (sameUrl(url, pageCanonical))
+        fail(route, "G79", `ItemList entry links to this page's own canonical: ${url}`);
+      const path = url.startsWith(ORIGIN)
+        ? url.slice(ORIGIN.length) || "/"
+        : url.startsWith("/") && !url.startsWith("//")
+          ? url
+          : null;
+      if (path !== null && !resolvesInternally(path))
+        fail(route, "G79", `ItemList url not in registry: ${url}`);
     }
   }
 

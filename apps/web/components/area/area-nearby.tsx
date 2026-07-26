@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/icons";
+import { Num } from "@/components/numerals";
 import { focusRing } from "@/components/ui";
 import { inlineLink } from "@/components/stays/styles";
 import type { AreaContent } from "@/lib/content/areas/types";
@@ -35,18 +36,27 @@ export function AreaNearby({ area }: { readonly area: AreaContent }) {
   return (
     <section aria-labelledby="nearby-h" className={`${shell} ${rhythm}`}>
       <h2 id="nearby-h" className={sectionH2}>
-        {nearby.heading}
+        <Num>{nearby.heading}</Num>
       </h2>
-      <p className="mt-2 max-w-[76ch] text-bodySm text-secondary">{nearby.intro}</p>
+      <p className="mt-2 max-w-[76ch] text-bodySm text-secondary">
+        <Num>{nearby.intro}</Num>
+      </p>
 
       <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
         {nearby.items.map((item) => (
           <Link key={item.href} href={item.href} className={`${siblingPanel} ${focusRing}`}>
             <span className="flex items-center gap-2 text-bodySm font-semibold text-primary">
-              {item.label}
+              {/* One span around `Num`'s output: this row is `flex … gap-2`, and
+                  `Num` splits "Stays in F-6" into several nodes, so as direct
+                  children the gap rendered inside the label — "Stays in F- 6". */}
+              <span>
+                <Num>{item.label}</Num>
+              </span>
               <ArrowRightIcon className="size-4 shrink-0 text-tertiary transition-colors duration-instant ease-decelerate group-hover:text-primary motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate" />
             </span>
-            <span className="mt-1.5 block text-bodySm text-secondary">{item.blurb}</span>
+            <span className="mt-1.5 block text-bodySm text-secondary">
+              <Num>{item.blurb}</Num>
+            </span>
           </Link>
         ))}
       </div>
@@ -57,9 +67,16 @@ export function AreaNearby({ area }: { readonly area: AreaContent }) {
       <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
         <Link href={nearby.parent.href} className={`${inlineLink} ${focusRing}`}>
           <ArrowLeftIcon className="size-4 shrink-0" />
-          {nearby.parent.label}
+          <Num>{nearby.parent.label}</Num>
         </Link>
-        <p className="max-w-[76ch] text-caption text-tertiary">{nearby.parentNote}</p>
+        {/* 13/400 (`label`), not 12: §7's ladder bottoms out at 13 and
+            `caption` is under it. This note states the rule that decides
+            whether a sector gets a page at all, which is the sentence on this
+            block a reader most needs not to read as fine print — the same
+            ruling `area-stays.tsx` made for the supply note. */}
+        <p className="max-w-[76ch] text-label text-tertiary">
+          <Num>{nearby.parentNote}</Num>
+        </p>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { focusRing } from "@/components/ui";
+import { focusRing, inlineAction } from "@/components/ui";
+import { Num } from "@/components/numerals";
 import { LandmarkIcon } from "@/components/stays/icons";
 import { image } from "@/lib/content/image-manifest";
 import type { CityArea, CityContent } from "@/lib/content/cities/types";
@@ -32,6 +33,16 @@ import { shell, rhythm, sectionH2, headingGap } from "@/components/discovery/she
  * accessible name comes from `linkLabel` ("View stays in F-6") because the
  * visible text alone is thin as link text; the visible label is contained in
  * it, so the name still matches what a voice user would say.
+ *
+ * That name is underlined at rest (§8), in the tile as well as in the row. It
+ * is the one place the tile departs from the homepage city card
+ * (`stays/city-card-compact.tsx`), which draws its name plain: there the card
+ * IS the link and the name is a label on it, here the name is also the section's
+ * `<h3>` and the sector's own anchor, and the same field cannot be an underlined
+ * action on Lahore and a bare label on Islamabad because one of the two has a
+ * photograph. Flagged rather than propagated — the homepage card is not this
+ * file's to change, and whether §8 reaches a whole-tile media link is a ruling
+ * that should be made once, for both.
  *
  * Every sector thumbnail is a declared stand-in in the manifest (`authentic:
  * false`); the alt text describes what the frame actually shows, never what we
@@ -73,11 +84,40 @@ const tileLink =
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
 /**
+ * The sector name, in both shapes.
+ *
  * 16/600 (§7: card titles 16/500-600). At 14 a sector name sat at the same size
  * as the line under it and the row read as ten equal labels rather than as five
  * named places with a line each.
+ *
+ * §8 decides the decoration. Founder ruling, 2026-07-25, after this file briefly
+ * underlined both shapes: **§8 governs inline text actions, not media tiles.**
+ * Its own list is Share / Save / Show more / Learn more / Report / Show original
+ * / "How X works" — links living inside or beside prose — and it closes the
+ * extension with "and only those".
+ *
+ * So the ROW underlines and the TILE does not. The row has no photograph: its
+ * text IS the affordance, which is exactly what §8 addresses. The tile's whole
+ * surface is the target, and it already declares itself through the image, the
+ * elevation and the press-scale; underlining its title would be decorating a
+ * card, not marking a text action. This also keeps the tile at parity with
+ * `stays/city-card-compact.tsx`, whose shape and motion it was built to mirror —
+ * the earlier "fix" removed one inconsistency by creating that one.
+ *
+ * The action variant is the shared `inlineAction` from `ui.ts`, not a copy of
+ * it. The copy that used to live at the row had drifted twice already —
+ * `group-hover:` for `hover:`, and `rounded-sm` dropped — which is what a
+ * hand-inlined constant does.
  */
-const tileName = "mt-2.5 truncate text-bodyMd font-semibold text-primary";
+const nameBase = "text-bodyMd font-semibold";
+const nameNote = `${nameBase} text-primary`;
+// `group-hover:` in addition to the `hover:` inside `inlineAction`: the whole ROW
+// is the anchor, so pointing at the description line must feed back on the name
+// too. `inlineAction` alone narrows the response to the <h3>, which would leave a
+// clickable line that answers to nothing. (Currently unreachable — only Islamabad's
+// areas carry an href and all of those are tiles — but wrong the moment a second
+// city gains sector pages.)
+const nameAction = `${nameBase} ${inlineAction} group-hover:text-secondary`;
 
 /**
  * Two lines, so a longer line stays in the HTML without stretching the row.
@@ -87,8 +127,16 @@ const tileName = "mt-2.5 truncate text-bodyMd font-semibold text-primary";
  * printed the same sentence at two sizes depending only on whether a
  * photograph existed for that sector. §7 also puts 12 below the floor for a
  * line a reader is expected to read.
+ *
+ * `text.secondary`, matching the row for the same reason and now on the same
+ * grounds. The size drift was fixed here and the COLOUR drift was left: tile
+ * tertiary, row secondary, one field, two inks. Of the two, only secondary is
+ * available at this size — `colors.ts` states `text.tertiary` is AA-large only,
+ * "use ≥18.66px", and this line is 14. So the tie is not broken by preference:
+ * one of the two roles fails contrast at the size the field is set in, and the
+ * other is documented as "still AA on canvas".
  */
-const tileLine = "mt-1 line-clamp-2 text-bodySm text-tertiary";
+const tileLine = "mt-1 line-clamp-2 text-bodySm text-secondary";
 
 /**
  * The photo row's column count follows the number of PHOTOGRAPHED areas, not a
@@ -145,8 +193,13 @@ function AreaTile({
           className={mediaImage}
         />
       </span>
-      <h3 className={tileName}>{area.name}</h3>
-      <p className={tileLine}>{area.line}</p>
+      {/* Media tile: always the note treatment, linked or not — see §8 ruling above. */}
+      <h3 className={`mt-2.5 truncate ${nameNote}`}>
+        <Num>{area.name}</Num>
+      </h3>
+      <p className={tileLine}>
+        <Num>{area.line}</Num>
+      </p>
     </>
   );
 
@@ -186,18 +239,13 @@ function AreaRow({
 }) {
   const body = (
     <>
-      {/* Underlined at rest when it is an action (§8), plain when it is a
-          note. Ink either way — §2 keeps green off links. */}
-      <h3
-        className={
-          area.href
-            ? "text-bodyMd font-semibold text-primary underline underline-offset-4 transition-colors duration-instant ease-decelerate group-hover:text-secondary motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant motion-reduce:ease-decelerate"
-            : "text-bodyMd font-semibold text-primary"
-        }
-      >
-        {area.name}
+      {/* Ink either way — §2 keeps green off links. */}
+      <h3 className={area.href ? nameAction : nameNote}>
+        <Num>{area.name}</Num>
       </h3>
-      <p className="mt-1 text-bodySm text-secondary">{area.line}</p>
+      <p className="mt-1 text-bodySm text-secondary">
+        <Num>{area.line}</Num>
+      </p>
     </>
   );
 
@@ -210,6 +258,11 @@ function AreaRow({
       ) : null}
       <div className="min-w-0">
         {area.href ? (
+          /* `focusRing` stays on the anchor even though `nameAction` carries
+             its own: the ring is drawn by `focus-visible`, which matches the
+             element that TAKES focus, and that is the <a> and never the <h3>
+             inside it. `group` stays too — `nameAction`'s `group-hover:` is its
+             consumer, so hovering anywhere on the row answers on the name. */
           <Link
             href={area.href}
             {...(area.linkLabel ? { "aria-label": area.linkLabel } : {})}
@@ -246,7 +299,9 @@ export function CityAreas({ city }: { readonly city: CityContent }) {
       </h2>
       {/* The one prose run outside the FAQ. It is how the city is laid out,
           which a reader needs before a row of sector names means anything. */}
-      <p className="mt-2 max-w-[76ch] text-bodySm text-secondary">{areas.intro}</p>
+      <p className="mt-2 max-w-[76ch] text-bodySm text-secondary">
+        <Num>{areas.intro}</Num>
+      </p>
 
       {tiles.length > 0 ? (
         <ul

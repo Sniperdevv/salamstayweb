@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Num } from "@/components/numerals";
 import {
+  BoltIcon,
   ChatIcon,
   DocumentDateIcon,
   NoAlcoholIcon,
   PersonIcon,
-  QiblaIcon,
   ShieldCheckIcon,
   WholeHomeIcon,
 } from "@/components/home-icons";
@@ -65,9 +65,11 @@ const STEP_ICONS = {
   home: WholeHomeIcon,
 } as const;
 
+// `power` was `qibla` until 2026-07-26 (REPOSITIONING.md): the row it draws is
+// now the practical facts about a home, not a retired cultural attribute.
 const CONTROL_ICONS = {
   rules: HouseRulesIcon,
-  qibla: QiblaIcon,
+  power: BoltIcon,
   noAlcohol: NoAlcoholIcon,
   person: PersonIcon,
 } as const;
@@ -139,7 +141,7 @@ export function HostControl() {
         What you control as a host
       </h2>
       <p className={sectionSub}>
-        Cultural and practical preferences sit beside the everyday settings, stated
+        The practical facts about your home sit beside the everyday settings, stated
         plainly and given equal weight — you decide, we never assume.
       </p>
 
@@ -202,16 +204,17 @@ export function HostFees() {
           <p className="max-w-[62ch] text-bodyMd text-secondary">
             Guest payments are held in{" "}
             {/* §7: bold the payload word only. */}
-            <strong className="font-semibold text-primary">amanah</strong> — a trust —
-            with Meezan Bank, and released to you once your guest checks in. It isn&apos;t
-            spent, lent out, or used to earn interest while it waits.
+            <strong className="font-semibold text-primary">trust</strong> with Meezan
+            Bank, and released to you once your guest checks in. It isn&apos;t spent, lent
+            out, or used to earn interest while it waits.
           </p>
           <p className="mt-4 max-w-[62ch] text-bodyMd text-secondary">
-            {/* Registry claim 9, byte-exact. */}
+            {/* Registry claim 9, byte-exact — the stop is sentence punctuation and
+                sits OUTSIDE the claim, so §5's verbatim rule holds and §7 keeps a
+                claim-inside-a-line rather than a bolded whole sentence. */}
             <strong className="font-semibold text-primary">
-              Transparent fees and tax — every rupee shown before you book or earn.
-            </strong>{" "}
-            Three items come off each booking before your payout:
+              Transparent fees and tax — every rupee shown before you book or earn
+            </strong>. Three items come off each booking before your payout:
           </p>
 
           <ul className="mt-6 divide-y divide-hairline">
@@ -239,7 +242,7 @@ export function HostFees() {
 
           <p className="mt-5">
             <Link
-              href="/host/help/fees#wakala"
+              href="/host/help/fees"
               className={`${inlineAction} text-bodySm ${focusRing}`}
             >
               See exactly how each payout is calculated
@@ -251,7 +254,7 @@ export function HostFees() {
           <h3 className="text-h6 text-primary">{EARNINGS.heading}</h3>
 
           {/* One measure for all three paragraphs in this column: the figures,
-              the assumption and the riba line share a right edge, because a
+              the assumption and the nature-of-income line share a right edge, because a
               disclaimer that sets wider than the claim it qualifies reads as an
               afterthought pinned underneath rather than as part of the same
               statement. */}
@@ -271,7 +274,7 @@ export function HostFees() {
           </p>
 
           <p className="mt-4 max-w-[52ch] border-t border-hairline pt-4 text-bodySm text-secondary">
-            {EARNINGS.halal}
+            {EARNINGS.natureOfIncome}
           </p>
 
           <Link
@@ -326,8 +329,8 @@ export function HostTrust() {
         <Link href="/trust-and-safety" className={`${inlineAction} text-bodySm ${focusRing}`}>
           Read how we keep stays safe
         </Link>
-        <Link href="/shariah-policy" className={`${inlineAction} text-bodySm ${focusRing}`}>
-          Our Shariah-respectful approach
+        <Link href="/verification" className={`${inlineAction} text-bodySm ${focusRing}`}>
+          How verification works
         </Link>
       </div>
     </section>

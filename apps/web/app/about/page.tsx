@@ -9,7 +9,6 @@ import {
   Prose,
   ProseSection,
   StepList,
-  Term,
 } from "@/components/prose/prose-blocks";
 import { column, factRow, headingGap, prose, sectionGap, shell } from "@/components/prose/shell";
 import { inlineLink } from "@/components/stays/styles";
@@ -23,17 +22,20 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *
  * Why the product exists, stated as design philosophy rather than as a story; a
  * plain three-step of how booking works; the six-city beta as a fact with real
- * links; and the page's structural centrepiece — all nine §5 registry claims
+ * links; and the page's structural centrepiece — all eight §5 registry claims
  * printed verbatim as a CLOSED list, with the honest line that if a sentence
- * isn't on it, SalamStay doesn't say it.
+ * isn't on it, SalamStay doesn't say it. (Eight since 2026-07-26: claim 6 —
+ * halal kitchen / prayer space / Qibla — is retired from the product and from
+ * the registry, per REPOSITIONING.md. The count is load-bearing on this page,
+ * so the heading and the closing paragraph move with it.)
  *
  * SEO contract, from the card's header comment:
  *  · JSON-LD is BreadcrumbList + AboutPage. NO FAQPage — this page ships no Q&A
  *    block. No AggregateRating, no founder or employee entities, no
  *    foundingDate, no numberOfEmployees: none of those are established facts.
  *  · Visible breadcrumb ≡ BreadcrumbList (G40), Home › About.
- *  · Claims: hero strip → 1, 4, 7. "How it works" → 1, 6, 9. The registry
- *    section → all nine, byte-exact, in registry order.
+ *  · Claims: hero strip → 1, 4, 7. "How it works" → 1, 9. The registry
+ *    section → all eight, byte-exact, in registry order.
  *
  * DELIBERATE ABSENCES — do not "complete" these later without founder sign-off:
  *  · NO careers page, NO press page, NO press kit. Marketing-ops surfaces are
@@ -87,7 +89,8 @@ const HERO_CLAIMS = [
 /**
  * The whole SEO-RULES §5 registry, in registry order, byte-exact. This array is
  * the page's centrepiece and its structural argument: the list is CLOSED. A
- * tenth entry here is a founder decision, never an editing one.
+ * ninth entry here is a founder decision, never an editing one — and so was the
+ * removal of the one that used to sit sixth.
  *
  * `note` is plain descriptive text about the claim — never an extension of it.
  */
@@ -111,10 +114,6 @@ const CLAIMS = [
   {
     claim: "Women-only stays hosted by women",
     note: "An option a host sets for her own home, stated on the listing.",
-  },
-  {
-    claim: "Halal-kitchen, prayer-space, and Qibla direction shown on listings",
-    note: "Plain attributes, at the same visual weight as any other amenity.",
   },
   {
     claim: "Listings show load-shedding hours and backup power",
@@ -150,9 +149,9 @@ export default function AboutPage() {
 
           <p className={`mt-3 ${prose}`}>
             SalamStay is a home-sharing marketplace for Pakistan. We list verified homes and rooms
-            in six cities, show the facts that actually decide a stay here — who is verified, what
-            a home allows, when the power is out — and hold your payment in <Term>amanah</Term>{" "}
-            until you check in. This page says plainly where we are and what we claim.
+            in six cities, show the facts that actually decide a stay here — when the power is out,
+            what the backup runs, who is verified, what a home allows — and hold your payment in
+            trust until you check in. This page says plainly where we are and what we claim.
           </p>
 
           <ul className="mt-8 grid grid-cols-1 gap-x-8 gap-y-3 border-t border-hairline pt-5 sm:grid-cols-3">
@@ -177,8 +176,8 @@ export default function AboutPage() {
             <p>
               SalamStay exists so those things are handled <strong>before</strong> you arrive,
               quietly, in the product. Verification happens once, in the app, matched to the
-              booking you&apos;re actually making. House rules, cultural attributes and power
-              backup are stated on the listing, not discovered at the door. The awkward
+              booking you&apos;re actually making. Load-shedding hours, backup power and house
+              rules are stated on the listing, not discovered at the door. The awkward
               conversation is replaced by a field.
             </p>
           </Prose>
@@ -193,11 +192,11 @@ export default function AboutPage() {
 
           <Prose gap={false}>
             <p>
-              That is the design rule the whole product is built on. A halal kitchen appears on a
-              listing at exactly the visual weight of Wifi. Qibla direction is travel information,
-              presented like check-in time. Women-only is a host&apos;s stated policy, not a mode
-              we switch on for you. Nothing cultural is decorated, framed, or sold — it is simply{" "}
-              <strong>stated</strong>, because treating it as ordinary is the respectful move.
+              That is the design rule the whole product is built on. Load-shedding hours appear on
+              a listing at exactly the visual weight of Wifi. A house rule is presented like a
+              check-in time. Women-only is a host&apos;s stated policy, not a mode we switch on for
+              you. Nothing is decorated, framed, or sold — it is simply <strong>stated</strong>,
+              because treating it as ordinary is the respectful move.
             </p>
             <p>
               And there is one test we hold every screen against:{" "}
@@ -209,7 +208,7 @@ export default function AboutPage() {
 
           <LinkRow
             links={[
-              { href: "/shariah-policy", label: 'What "Shariah-respectful" means, in detail' },
+              { href: "/verification", label: "How verification works, by booking type" },
               { href: "/trust-and-safety", label: "How trust & safety works" },
             ]}
           />
@@ -226,17 +225,17 @@ export default function AboutPage() {
               {
                 term: "Search a city",
                 detail:
-                  "Pick a city and your dates, then filter on what actually matters: halal-kitchen, prayer-space, and Qibla direction shown on listings, women-only stays, load-shedding hours and backup power.",
+                  "Pick a city and your dates, then filter on what actually matters: load-shedding hours and backup power, safe parking, women-only stays, and the house rules a home is booked under.",
               },
               {
                 term: "Verify once",
                 detail:
-                  "CNIC-verified guests and hosts via NADRA Verisys. A document is asked for only when a host's rule applies — a Nikah Nama, an FRC, a B-Form — and your host never sees it.",
+                  "CNIC-verified guests and hosts via NADRA Verisys, because every guest has to be registered with the provincial police after check-in. A further document is asked for only when a host's rule or a local one applies, and your host never sees it.",
               },
               {
                 term: "Pay, and stay",
                 detail:
-                  "Every rupee of fees and tax is shown before you confirm. Your payment is held in amanah, a trust, and released to the host only after you've checked in.",
+                  "Every rupee of fees and tax is shown before you confirm. Your payment is held in trust and released to the host only after you've checked in.",
               },
             ]}
           />
@@ -284,7 +283,7 @@ export default function AboutPage() {
         </ProseSection>
 
         {/* 4 · THE CLOSED CLAIMS REGISTRY — all nine §5 claims, verbatim */}
-        <ProseSection id="claims" heading="The nine things we claim">
+        <ProseSection id="claims" heading="The eight things we claim">
           <Prose>
             <p>
               These are the only claims SalamStay makes. They appear in <strong>the same words</strong>{" "}
@@ -295,8 +294,8 @@ export default function AboutPage() {
 
           {/* The numerals stay. Everywhere else on these pages an ordered list
               carries its own order silently, but here the COUNT is the
-              argument — nine, and the page is named after it — so each row
-              says which of the nine it is. Ink at meta size, never brand. */}
+              argument — eight, and the section is named after it — so each row
+              says which of the eight it is. Ink at meta size, never brand. */}
           <ol className={`${headingGap} ${column}`}>
             {CLAIMS.map((entry, i) => (
               <li key={entry.claim} className={`flex gap-4 ${factRow}`}>
@@ -318,6 +317,11 @@ export default function AboutPage() {
               This list is closed on purpose. It keeps marketing honest, it keeps the app and the
               website saying the same thing, and it means you can check any claim on this site
               against the product rather than against a mood.
+            </p>
+            <p>
+              It got shorter once. A claim about features we decided not to build came off the
+              list, and the features came out of the product with it. A closed list is only worth
+              something if things can leave it as well as join it.
             </p>
           </Prose>
         </ProseSection>
@@ -386,8 +390,8 @@ export default function AboutPage() {
                 trust &amp; safety
               </Link>
               ,{" "}
-              <Link href="/shariah-policy" className={inlineAction}>
-                our Shariah-respectful approach
+              <Link href="/verification" className={inlineAction}>
+                how verification works
               </Link>
               , or the{" "}
               <Link href="/help" className={inlineAction}>

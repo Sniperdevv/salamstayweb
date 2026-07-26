@@ -34,11 +34,22 @@ import { focusRing } from "@/components/ui";
  * mount.
  */
 
+/**
+ * Disabled is TWO token roles and no opacity (§1, §11.7). The redline wants a
+ * control that cannot act to stay visible and in place — flat, legible, holding
+ * its position — and `text.disabled` is already tuned to exactly that reading:
+ * communicative, not readable-as-content. A raw `opacity-40` on top compounded
+ * against an ink that had already been dimmed once, and being a whole-element
+ * filter it faded the chevron independently of the ink role, so the glyph
+ * disappeared faster than the border did. Faded is not the same signal as
+ * disabled; `components/search/filter-chip.tsx` states the same rule with token
+ * roles alone.
+ */
 const arrowButton =
   "grid size-8 place-items-center rounded-full border border-border-default bg-canvas text-primary " +
-  "transition-[transform,border-color,color,opacity] duration-instant ease-decelerate " +
+  "transition-[transform,border-color,color] duration-instant ease-decelerate " +
   "hover:border-border-strong active:scale-[0.92] " +
-  "disabled:pointer-events-none disabled:border-hairline disabled:text-disabled disabled:opacity-40 " +
+  "disabled:pointer-events-none disabled:border-hairline disabled:text-disabled " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
 
@@ -160,10 +171,13 @@ export function RailControls({ scrollerId, label }: RailControlsProps) {
     <div className="hidden shrink-0 items-center gap-3 lg:flex">
       {/* §10's counter. `aria-hidden`: the buttons are already named, the rail
           is a labelled scroll region, and a position readout that re-announces
-          on every fling is noise in place of information. `.num` sets tabular
-          figures, so 9 → 10 does not shift the arrows sideways. */}
+          on every fling is noise in place of information. `.num` alone sets the
+          tabular figures — `font-variant-numeric: tabular-nums` is in the rule
+          itself (`app/globals.css`) — so 9 → 10 does not shift the arrows
+          sideways and a `tabular-nums` utility beside it would be the same
+          declaration written twice. */}
       {pages > 1 ? (
-        <span aria-hidden="true" className="num text-label tabular-nums text-secondary">
+        <span aria-hidden="true" className="num text-label text-secondary">
           {current} / {pages}
         </span>
       ) : null}

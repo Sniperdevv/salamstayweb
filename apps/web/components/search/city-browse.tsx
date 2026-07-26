@@ -66,8 +66,12 @@ export function CityBrowse({ priority = false }: CityBrowseProps) {
           city page, not this URL, is the thing to bookmark or share. The F-7
           and homepage links it carried are one click away on the Islamabad
           tile above, and dropping them keeps the six city anchors unambiguous
-          as this page's crawl payload. */}
-      <p className="mt-5 max-w-prose text-caption text-secondary">
+          as this page's crawl payload.
+
+          `label` (13), not `caption` (12) — §7's ladder bottoms out at 13, and
+          two sentences of prose set below the floor are two sentences nobody
+          finishes. */}
+      <p className="mt-5 max-w-prose text-label text-secondary">
         Searching is temporary; city pages are permanent. Whatever you filter here, the
         lasting address for a place is its city page.
       </p>

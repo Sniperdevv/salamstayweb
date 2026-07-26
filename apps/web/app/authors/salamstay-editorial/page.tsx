@@ -83,12 +83,12 @@ const COVERS = [
   {
     term: "The local facts on city and area pages",
     detail:
-      "Named areas, markets, masjids, distances and practical notes — the parts of those pages that aren’t a host’s or a system’s own words.",
+      "Named areas, markets, landmarks, distances and practical notes — the parts of those pages that aren’t a host’s or a system’s own words.",
   },
   {
     term: "The trust pages",
     detail:
-      "Trust & safety, our Shariah-respectful approach, and about — narrative pages that explain how SalamStay works.",
+      "Trust & safety, verification and house rules, and about — narrative pages that explain how SalamStay works.",
   },
   {
     term: "City guides, when they exist",
@@ -190,7 +190,7 @@ const PAGES = [
     href: "/stays-in-islamabad/f-7",
     title: "Stays in F-7, Islamabad",
     kind: "Area page",
-    body: "The named local facts on it: markets, masjids and walking distances.",
+    body: "The named local facts on it: markets, landmarks and walking distances.",
   },
   {
     href: "/trust-and-safety",
@@ -199,8 +199,8 @@ const PAGES = [
     body: "Verification, reporting, and what happens when something goes wrong.",
   },
   {
-    href: "/shariah-policy",
-    title: "Our Shariah-respectful approach",
+    href: "/verification",
+    title: "Verification and house rules",
     kind: "Trust page",
     body: "What the phrase means here, and the boundary it doesn’t cross.",
   },
@@ -303,7 +303,7 @@ export default function SalamStayEditorialProfilePage() {
             <p>
               So this byline is an entity, and it is honest about being one.{" "}
               <strong>What it can’t claim is first-hand experience of a place.</strong> An
-              entity has not walked to the masjid at the end of the street or sat through an
+              entity has not walked the street at the end of the block or sat through an
               August evening without power. When a guide needs that kind of knowledge, it
               will be written by someone who actually has it, their name will be on it, and
               their own profile page will say who they are and how they know — checkably, not

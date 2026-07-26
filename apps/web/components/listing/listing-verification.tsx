@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { ArrowRightIcon } from "@/components/icons";
 import { sectionH2 } from "@/components/discovery/shell";
 import { focusRing } from "@/components/ui";
 import type { ListingContent } from "@/lib/content/listings/is-f7-2bed";
-import { Copy, Plain, listingLink, listingPara, listingSection } from "./shell";
+import { Copy, listingLink, listingPara, listingSection } from "./shell";
 
 /**
  * Verification for your booking — the party-type matrix.
@@ -42,12 +43,12 @@ export function ListingVerification({ listing }: { readonly listing: ListingCont
         {verification.heading}
       </h2>
       <p className={`mt-2 ${listingPara}`}>
-        <Plain>{verification.sub}</Plain>
+        <Num>{verification.sub}</Num>
       </p>
 
       <table className="mt-5 w-full max-w-[68ch] border-collapse text-left">
         <caption className="pb-3 text-left text-bodySm text-secondary">
-          <Plain>{verification.caption}</Plain>
+          <Num>{verification.caption}</Num>
         </caption>
         <thead>
           <tr className="border-b border-hairline">
@@ -66,13 +67,18 @@ export function ListingVerification({ listing }: { readonly listing: ListingCont
                 scope="row"
                 className="py-3 pr-4 text-left text-bodySm font-medium text-primary"
               >
-                <Plain>{row.header}</Plain>
+                <Num>{row.header}</Num>
               </th>
               <td className="py-3 text-bodySm text-secondary">
                 <Copy {...row.value} />
+                {/* 13/400 (`label`), not 12 — §7's ladder bottoms out at 13.
+                    The note expands the acronym in the cell above it ("FRC =
+                    the NADRA Family Registration Certificate"), so it is the
+                    line a reader who does not already know the term has to
+                    read to use the table at all. */}
                 {row.note ? (
-                  <span className="mt-1 block text-caption text-secondary">
-                    <Plain>{row.note}</Plain>
+                  <span className="mt-1 block text-label text-secondary">
+                    <Num>{row.note}</Num>
                   </span>
                 ) : null}
               </td>

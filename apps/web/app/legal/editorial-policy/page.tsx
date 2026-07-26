@@ -93,7 +93,7 @@ const SOURCES = [
   {
     kind: "City and area facts",
     source:
-      "A maintained city-facts record held alongside the page — named areas, markets, roads, masjids and distances.",
+      "A maintained city-facts record held alongside the page — named areas, markets, roads, landmarks and distances.",
     check: (
       <>
         Every named place is checked against a primary local source before the page

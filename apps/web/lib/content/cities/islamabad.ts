@@ -25,8 +25,20 @@ import type { CityContent } from "./types";
  *   still on the page, verbatim, in FAQ answer 1, which reads as a paragraph
  *   about F-6, F-7, F-8, E-7 and Blue Area precisely because it was written to
  *   answer that question in full.
- * - Note bodies, filter labels, FAQ questions and answers, related links and
- *   the meta description are BYTE-IDENTICAL to v1.
+ * - Note bodies and FAQ questions and answers are BYTE-IDENTICAL to v1.
+ *
+ * What REPOSITIONING.md then changed, and only this:
+ * - The filter row is FOUR chips, not six. `halal-kitchen` and `prayer-space`
+ *   are retired from the lexicon, so there is nothing left for those two chips
+ *   to filter on, and `backup-power` moves to the front of the row because the
+ *   practical facts are the product's lead differentiator.
+ * - Every stay carries two attributes drawn from the surviving four, chosen for
+ *   the home rather than pasted down the column: no two neighbouring cards in
+ *   the rail share a pair.
+ * - The meta description drops "halal kitchen" and "prayer space" and names the
+ *   filters that still exist.
+ * - The "Trust & hosting" column points at `/verification`, which is where
+ *   `/shariah-policy` moved, under a label that describes the page.
  *
  * Deliberate absences, all load-bearing and all unchanged:
  * - NO price figure. "PKR —" is the card's own data-driven placeholder; a
@@ -41,7 +53,7 @@ export const islamabad: CityContent = {
   path: "/stays-in-islamabad",
   name: "Islamabad",
   metaDescription:
-    "Find verified stays in Islamabad. Filter by no-alcohol listings, halal kitchen, women-only stays, and prayer space, with load-shedding hours and backup power shown on each home.",
+    "Find verified stays in Islamabad. Filter by no-alcohol listings, women-only stays and family homes, with load-shedding hours and backup power shown on each home.",
 
   h1: "Stays in Islamabad",
   /** Fifteen words. Names the sectors the inventory actually sits in, which is
@@ -70,7 +82,7 @@ export const islamabad: CityContent = {
         areaPin: "F-6",
         location: "F-6, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market"],
-        attributes: ["halal-kitchen", "no-alcohol", "backup-power"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Sunlit 2-bed near Kohsar Market, F-6, Islamabad",
       },
       {
@@ -79,7 +91,7 @@ export const islamabad: CityContent = {
         areaPin: "F-7",
         location: "F-7, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-7/central-studio-by-jinnah-super"],
-        attributes: ["women-only", "halal-kitchen", "backup-power"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Central studio by Jinnah Super, F-7, Islamabad",
       },
       {
@@ -88,7 +100,7 @@ export const islamabad: CityContent = {
         areaPin: "F-8",
         location: "F-8, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz"],
-        attributes: ["halal-kitchen", "prayer-space", "no-alcohol"],
+        attributes: ["family-friendly", "no-alcohol"],
         schemaName: "Quiet family home in F-8 Markaz, F-8, Islamabad",
       },
       {
@@ -97,7 +109,7 @@ export const islamabad: CityContent = {
         areaPin: "E-7",
         location: "E-7, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/e-7/margalla-view-apartment"],
-        attributes: ["halal-kitchen", "no-alcohol", "backup-power"],
+        attributes: ["backup-power", "family-friendly"],
         schemaName: "Margalla-view apartment, E-7, Islamabad",
       },
       {
@@ -106,7 +118,7 @@ export const islamabad: CityContent = {
         areaPin: "Blue Area",
         location: "Blue Area, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/blue-area/business-studio-jinnah-avenue"],
-        attributes: ["no-alcohol", "backup-power", "halal-kitchen"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Business studio on Jinnah Avenue, Blue Area, Islamabad",
       },
       {
@@ -115,7 +127,7 @@ export const islamabad: CityContent = {
         areaPin: "F-6",
         location: "F-6, Islamabad",
         image: LISTING_THUMBS["/stays-in-islamabad/f-6/garden-guest-house-near-kohsar"],
-        attributes: ["family-friendly", "halal-kitchen", "backup-power"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Garden guest house near Kohsar, F-6, Islamabad",
       },
     ],
@@ -203,29 +215,19 @@ export const islamabad: CityContent = {
     heading: "Popular filters in Islamabad",
     items: [
       {
+        icon: "backup-power",
+        label: "Backup power",
+        href: "/search?city=islamabad&backup_power=1",
+      },
+      {
         icon: "no-alcohol",
         label: "No-alcohol listings",
         href: "/search?city=islamabad&no_alcohol=1",
       },
       {
-        icon: "halal-kitchen",
-        label: "Halal kitchen",
-        href: "/search?city=islamabad&halal_kitchen=1",
-      },
-      {
         icon: "women-only",
         label: "Women-only stays",
         href: "/search?city=islamabad&women_only=1",
-      },
-      {
-        icon: "prayer-space",
-        label: "Prayer space",
-        href: "/search?city=islamabad&prayer_space=1",
-      },
-      {
-        icon: "backup-power",
-        label: "Backup power",
-        href: "/search?city=islamabad&backup_power=1",
       },
       { icon: "family-friendly", label: "Family-friendly", href: "/search?city=islamabad&family=1" },
     ],
@@ -284,7 +286,7 @@ export const islamabad: CityContent = {
         heading: "Trust & hosting",
         links: [
           { href: "/trust-and-safety", label: "Trust & safety" },
-          { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+          { href: "/verification", label: "How verification works" },
           { href: "/become-a-host", label: "Become a host in Islamabad" },
         ],
       },

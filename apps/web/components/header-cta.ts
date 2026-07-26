@@ -30,10 +30,22 @@ import { routeByPath } from "@/lib/seo/route-registry";
  * treatment, at both widths.
  */
 const CTA_OWNED_BY_PAGE: ReadonlySet<string> = new Set([
-  "/stays-in-islamabad/f-7/is-f7-2bed",
   "/become-a-host",
 ]);
 
+/**
+ * EVERY listing route owns its own primary green — the booking card's Reserve.
+ *
+ * This was a hard-coded set of one until 2026-07-26, when ten more listings
+ * shipped and every one of them rendered a green Sign up beside a green Reserve:
+ * two primaries on one surface, §2's green budget broken ten times over. Listing
+ * routes are three segments under a city (`/stays-in-{city}/{area}/{slug}`) and
+ * always draw a Reserve, so the rule is derived rather than enumerated — a
+ * listing added next month is covered without anyone remembering this file.
+ */
+const isListingRoute = (pathname: string): boolean =>
+  /^\/stays-in-[a-z0-9-]+\/[a-z0-9-]+\/[a-z0-9-]+$/.test(pathname);
+
 export function headerCtaYields(pathname: string): boolean {
-  return CTA_OWNED_BY_PAGE.has(pathname) || !routeByPath.has(pathname);
+  return CTA_OWNED_BY_PAGE.has(pathname) || isListingRoute(pathname) || !routeByPath.has(pathname);
 }

@@ -1,4 +1,4 @@
-# SalamStay Semantic-SEO — Extended Gates (G69–G78)
+# SalamStay Semantic-SEO — Extended Gates (G69–G79)
 
 > **This document EXTENDS `gates/semantic-seo/MANDATE.md`. It does not replace, reinterpret or relax any part of it.**
 >
@@ -30,6 +30,7 @@
 | G76 | Internal search-results indexability & crawl-trap prevention | S0, S2, S4 | HARD |
 | G77 | Brand SERP & knowledge-panel integrity | S0, S2, S5 | HARD (S0/S2), SOFT (S5 monitoring) |
 | G78 | Design → Next.js structural parity | S1, S2, S4 | HARD |
+| G79 | ItemList entity integrity (no fabricated or self-referential list entities) | S2, S4 | HARD |
 
 > **Cross-references used below:** G2/G19 (route generation + area eligibility / supply gate), G13/G35 (page-intent ownership + cannibalisation, registered in `page-intent-map.csv`), G15 (entity consistency), G32/G33 (scaled-content + duplicate similarity), G41/G42/G43 (title/meta/H1), G47 (Organization/WebSite schema), G49 (FAQ/HowTo eligibility), G51/G52 (authorship + first-hand experience / E-E-A-T), G55/G56 (listing–booking consistency), G57 (image implementation), G62 (CWV — **G73 supersedes it with a stricter, HARD budget**), G66/G67 (test infrastructure + regression tests).
 
@@ -363,6 +364,40 @@ At build/CI (S2) and pre-deploy (S4), extract from the **rendered** page and dif
 ### Evidence requirements
 
 The approved design card reference (SCREENS.md §2 row + `DESIGN.md` §9 blueprint, or the `specs/design-to-nextjs-conversion.md` card once it exists); the rendered-HTML extracted heading outline + landmark tree + anchor list; the diff report vs the approved card (must be empty for pass); and the token-fidelity scan output.
+
+---
+
+## GATE 79 — ItemList entity integrity (no fabricated or self-referential list entities)
+
+**Stages:** S2, S4 · **Blocking:** HARD
+
+Purpose: an `ItemList` declares to Google that a set of **distinct, real, reachable** resources exists. A list whose entries resolve to the page they sit on, repeat one another, or point at unregistered routes is a fabricated entity set — it asserts inventory that does not exist. This is the fabrication rule (preamble) applied to structured data, and it tightens `SEO-RULES.md` §1.5 (*"Never invent an SEO fact, claim, stat, rating, or **schema value**"*), MANDATE G44/G74 (schema-type matrix) and G37 (internal-link resolvability).
+
+**Why this gate exists (incident, 2026-07-25).** Five city pages each emitted nine `ListItem` entries — 45 in total — whose `url` was the emitting page's own canonical, under nine invented listing names. Every existing gate passed: G44/G74 checks `@type` only and never inspects values; G49's verbatim check covers `FAQPage` alone; G37 reads rendered anchors and not JSON-LD, and the self-links resolved because the city route is registered. The defect was invisible to the entire gate system. **A gate that checks the shape of structured data but never its truth is not a gate.**
+
+### Layer 1 — Specification gate
+
+The `ItemList` builder is the single enforcement point. No page may hand-assemble list schema (`lib/seo/jsonld.tsx` doctrine: *"if a builder doesn't exist here, the schema type is forbidden"*). The builder must make the invariant unrepresentable rather than merely unchecked:
+
+- A list entity's URL is **optional in the type system** (`string | null`). An item with no reachable resource yet is modelled as absent, never as a placeholder or a substitute URL.
+- Entries without a URL are excluded from the emitted list; if none remain, **the `ItemList` is omitted entirely** rather than emitted empty.
+- The rendered UI and the emitted list read the **same array**, so a visible card and a list entity cannot disagree (the pattern G49 already relies on for `FAQPage`).
+
+### Layer 2 — Verification gate
+
+At build/CI (S2) and pre-deploy (S4), for every `ItemList` node in a page's rendered JSON-LD, extracted from the initial HTML:
+
+- **Non-empty** — an `ItemList` present with zero entries is a HARD fail; omit the block instead.
+- **Distinct** — no `ListItem.url` repeats within a list.
+- **Non-self-referential** — no `ListItem.url` equals the page's own rendered canonical.
+- **Resolvable** — every same-origin or root-relative URL resolves in `lib/seo/route-registry.ts` (shared resolver with G37).
+- Both schema.org shapes are read (`ListItem.url` and the bare-string `item` form), so a hand-written list cannot evade the check by choosing the other encoding. Foreign-origin URLs are skipped rather than guessed. `BreadcrumbList` is out of scope — its `@type` differs and its self-referencing final crumb is legitimate.
+
+### Evidence requirements
+
+The validator run output naming each checked route and its list-entity count; for a failure, the offending URL, the rule broken, and the emitting content file. The gate must additionally be shown to **fail** on a deliberately reintroduced defect, not merely to pass on the current tree — a gate never observed failing is unverified, and per the mandate an unverifiable HARD gate is failed until verified.
+
+**Implementation:** `scripts/validate-pages.mjs` (G79), placed after G37 to share its registry resolver. Exercised against all four failure conditions on 2026-07-25.
 
 ---
 

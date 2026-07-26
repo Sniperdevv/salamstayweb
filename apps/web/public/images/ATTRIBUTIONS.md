@@ -10,11 +10,23 @@ Slot assignment, alt text and the `authentic` honesty flag for each file live in
 The six `is-f7-*` frames were carried over from `design-system/assets/photos/` so the
 approved gw-004 gallery ships unchanged.
 
-`living-room-with-timber-slat-wall.jpg` is the only file altered after download: the
-original frame is 16:9, so it was centre-cropped to 3:2 to satisfy the crop rule in
-TASTE-RULES §9. Nothing else is retouched, filtered or recoloured.
+## Geometry
 
-**79 files.**
+`living-room-with-timber-slat-wall.jpg` was the first file altered after download: the
+original frame is 16:9, so it was centre-cropped to 3:2 to satisfy the crop rule in
+TASTE-RULES §9.
+
+The forty listing-gallery frames added afterwards — every file whose stem begins
+`business-studio-`, `cedar-lodge-`, `central-studio-`, `family-home-f8-`,
+`family-portion-`, `garden-guest-house-`, `margalla-view-`, `quiet-1-bed-`,
+`sunlit-2-bed-` or `upper-portion-` — were each centre-cropped to 3:2 and resampled to
+**1880 × 1253**, which is the corpus' own gallery size and the identical tile ratio §9
+asks of a mosaic. Two operations, both geometric: a centre crop and a resample.
+
+Nothing in this directory is retouched, filtered, recoloured or composited. §9 forbids
+compensating with a filter, so a frame that needed one was replaced instead of graded.
+
+**119 files.**
 
 | File | Photographer | Pexels ID | Source |
 |---|---|---|---|
@@ -37,6 +49,18 @@ TASTE-RULES §9. Nothing else is retouched, filtered or recoloured.
 | `bedroom-with-wooden-furniture-daylight.jpg` | Anisha Deb | 36195703 | https://www.pexels.com/photo/peaceful-bedroom-with-natural-light-in-pune-36195703/ |
 | `bedroom-wooden-bed-warm.jpg` | Curtis Adams | 3773575 | https://www.pexels.com/photo/brown-wooden-bed-inside-bedroom-3773575/ |
 | `bedroom-wooden-cabinets-white-linen.jpg` | Max Vakhtbovych | 8141962 | https://www.pexels.com/photo/a-bed-with-white-linen-near-the-wooden-cabinets-8141962/ |
+| `business-studio-bath.jpg` | Max Vakhtbovych | 7546549 | https://www.pexels.com/photo/bathroom-with-washing-machine-in-an-apartment-for-rent-7546549/ |
+| `business-studio-counter.jpg` | Max Vakhtbovych | 6447390 | https://www.pexels.com/photo/interior-of-miniature-modern-apartment-with-furniture-6447390/ |
+| `business-studio-entrance.jpg` | Max Vakhtbovych | 6238684 | https://www.pexels.com/photo/interior-of-apartment-with-kitchen-and-living-zone-near-hallway-6238684/ |
+| `business-studio-sleeping.jpg` | Max Vakhtbovych | 6447377 | https://www.pexels.com/photo/studio-interior-with-bed-near-counter-with-chairs-near-window-6447377/ |
+| `cedar-lodge-bath.jpg` | Max Vakhtbovych | 8082315 | https://www.pexels.com/photo/spacious-bathroom-design-with-shower-and-bathtu-8082315/ |
+| `cedar-lodge-bedroom.jpg` | Max Vakhtbovych | 8082308 | https://www.pexels.com/photo/contemporary-bedroom-8082308/ |
+| `cedar-lodge-kitchen.jpg` | Max Vakhtbovych | 8082316 | https://www.pexels.com/photo/spacious-modern-kitchen-design-8082316/ |
+| `cedar-lodge-terrace.jpg` | Max Vakhtbovych | 8082313 | https://www.pexels.com/photo/photo-of-the-terrace-with-a-view-of-the-garden-8082313/ |
+| `central-studio-bath.jpg` | Max Vakhtbovych | 6969997 | https://www.pexels.com/photo/white-ceramic-bathtub-with-stainless-steel-faucet-6969997/ |
+| `central-studio-kitchenette.jpg` | Max Vakhtbovych | 6969994 | https://www.pexels.com/photo/brown-wooden-counter-top-6969994/ |
+| `central-studio-sitting.jpg` | Max Vakhtbovych | 6970000 | https://www.pexels.com/photo/gray-sofa-with-green-throw-pillows-6970000/ |
+| `central-studio-sleeping.jpg` | Max Vakhtbovych | 6969992 | https://www.pexels.com/photo/gray-bedsheet-and-brown-pillows-6969992/ |
 | `courtyard-with-plants.jpg` | FOX ^.ᆽ.^= ∫ | 38101264 | https://www.pexels.com/photo/charming-urban-courtyard-with-lush-plants-38101264/ |
 | `dining-area-with-balcony-doors.jpg` | Max Vakhtbovych | 7061333 | https://www.pexels.com/photo/interior-of-light-dining-room-with-panoramic-balcony-doors-7061333/ |
 | `dining-corner-with-round-table.jpg` | Max Vakhtbovych | 7046002 | https://www.pexels.com/photo/modern-dining-room-interior-with-furniture-in-light-house-7046002/ |
@@ -45,6 +69,18 @@ TASTE-RULES §9. Nothing else is retouched, filtered or recoloured.
 | `entrance-with-carved-door.jpg` | Sharath G. | 9209430 | https://www.pexels.com/photo/a-green-door-of-a-house-9209430/ |
 | `faisalabad-clock-tower-street.jpg` | Ali Haider | 37697365 | https://www.pexels.com/photo/faisalabad-clock-tower-street-view-in-punjab-37697365/ |
 | `faisalabad-empty-street-view.jpg` | Ali Haider | 37697355 | https://www.pexels.com/photo/empty-street-view-of-faisalabad-pakistan-37697355/ |
+| `family-home-f8-bath.jpg` | Max Vakhtbovych | 6899357 | https://www.pexels.com/photo/restroom-interior-with-toilet-and-washing-machine-near-sink-6899357/ |
+| `family-home-f8-bedroom.jpg` | Peter Vang | 35430059 | https://www.pexels.com/photo/cozy-bedroom-with-wooden-furniture-and-natural-light-35430059/ |
+| `family-home-f8-kitchen.jpg` | Max Vakhtbovych | 6297088 | https://www.pexels.com/photo/table-with-chairs-in-kitchen-6297088/ |
+| `family-home-f8-veranda.jpg` | Max Vakhtbovych | 6296916 | https://www.pexels.com/photo/corridor-of-modern-apartment-with-fence-6296916/ |
+| `family-portion-bath.jpg` | Max Vakhtbovych | 7745934 | https://www.pexels.com/photo/an-interior-of-a-bathroom-7745934/ |
+| `family-portion-bedroom-2.jpg` | Max Vakhtbovych | 7745929 | https://www.pexels.com/photo/an-interior-of-a-bedroom-7745929/ |
+| `family-portion-bedroom.jpg` | Max Vakhtbovych | 7745937 | https://www.pexels.com/photo/an-interior-of-a-bedroom-7745937/ |
+| `family-portion-kitchen.jpg` | Max Vakhtbovych | 6958146 | https://www.pexels.com/photo/kitchen-counter-in-modern-apartment-6958146/ |
+| `garden-guest-house-bath.jpg` | Max Vakhtbovych | 8143708 | https://www.pexels.com/photo/spacious-bathroom-with-tiled-walls-8143708/ |
+| `garden-guest-house-bedroom.jpg` | Curtis Adams | 4030072 | https://www.pexels.com/photo/ceiling-fan-above-a-bed-4030072/ |
+| `garden-guest-house-garden-room.jpg` | Max Vakhtbovych | 8143711 | https://www.pexels.com/photo/brown-table-with-chairs-8143711/ |
+| `garden-guest-house-kitchen.jpg` | Max Vakhtbovych | 8143701 | https://www.pexels.com/photo/granite-table-top-in-a-spacious-kitchen-8143701/ |
 | `guest-house-exterior-with-garden.jpg` | Thang Nguyen | 34056718 | https://www.pexels.com/photo/modern-apartment-exterior-with-lush-garden-34056718/ |
 | `hallway-apartment-wooden.jpg` | Max Vakhtbovych | 7166928 | https://www.pexels.com/photo/contemporary-hallway-in-an-apartment-with-wooden-elements-7166928/ |
 | `host-home-courtyard-villa-sunny.jpg` | Max Vakhtbovych | 7031593 | https://www.pexels.com/photo/courtyard-of-modern-villa-in-sunny-day-7031593/ |
@@ -85,15 +121,31 @@ TASTE-RULES §9. Nothing else is retouched, filtered or recoloured.
 | `living-room-with-kitchen-zone-flat.jpg` | Max Vakhtbovych | 6890400 | https://www.pexels.com/photo/light-living-room-with-small-kitchen-zone-in-contemporary-flat-6890400/ |
 | `living-room-with-timber-slat-wall.jpg` | The Funiture Studio | 33559373 | https://www.pexels.com/photo/modern-indian-living-room-with-sheesham-wood-accents-33559373/ |
 | `living-room-wooden-furniture-sofa-bed.jpg` | Max Vakhtbovych | 6890412 | https://www.pexels.com/photo/interior-of-contemporary-apartment-with-wooden-furniture-and-sofa-bed-6890412/ |
+| `margalla-view-bath.jpg` | Max Vakhtbovych | 7534282 | https://www.pexels.com/photo/spacious-bathroom-with-minimalist-design-and-shower-cabin-7534282/ |
+| `margalla-view-bedroom.jpg` | Atlantic Ambience | 14286298 | https://www.pexels.com/photo/a-cozy-bedroom-with-city-view-14286298/ |
+| `margalla-view-kitchen.jpg` | Waqas ilyas | 36903860 | https://www.pexels.com/photo/modern-kitchen-design-with-city-view-36903860/ |
+| `margalla-view-living.jpg` | Image Hunter | 26747979 | https://www.pexels.com/photo/sofa-in-an-aerial-living-room-26747979/ |
 | `pakistan-market-street-motorcycles.jpg` | Dr Photographer | 36006885 | https://www.pexels.com/photo/bustling-market-street-scene-with-motorcycles-36006885/ |
 | `patio-with-wicker-seating.jpg` | Naresh Babu | 8041135 | https://www.pexels.com/photo/an-empty-sofa-set-8041135/ |
 | `peshawar-college-building-green.jpg` | Raqeeb Ahmed | 5838486 | https://www.pexels.com/photo/brown-concrete-building-near-green-trees-5838486/ |
 | `peshawar-old-city-street.jpg` | Muhammad Shamaoon Malik | 33032698 | https://www.pexels.com/photo/bustling-street-scene-in-peshawar-pakistan-33032698/ |
+| `quiet-1-bed-bath.jpg` | Max Vakhtbovych | 7046005 | https://www.pexels.com/photo/contemporary-bathroom-interior-with-washbasin-and-glass-door-7046005/ |
+| `quiet-1-bed-bedroom.jpg` | Max Vakhtbovych | 7045993 | https://www.pexels.com/photo/contemporary-bedroom-interior-with-bed-against-wooden-wall-7045993/ |
+| `quiet-1-bed-entrance.jpg` | Max Vakhtbovych | 7045998 | https://www.pexels.com/photo/empty-corridor-with-doors-and-carpet-at-home-7045998/ |
+| `quiet-1-bed-kitchen.jpg` | Max Vakhtbovych | 7045995 | https://www.pexels.com/photo/contemporary-kitchen-interior-with-cabinets-and-decorative-dragonflies-in-house-7045995/ |
 | `quiet-sector-road-autumn-trees.jpg` | Ali Hamza Tullah | 19995183 | https://www.pexels.com/photo/road-in-autumn-19995183/ |
 | `rawalpindi-truck-art-street.jpg` | Mr. Sami | 32753946 | https://www.pexels.com/photo/colorful-pakistani-truck-in-rawalpindi-street-32753946/ |
 | `residential-neighbourhood-aerial.jpg` | Aa Dil | 3742627 | https://www.pexels.com/photo/aerial-photography-of-concrete-houses-on-a-neighborhood-3742627/ |
 | `sitting-room-with-leather-sofas.jpg` | Zyn Aly | 27822509 | https://www.pexels.com/photo/emaar-construction-homes-27822509/ |
 | `studio-apartment-compact-interior.jpg` | Max Vakhtbovych | 6447384 | https://www.pexels.com/photo/interior-modern-apartment-with-kitchen-and-bedroom-6447384/ |
 | `studio-apartment-kitchen-and-bed.jpg` | Max Vakhtbovych | 6969987 | https://www.pexels.com/photo/interior-design-of-small-studio-apartment-6969987/ |
+| `sunlit-2-bed-bath.jpg` | Max Vakhtbovych | 6207818 | https://www.pexels.com/photo/stylish-bathroom-interior-with-modern-furniture-6207818/ |
+| `sunlit-2-bed-bedroom-2.jpg` | Max Vakhtbovych | 7214473 | https://www.pexels.com/photo/trendy-light-bedroom-with-balcony-7214473/ |
+| `sunlit-2-bed-bedroom.jpg` | Max Vakhtbovych | 6207819 | https://www.pexels.com/photo/interior-of-light-elegant-bedroom-6207819/ |
+| `sunlit-2-bed-kitchen.jpg` | Max Vakhtbovych | 7018399 | https://www.pexels.com/photo/contemporary-kitchen-interior-with-dining-zone-7018399/ |
 | `terrace-seating-with-large-windows.jpg` | Max Vakhtbovych | 7534300 | https://www.pexels.com/photo/chairs-with-pillows-placed-in-patio-with-big-windows-7534300/ |
 | `tree-lined-residential-street.jpg` | Ali Hamza Tullah | 19995192 | https://www.pexels.com/photo/trees-around-road-19995192/ |
+| `upper-portion-bath.jpg` | Max Vakhtbovych | 6890407 | https://www.pexels.com/photo/small-light-bathroom-with-shower-cabin-6890407/ |
+| `upper-portion-bedroom-2.jpg` | Max Vakhtbovych | 6890413 | https://www.pexels.com/photo/cozy-bedroom-with-modern-furniture-and-decorative-elements-6890413/ |
+| `upper-portion-bedroom.jpg` | Max Vakhtbovych | 6890398 | https://www.pexels.com/photo/cozy-bed-in-modern-apartment-with-minimalist-design-in-daylight-6890398/ |
+| `upper-portion-kitchen.jpg` | Max Vakhtbovych | 6890404 | https://www.pexels.com/photo/interior-of-stylish-kitchen-with-white-and-wooden-furniture-6890404/ |

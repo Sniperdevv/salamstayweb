@@ -1,57 +1,46 @@
 import type { ReactElement } from "react";
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { ArrowRightIcon } from "@/components/icons";
-import {
-  FamilyIcon,
-  HalalKitchenIcon,
-  NoAlcoholIcon,
-  QiblaIcon,
-  ShieldCheckIcon,
-} from "@/components/home-icons";
-import { MasjidIcon } from "@/components/stays/icons";
+import { FamilyIcon, NoAlcoholIcon, ShieldCheckIcon } from "@/components/home-icons";
 import { sectionH2 } from "@/components/discovery/shell";
 import { focusRing } from "@/components/ui";
 import type { AmenityId, ListingContent, TableRow } from "@/lib/content/listings/is-f7-2bed";
-import {
-  AirConditioningIcon,
-  CheckIcon,
-  CompassIcon,
-  LockIcon,
-  PrayerMatIcon,
-  WifiIcon,
-} from "./icons";
-import {
-  Copy,
-  Plain,
-  anchorOffset,
-  listingH3,
-  listingLink,
-  listingPara,
-  listingSection,
-} from "./shell";
+import { AirConditioningIcon, CheckIcon, LockIcon, WifiIcon } from "./icons";
+import { Copy, anchorOffset, listingH3, listingLink, listingPara, listingSection } from "./shell";
 
 /**
- * Amenities & cultural attributes, with the prayer/Qibla and home-infrastructure
- * blocks under it. The web twins of the shipped app screens ga-029, ga-030 and
- * ga-031 — G78 structural parity binds all three.
+ * Amenities & house rules, with the home-infrastructure table under it. The web
+ * twins of the shipped app screens ga-029 and ga-031.
  *
- * **Cultural facts at exactly Wi-Fi weight.** This is the direction's whole
- * thesis in one grid: "No-alcohol home" and "Qibla marked" are set in the same
- * type, at the same size, on the same row rhythm, with the same glyph weight as
- * "Air conditioning" and "Wi-Fi (fibre)". No section of their own, no crescent
- * decoration, no green. They are attributes of a home, stated plainly, and
- * anything that singled them out would be the "Islamic look" the direction
- * explicitly is not.
+ * **What used to sit between them is gone.** This component drew a third block
+ * here: a Qibla bearing, a prayer paragraph and a list of masjid distances (the
+ * web twin of ga-030). REPOSITIONING.md retires all of it, so the block is
+ * deleted rather than emptied — no heading with nothing under it, no `prayer &&`
+ * guard waiting for data that will not come back. The amenity grid now runs
+ * straight into "Home infrastructure", which shortens the page by a screen and
+ * puts the practical table, the product's lead differentiator, higher up it.
+ * ga-030 has no web twin any more, and G78's parity claim is one screen
+ * narrower than it was.
+ *
+ * **A house rule at exactly Wi-Fi weight.** The direction's thesis survives the
+ * repositioning intact, with a smaller set to apply it to: "No-alcohol home"
+ * and "Family-friendly" are set in the same type, at the same size, on the same
+ * row rhythm, with the same glyph weight as "Air conditioning" and "Wi-Fi
+ * (fibre)". No section of their own, no decoration, no green. They are facts
+ * about a home, stated plainly.
  *
  * **No icon plates.** The card draws each glyph in a bordered `bg.raised` tile.
  * §1: content blocks carry neither border nor shadow, and eight tiles in a grid
  * is eight small boxes doing nothing a bare glyph does not. §6 also caps
  * `bg.raised` at five jobs, and "icon chip" is not one of them.
  *
- * **The eight labels are the schema.** `LodgingBusiness.amenityFeature` is
+ * **The five labels are the schema.** `LodgingBusiness.amenityFeature` is
  * built from this same array (G44 requires the names to match the visible
  * attributes EXACTLY), so a copy edit here moves the structured data with it
- * and the two cannot drift.
+ * and the two cannot drift. Three labels leaving the grid took three
+ * `amenityFeature` entries with them, which is the contract working rather
+ * than the contract breaking.
  *
  * **Both tables are real tables.** A `<caption>`, `<th scope="col">` where
  * there are column heads and `<th scope="row">` on every row, because this
@@ -71,16 +60,13 @@ import {
 type IconComponent = (props: { readonly className?: string }) => ReactElement;
 
 /**
- * Attribute id → glyph. Cultural marks come from the shipped `home-icons` set
- * so a "Halal kitchen" here is byte-identical to a "Halal kitchen" on the city
- * rail; only the three the corpus had not drawn for the web live in this
- * directory's own icon file.
+ * Attribute id → glyph. The two house-rule marks come from the shipped
+ * `home-icons` set so a "Family-friendly" here is byte-identical to a
+ * "Family-friendly" on the city rail; the three the corpus had not drawn for
+ * the web live in this directory's own icon file.
  */
 const AMENITY_ICONS: Record<AmenityId, IconComponent> = {
   "no-alcohol": NoAlcoholIcon,
-  "halal-kitchen": HalalKitchenIcon,
-  "prayer-mat": PrayerMatIcon,
-  qibla: QiblaIcon,
   family: FamilyIcon,
   wifi: WifiIcon,
   "air-conditioning": AirConditioningIcon,
@@ -94,16 +80,21 @@ function DataRow({ row }: { readonly row: TableRow }) {
         scope="row"
         className="w-[34%] py-3 pr-4 text-left text-bodySm font-semibold text-primary"
       >
-        <Plain>{row.header}</Plain>
+        <Num>{row.header}</Num>
       </th>
       <td className="py-3 text-bodySm text-secondary">
         <span className={row.affirmed ? "flex items-center gap-1.5 font-medium text-primary" : ""}>
           {row.affirmed ? <CheckIcon className="size-4 shrink-0 text-secondary" /> : null}
           <Copy {...row.value} />
         </span>
+        {/* 13/400 (`label`), not 12 — §7's ladder bottoms out at 13. The note
+            is the qualifier on the value above it ("UPS keeps fans, lights and
+            Wi-Fi through routine cuts; the diesel generator covers longer
+            outages…"), which is the half of the cell that says what the value
+            means for a night in the house. Not fine print. */}
         {row.note ? (
-          <span className="mt-1 block text-caption text-secondary">
-            <Plain>{row.note}</Plain>
+          <span className="mt-1 block text-label text-secondary">
+            <Num>{row.note}</Num>
           </span>
         ) : null}
       </td>
@@ -112,7 +103,7 @@ function DataRow({ row }: { readonly row: TableRow }) {
 }
 
 export function ListingAmenities({ listing }: { readonly listing: ListingContent }) {
-  const { amenities, prayer, infrastructure } = listing;
+  const { amenities, infrastructure } = listing;
 
   return (
     <section id="amenities" aria-labelledby="amenities-h" className={`${listingSection} ${anchorOffset}`}>
@@ -120,7 +111,7 @@ export function ListingAmenities({ listing }: { readonly listing: ListingContent
         {amenities.heading}
       </h2>
       <p className={`mt-2 ${listingPara}`}>
-        <Plain>{amenities.sub}</Plain>
+        <Num>{amenities.sub}</Num>
       </p>
 
       <ul className="mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2">
@@ -132,7 +123,7 @@ export function ListingAmenities({ listing }: { readonly listing: ListingContent
               <span className="min-w-0">
                 <span className="block text-bodyMd font-medium text-primary">{item.label}</span>
                 <span className="mt-0.5 block text-bodySm text-secondary">
-                  <Plain>{item.detail}</Plain>
+                  <Num>{item.detail}</Num>
                 </span>
               </span>
             </li>
@@ -145,51 +136,12 @@ export function ListingAmenities({ listing }: { readonly listing: ListingContent
         <ArrowRightIcon className="size-4" />
       </Link>
 
-      {/* ── Prayer, Qibla, masjid distances (web twin of ga-030) ─────────── */}
-      <h3 className={`mt-10 ${listingH3}`}>{prayer.heading}</h3>
-
-      <div className="mt-3 flex max-w-[65ch] gap-3.5">
-        <CompassIcon className="mt-0.5 size-6 shrink-0 text-secondary" />
-        <div className="min-w-0">
-          <p className="text-bodyMd font-medium text-primary">
-            <Plain>{prayer.bearing}</Plain>
-          </p>
-          <p className="mt-1.5 text-bodySm leading-relaxed text-secondary">
-            <Copy {...prayer.body} />
-          </p>
-        </div>
-      </div>
-
-      <ul className="mt-5 flex flex-col gap-4">
-        {prayer.masjids.map((m) => (
-          <li key={m.name} className="flex gap-3.5">
-            <MasjidIcon className="mt-0.5 size-5 shrink-0 text-tertiary" />
-            <span className="min-w-0">
-              <span className="block text-bodySm font-medium text-primary">
-                <Plain>{m.name}</Plain>
-              </span>
-              <span className="mt-0.5 block text-bodySm text-secondary">
-                <Plain>{m.distance}</Plain>
-              </span>
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <p className={`mt-5 ${listingPara}`}>
-        <Plain>{prayer.para}</Plain>
-      </p>
-      <Link href={prayer.link.href} className={`mt-4 ${listingLink} ${focusRing}`}>
-        {prayer.link.label}
-        <ArrowRightIcon className="size-4" />
-      </Link>
-
       {/* ── Home infrastructure (web twin of ga-031) ─────────────────────── */}
       <h3 className={`mt-10 ${listingH3}`}>{infrastructure.heading}</h3>
 
       <table className="mt-3 w-full max-w-[68ch] border-collapse text-left">
         <caption className="pb-3 text-left text-bodySm text-secondary">
-          <Plain>{infrastructure.caption}</Plain>
+          <Num>{infrastructure.caption}</Num>
         </caption>
         <tbody>
           {infrastructure.rows.map((row) => (
@@ -198,10 +150,15 @@ export function ListingAmenities({ listing }: { readonly listing: ListingContent
         </tbody>
       </table>
 
-      <p className="mt-4 flex max-w-[65ch] items-start gap-2 text-caption text-secondary">
+      {/* 13/400 (`label`), not 12. This is the line that dates the table above
+          it — "Last verified by the host on 18 July 2026" — and how old a fact
+          is is part of the fact (§12). A freshness statement set smaller than
+          everything it qualifies is a disclaimer, which is the one thing it
+          must not read as. */}
+      <p className="mt-4 flex max-w-[65ch] items-start gap-2 text-label text-secondary">
         <ShieldCheckIcon className="mt-px size-4 shrink-0 text-secondary" />
         <span>
-          <Plain>{infrastructure.verified}</Plain>
+          <Num>{infrastructure.verified}</Num>
         </span>
       </p>
     </section>

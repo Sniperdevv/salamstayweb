@@ -61,16 +61,44 @@ export const breadcrumbList = (crumbs: readonly Crumb[]): JsonLd => ({
   })),
 });
 
-export const itemList = (items: readonly { name: string; path: string }[]): JsonLd => ({
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  itemListElement: items.map((it, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    name: it.name,
-    url: `${ORIGIN}${it.path}`,
-  })),
-});
+/**
+ * ItemList of things that have their own pages.
+ *
+ * `path: null` — a stay with no listing route yet — is DROPPED, and a list left
+ * with nothing in it returns `null` so no `ItemList` is emitted at all. Both
+ * halves are the honesty rule, not tidiness:
+ *
+ * - A `ListItem` needs a URL, and the only URL available for a page-less stay
+ *   is the page the list is already on. Five city pages shipped exactly that:
+ *   nine entries, nine copies of the page's own canonical. An `ItemList` that
+ *   lists a page nine times inside itself is a fabricated schema value
+ *   (SEO-RULES §1.5) and reads to a crawler as the doorway pattern SCREENS §6
+ *   forbids.
+ * - An empty `ItemList` is not the honest remainder of that — it is a claim to
+ *   list something and then a list of nothing. Absent is the true statement.
+ *
+ * Callers pass their content through unchanged; the invariant lives here so no
+ * page can opt out of it. `scripts/validate-pages.mjs` (G79) enforces the same
+ * rule against rendered HTML, so a hand-written ItemList cannot slip past.
+ */
+export const itemList = (
+  items: readonly { name: string; path: string | null }[],
+): JsonLd | null => {
+  const listed = items.filter(
+    (it): it is { name: string; path: string } => it.path !== null,
+  );
+  if (listed.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: listed.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      url: `${ORIGIN}${it.path}`,
+    })),
+  };
+};
 
 export interface FaqItem {
   readonly question: string;
@@ -229,17 +257,25 @@ export const editorialProfilePage = (): JsonLd => ({
   },
 });
 
-/** Renders JSON-LD blocks. Server component — schema lands in initial HTML (G61). */
-export function JsonLdScript({ data }: { data: readonly JsonLd[] }) {
+/**
+ * Renders JSON-LD blocks. Server component — schema lands in initial HTML (G61).
+ *
+ * `null` entries are dropped rather than rejected, so a builder that has nothing
+ * truthful to emit (see `itemList`) can say so in its return type and the page
+ * that calls it needs no conditional of its own.
+ */
+export function JsonLdScript({ data }: { data: readonly (JsonLd | null)[] }) {
   return (
     <>
-      {data.map((d, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }}
-        />
-      ))}
+      {data
+        .filter((d): d is JsonLd => d !== null)
+        .map((d, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(d) }}
+          />
+        ))}
     </>
   );
 }

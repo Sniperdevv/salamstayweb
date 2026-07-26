@@ -55,6 +55,20 @@ const heartBase =
  * heart is on the card's own white padding). It is not a third treatment — it
  * is the same rule answering the same question twice, on one button rather than
  * two, because two hearts in the DOM is two controls to a screen reader.
+ *
+ * The white on the media form is `slate-0`, the ramp step, and it stays that
+ * way deliberately — checked against the role map rather than left alone. The
+ * preset exposes no ink role for a glyph on a photograph: `text-on-brand` is
+ * ink on a BRAND FILL and flips to `slate-950` in dark, `text-canvas` is a
+ * surface role and flips the same way, and `text.onInverse` is not exposed to
+ * Tailwind at all. Every themed role is wrong here for one reason, and it is
+ * the reason the preset already gives for shipping scrims as static values: a
+ * photograph does not get darker because the UI did, so the stroke that has to
+ * survive it cannot be a value that inverts with the theme. `slate-0` is a
+ * token consumed by name, not a hex, and it is the honest one until an
+ * `on-media` ink role exists to hold the intent. Note the `sm:text-primary`
+ * half of `chromeFromSm` IS themed — correctly, because past `sm` that glyph
+ * has left the photograph and is sitting on the card's own white padding.
  */
 export type WishlistHeartVariant = "media" | "chrome" | "chromeFromSm";
 

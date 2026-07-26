@@ -1,0 +1,1122 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Booking states: pending, declined, payment failed (GW-027)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     GW-027 · BOOKING STATES — every way the journey ends that is not success
+     routes  "/book/is-f7-2bed/status"  (pending, declined — post-flow)
+             "/book/is-f7-2bed/confirm" (payment failed, wallet return timeout —
+                                         still step 4, the booking is held)
+     plus their /ur/ twins. Web twin of ga-065 (pending), ga-066 (declined),
+     ga-117 (payment retry / alternate rail) and ga-116 (redirect return).
+
+     Inherits design-system/cards/screens/CHECKOUT-SHELL.md unchanged except
+     where this comment says otherwise; gw-021-reserve.html is the reference
+     rendering. The `.outcome`, `.frows`, `.alist`, `.gbtn` additions are shared
+     with gw-026 and documented there.
+
+     ---------------------------------------------------------------------------
+     RULING 1 — THE STEPPER. Same answer as gw-026, applied to the STATE rather
+       than to the file, which is the only way it can be applied honestly:
+
+         pending    → NO stepper.  The request left checkout; §7.6a names it.
+         declined   → NO stepper.  Same.
+         payment failed / wallet return timeout → THE STEPPER STAYS, at step 4:
+                      Party · Verify · Price all `.done`, Confirm `.cur`,
+                      `aria-current="step"`.
+
+       HANDOFF §7.6a lists the post-book family as "pending/declined/held/
+       confirmation". A failed payment is not in that list and is not one of
+       them: no money moved, no booking was created, the dates and the price are
+       still held, and the guest's next act is the same act they just attempted.
+       They never left step 4. ga-117 and ga-116 both render exactly this — full
+       stepper, "Step 4 of 4", Confirm current — and this card matches them.
+
+       So the line is drawn where the journey actually ends, not where the card
+       file begins. A card is an authoring unit; the stepper answers a question
+       about the guest. Two panels in this file show a stepper and two do not,
+       and that IS the specification: the stepper's presence is the signal for
+       "you are still inside this".
+
+       Where there is no stepper, the `.outcome` block introduced on gw-026
+       takes its exact slot and geometry (main column, under `.pagehead`,
+       `padding:0 0 26px`, status row + caption). On the pending and declined
+       panels its glyph is `text.secondary` — no success register, because
+       nothing succeeded, and no error register, because nothing failed.
+
+     RULING 2 — THE RAIL SURVIVES on every state, structure unchanged
+       (CHECKOUT-SHELL §4 order kept literally). The rail holds the object, and
+       there is still an object: a request that is waiting, a request that did
+       not work out, a payment that has not landed. Only the truth in the slots
+       changes. Most pointedly, on the DECLINED panel the money slot reads
+         Nothing was charged ........................................ PKR 0
+       because that is the single most important number on that page and the
+       money slot is where the guest's eye already goes.
+
+       ONE CLARIFICATION THE CONTRACT NEEDS (proposed): §4 says "nothing is ever
+       added or reordered". Post-flow, a slot sometimes names an action that no
+       longer exists — "Change" on a request the guest cannot change. The rule
+       that resolves it: **a slot may resolve to nothing; it is never replaced
+       by a different action.** Omission is allowed, substitution is not.
+       gw-021's own empty panel already omits the DATES "Change" inlink, so the
+       precedent is in the reference card.
+
+     ---------------------------------------------------------------------------
+     SHELL ADDITIONS beyond gw-026's four (all proposed):
+       `.banner.error`     the error register of the existing page-level banner
+                           (§11 requires both registers; gw-021 only ever needed
+                           warning). `role="alert"` on the failed-payment panel,
+                           `role="status"` on the timeout panel — a timeout is
+                           not an error, it is an unfinished answer.
+       `.arow.same`        the "retry the rail you already chose" row: the same
+                           row anatomy with a refresh glyph instead of a chevron
+                           (ga-117's convention), so retry and switch never look
+                           like the same act.
+       `.altlist .altrow .altthumb .altb .altt .altmeta .altprice`
+                           the alternatives list on the declined panel. A plain
+                           hairline-divided list in OPEN SPACE — no outer border,
+                           no card, no shadow (TASTE §1: content blocks carry
+                           neither). Deliberately NOT the bordered form-group
+                           anatomy: these are places to go, not fields to fill.
+                           Thumbs are 1:1 at `radius.md` (TASTE §9 crops).
+
+     ---------------------------------------------------------------------------
+     DIGNITY — the load-bearing constraint on this card (DESIGN §0.2,
+       dignity-through-normalcy; ga-066 sets the tone and this card holds it):
+         · The declined title names AVAILABILITY, never the guest:
+           "This stay isn't available for your dates."
+         · "It happens sometimes — this is about the dates, not about you."
+           carried verbatim from ga-066.
+         · "Your verification and your profile are unaffected" — the sentence
+           that answers the fear the guest actually has.
+         · The decline glyph is a neutral calendar with a slash. Never a red X,
+           never the error register, never an alarm hue. Nothing on the declined
+           panel is red.
+         · Alternatives are real listings with real photographs and real prices,
+           so the exit is a genuine next step rather than a consolation.
+         · A host is never required to explain. When there is a note it is
+           quoted plainly; when there is none, the card does not invent one and
+           does not imply the guest was owed one.
+
+     PENDING MEANS NOT CHARGED. It is said three times, in three registers, on
+       purpose: in the `.psub` under the H1, in the `.outcome` caption, and in
+       the rail `.strip` sitting directly under the money. The rail's money row
+       reads "If Ayesha accepts", not "Total" — a pending request has no total,
+       it has a conditional one. There is no held-in-trust line in `.trust` on
+       the pending panel, because nothing is being held: claiming a hold over
+       money that was never taken would be exactly the kind of sentence this
+       card exists to avoid.
+
+     ---------------------------------------------------------------------------
+     ROBOTS: noindex, follow. No canonical, no hreflang pair, no JSON-LD.
+       `<main class="co-main">`, never `class="indexable"`. No breadcrumb; one
+       ink underlined back link. The header's one exit affordance reads "Done"
+       on the post-flow states and "Save & exit" on the two step-4 states, where
+       saving is a real thing to do because the booking is genuinely held.
+       One <h1>: the page's accessible title, on panel 1.
+
+     GREEN RARITY — three roles, counted: the wordmark dot · the one enabled
+       `.cta` · the verification shield in `.trust`. The `.steps li.done/.cur`
+       rules are stepper state, not a fourth role (CHECKOUT-SHELL §7). No
+       success register is spent anywhere on this card — nothing here succeeded.
+
+     MONEY — traceable, balanced, unchanged from gw-021 / ga-050:
+       PKR 12,500 × 3 nights = PKR 37,500; + service fee 2,250 + MDR 720 + ICT
+       sales tax 1,880 = PKR 42,350. Alternative nightly rates PKR 14,200 and
+       PKR 8,900 are ga-066's, reused unchanged. Format is always "PKR 42,350";
+       the bare rupee sign appears nowhere in this file. Every digit run sits
+       inside `.num`.
+
+     NO BOOKING REFERENCE IS SHOWN ON ANY PANEL, and that is the point: a
+       pending request, a declined request and a failed payment have not
+       produced a booking, so there is nothing to reference. Only gw-026 shows
+       `SS-7F3K9Q`. No reference format is invented here.
+
+     INVENTED FOR THIS CARD (nothing else is): the specific failure reason on
+       the payment panel is ga-117's (EasyPaisa insufficient balance, masked
+       wallet 0345 ••• 1190) and the timeout rail is ga-116's; the request
+       timestamps ("sent Sat 1 Aug", "about 18 hours left") are gw-021's
+       today = Sat 1 Aug 2026 applied to ga-065's shipped 24-hour host-response
+       window. The window is a product rule from ga-061 / ga-065, not an SLA.
+
+     DELIBERATELY NOT CARRIED FORWARD from the app twin: ga-065's line "Most
+       hosts reply well before the window closes." It is an unverifiable claim
+       about host behaviour with no data behind it, which SEO-RULES §5 does not
+       permit on web. Replaced with the plain fact — she has until the window
+       closes, and we will tell you the moment she answers.
+
+     REPOSITIONED 2026-07-26 (REPOSITIONING.md, founder decision — the record of
+       what changed, kept so a reader of the old card can see the delta).
+       Two changes, both small on this card and both load-bearing:
+         · MONEY VOCABULARY. The held-in-trust line on the two step-4 panels now
+           reads "held in trust" and links "How your payment is held" at the
+           registry's /help/payments/how-money-is-held. The structure behind it
+           is unchanged, and the pending panel still carries NO such line at
+           all, because nothing is held there.
+         · THE ALTERNATIVE-STAY ROW on the declined panel used to carry "Halal
+           kitchen" as a listing attribute. That attribute is retired from the
+           product — the surviving lexicon is no-alcohol, backup-power,
+           women-only, family-friendly — so the row now reads "Backup power",
+           which is the on-message one and the fact a guest looking at an
+           Islamabad August stay actually wants. The second row's "Family-only"
+           survives untouched.
+       No §5 claim on this card changes, and claim 6 (halal kitchen, prayer
+       space, Qibla) is RETIRED and appears nowhere here.
+
+     CLAIMS: SEO-RULES §5 registry only, verbatim — #1 (CNIC/NADRA Verisys) and
+       #9 (transparent fees and tax). No SLA, no response time, no host phone
+       number, no ratings, no review prompt, no counts, no scarcity.
+
+     CARD CONVENTION: panel 1 (light, pending) is the authoritative semantic
+       page — one h1, real landmarks. Panels 2–6 are variants and renderings;
+       the dark, Urdu/RTL and mobile panels are aria-hidden and carry no
+       headings or landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role.
+     Copied verbatim from gw-021-reserve.html (CHECKOUT-SHELL §9).
+     No raw hex outside this block.
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-floating:0 2px 6px 0 rgba(16,25,27,.08),0 6px 16px 0 rgba(16,25,27,.12);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-floating:0 2px 6px 0 rgba(0,0,0,.4),0 6px 16px 0 rgba(0,0,0,.36);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.mob { max-width:390px; margin:0 auto; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* ---- reduced checkout header (CHECKOUT-SHELL §2) ---- */
+  .co-header { display:flex; align-items:center; gap:16px; height:64px; padding:0 28px; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; z-index:2; }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hspacer { flex:1; }
+  .securenote { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); white-space:nowrap; }
+  .securenote svg { width:15px; height:15px; flex:none; }
+  .langsw { display:inline-flex; align-items:stretch; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { border:none; background:transparent; font-family:inherit; font-size:13px; line-height:1; padding:7px 13px; color:var(--text-secondary); cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:14px; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current="page"] { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .exitlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
+
+  /* ---- page frame ---- */
+  .co-main { display:block; background:var(--bg-canvas); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+  .backrow { padding:20px 0 0; }
+  .backlink { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .backlink svg { width:15px; height:15px; flex:none; }
+  .rtl .backlink svg { transform:scaleX(-1); }
+  .pagehead { padding:20px 0 22px; }
+  .pagehead h1 { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .pagehead .psub { font-size:16px; color:var(--text-secondary); margin-top:8px; max-width:56ch; }
+  .pagehead .psub b { color:var(--text-primary); font-weight:600; }
+  .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+
+  /* ---- the two-column shell ---- */
+  .cols2 { display:grid; grid-template-columns:minmax(0,1fr) 348px; gap:48px; align-items:start; border-top:1px solid var(--border-hairline); padding-bottom:8px; }
+  .lmain { padding-top:4px; }
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); }
+  .fsec:first-child { border-top:none; padding-top:24px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- stepper: the locked 4 named circles. Ships ONLY on the two step-4
+         states (payment failed, wallet return timeout) — RULING 1 ---- */
+  .stepblk { padding:0 0 26px; }
+  .steps { display:flex; align-items:flex-start; list-style:none; max-width:440px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:13px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .scirc { width:28px; height:28px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .scirc svg { width:14px; height:14px; }
+  .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:8px; letter-spacing:.02em; }
+  .steps li.done .scirc { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .scirc { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+  .scap { font-size:13px; color:var(--text-secondary); margin-top:14px; }
+  .scap b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- POST-FLOW STATUS BLOCK — the stepper's slot and geometry (RULING 1) ---- */
+  .outcome { padding:0 0 26px; }
+  .ostat { display:inline-flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .ostat svg { width:19px; height:19px; flex:none; color:var(--text-secondary); }
+  .ocap { font-size:13px; color:var(--text-secondary); margin-top:10px; max-width:62ch; line-height:1.6; }
+  .ocap b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- facts <dl>: the §5 form-group anatomy, hairline-divided rows ---- */
+  .frows { margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); max-width:520px; }
+  .frow { display:flex; align-items:baseline; gap:16px; padding:12px 16px; border-top:1px solid var(--border-hairline); }
+  .frow:first-child { border-top:none; }
+  .fdt { flex:none; width:132px; max-width:40%; font-size:13px; color:var(--text-secondary); }
+  .fdd { flex:1; min-width:0; font-size:15px; color:var(--text-primary); }
+  .fdd b { font-weight:600; }
+  .fdd .fsub { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; }
+
+  /* ---- action / outcome rows: the same anatomy as .frows ---- */
+  .alist { list-style:none; margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); max-width:520px; }
+  .alist li { border-top:1px solid var(--border-hairline); }
+  .alist li:first-child { border-top:none; }
+  .arow { display:flex; align-items:center; gap:14px; padding:13px 16px; text-decoration:none; min-height:64px; }
+  .aic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-raised); color:var(--text-secondary); }
+  .aic svg { width:19px; height:19px; }
+  .abody { flex:1; min-width:0; }
+  .at { display:block; font-size:15px; font-weight:500; color:var(--text-primary); }
+  .as { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+  .achev { flex:none; color:var(--text-tertiary); display:flex; }
+  .achev svg { width:18px; height:18px; }
+  .rtl .achev svg { transform:scaleX(-1); }
+  /* retry-the-same-rail row: a refresh glyph, never a chevron (ga-117) */
+  .arow.same .achev svg { transform:none; }
+  .arow.same .at { font-weight:600; }
+  .rtl .arow.same .achev svg { transform:none; }
+
+  /* ---- alternatives: content in open space, no box, no border (TASTE §1) ---- */
+  .altlist { list-style:none; margin-top:8px; max-width:520px; }
+  .altlist li { border-top:1px solid var(--border-hairline); }
+  .altlist li:first-child { border-top:none; }
+  .altrow { display:flex; align-items:center; gap:14px; padding:14px 0; text-decoration:none; }
+  .altthumb { width:72px; height:72px; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .altthumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .altb { flex:1; min-width:0; }
+  .altt { display:block; font-size:16px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .altmeta { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .altprice { display:block; font-size:14px; color:var(--text-primary); margin-top:6px; }
+  .altprice b { font-weight:600; }
+
+  /* ---- secondary action: TASTE §5 gray-fill button ---- */
+  .acts { display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-top:18px; max-width:520px; }
+  .gbtn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .gbtn:active { transform:scale(0.98); }
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+  .inlink[disabled] { color:var(--text-disabled); text-decoration:none; cursor:default; }
+
+  /* ---- reassurance line under a section (icon + text in open space) ---- */
+  .ghint { display:flex; align-items:flex-start; gap:10px; margin-top:16px; max-width:62ch; font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:16px; height:16px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+  .ghint a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- page-level banner: warning by default, error + info modifiers ---- */
+  .banner { display:flex; align-items:flex-start; gap:11px; margin:20px 0 0; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner svg { width:18px; height:18px; color:var(--warning-fg); flex:none; margin-top:2px; }
+  .banner p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .banner p b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+  .banner.error { border-color:var(--error-border); background:var(--error-bg); }
+  .banner.error svg { color:var(--error-fg); }
+  .banner.info { border-color:var(--info-border); background:var(--info-bg); }
+  .banner.info svg { color:var(--info-fg); }
+
+  /* ---- the summary rail (CHECKOUT-SHELL §4) ---- */
+  .railwrap { position:sticky; top:24px; padding:24px 0 0; }
+  .railcard { border:1px solid var(--border-default); border-radius:var(--radius-xl); background:var(--bg-canvas); box-shadow:var(--el-floating); padding:20px; }
+  .ident { display:flex; gap:12px; align-items:center; }
+  .thumb { width:56px; height:56px; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .iname { display:block; font-size:16px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .iarea { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .railrule { height:1px; background:var(--border-hairline); margin:16px 0; }
+  .sumrow { display:flex; align-items:baseline; gap:12px; }
+  .sumrow + .sumrow { margin-top:14px; }
+  .sumrow .sbody { flex:1; min-width:0; }
+  .overline { display:block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sval { display:block; font-size:14px; color:var(--text-primary); margin-top:4px; }
+  .sval.empty { color:var(--text-secondary); }
+  .pline { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:14px; color:var(--text-secondary); }
+  .pline + .pline { margin-top:12px; }
+  .pline .pamt { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .strip { margin-top:14px; padding:11px 13px; border-radius:var(--radius-md); background:var(--bg-raised); font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .strip b { color:var(--text-primary); font-weight:600; }
+  .striplab { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:3px; }
+  .fsec .strip { margin-top:16px; max-width:520px; }
+  .cta { display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; margin-top:16px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .cta:active { transform:scale(0.98); }
+  .cta[disabled], .cta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; transform:none; }
+  .ctanote { font-size:13px; color:var(--text-secondary); text-align:center; margin-top:11px; line-height:1.5; }
+  .trust { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:12px; }
+  .tline { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text-secondary); line-height:1.55; }
+  .tline svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .tline.verified svg { color:var(--int-primary); }
+  .tline b { color:var(--text-primary); font-weight:600; }
+  .tline a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- reduced footer (CHECKOUT-SHELL §2) ---- */
+  .co-footer { background:var(--bg-raised); border-top:1px solid var(--border-hairline); padding:22px 28px; margin-top:16px; }
+  .fbar { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; font-size:13px; color:var(--text-secondary); }
+  .flegal { display:flex; gap:14px 20px; flex-wrap:wrap; }
+  .flegal a { color:var(--text-primary); text-decoration:none; }
+  .flegal a:hover { color:var(--text-primary); text-decoration:underline; }
+
+  /* ---- mobile collapse (CHECKOUT-SHELL §4) ---- */
+  .mobstrip { display:flex; gap:11px; align-items:center; padding:12px 0 0; }
+  .mobbar { position:sticky; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 20px 14px; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); }
+  .mobsum { display:flex; flex-direction:column; }
+  .mobsum .ms-t { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .mobsum .ms-s { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+  .mobbar .cta { width:auto; margin-top:0; padding:0 22px; flex:none; }
+  .mob .wrap { padding:0 20px; }
+  .mob .cols2 { grid-template-columns:1fr; gap:0; }
+  .mob .railwrap { display:none; }
+  .mob .co-header { padding:0 20px; gap:12px; }
+  .mob .steps { max-width:none; }
+  .mob .frows, .mob .alist, .mob .altlist, .mob .acts, .mob .fsec .strip { max-width:none; }
+  .mob .fdt { width:112px; }
+  .mob .pagehead h1, .mob .ptitle { font-size:22px; }
+
+  /* ---- interaction: press feedback + hover gating + reduced motion ---- */
+  .arow, .altrow, .gbtn, .exitlink, .backlink, .inlink { transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  @media (hover:hover) and (pointer:fine) {
+    .cta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .gbtn:hover { background:var(--bg-sunken); }
+    a.arow:hover { background:var(--bg-raised); }
+    a.altrow:hover .altt { text-decoration:underline; text-underline-offset:3px; }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .cta, .arow, .altrow, .gbtn, .exitlink, .backlink, .inlink { transition-duration:var(--dur-instant); }
+    .cta:active, .gbtn:active { transform:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl { direction:rtl; }
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+  .rtl .ocap.nastaliq, .rtl .as.nastaliq, .rtl .ghint.nastaliq, .rtl .strip.nastaliq, .rtl .altmeta.nastaliq { line-height:1.9; }
+
+  /* ---- real viewport collapse (matches the .mob panel exactly) ---- */
+  @media (max-width:1080px) {
+    .cols2 { grid-template-columns:1fr; gap:0; }
+    .railwrap { position:static; padding:0 0 28px; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">GW-027 — Booking states · pending, declined, payment failed (web checkout)</div>
+    <p>The three outcomes that are not success, plus the wallet handoff that does not come back cleanly. Routes <code>/book/is-f7-2bed/status</code> (pending, declined — post-flow) and <code>/book/is-f7-2bed/confirm</code> (payment failed, return timeout — still step 4), all <strong>noindex, follow</strong>. Web twin of <code>ga-065</code>, <code>ga-066</code>, <code>ga-117</code> and <code>ga-116</code>. The stepper ruling from <code>gw-026</code> is applied to the <em>state</em>, not the file: <strong>pending and declined ship no stepper; a failed payment keeps the step-4 stepper</strong>, because the guest never left checkout. The rail survives on all four. Panel 1 is the authoritative semantic page; panels 2–6 are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL 1 · LIGHT · PENDING (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">Light · pending — the authoritative page (one h1, real landmarks) · no stepper · the guest has not been charged, and the page says so three times</div>
+
+      <header class="co-header">
+        <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+        <span class="hspacer"></span>
+        <span class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Your details are encrypted
+        </span>
+        <div class="langsw" role="group" aria-label="Language">
+          <a href="/book/is-f7-2bed/status" aria-current="page" lang="en">EN</a>
+          <a class="urdu" href="/ur/book/is-f7-2bed/status" lang="ur">اردو</a>
+        </div>
+        <a class="exitlink" href="/trips/requests">Done</a>
+      </header>
+
+      <main class="co-main">
+        <div class="wrap">
+          <div class="backrow">
+            <a class="backlink" href="/trips/requests">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              Back to your requests
+            </a>
+          </div>
+
+          <div class="pagehead">
+            <h1>Waiting for Ayesha to reply</h1>
+            <p class="psub">Your request is with <b>Ayesha</b> now. Nothing is charged yet — you'll pay only if she accepts.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <!-- POST-FLOW STATUS BLOCK — the stepper's slot, no stepper (RULING 1) -->
+              <div class="outcome">
+                <span class="ostat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                  Awaiting your host
+                </span>
+                <p class="ocap">Request sent Sat <span class="num">1</span> Aug <span class="num">2026</span> · <b>nothing has been charged</b>. About <b><span class="num">18</span> hours</b> are left in Ayesha's <span class="num">24</span>-hour window. We'll tell you the moment she answers — until then there is nothing for you to do.</p>
+              </div>
+
+              <!-- YOUR REQUEST -->
+              <section class="fsec" aria-labelledby="req-h">
+                <h2 id="req-h">Your request</h2>
+                <p class="sec-sub">These are the details Ayesha is looking at.</p>
+
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Stay</dt><dd class="fdd">Margalla View Apartment<span class="fsub">Entire apartment · F-<span class="num">7</span>, Islamabad</span></dd></div>
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span><span class="fsub"><span class="num">3</span> nights</span></dd></div>
+                  <div class="frow"><dt class="fdt">Guests</dt><dd class="fdd"><span class="num">6</span> guests<span class="fsub"><span class="num">4</span> adults, <span class="num">2</span> children · Family</span></dd></div>
+                  <div class="frow"><dt class="fdt">Host</dt><dd class="fdd">Ayesha</dd></div>
+                  <div class="frow"><dt class="fdt">If she accepts</dt><dd class="fdd"><b class="num">PKR 42,350</b><span class="fsub">Not charged yet · your price is held at this figure</span></dd></div>
+                </dl>
+              </section>
+
+              <!-- TWO WAYS THIS CAN GO -->
+              <section class="fsec" aria-labelledby="branch-h">
+                <h2 id="branch-h">Two ways this can go</h2>
+                <p class="sec-sub">Whichever way she answers, there is a next step waiting. Neither one charges you now.</p>
+
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                      <span class="abody"><span class="at">She accepts — then you confirm and pay</span><span class="as">Your dates and your price stay held until then. Payment is the last step, and the message thread opens once it goes through.</span></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 6l6 6-6 6"/></svg></span>
+                      <span class="abody"><span class="at">She can't this time — then nothing is charged</span><span class="as">We'll show you stays that are free for Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug, with your guests already filled in.</span></span>
+                    </span>
+                  </li>
+                </ul>
+              </section>
+
+              <!-- IF YOU CHANGE YOUR MIND -->
+              <section class="fsec" aria-labelledby="cancel-h">
+                <h2 id="cancel-h">If you change your mind</h2>
+                <p class="sec-sub">You can withdraw this request at any point before Ayesha replies. It costs nothing, because nothing has been taken.</p>
+                <div class="acts">
+                  <a class="gbtn" href="/trips/requests/is-f7-2bed-aug2026/cancel">Cancel this request</a>
+                  <a class="inlink" href="/stays-in-islamabad">Keep browsing stays</a>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- SUMMARY RAIL — §4 order kept literally; the "Change" slot resolves
+                 to nothing because a sent request cannot be edited (RULING 2) -->
+            <aside class="railwrap" aria-label="Request summary">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span>
+                    <span class="iname">Margalla View Apartment</span>
+                    <span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span>
+                  </span>
+                </div>
+
+                <div class="railrule"></div>
+
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Dates</span>
+                    <span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span>
+                  </span>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Guests</span>
+                    <span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span>
+                  </span>
+                </div>
+
+                <div class="railrule"></div>
+
+                <p class="pline">
+                  <span>If Ayesha accepts</span>
+                  <span class="pamt num">PKR 42,350</span>
+                </p>
+                <p class="strip"><b>Nothing has been charged.</b> A request never takes payment — you pay after your host accepts, and only then.</p>
+
+                <a class="cta" href="/trips/requests/is-f7-2bed-aug2026">View your request</a>
+                <p class="ctanote">You can cancel any time before she replies.</p>
+
+                <div class="trust">
+                  <span class="tline verified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg>
+                    <span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span>
+                  </span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
+
+      <footer class="co-footer">
+        <h2 class="sr-only">Footer</h2>
+        <div class="fbar">
+          <span>© <span class="num">2026</span> SalamStay</span>
+          <nav class="flegal" aria-label="Legal">
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/guest-refund-policy">Guest refund policy</a>
+            <a href="/help">Help center</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ================= PANEL 2 · LIGHT · DECLINED ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · declined — the title names availability, never the guest · a neutral glyph, no alarm hue, nothing red · real alternatives with real prices · the money slot reads PKR 0</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/status" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/status">اردو</a></div>
+        <span class="exitlink">Done</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your requests</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle">This stay isn't available for your dates</div>
+            <p class="psub">Ayesha couldn't take your booking for <b>Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug</b>. It happens sometimes — this is about the dates, not about you.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M9.5 14.5l5 5M14.5 14.5l-5 5"/></svg>
+                  Not available for your dates
+                </span>
+                <p class="ocap"><b>Nothing was charged.</b> A request never takes payment, so there is nothing to refund. Your verification and your profile are unaffected, and you can request this stay again for other dates whenever you like.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">A note from Ayesha</div>
+                <p class="sec-sub">Hosts don't have to explain a decline. Ayesha left this.</p>
+                <p class="strip"><span class="striplab">Ayesha</span>“These dates are already booked — you'd be very welcome another time.”</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Stays free for Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug</div>
+                <p class="sec-sub">Available for your dates, for <b><span class="num">6</span> guests</b>, in the same part of Islamabad.</p>
+
+                <ul class="altlist">
+                  <li>
+                    <a class="altrow" href="/stays-in-islamabad/f-7/cedar-lodge-f7">
+                      <span class="altthumb"><img src="../../assets/photos/is-f7-living.jpg" alt="Living room of Cedar Lodge, F-7 Markaz, Islamabad" data-prod-loading="lazy" /></span>
+                      <span class="altb">
+                        <span class="altt">Cedar Lodge, F-<span class="num">7</span> Markaz</span>
+                        <span class="altmeta">Entire home · <span class="num">6</span> guests · Backup power</span>
+                        <span class="altprice"><b class="num">PKR 14,200</b> per night</span>
+                      </span>
+                      <span class="achev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="altrow" href="/stays-in-islamabad/g-6/g6-family-house">
+                      <span class="altthumb"><img src="../../assets/photos/is-f7-dining.jpg" alt="Dining area of Sector G-6 Family House, Islamabad" data-prod-loading="lazy" /></span>
+                      <span class="altb">
+                        <span class="altt">Sector G-<span class="num">6</span> Family House</span>
+                        <span class="altmeta">Entire home · <span class="num">5</span> guests · Family-only</span>
+                        <span class="altprice"><b class="num">PKR 8,900</b> per night</span>
+                      </span>
+                      <span class="achev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Or come back to this one</div>
+                <p class="sec-sub">Ayesha's calendar shows which nights are open. A decline for one set of dates does not close the door on another.</p>
+                <div class="acts">
+                  <span class="gbtn">Try different dates for this stay</span>
+                  <span class="inlink">See Ayesha's open nights</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates you asked for</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span>Charged</span><span class="pamt num">PKR 0</span></p>
+                <p class="strip">A request never takes payment, so there is <b>nothing to refund</b> and nothing to chase.</p>
+                <span class="cta">Explore stays in Islamabad</span>
+                <p class="ctanote">Your dates and guests are kept, so you won't type them again.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 3 · LIGHT · PAYMENT FAILED (STILL STEP 4) ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · payment failed — the stepper STAYS at step <span class="num">4</span>: nothing was deducted, no booking exists, the guest never left checkout · error register, specific recoverable reason, retry the same rail plus real alternates</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirm" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirm">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to payment methods</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle">Your payment didn't go through</div>
+            <p class="psub">Nothing was deducted. Your dates and your price are still held while you try again.</p>
+          </div>
+
+          <div class="banner error" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            <span>
+              <p><b>Not enough balance in your EasyPaisa wallet.</b> EasyPaisa turned down the payment for <b><span class="num">PKR 42,350</span></b> — the wallet balance was short. <b>Nothing was deducted.</b> Top up and try again, or pay another way. Your price and dates are still held.</p>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <!-- THE STEPPER STAYS — step 4 of 4, Confirm current (RULING 1) -->
+              <div class="stepblk">
+                <ol class="steps" aria-label="Checkout progress">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+                  <li class="cur" aria-current="step"><span class="scirc num">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">4</span> of <span class="num">4</span> · Confirm</b>. You are still on this step — the booking is not made until a payment goes through.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Try EasyPaisa again</div>
+                <p class="sec-sub">Top up the wallet, then retry. The amount and the account are unchanged.</p>
+                <ul class="alist">
+                  <li>
+                    <span class="arow same">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 6h4M12 17h.01"/></svg></span>
+                      <span class="abody"><span class="at">EasyPaisa · the same wallet</span><span class="as"><span class="num">0345</span> ••• <span class="num">1190</span> — top up, then retry</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Or pay another way</div>
+                <p class="sec-sub">Switching method does not change the price, and it does not start the checkout again.</p>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                      <span class="abody"><span class="at">Debit or credit card</span><span class="as">HBL, Meezan, or any bank card</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 6h4M12 17h.01"/></svg></span>
+                      <span class="abody"><span class="at">JazzCash</span><span class="as">Approve in the JazzCash app</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5M5 10v8M19 10v8M9 10v8M15 10v8M3 21h18"/></svg></span>
+                      <span class="abody"><span class="at">Raast</span><span class="as">Instant bank transfer, no fee</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span>Whichever you choose, <b>the failed attempt is cancelled first</b>, so a payment can never be taken twice for these nights.</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span>Amount due · held for you</span><span class="pamt num">PKR 42,350</span></p>
+                <p class="strip">Your dates and your price are held while you try again. <b>Nothing is charged until a payment goes through.</b></p>
+                <span class="cta">Try EasyPaisa again</span>
+                <p class="ctanote">You aren't charged until a payment goes through.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 4 · DARK · WALLET RETURN TIMED OUT (STILL STEP 4) ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">Dark · wallet handoff that didn't come back cleanly (ga-<span class="num">116</span>) — warning register, not error: an unfinished answer is not a failure · the booking is held and the double-charge fear is answered directly</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirm" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirm">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to payment methods</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle">We couldn't confirm in time</div>
+            <p class="psub">EasyPaisa hasn't sent us a final answer yet. Your booking is still held, and your money is not lost either way.</p>
+          </div>
+
+          <div class="banner" role="status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+            <span>
+              <p><b>No final answer yet.</b> This is usually a slow network, <b>not a problem with your money</b>. Your booking is still held — check again in a moment.</p>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Price</span></li>
+                  <li class="cur"><span class="scirc num">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">4</span> of <span class="num">4</span> · Confirm</b>. Still on this step while we reconcile with EasyPaisa.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Held — nothing lost</div>
+                <p class="sec-sub">Whatever EasyPaisa eventually tells us, one of exactly two things is true, and neither of them costs you anything extra.</p>
+
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span><span class="fsub">Held, not released</span></dd></div>
+                  <div class="frow"><dt class="fdt">Price</dt><dd class="fdd"><b class="num">PKR 42,350</b><span class="fsub">Held at this figure while we reconcile</span></dd></div>
+                </dl>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                  <span>If EasyPaisa <b>did</b> take the payment, checking again matches it to this booking and confirms it — <b>you won't be charged twice</b>. If it didn't, nothing was deducted.</span>
+                </p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What you can do now</div>
+                <ul class="alist">
+                  <li>
+                    <span class="arow same">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                      <span class="abody"><span class="at">Check again</span><span class="as">We ask EasyPaisa once more and confirm if the payment landed.</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 4v4h-4"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                      <span class="abody"><span class="at">Pay another way</span><span class="as">Pick a different method — we cancel this attempt first so it can't double up.</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+                <div class="acts">
+                  <span class="inlink">Still stuck? Contact support</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span>Amount due · held for you</span><span class="pamt num">PKR 42,350</span></p>
+                <p class="strip">Held while we reconcile with EasyPaisa. <b>You won't be charged twice</b>, and if the payment never landed, nothing was deducted.</p>
+                <span class="cta">Check again</span>
+                <p class="ctanote">You can leave this page — the booking stays held.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 5 · URDU / RTL · DECLINED ================= -->
+    <div class="doc rtl" aria-hidden="true" lang="ur" dir="rtl">
+      <div class="panel-tag" style="direction:ltr">Urdu · RTL — the declined state, because it is the one where a careless sentence does the most damage. Western digits inside <code>.num</code>, Urdu prose around them (Pass #31). The dignity lines and the two §5 claim strings reuse the corpus-established Urdu verbatim (ga-066 / ga-002 / gw-001 / gw-021); all other Urdu here is a direction demo and is human-translated for production.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>آپ کی معلومات محفوظ ہیں</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/status">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/status" aria-current="page">اردو</a></div>
+        <span class="exitlink nastaliq">مکمل</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>اپنی درخواستوں پر واپس</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle nastaliq">یہ قیام گاہ آپ کی تاریخوں کے لیے دستیاب نہیں</div>
+            <p class="psub nastaliq">عائشہ <b>جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست</b> کے لیے آپ کی بکنگ قبول نہ کر سکیں۔ ایسا کبھی کبھار ہوتا ہے — یہ تاریخوں کی بات ہے، آپ کی نہیں۔</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M9.5 14.5l5 5M14.5 14.5l-5 5"/></svg>
+                  آپ کی تاریخوں کے لیے دستیاب نہیں
+                </span>
+                <p class="ocap nastaliq"><b>کوئی رقم نہیں کٹی۔</b> درخواست کبھی ادائیگی نہیں لیتی، اس لیے واپسی کی کوئی بات نہیں۔ آپ کی تصدیق اور آپ کا پروفائل بالکل متاثر نہیں ہوا، اور آپ جب چاہیں دوسری تاریخوں کے لیے دوبارہ درخواست بھیج سکتے ہیں۔</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">میزبان کی طرف سے پیغام</div>
+                <p class="sec-sub nastaliq">میزبان کے لیے وجہ بتانا ضروری نہیں۔ عائشہ نے یہ لکھا ہے۔</p>
+                <p class="strip nastaliq"><span class="striplab nastaliq">عائشہ</span>”یہ تاریخیں پہلے سے بُک ہیں — کسی اور وقت آپ کا خیرمقدم ہے۔“</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست کے لیے دستیاب قیام گاہیں</div>
+                <p class="sec-sub nastaliq">آپ کی تاریخوں اور <b><span class="num">6</span> مہمانوں</b> کے لیے، اسلام آباد کے اسی حصے میں۔</p>
+
+                <ul class="altlist">
+                  <li>
+                    <span class="altrow">
+                      <span class="altthumb"><img src="../../assets/photos/is-f7-living.jpg" alt="سیڈر لاج، ایف-7 مرکز، اسلام آباد کا کمرہ" data-prod-loading="lazy" /></span>
+                      <span class="altb">
+                        <span class="altt">Cedar Lodge, F-<span class="num">7</span> Markaz</span>
+                        <span class="altmeta nastaliq">پورا گھر · <span class="num">6</span> مہمان · بیک اپ پاور</span>
+                        <span class="altprice nastaliq"><b class="num">PKR 14,200</b> فی رات</span>
+                      </span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="altrow">
+                      <span class="altthumb"><img src="../../assets/photos/is-f7-dining.jpg" alt="سیکٹر جی-6 فیملی ہاؤس، اسلام آباد کا کھانے کا حصہ" data-prod-loading="lazy" /></span>
+                      <span class="altb">
+                        <span class="altt">Sector G-<span class="num">6</span> Family House</span>
+                        <span class="altmeta nastaliq">پورا گھر · <span class="num">5</span> مہمان · صرف خاندان</span>
+                        <span class="altprice nastaliq"><b class="num">PKR 8,900</b> فی رات</span>
+                      </span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">یا اسی قیام گاہ پر واپس آئیں</div>
+                <p class="sec-sub nastaliq">عائشہ کے کیلنڈر میں کھلی راتیں نظر آتی ہیں۔ ایک بار انکار کا مطلب یہ نہیں کہ دروازہ بند ہے۔</p>
+                <div class="acts">
+                  <span class="gbtn nastaliq">اسی قیام گاہ کے لیے دوسری تاریخیں آزمائیں</span>
+                  <span class="inlink nastaliq">عائشہ کی کھلی راتیں دیکھیں</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname nastaliq">مارگلہ ویو اپارٹمنٹ</span><span class="iarea nastaliq">پورا اپارٹمنٹ · <span class="num">F-7</span>، اسلام آباد</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">مطلوبہ تاریخیں</span><span class="sval nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span></span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">مہمان</span><span class="sval nastaliq"><span class="num">6</span> مہمان · <span class="num">4</span> بالغ، <span class="num">2</span> بچے</span></span></div>
+                <div class="railrule"></div>
+                <p class="pline nastaliq"><span>وصول کی گئی رقم</span><span class="pamt num">PKR 0</span></p>
+                <p class="strip nastaliq">درخواست کبھی ادائیگی نہیں لیتی، اس لیے <b>واپسی کی کوئی بات نہیں</b> اور نہ ہی کچھ پیچھا کرنا ہے۔</p>
+                <span class="cta nastaliq">اسلام آباد میں قیام گاہیں دیکھیں</span>
+                <p class="ctanote nastaliq">آپ کی تاریخیں اور مہمان محفوظ ہیں، دوبارہ لکھنے کی ضرورت نہیں۔</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span class="nastaliq"><b>مہمان اور میزبان دونوں کی تصدیق نادرا ویری سِس کے ذریعے کی جاتی ہے</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span class="nastaliq"><b>شفاف فیس اور ٹیکس — بکنگ یا کمائی سے پہلے ہر روپیہ ظاہر۔</b></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 6 · MOBILE 390 · PENDING ================= -->
+    <div class="doc mob" aria-hidden="true">
+      <div class="panel-tag">Mobile <span class="num">390</span> · pending — rail leaves the flow; identity folds to a top strip; the conditional amount and the one CTA move to a hairline-topped sticky bottom bar (no shadow, ever)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="langsw"><a href="/book/is-f7-2bed/status" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/status">اردو</a></div>
+        <span class="exitlink">Done</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your requests</span></div>
+
+          <div class="mobstrip">
+            <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+            <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+          </div>
+
+          <div class="pagehead">
+            <div class="ptitle">Waiting for Ayesha to reply</div>
+            <p class="psub">Nothing is charged yet — you'll pay only if she accepts.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                  Awaiting your host
+                </span>
+                <p class="ocap">About <span class="num">18</span> hours left in the <span class="num">24</span>-hour window. <b>Nothing has been charged.</b></p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your request</div>
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug<span class="fsub"><span class="num">3</span> nights</span></dd></div>
+                  <div class="frow"><dt class="fdt">Guests</dt><dd class="fdd"><span class="num">6</span> guests</dd></div>
+                  <div class="frow"><dt class="fdt">If she accepts</dt><dd class="fdd"><b class="num">PKR 42,350</b><span class="fsub">Not charged yet</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Two ways this can go</div>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                      <span class="abody"><span class="at">She accepts — you confirm and pay</span><span class="as">Your dates and price stay held until then.</span></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M13 6l6 6-6 6"/></svg></span>
+                      <span class="abody"><span class="at">She can't — nothing is charged</span><span class="as">We'll show stays free for your dates.</span></span>
+                    </span>
+                  </li>
+                </ul>
+                <p class="strip"><b>Nothing has been charged.</b> You pay after your host accepts, and only then.</p>
+              </div>
+            </div>
+            <div class="railwrap"></div>
+          </div>
+        </div>
+
+        <div class="mobbar">
+          <span class="mobsum">
+            <span class="ms-t num">PKR 42,350</span>
+            <span class="ms-s">if accepted · not charged</span>
+          </span>
+          <span class="cta">View request</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

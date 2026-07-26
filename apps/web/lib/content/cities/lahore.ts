@@ -24,6 +24,15 @@ import type { CityContent } from "./types";
  * Deliberate absences, all load-bearing:
  * - NO area links. The registry carries no `/stays-in-lahore/{area}` route, and
  *   a content file never mints one (G37/G5). The tiles are names and lines.
+ * - NO listing links, and so NO ItemList. Every stay here carries
+ *   `href: null`: the registry holds no `/stays-in-lahore/{area}/{listing}`
+ *   route to point at, and the value this replaced was this page's own path —
+ *   nine cards linking to the page they sit on, and nine schema entries whose
+ *   `url` was this page's canonical. Both were invented (SEO-RULES §1.5), and
+ *   minting them is the doorway pattern §6 forbids: instances are earned, not
+ *   minted. The tiles are photographs, names and lines until the listing
+ *   pages exist; `CityLandingPage` then emits no ItemList for this city at
+ *   all, rather than an empty one.
  * - NO price figure, NO ratings, NO review counts, NO listing tallies.
  * - NO breadcrumb. A top-level city page is the head of its trail (§2/§3.2).
  * - NO verification FAQ: verification is a nationwide product fact, and
@@ -35,7 +44,7 @@ export const lahore: CityContent = {
   path: "/stays-in-lahore",
   name: "Lahore",
   metaDescription:
-    "Verified stays in Gulberg, Model Town, Johar Town, DHA and the Walled City, with halal-kitchen, no-alcohol and women-only filters across Lahore.",
+    "Verified stays in Gulberg, Model Town, Johar Town, DHA and the Walled City, with no-alcohol, women-only and backup-power filters across Lahore.",
 
   h1: "Stays in Lahore",
   /** Fifteen words. Runs the city from its modern commercial side to its
@@ -53,7 +62,7 @@ export const lahore: CityContent = {
     heading: "Featured stays in Lahore",
     items: [
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Studio near Liberty Market",
         areaPin: "Gulberg III",
         location: "Gulberg III, Lahore",
@@ -62,61 +71,61 @@ export const lahore: CityContent = {
         schemaName: "Studio near Liberty Market — Gulberg III, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Quiet 1-bed in Model Town",
         areaPin: "Model Town",
         location: "Model Town, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][1],
-        attributes: ["halal-kitchen", "no-alcohol"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Quiet 1-bed in Model Town — Model Town, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Family room near the Walled City",
         areaPin: "Walled City",
         location: "Walled City, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][2],
-        attributes: ["family-friendly", "prayer-space"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Family room near the Walled City — Walled City, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Whole portion in Johar Town",
         areaPin: "Johar Town",
         location: "Johar Town, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][3],
-        attributes: ["halal-kitchen", "backup-power"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Whole portion in Johar Town — Johar Town, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Balcony flat in Garden Town",
         areaPin: "Garden Town",
         location: "Garden Town, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][4],
-        attributes: ["qibla-marked", "halal-kitchen"],
+        attributes: ["no-alcohol", "family-friendly"],
         schemaName: "Balcony flat in Garden Town — Garden Town, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Courtyard house in DHA Phase 5",
         areaPin: "DHA Phase 5",
         location: "DHA Phase 5, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][5],
-        attributes: ["family-friendly", "halal-kitchen"],
+        attributes: ["backup-power", "family-friendly"],
         schemaName: "Courtyard house in DHA Phase 5 — DHA Phase 5, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Bright flat in Askari 11",
         areaPin: "Askari 11",
         location: "Askari 11, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][6],
-        attributes: ["backup-power", "no-alcohol"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Bright flat in Askari 11 — Askari 11, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Marble-floor room in Samanabad",
         areaPin: "Samanabad",
         location: "Samanabad, Lahore",
@@ -125,12 +134,12 @@ export const lahore: CityContent = {
         schemaName: "Marble-floor room in Samanabad — Samanabad, Lahore",
       },
       {
-        href: "/stays-in-lahore",
+        href: null,
         title: "Whole house in Allama Iqbal Town",
         areaPin: "Allama Iqbal Town",
         location: "Allama Iqbal Town, Lahore",
         image: CITY_STAY_CARDS["/stays-in-lahore"][8],
-        attributes: ["halal-kitchen", "prayer-space"],
+        attributes: ["family-friendly", "backup-power"],
         schemaName: "Whole house in Allama Iqbal Town — Allama Iqbal Town, Lahore",
       },
     ],
@@ -185,11 +194,9 @@ export const lahore: CityContent = {
   filters: {
     heading: "Popular filters in Lahore",
     items: [
-      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=lahore&no_alcohol=1" },
-      { icon: "halal-kitchen", label: "Halal kitchen", href: "/search?city=lahore&halal_kitchen=1" },
-      { icon: "women-only", label: "Women-only stays", href: "/search?city=lahore&women_only=1" },
-      { icon: "prayer-space", label: "Prayer space", href: "/search?city=lahore&prayer_space=1" },
       { icon: "backup-power", label: "Backup power", href: "/search?city=lahore&backup_power=1" },
+      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=lahore&no_alcohol=1" },
+      { icon: "women-only", label: "Women-only stays", href: "/search?city=lahore&women_only=1" },
       { icon: "family-friendly", label: "Family-friendly", href: "/search?city=lahore&family=1" },
     ],
   },
@@ -244,7 +251,7 @@ export const lahore: CityContent = {
         heading: "Trust & hosting",
         links: [
           { href: "/trust-and-safety", label: "Trust & safety" },
-          { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+          { href: "/verification", label: "How verification works" },
           { href: "/become-a-host", label: "Become a host in Lahore" },
         ],
       },

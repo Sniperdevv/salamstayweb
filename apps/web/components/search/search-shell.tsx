@@ -112,8 +112,13 @@ export function SearchShell({ city, cityName, stays, browse }: SearchShellProps)
 
         {/* SEO-RULES §5 claim 4, verbatim, then the reason it is not a chip.
             Gray glyph, ink-free of brand: §2 spends green on four roles and a
-            standing fact about every listing is not one of them. */}
-        <p className="mt-4 flex items-center gap-2 text-caption text-secondary">
+            standing fact about every listing is not one of them.
+
+            `label` (13), not `caption` (12) — §7's ladder bottoms out at 13. A
+            §5 claim is the last string on the page to set as fine print: it is
+            the one line here that has to be read exactly as written. Copy
+            untouched, size only. */}
+        <p className="mt-4 flex items-center gap-2 text-label text-secondary">
           <NoAlcoholIcon className="size-4 shrink-0" />
           No-alcohol listings by default. No filter needed.
         </p>
@@ -147,8 +152,11 @@ export function SearchShell({ city, cityName, stays, browse }: SearchShellProps)
             {results.length > 0 ? (
               <>
                 <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
+                  {/* Keyed on the frame, not the route: `href` is null for any
+                      home with no listing page yet, and no two results share a
+                      frame (`verify-images.mjs`). */}
                   {results.map((stay, i) => (
-                    <li key={`${stay.href}-${stay.image}`}>
+                    <li key={stay.image}>
                       {/* `newChip` off: it is honest on every listing we have,
                           so drawing it here would be nine identical chips
                           saying nothing about the difference between nine

@@ -135,9 +135,7 @@ export const privacyPage: LegalPageContent = {
               header: ["Payment details"],
               cells: [
                 [
-                  "To take payment in Pakistani Rupees and hold it in ",
-                  term("amanah"),
-                  " until you check in.",
+                  "To take payment in Pakistani Rupees and hold it in trust until you check in.",
                 ],
                 [
                   "The rail you chose — HBL, JazzCash, EasyPaisa, Raast or Stripe — and Meezan Bank, which holds the custody account.",
@@ -518,7 +516,7 @@ export const privacyPage: LegalPageContent = {
       ", the ",
       link("/legal/cookie-policy", "cookie policy"),
       ", or how verification works in ",
-      link("/shariah-policy", "our Shariah-respectful approach"),
+      link("/verification", "verification and house rules"),
       ".",
     ],
     ctaLabel: "Contact support",

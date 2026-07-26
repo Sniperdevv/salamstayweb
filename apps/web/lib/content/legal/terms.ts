@@ -22,7 +22,7 @@ import type { LegalPageContent } from "./types";
 export const termsPage: LegalPageContent = {
   path: "/legal/terms",
   metaDescription:
-    "The terms behind a SalamStay account: who can join, how verification works, how payments are held in amanah until check-in, and how to reach us.",
+    "The terms behind a SalamStay account: who can join, how verification works, how payments are held in trust until check-in, and how to reach us.",
   h1: "Terms of Service",
   crumbs: [
     { name: "Home", path: "/" },
@@ -52,7 +52,7 @@ export const termsPage: LegalPageContent = {
           kind: "p",
           text: [
             "SalamStay is not the owner of the homes on it. Each stay is a booking between you and a host, arranged through SalamStay. ",
-            bold("SalamStay acts as your booking agent (", term("wakala"), ")"),
+            bold("SalamStay acts as your booking agent"),
             " and charges a fixed, disclosed commission for arranging and safeguarding your stay. It's a flat agency fee shown up front — not interest, and not a hidden markup on the host's price.",
           ],
         },
@@ -106,7 +106,7 @@ export const termsPage: LegalPageContent = {
           title: ["Children on a booking"],
           body: [
             "Children can travel with you on a stay. They don't hold accounts of their own, and a family booking may ask for a B-Form — see ",
-            link("/shariah-policy", "our Shariah-respectful approach"),
+            link("/verification", "verification and house rules"),
             " for which document applies to which booking type.",
           ],
         },
@@ -173,8 +173,8 @@ export const termsPage: LegalPageContent = {
           kind: "p",
           text: [
             "A booking is confirmed when the host accepts it and your payment is taken. Before you pay, you see the whole price: ",
-            bold("Transparent fees and tax — every rupee shown before you book or earn."),
-            " The same breakdown is shown to your host before they earn. Nothing is added afterwards.",
+            bold("Transparent fees and tax — every rupee shown before you book or earn"),
+            ". The same breakdown is shown to your host before they earn. Nothing is added afterwards.",
           ],
         },
         {
@@ -204,9 +204,7 @@ export const termsPage: LegalPageContent = {
         {
           kind: "p",
           text: [
-            "When you pay, your money doesn't go straight to the host. We hold it in ",
-            term("amanah"),
-            " — a trust — and release it ",
+            "When you pay, your money doesn't go straight to the host. We hold it in trust and release it ",
             bold("only after you've checked in"),
             ". It protects both sides: you know the host is paid once you've arrived, and the host knows the money is really there.",
           ],
@@ -219,7 +217,7 @@ export const termsPage: LegalPageContent = {
               body: ["Your payment leaves your card or wallet in Pakistani Rupees."],
             },
             {
-              title: ["Held in amanah"],
+              title: ["Held in trust"],
               body: [
                 "It sits in a custody account at Meezan Bank — not spent, not lent out, no interest earned on it.",
               ],

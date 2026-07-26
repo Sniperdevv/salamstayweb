@@ -3,6 +3,13 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { duration } from "@salamstay/design-tokens/motion";
+import {
+  CONSENT_RESET_EVENT,
+  clearConsent,
+  readConsent,
+  writeConsent,
+  type ConsentChoice,
+} from "@/lib/consent";
 import { btnSecondary, focusRing, inlineAction } from "./ui";
 
 /**
@@ -43,30 +50,14 @@ import { btnSecondary, focusRing, inlineAction } from "./ui";
  * RENDERING: nothing renders until the effect has read `localStorage`, so the
  * server HTML and the first client render agree (no hydration mismatch) and the
  * banner never appears in the initial HTML the SEO gates parse (G61).
+ *
+ * THE RECORD ITSELF LIVES IN `lib/consent.ts`. It used to be module-private
+ * here, which meant the one page whose job is disclosing what the reader chose
+ * had no way to read it and printed a fixed sentence instead. The key, the
+ * events and the reader are now shared, and `writeConsent` announces the write
+ * — this component closes on a choice and never re-reads, but the policy page
+ * is a sibling under the root layout with no way to know a button was pressed.
  */
-
-const STORAGE_KEY = "salamstay.cookie-consent";
-const RESET_EVENT = "salamstay:cookie-consent-reset";
-
-type Choice = "all" | "essential";
-
-/** Storage can throw (private mode, blocked cookies). A choice we cannot record is a choice we ask for again. */
-function readChoice(): Choice | null {
-  try {
-    const v = window.localStorage.getItem(STORAGE_KEY);
-    return v === "all" || v === "essential" ? v : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeChoice(choice: Choice): void {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, choice);
-  } catch {
-    /* Nothing to do: the banner will ask again next visit, which is the honest failure. */
-  }
-}
 
 /**
  * Exit duration. Read from the token rather than typed: the panel's exit is
@@ -81,11 +72,11 @@ export function ConsentBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (readChoice() === null) setOpen(true);
+    if (readConsent() === null) setOpen(true);
 
     const onReset = () => setOpen(true);
-    window.addEventListener(RESET_EVENT, onReset);
-    return () => window.removeEventListener(RESET_EVENT, onReset);
+    window.addEventListener(CONSENT_RESET_EVENT, onReset);
+    return () => window.removeEventListener(CONSENT_RESET_EVENT, onReset);
   }, []);
 
   /**
@@ -113,8 +104,8 @@ export function ConsentBanner() {
     };
   }, [open]);
 
-  const choose = useCallback((choice: Choice) => {
-    writeChoice(choice);
+  const choose = useCallback((choice: ConsentChoice) => {
+    writeConsent(choice);
     setVisible(false);
     window.setTimeout(() => setOpen(false), EXIT_MS);
   }, []);
@@ -220,6 +211,9 @@ export function ConsentBanner() {
  * choice and brings the banner back, in place, without a reload. Nothing on the
  * cookie page pretends to be a switch — the banner is the control, and this is
  * the way back to it.
+ *
+ * The label is load-bearing copy: the policy page names this button by name in
+ * two places, now that it no longer names a footer link that was never built.
  */
 export function ConsentResetButton() {
   const [ready, setReady] = useState(false);
@@ -229,14 +223,7 @@ export function ConsentResetButton() {
     <button
       type="button"
       disabled={!ready}
-      onClick={() => {
-        try {
-          window.localStorage.removeItem(STORAGE_KEY);
-        } catch {
-          /* Nothing stored means nothing to clear; the event below still reopens the banner. */
-        }
-        window.dispatchEvent(new Event(RESET_EVENT));
-      }}
+      onClick={clearConsent}
       className={`${btnSecondary} ${focusRing} disabled:opacity-60`}
     >
       Change your choice

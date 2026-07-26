@@ -87,7 +87,7 @@ export const metadata = pageMetadata(
 const IS_A_CORRECTION = [
   {
     title: "A wrong local fact",
-    body: "A misnamed market or masjid, a distance or walking time that isn’t right, an area described as something it isn’t.",
+    body: "A misnamed market or landmark, a distance or walking time that isn’t right, an area described as something it isn’t.",
   },
   {
     title: "A document rule that doesn’t match the app",

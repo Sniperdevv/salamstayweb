@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SearchIcon } from "./icons";
+import { Num } from "./numerals";
 import { LanguageGroup } from "./language-group";
 import { MobileMenu } from "./mobile-menu";
 import { headerCtaYields } from "./header-cta";
@@ -156,11 +157,31 @@ export function SiteHeader({ search }: SiteHeaderProps) {
             <Link
               href={pill?.href ?? "/search"}
               aria-label={pill?.aria ?? "Search stays"}
-              className={`mx-auto hidden h-12 max-w-md flex-1 items-center gap-3 rounded-full bg-canvas pl-5 pr-2 shadow-floating md:flex ${focusRing} ${pressablePill}`}
+              className={`mx-auto hidden h-12 max-w-md flex-1 items-center gap-3 rounded-full bg-canvas pl-5 pr-1.5 shadow-floating md:flex ${focusRing} ${pressablePill}`}
             >
               <SearchIcon className="size-5 shrink-0 text-secondary" />
-              <span className="flex-1 truncate text-bodyMd text-secondary">{pillSummary}</span>
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-interactive">
+              {/* The sector summaries carry digit runs — "F-7, Islamabad · Any
+                  week · Add guests" — and an unisolated run reverses under RTL
+                  (TASTE §12, the shipped `.num` canon). `Num` is applied to the
+                  whole string rather than to the summaries known to need it,
+                  because `search` is caller-supplied and `derivePill` grows a
+                  case every time a city or area label does; a hand-tagged run is
+                  the run somebody forgets. The regex starts a run AT the digit,
+                  so `F-7` isolates its `7` and leaves the sector prefix in the
+                  text flow, and a summary with no digits passes through
+                  untouched. Visible string unchanged either way. */}
+              <span className="flex-1 truncate text-bodyMd text-secondary">
+                <Num>{pillSummary}</Num>
+              </span>
+              {/* §10: diameter = pill height − 12, so 36 on this 48px pill.
+                  That is also the only CONCENTRIC answer (§4): the pill's end
+                  cap is a 24px-radius semicircle whose centre sits 24px in, so
+                  an 18px-radius circle clears every edge by exactly 6px — which
+                  is why the pill's right padding is 1.5 (6) and not 2 (8). The
+                  shipped 32px circle was concentric with an 8px inset and so
+                  landed 4px short of the redline; the two numbers move
+                  together or not at all. */}
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-interactive">
                 <SearchIcon className="size-4 text-on-brand" />
               </span>
             </Link>

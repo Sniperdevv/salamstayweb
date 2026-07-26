@@ -1,10 +1,10 @@
 import { Fragment } from "react";
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { PinIcon } from "@/components/icons";
 import { inlineAction, focusRing } from "@/components/ui";
 import { shell } from "@/components/discovery/shell";
 import type { ListingContent } from "@/lib/content/listings/is-f7-2bed";
-import { Plain } from "./shell";
 
 /**
  * Title block — the page's single `<h1>`, the "New listing" chip, and one meta
@@ -16,6 +16,15 @@ import { Plain } from "./shell";
  * exactly what the §3.4 uniqueness guard forbids. `<title>` reads the route
  * registry and the H1 reads the content object, and the two strings are
  * required to match — the validator's G41/G43 pair is what holds them together.
+ *
+ * It is also isolated (§12), like everything else on the page and unlike itself
+ * until now: the meta line under it wrapped its digit runs from the first
+ * commit while the heading with "F-7" in it did not, which is precisely the run
+ * somebody forgets that `numerals.tsx` is written against. `Num` re-emits every
+ * character in order, so the H1's `textContent` is the registry string byte for
+ * byte and G41/G43 read what they read before. The area and city labels beneath
+ * are wrapped for the same reason — they are the same place-name field, and one
+ * of the two carries a sector.
  *
  * **"New listing", not a rating.** This is the whole social-proof treatment on
  * this page: no stars, no score, no review count, no "Guest favourite", no
@@ -67,24 +76,26 @@ export function ListingTitle({ listing }: { readonly listing: ListingContent }) 
   return (
     <div className={`${shell} pt-6 md:pt-8`}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <h1 className="text-h3 font-semibold text-primary">{listing.title}</h1>
+        <h1 className="text-h3 font-semibold text-primary">
+          <Num>{listing.title}</Num>
+        </h1>
         <span className={chip}>{listing.newChip}</span>
       </div>
 
       <p className="mt-3 text-bodySm leading-relaxed text-secondary">
         <PinIcon className="mr-2 inline size-4 align-[-3px] text-tertiary" />
         <Link href={place.areaHref} className={`${inlineAction} ${focusRing}`}>
-          {place.areaLabel}
+          <Num>{place.areaLabel}</Num>
         </Link>
         {", "}
         <Link href={place.cityHref} className={`${inlineAction} ${focusRing}`}>
-          {place.cityLabel}
+          <Num>{place.cityLabel}</Num>
         </Link>
         {place.facts.map((fact) => (
           <Fragment key={fact}>
             {" "}
             <span className="whitespace-nowrap">
-              <span className="text-border-strong">&middot;</span> <Plain>{fact}</Plain>
+              <span className="text-border-strong">&middot;</span> <Num>{fact}</Num>
             </span>
           </Fragment>
         ))}

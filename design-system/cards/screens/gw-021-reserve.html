@@ -1,0 +1,1600 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Reserve: dates &amp; guests, Margalla View Apartment F-7 (GW-021)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     GW-021 · RESERVE — dates & guests (WEB CHECKOUT, step 0)
+     route "/book/is-f7-2bed/dates" (en) + "/ur/book/is-f7-2bed/dates"
+     Opened from the GW-004 booking widget's "Add dates" / "Add guests" /
+     "Check availability" controls. Web twin of the app screens ga-022
+     (date picker) and ga-023 (guest count); the party/verify/price/confirm
+     steps that follow are the six sibling checkout cards
+     (their registry IDs are assigned outside this card).
+
+     THIS CARD ESTABLISHES THE WEB CHECKOUT SHELL. Six sibling cards inherit it.
+     The contract is written out in design-system/cards/screens/CHECKOUT-SHELL.md
+     — read that before authoring any of them.
+
+     ---------------------------------------------------------------------------
+     PRECEDENCE POLICY USED HERE (stated once, applies to the whole shell)
+       TASTE-RULES.md wins on every rule it states explicitly (elevation law,
+       green rarity, ink selection, radius ladder, type ladder, underline-at-
+       rest, the anatomy recipes, the twenty micro-details). GW-004 governs
+       everything TASTE-RULES does not speak to: container widths, chrome
+       geometry, class conventions, token-block shape. SalamStay honesty law
+       (SEO-RULES §5, no invented facts) wins over both.
+       Visible consequences vs gw-004, all deliberate:
+         · inline text actions are INK + UNDERLINED at rest, never brand green
+           (TASTE §2/§8). gw-004's green `.morelink` predates the 2026-07-25
+           ruling and is not copied forward.
+         · calendar selection is INK, not brand (TASTE §3): endpoints are solid
+           ink circles with white numerals, the in-range band is a flat
+           `bg.raised` rectangle at ZERO radius, disabled days are struck.
+         · the primary CTA is `radius.full` (TASTE §4 ladder + §10 booking card),
+           not gw-004's `radius.md` button.
+         · H1 is 26 and section headings 22 (TASTE §7 ladder); no letter-spacing
+           on either (TASTE §7: only display sizes are tracked).
+         · zero eyebrows (TASTE §7). gw-004's one `.sec-eyebrow` is not copied.
+         · the language switch's current item is INK-filled, not brand-filled
+           (TASTE §3: selected is never green) — on checkout a green language
+           chip would be a fourth, unsanctioned green role competing with the
+           one primary CTA. Green here is spent on exactly three sanctioned
+           roles: the wordmark dot, the enabled CTA, the verification shield.
+
+     ---------------------------------------------------------------------------
+     SHELL DECISION 1 — CHROME. Checkout wears a REDUCED header and a REDUCED
+       footer, not the marketing chrome of gw-004.
+       Header (64px, `bg.canvas`, `elevation.subtle` — same geometry, same
+       wordmark, same hairline weight as gw-004, so it reads as the same site):
+         wordmark → | ← a plain "your details are encrypted" status line,
+         the EN/اردو switch, and one exit affordance ("Save & exit").
+       What is REMOVED and why: the header search pill (a search box inside a
+       checkout invites abandonment and re-entry into a different listing); the
+       "Become a host" / "Help" marketing links; the Log in + Sign up pair.
+       Removing the header CTA also settles TASTE §2 structurally rather than by
+       exception — with no chrome CTA, brand green on this surface is spent on
+       exactly the wordmark dot, the enabled primary CTA, and the verification
+       shield. That is 3 of the 4 sanctioned roles, and never more.
+       Footer: the `bg.raised` band + hairline top survive (TASTE §10), but the
+       four-column sitemap does not. A noindex checkout page has no crawl job,
+       and 30 outbound links are 30 ways to lose a booking. One legal row stays,
+       because legal reachability during a payment flow is not optional.
+
+     SHELL DECISION 2 — SUMMARY RAIL. `348px`, exactly gw-004's `.bookcol`
+       width, `48px` gutter, inside the same `1100px` `.wrap`. The rail is the
+       gw-004 booking card promoted to a first-class page region: same width,
+       same border, same radius.xl, so the guest recognises the object they just
+       clicked. `position:sticky; top:24px`.
+       It is the ONE element on the page allowed border AND shadow (TASTE §1's
+       sanctioned exception) and it uses `elevation.floating`, not `card` —
+       it is a sticky panel over a scrolling form, which is the token's
+       documented use ("sticky booking panels", elevation.ts).
+       It carries, top to bottom: listing identity (thumb + name + area) →
+       dates row → guests row → the stay's money → the deferral strip → the
+       primary CTA → the reassurance line → three trust lines. Nothing else is
+       ever added to it; per-step content goes in the main column.
+       Below 1080px the rail un-sticks, leaves the flow entirely, and becomes a
+       hairline-topped sticky BOTTOM bar carrying only nights + subtotal + CTA
+       (TASTE §10 sticky anchor bar: hairline, NO shadow ever). The identity and
+       trust rows fold to the top of the page as a single compact strip.
+
+     SHELL DECISION 3 — STEPPER. The canon is locked (HANDOFF §7.6a): the
+       journey is 4 steps, Party → Verify → Price → Confirm, and checkout
+       screens render the NAMED-CIRCLES stepper. This screen precedes step 1, so
+       it renders that same component in one added, documented state:
+         PRE — all four circles unstarted (hairline ring, `text.tertiary`
+         numeral and label), the connector rail entirely `border.default`, NO
+         `aria-current="step"` on any item, and the caption reads
+         "Next: Step 1 of 4 · Party" / "اگلا: مرحلہ 1 از 4 · پارٹی".
+       No circle is brand-filled on this screen. A stepper whose job is "you are
+       here" must not claim a position the guest has not reached; in the PRE
+       state the same four circles do the honest second job — showing the shape
+       of what follows — without inventing a fifth step or a second rendering.
+       PLACEMENT (fixed for all seven cards): main column, immediately below the
+       H1 block, above the first form group. Not in the header (chrome must not
+       scroll away from the form), not in the rail (the rail is the invariant
+       summary). Steps 1–4 use the same slot with `.cur` / `.done` set.
+
+     SHELL DECISION 4 — FIELD ANATOMY. Dates are ONE `radius.md` form group,
+       `border.default`, two cells split by a hairline, interior corners square,
+       `overline` labels (11/600/+0.04em), values 16/400 ink, placeholder
+       `text.secondary` (never `text.tertiary` — it is large-only, DESIGN §11).
+       The cell being edited takes a 2px ink `box-shadow:inset` ring, NOT a fill
+       change and NOT a real border (no layout shift; TASTE §11.18).
+       The calendar sits directly beneath in OPEN SPACE — no box, no card, no
+       second border. Box-in-box is the single fastest way to make a form look
+       cheap, and TASTE §1's "carries NEITHER" restraint is applied to the
+       largest object on the page on purpose. The day cells carry all the
+       structure they need.
+       Guests are a second `radius.md` group, rows divided full-bleed by
+       hairlines, each row label 16/500 + 13 gray age note, control = − N + with
+       44px circular `border.default` buttons; at a bound the button goes flat
+       and stays in place (TASTE §11.7).
+
+     SHELL DECISION 5 — MONEY. Only the Price-step card ever renders the
+       itemised total. Every other checkout card shows the stay subtotal and
+       then names, in a `bg.raised` info strip, exactly what is still to come
+       and where. This is not drip pricing: drip pricing hides that fees exist.
+       This names them, counts them, and points at the step that itemises them,
+       and claim 9 sits three lines below it verbatim. It also keeps ga-050 and
+       its web twin as the single source of the total, so the two cannot drift.
+
+     ---------------------------------------------------------------------------
+     ROBOTS: noindex, follow. A checkout route is never an indexable surface.
+       Consequences carried through deliberately (same discipline as gw-005):
+         · <main> carries NO class="indexable".
+         · No canonical, no hreflang pair, no JSON-LD of any kind. The EN/اردو
+           switch is still present — a guest may want Urdu mid-checkout; that is
+           a UI affordance, not an alternate-URL declaration.
+         · No SEO breadcrumb. The back affordance is a single ink, underlined
+           "Back to Margalla View Apartment" link that returns to gw-004.
+         · robots.txt (MANDATE G3 owns the file) disallows /book/.
+       One <h1> is still shipped — it is the page's accessible title, not an SEO
+       artefact.
+
+     ---------------------------------------------------------------------------
+     WORKED EXAMPLE — every figure traceable, arithmetic balanced:
+       Listing  Margalla View Apartment — F-7, Islamabad   (gw-004, ga-027)
+       Sleeps   6                                          (gw-004 house rules)
+       Nightly  PKR 12,500                                 (ga-050)
+       Dates    Fri 14 – Mon 17 Aug 2026 = 3 nights        (ga-050)
+       Subtotal PKR 12,500 × 3 = PKR 37,500                (ga-050 line 1)
+       At step 3 (ga-050 and its web twin) this becomes: + service fee PKR 2,250
+       + MDR PKR 720 + ICT sales tax PKR 1,880 = PKR 42,350. Not shown here by
+       design.
+       Money is ALWAYS "PKR 12,500" — three-letter code, one space, every digit
+       run inside `.num`. The bare rupee sign (U+20A8) appears nowhere in this
+       file — not in markup, not in copy, not in this comment.
+
+     INVENTED FOR THIS CARD (nothing else is): the host's 2-night minimum stay;
+       the specific unavailable nights (5–7, 9–10, 21–22 Aug; 12–13 Sep); the
+       1-night gap on 8 Aug that the minimum then rules out; today = Sat 1 Aug
+       2026. All are per-home host disclosures with no corpus source, shown so
+       the calendar's unavailable / below-minimum states are demonstrable.
+
+     HIJRI: Aug–Sep 2026 spans Safar → Rabi al-Awwal → Rabi al-Thani 1448 AH.
+       1 Safar 1448 ≈ 16 Jul 2026, so 14 Aug 2026 ≈ 1 Rabi al-Awwal — the
+       check-in lands on a Hijri month rollover, which is exactly what the
+       Hijri-aware grid exists to show. Ramadan band and Eid dot are inherited
+       from cards/hijri-calendar.html unchanged; neither occurs in this window,
+       so neither renders here.
+
+     REPOSITIONED 2026-07-26 (REPOSITIONING.md, founder decision — the record of
+       what changed, kept so a reader of the old cards can see the delta).
+       The legal and financial structure is UNCHANGED: funds are held under the
+       Meezan custody agreement and released to the host after check-in, and
+       SalamStay does not hold customer money in its own name. ARCHITECTURE.md
+       is untouched. Only what a guest READS changed — the trust line now says
+       "held in trust", the link reads "How your payment is held", and it points
+       at the registry's existing /help/payments/how-money-is-held. No word on
+       this screen is one a guest has to look up to know where their money is.
+       This closes the parked GA-059 wording decision.
+
+     CLAIMS: SEO-RULES §5 registry only, verbatim — #1 (CNIC/NADRA Verisys) and
+       #9 (transparent fees and tax). Everything else is plain neutral
+       description. No ratings, no counts, no superlatives, no SLAs.
+
+     CARD CONVENTION: panel 1 (light, chosen) is the authoritative semantic page
+       — one h1, real landmarks, a real <form>. Panels 2–6 are variants and
+       renderings; the dark, Urdu/RTL and mobile panels are aria-hidden and
+       carry no headings or landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role.
+     Additions over the gw-004 block, all real token roles:
+       --int-selected / --int-selected-fg  interactive.selectedFill/selectedFg
+       --el-floating                       elevation.{light,dark}.floating
+       --text-disabled                     text.disabled
+       --focus-ring                        borderWidthRole.focusRing + brand
+       --dur-* / --ease-*                  motion.duration.* / motion.easing.*
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-floating:0 2px 6px 0 rgba(16,25,27,.08),0 6px 16px 0 rgba(16,25,27,.12);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-floating:0 2px 6px 0 rgba(0,0,0,.4),0 6px 16px 0 rgba(0,0,0,.36);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.mob { max-width:390px; margin:0 auto; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* ---- reduced checkout header (SHELL DECISION 1) ---- */
+  .co-header { display:flex; align-items:center; gap:16px; height:64px; padding:0 28px; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; z-index:2; }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hspacer { flex:1; }
+  .securenote { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); white-space:nowrap; }
+  .securenote svg { width:15px; height:15px; flex:none; }
+  .langsw { display:inline-flex; align-items:stretch; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { border:none; background:transparent; font-family:inherit; font-size:13px; line-height:1; padding:7px 13px; color:var(--text-secondary); cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:14px; padding-top:5px; padding-bottom:9px; }
+  /* current language = ink selection (TASTE §3), NOT brand. gw-004 fills this
+     green; on checkout that would be a fourth, unsanctioned green role and it
+     would compete with the one primary CTA. */
+  .langsw a[aria-current="page"] { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .exitlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
+
+  /* ---- page frame ---- */
+  .co-main { display:block; background:var(--bg-canvas); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+  .backrow { padding:20px 0 0; }
+  .backlink { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .backlink svg { width:15px; height:15px; flex:none; }
+  .rtl .backlink svg { transform:scaleX(-1); }
+  .pagehead { padding:20px 0 22px; }
+  .pagehead h1 { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .pagehead .psub { font-size:16px; color:var(--text-secondary); margin-top:8px; max-width:56ch; }
+  .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+
+  /* ---- the two-column shell ---- */
+  .cols2 { display:grid; grid-template-columns:minmax(0,1fr) 348px; gap:48px; align-items:start; border-top:1px solid var(--border-hairline); padding-bottom:8px; }
+  .lmain { padding-top:4px; }
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); }
+  .fsec:first-child { border-top:none; padding-top:24px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- stepper: the locked 4 named circles, in the PRE state (DECISION 3) ---- */
+  .stepblk { padding:0 0 26px; }
+  .steps { display:flex; align-items:flex-start; list-style:none; max-width:440px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:13px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .scirc { width:28px; height:28px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .scirc svg { width:14px; height:14px; }
+  .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:8px; letter-spacing:.02em; }
+  .steps li.done .scirc { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .scirc { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+  .scap { font-size:13px; color:var(--text-secondary); margin-top:14px; }
+  .scap b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- dates: one form group, two cells, hairline divider (DECISION 4) ---- */
+  .dgroup { display:grid; grid-template-columns:1fr 1fr; margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); max-width:520px; }
+  .dcell { text-align:left; font-family:inherit; background:transparent; border:none; border-right:1px solid var(--border-hairline); padding:12px 16px 13px; cursor:pointer; min-height:64px; }
+  .dcell:last-child { border-right:none; }
+  .rtl .dcell { text-align:right; border-right:none; border-left:1px solid var(--border-hairline); }
+  .rtl .dcell:last-child { border-left:none; }
+  .dcell.editing { box-shadow:inset 0 0 0 2px var(--int-selected); border-radius:var(--radius-md); }
+  .overline { display:block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .dval { display:block; font-size:16px; color:var(--text-primary); margin-top:5px; }
+  .dval.empty { color:var(--text-secondary); }
+  .dfoot { display:flex; align-items:center; gap:14px; margin-top:12px; max-width:520px; }
+  .dnights { font-size:14px; color:var(--text-secondary); }
+  .dnights b { color:var(--text-primary); font-weight:600; }
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+  .inlink[disabled] { color:var(--text-disabled); text-decoration:none; cursor:default; }
+  .dfoot .inlink { margin-inline-start:auto; }
+
+  /* ---- calendar: open space, no box (DECISION 4) ---- */
+  .cal { margin-top:24px; }
+  .calhead { display:flex; align-items:center; gap:12px; }
+  .calnav { width:40px; height:40px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; }
+  .calnav svg { width:17px; height:17px; color:var(--text-primary); }
+  .calnav[disabled] { border-color:var(--border-hairline); color:var(--text-disabled); cursor:default; background:var(--bg-raised); }
+  .calnav[disabled] svg { color:var(--text-disabled); }
+  .rtl .calnav svg { transform:scaleX(-1); }
+  .calhead .mtitles { flex:1; display:grid; grid-template-columns:1fr 1fr; gap:24px; text-align:center; }
+  .calhead .mtitles.one { grid-template-columns:1fr; }
+  .mname { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .mhj { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+  .calms { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:12px; }
+  .calms.one { grid-template-columns:1fr; max-width:460px; }
+  .wk { display:grid; grid-template-columns:repeat(7,1fr); }
+  .wk span { text-align:center; font-size:11px; font-weight:600; color:var(--text-tertiary); padding-bottom:8px; }
+  .days { display:grid; grid-template-columns:repeat(7,1fr); }
+  .day { position:relative; height:48px; display:flex; align-items:center; justify-content:center; border:none; background:transparent; cursor:pointer; padding:0; font-family:inherit; }
+  .day.pad { cursor:default; }
+  .inner { width:44px; height:44px; border-radius:var(--radius-full); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; }
+  .g { font-size:15px; color:var(--text-primary); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .hj { font-size:10px; color:var(--text-secondary); line-height:1.1; font-variant-numeric:tabular-nums; }
+  /* TASTE §3 — selection is INK. The in-range band is a flat rectangle at ZERO
+     radius (a connector, not a shape); the endpoints are solid ink circles. */
+  .day.in-range { background:var(--bg-raised); border-radius:0; }
+  .day.range-start { background:linear-gradient(to right, transparent 50%, var(--bg-raised) 50%); }
+  .day.range-end { background:linear-gradient(to left, transparent 50%, var(--bg-raised) 50%); }
+  .rtl .day.range-start { background:linear-gradient(to left, transparent 50%, var(--bg-raised) 50%); }
+  .rtl .day.range-end { background:linear-gradient(to right, transparent 50%, var(--bg-raised) 50%); }
+  .day.range-start .inner, .day.range-end .inner { background:var(--int-selected); }
+  .day.range-start .g, .day.range-end .g { color:var(--int-selected-fg); }
+  .day.range-start .hj, .day.range-end .hj { color:var(--int-selected-fg); opacity:.78; }
+  .day.today .inner { border:1.5px solid var(--border-strong); }
+  .day.off { cursor:default; }
+  .day.off .g { color:var(--text-disabled); text-decoration:line-through; }
+  .day.off .hj { color:var(--text-disabled); }
+  .legend { display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); }
+  .lg { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--text-secondary); }
+  .sw { width:14px; height:14px; flex:none; }
+  .sw.ink { background:var(--int-selected); border-radius:var(--radius-full); }
+  .sw.band { background:var(--bg-raised); border:1px solid var(--border-hairline); border-radius:0; }
+  .sw.ring { border:1.5px solid var(--border-strong); border-radius:var(--radius-full); }
+  .sw.struck { position:relative; background:var(--bg-canvas); border:1px solid var(--border-default); border-radius:var(--radius-full); }
+  .sw.struck::after { content:""; position:absolute; inset:0; margin:auto; width:100%; height:1.5px; background:var(--text-disabled); }
+  /* inline flow inside, never flex — a flex gap would split the bare text runs */
+  .calnote { display:flex; align-items:flex-start; gap:9px; margin-top:14px; font-size:13px; color:var(--text-secondary); line-height:1.55; max-width:62ch; }
+  .calnote svg { width:15px; height:15px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .calnote b { color:var(--text-primary); font-weight:600; }
+  .calfoot { font-size:13px; color:var(--text-secondary); margin-top:8px; }
+
+  /* ---- guests: rows in one form group (DECISION 4) ---- */
+  .ggroup { margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); max-width:520px; }
+  .ggroup.invalid { border-color:var(--error-fg); }
+  .grow { display:flex; align-items:center; gap:16px; padding:14px 16px; border-top:1px solid var(--border-hairline); }
+  .grow:first-child { border-top:none; }
+  .glab { flex:1; min-width:0; }
+  .gname { display:block; font-size:16px; font-weight:500; color:var(--text-primary); }
+  .gage { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; }
+  .gctrl { display:flex; align-items:center; gap:12px; flex:none; }
+  .gstep { width:44px; height:44px; border-radius:var(--radius-full); border:1px solid var(--border-default); background:var(--bg-canvas); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .gstep svg { width:17px; height:17px; color:var(--text-primary); }
+  .gstep[disabled] { border-color:var(--border-hairline); background:var(--bg-raised); cursor:default; }
+  .gstep[disabled] svg { color:var(--text-disabled); }
+  .gnum { min-width:24px; text-align:center; font-size:16px; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+  .errline { display:flex; align-items:flex-start; gap:9px; margin-top:12px; max-width:520px; font-size:13px; color:var(--error-fg); line-height:1.55; }
+  .errline svg { width:16px; height:16px; flex:none; margin-top:1px; }
+  .errline b { font-weight:600; }
+  .ghint { display:flex; align-items:flex-start; gap:10px; margin-top:18px; max-width:62ch; font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:16px; height:16px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- page-level banner (availability conflict) ---- */
+  .banner { display:flex; align-items:flex-start; gap:11px; margin:20px 0 0; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner svg { width:18px; height:18px; color:var(--warning-fg); flex:none; margin-top:2px; }
+  .banner p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .banner p b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+
+  /* ---- the summary rail (SHELL DECISION 2) ---- */
+  .railwrap { position:sticky; top:24px; padding:24px 0 0; }
+  .railcard { border:1px solid var(--border-default); border-radius:var(--radius-xl); background:var(--bg-canvas); box-shadow:var(--el-floating); padding:20px; }
+  .ident { display:flex; gap:12px; align-items:center; }
+  .thumb { width:56px; height:56px; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .iname { display:block; font-size:16px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .iarea { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .railrule { height:1px; background:var(--border-hairline); margin:16px 0; }
+  .sumrow { display:flex; align-items:baseline; gap:12px; }
+  .sumrow + .sumrow { margin-top:14px; }
+  .sumrow .sbody { flex:1; min-width:0; }
+  .sval { display:block; font-size:14px; color:var(--text-primary); margin-top:4px; }
+  .sval.empty { color:var(--text-secondary); }
+  .pline { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:14px; color:var(--text-secondary); }
+  .pline .pamt { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .strip { margin-top:14px; padding:11px 13px; border-radius:var(--radius-md); background:var(--bg-raised); font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .strip b { color:var(--text-primary); font-weight:600; }
+  .cta { display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; margin-top:16px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .cta:active { transform:scale(0.98); }
+  .cta[disabled], .cta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; transform:none; }
+  .ctanote { font-size:13px; color:var(--text-secondary); text-align:center; margin-top:11px; line-height:1.5; }
+  .trust { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:12px; }
+  .tline { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text-secondary); line-height:1.55; }
+  .tline svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .tline.verified svg { color:var(--int-primary); }
+  .tline b { color:var(--text-primary); font-weight:600; }
+  .tline a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- reduced footer (SHELL DECISION 1) ---- */
+  .co-footer { background:var(--bg-raised); border-top:1px solid var(--border-hairline); padding:22px 28px; margin-top:16px; }
+  .fbar { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; font-size:13px; color:var(--text-secondary); }
+  .flegal { display:flex; gap:14px 20px; flex-wrap:wrap; }
+  .flegal a { color:var(--text-primary); text-decoration:none; }
+  .flegal a:hover { color:var(--text-primary); text-decoration:underline; }
+
+  /* ---- mobile collapse (SHELL DECISION 2) ---- */
+  .mobstrip { display:flex; gap:11px; align-items:center; padding:12px 0 0; }
+  .mobbar { position:sticky; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 20px 14px; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); }
+  .mobsum { display:flex; flex-direction:column; }
+  .mobsum .ms-t { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .mobsum .ms-s { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+  .mobbar .cta { width:auto; margin-top:0; padding:0 22px; flex:none; }
+  .mob .wrap { padding:0 20px; }
+  .mob .cols2 { grid-template-columns:1fr; gap:0; }
+  .mob .railwrap { display:none; }
+  .mob .co-header { padding:0 20px; gap:12px; }
+  .mob .steps { max-width:none; }
+  .mob .dgroup, .mob .ggroup, .mob .dfoot, .mob .errline { max-width:none; }
+  .mob .calms.one { max-width:none; }
+  .mob .day { height:44px; }
+  .mob .inner { width:40px; height:40px; }
+  .mob .pagehead h1, .mob .ptitle { font-size:22px; }
+
+  /* ---- interaction: press feedback + hover gating + reduced motion ---- */
+  .dcell, .gstep, .calnav, .day, .exitlink, .backlink, .inlink { transition:transform var(--dur-instant) var(--ease-standard), border-color var(--dur-instant) var(--ease-standard); }
+  .gstep:not([disabled]):active, .calnav:not([disabled]):active { transform:scale(0.94); }
+  .day:not(.off):not(.pad):active .inner { transform:scale(0.94); }
+  .inner { transition:transform var(--dur-instant) var(--ease-standard); }
+  @media (hover:hover) and (pointer:fine) {
+    .cta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .dcell:hover, .gstep:not([disabled]):hover, .calnav:not([disabled]):hover { border-color:var(--border-strong); }
+    .day:not(.off):not(.pad):hover .inner { background:var(--bg-raised); }
+    .day.range-start:hover .inner, .day.range-end:hover .inner { background:var(--int-selected); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .cta, .dcell, .gstep, .calnav, .day, .inner, .exitlink, .backlink, .inlink { transition-duration:var(--dur-instant); }
+    .cta:active, .gstep:active, .calnav:active, .day:active .inner { transform:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl { direction:rtl; }
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+  .rtl .dfoot .inlink { margin-inline-start:auto; }
+  .rtl .wk span { font-size:10px; }
+
+  /* ---- real viewport collapse (matches the .mob panel exactly) ---- */
+  @media (max-width:1080px) {
+    .cols2 { grid-template-columns:1fr; gap:0; }
+    .railwrap { position:static; padding:0 0 28px; }
+    /* one month below 1080 — a stacked second month orphans its title from its grid */
+    .calms { grid-template-columns:1fr; max-width:460px; }
+    .calms > *:nth-child(2), .calhead .mtitles > *:nth-child(2) { display:none; }
+    .calhead .mtitles { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">GW-021 — Reserve · dates &amp; guests (web checkout, step 0)</div>
+    <p>The surface the <code>gw-004</code> booking widget opens: route <code>/book/is-f7-2bed/dates</code>, <strong>noindex, follow</strong>. Web twin of <code>ga-022</code> + <code>ga-023</code>. This card establishes the <strong>web checkout shell</strong> that its six sibling checkout cards inherit — reduced header and footer, a 348px sticky summary rail, the locked four named circles in a new <strong>PRE</strong> state, and the rule that only the Price step renders the itemised total. The full contract is in <code>CHECKOUT-SHELL.md</code>. Panel 1 is the authoritative semantic page; panels 2–6 are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL 1 · LIGHT · DATES + GUESTS CHOSEN (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">Light · chosen — the authoritative page (one h1, real landmarks, a real form; reduced header + rail + reduced footer)</div>
+
+      <header class="co-header">
+        <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+        <span class="hspacer"></span>
+        <span class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Your details are encrypted
+        </span>
+        <div class="langsw" role="group" aria-label="Language">
+          <a href="/book/is-f7-2bed/dates" aria-current="page" lang="en">EN</a>
+          <a class="urdu" href="/ur/book/is-f7-2bed/dates" lang="ur">اردو</a>
+        </div>
+        <a class="exitlink" href="/stays-in-islamabad/f-7/is-f7-2bed">Save &amp; exit</a>
+      </header>
+
+      <main class="co-main">
+        <div class="wrap">
+          <div class="backrow">
+            <a class="backlink" href="/stays-in-islamabad/f-7/is-f7-2bed">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              Back to Margalla View Apartment
+            </a>
+          </div>
+
+          <div class="pagehead">
+            <h1>Your dates and guests</h1>
+            <p class="psub">Pick the nights and who is coming. Nothing is charged yet.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <!-- STEPPER — locked 4 named circles, PRE state (SHELL DECISION 3) -->
+              <div class="stepblk">
+                <ol class="steps" aria-label="Checkout progress">
+                  <li><span class="scirc">1</span><span class="slab">Party</span></li>
+                  <li><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Next: <b>Step 1 of 4 · Party</b>. Dates and guests come first; the four steps start when you continue.</p>
+              </div>
+
+              <form id="reserve-form" action="/book/is-f7-2bed/party" method="get">
+
+                <!-- DATES -->
+                <section class="fsec" aria-labelledby="dates-h">
+                  <h2 id="dates-h">Dates</h2>
+                  <p class="sec-sub">Check-in from 2:00 PM, check-out before 11:00 AM. Minimum stay <b>2 nights</b>.</p>
+
+                  <div class="dgroup">
+                    <button class="dcell editing" type="button" aria-label="Check-in date, Friday 14 August 2026 — edit">
+                      <span class="overline">Check-in</span>
+                      <span class="dval">Fri <span class="num">14</span> Aug <span class="num">2026</span></span>
+                    </button>
+                    <button class="dcell" type="button" aria-label="Check-out date, Monday 17 August 2026 — edit">
+                      <span class="overline">Check-out</span>
+                      <span class="dval">Mon <span class="num">17</span> Aug <span class="num">2026</span></span>
+                    </button>
+                  </div>
+                  <div class="dfoot">
+                    <span class="dnights"><b><span class="num">3</span> nights</b> · Fri <span class="num">14</span> → Mon <span class="num">17</span> Aug</span>
+                    <button class="inlink" type="button">Clear dates</button>
+                  </div>
+
+                  <div class="cal">
+                    <div class="calhead">
+                      <button class="calnav" type="button" aria-label="Previous month" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                      </button>
+                      <div class="mtitles">
+                        <div><div class="mname">August <span class="num">2026</span></div><div class="mhj">Safar – Rabi al-Awwal <span class="num">1448</span> AH</div></div>
+                        <div><div class="mname">September <span class="num">2026</span></div><div class="mhj">Rabi al-Awwal – Rabi al-Thani <span class="num">1448</span> AH</div></div>
+                      </div>
+                      <button class="calnav" type="button" aria-label="Next month">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                      </button>
+                    </div>
+
+                    <div class="calms">
+                      <!-- AUGUST 2026 · 1 Aug = Saturday · today = Sat 1 Aug · range 14 → 17 -->
+                      <div>
+                        <div class="wk" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                        <div class="days" role="grid" aria-label="August 2026">
+                          <span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span>
+                          <button class="day today" type="button" role="gridcell" aria-label="1 August, 17 Safar, today, available"><span class="inner"><span class="g num">1</span><span class="hj num">17</span></span></button>
+
+                          <button class="day" type="button" role="gridcell" aria-label="2 August, 18 Safar, available"><span class="inner"><span class="g num">2</span><span class="hj num">18</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="3 August, 19 Safar, available"><span class="inner"><span class="g num">3</span><span class="hj num">19</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="4 August, 20 Safar, available"><span class="inner"><span class="g num">4</span><span class="hj num">20</span></span></button>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="5 August, 21 Safar, unavailable"><span class="inner"><span class="g num">5</span><span class="hj num">21</span></span></span>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="6 August, 22 Safar, unavailable"><span class="inner"><span class="g num">6</span><span class="hj num">22</span></span></span>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="7 August, 23 Safar, unavailable"><span class="inner"><span class="g num">7</span><span class="hj num">23</span></span></span>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="8 August, 24 Safar, below the 2-night minimum stay"><span class="inner"><span class="g num">8</span><span class="hj num">24</span></span></span>
+
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="9 August, 25 Safar, unavailable"><span class="inner"><span class="g num">9</span><span class="hj num">25</span></span></span>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="10 August, 26 Safar, unavailable"><span class="inner"><span class="g num">10</span><span class="hj num">26</span></span></span>
+                          <button class="day" type="button" role="gridcell" aria-label="11 August, 27 Safar, available"><span class="inner"><span class="g num">11</span><span class="hj num">27</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="12 August, 28 Safar, available"><span class="inner"><span class="g num">12</span><span class="hj num">28</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="13 August, 29 Safar, available"><span class="inner"><span class="g num">13</span><span class="hj num">29</span></span></button>
+                          <button class="day range-start" type="button" role="gridcell" aria-label="14 August, 1 Rabi al-Awwal, check-in"><span class="inner"><span class="g num">14</span><span class="hj num">1</span></span></button>
+                          <button class="day in-range" type="button" role="gridcell" aria-label="15 August, 2 Rabi al-Awwal, in your stay"><span class="inner"><span class="g num">15</span><span class="hj num">2</span></span></button>
+
+                          <button class="day in-range" type="button" role="gridcell" aria-label="16 August, 3 Rabi al-Awwal, in your stay"><span class="inner"><span class="g num">16</span><span class="hj num">3</span></span></button>
+                          <button class="day range-end" type="button" role="gridcell" aria-label="17 August, 4 Rabi al-Awwal, check-out"><span class="inner"><span class="g num">17</span><span class="hj num">4</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="18 August, 5 Rabi al-Awwal, available"><span class="inner"><span class="g num">18</span><span class="hj num">5</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="19 August, 6 Rabi al-Awwal, available"><span class="inner"><span class="g num">19</span><span class="hj num">6</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="20 August, 7 Rabi al-Awwal, available"><span class="inner"><span class="g num">20</span><span class="hj num">7</span></span></button>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="21 August, 8 Rabi al-Awwal, unavailable"><span class="inner"><span class="g num">21</span><span class="hj num">8</span></span></span>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="22 August, 9 Rabi al-Awwal, unavailable"><span class="inner"><span class="g num">22</span><span class="hj num">9</span></span></span>
+
+                          <button class="day" type="button" role="gridcell" aria-label="23 August, 10 Rabi al-Awwal, available"><span class="inner"><span class="g num">23</span><span class="hj num">10</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="24 August, 11 Rabi al-Awwal, available"><span class="inner"><span class="g num">24</span><span class="hj num">11</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="25 August, 12 Rabi al-Awwal, available"><span class="inner"><span class="g num">25</span><span class="hj num">12</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="26 August, 13 Rabi al-Awwal, available"><span class="inner"><span class="g num">26</span><span class="hj num">13</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="27 August, 14 Rabi al-Awwal, available"><span class="inner"><span class="g num">27</span><span class="hj num">14</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="28 August, 15 Rabi al-Awwal, available"><span class="inner"><span class="g num">28</span><span class="hj num">15</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="29 August, 16 Rabi al-Awwal, available"><span class="inner"><span class="g num">29</span><span class="hj num">16</span></span></button>
+
+                          <button class="day" type="button" role="gridcell" aria-label="30 August, 17 Rabi al-Awwal, available"><span class="inner"><span class="g num">30</span><span class="hj num">17</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="31 August, 18 Rabi al-Awwal, available"><span class="inner"><span class="g num">31</span><span class="hj num">18</span></span></button>
+                        </div>
+                      </div>
+
+                      <!-- SEPTEMBER 2026 · 1 Sep = Tuesday -->
+                      <div>
+                        <div class="wk" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                        <div class="days" role="grid" aria-label="September 2026">
+                          <span class="day pad"></span><span class="day pad"></span>
+                          <button class="day" type="button" role="gridcell" aria-label="1 September, 19 Rabi al-Awwal, available"><span class="inner"><span class="g num">1</span><span class="hj num">19</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="2 September, 20 Rabi al-Awwal, available"><span class="inner"><span class="g num">2</span><span class="hj num">20</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="3 September, 21 Rabi al-Awwal, available"><span class="inner"><span class="g num">3</span><span class="hj num">21</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="4 September, 22 Rabi al-Awwal, available"><span class="inner"><span class="g num">4</span><span class="hj num">22</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="5 September, 23 Rabi al-Awwal, available"><span class="inner"><span class="g num">5</span><span class="hj num">23</span></span></button>
+
+                          <button class="day" type="button" role="gridcell" aria-label="6 September, 24 Rabi al-Awwal, available"><span class="inner"><span class="g num">6</span><span class="hj num">24</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="7 September, 25 Rabi al-Awwal, available"><span class="inner"><span class="g num">7</span><span class="hj num">25</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="8 September, 26 Rabi al-Awwal, available"><span class="inner"><span class="g num">8</span><span class="hj num">26</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="9 September, 27 Rabi al-Awwal, available"><span class="inner"><span class="g num">9</span><span class="hj num">27</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="10 September, 28 Rabi al-Awwal, available"><span class="inner"><span class="g num">10</span><span class="hj num">28</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="11 September, 29 Rabi al-Awwal, available"><span class="inner"><span class="g num">11</span><span class="hj num">29</span></span></button>
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="12 September, 30 Rabi al-Awwal, unavailable"><span class="inner"><span class="g num">12</span><span class="hj num">30</span></span></span>
+
+                          <span class="day off" role="gridcell" aria-disabled="true" aria-label="13 September, 1 Rabi al-Thani, unavailable"><span class="inner"><span class="g num">13</span><span class="hj num">1</span></span></span>
+                          <button class="day" type="button" role="gridcell" aria-label="14 September, 2 Rabi al-Thani, available"><span class="inner"><span class="g num">14</span><span class="hj num">2</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="15 September, 3 Rabi al-Thani, available"><span class="inner"><span class="g num">15</span><span class="hj num">3</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="16 September, 4 Rabi al-Thani, available"><span class="inner"><span class="g num">16</span><span class="hj num">4</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="17 September, 5 Rabi al-Thani, available"><span class="inner"><span class="g num">17</span><span class="hj num">5</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="18 September, 6 Rabi al-Thani, available"><span class="inner"><span class="g num">18</span><span class="hj num">6</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="19 September, 7 Rabi al-Thani, available"><span class="inner"><span class="g num">19</span><span class="hj num">7</span></span></button>
+
+                          <button class="day" type="button" role="gridcell" aria-label="20 September, 8 Rabi al-Thani, available"><span class="inner"><span class="g num">20</span><span class="hj num">8</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="21 September, 9 Rabi al-Thani, available"><span class="inner"><span class="g num">21</span><span class="hj num">9</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="22 September, 10 Rabi al-Thani, available"><span class="inner"><span class="g num">22</span><span class="hj num">10</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="23 September, 11 Rabi al-Thani, available"><span class="inner"><span class="g num">23</span><span class="hj num">11</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="24 September, 12 Rabi al-Thani, available"><span class="inner"><span class="g num">24</span><span class="hj num">12</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="25 September, 13 Rabi al-Thani, available"><span class="inner"><span class="g num">25</span><span class="hj num">13</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="26 September, 14 Rabi al-Thani, available"><span class="inner"><span class="g num">26</span><span class="hj num">14</span></span></button>
+
+                          <button class="day" type="button" role="gridcell" aria-label="27 September, 15 Rabi al-Thani, available"><span class="inner"><span class="g num">27</span><span class="hj num">15</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="28 September, 16 Rabi al-Thani, available"><span class="inner"><span class="g num">28</span><span class="hj num">16</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="29 September, 17 Rabi al-Thani, available"><span class="inner"><span class="g num">29</span><span class="hj num">17</span></span></button>
+                          <button class="day" type="button" role="gridcell" aria-label="30 September, 18 Rabi al-Thani, available"><span class="inner"><span class="g num">30</span><span class="hj num">18</span></span></button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="legend">
+                      <span class="lg"><span class="sw ink"></span>Check-in / check-out</span>
+                      <span class="lg"><span class="sw band"></span>Nights in your stay</span>
+                      <span class="lg"><span class="sw ring"></span>Today</span>
+                      <span class="lg"><span class="sw struck"></span>Unavailable or below the minimum</span>
+                    </div>
+                    <p class="calnote">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                      <span>Struck-through dates are unavailable or below this host's <span class="num">2</span>-night minimum stay. They stay visible so you can see why.</span>
+                    </p>
+                    <p class="calfoot">Hijri dates are approximate and may vary by moon sighting.</p>
+                  </div>
+                </section>
+
+                <!-- GUESTS -->
+                <section class="fsec" aria-labelledby="guests-h">
+                  <h2 id="guests-h">Guests</h2>
+                  <p class="sec-sub">This home sleeps up to <b><span class="num">6</span></b>. Infants do not count toward the limit.</p>
+
+                  <div class="ggroup">
+                    <div class="grow">
+                      <span class="glab"><span class="gname">Adults</span><span class="gage">Ages <span class="num">13</span> and up</span></span>
+                      <span class="gctrl">
+                        <button class="gstep" type="button" aria-label="Remove one adult"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+                        <span class="gnum num" role="status" aria-label="4 adults">4</span>
+                        <button class="gstep" type="button" aria-label="Add one adult" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+                      </span>
+                    </div>
+                    <div class="grow">
+                      <span class="glab"><span class="gname">Children</span><span class="gage">Ages <span class="num">2</span>–<span class="num">12</span></span></span>
+                      <span class="gctrl">
+                        <button class="gstep" type="button" aria-label="Remove one child"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+                        <span class="gnum num" role="status" aria-label="2 children">2</span>
+                        <button class="gstep" type="button" aria-label="Add one child" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+                      </span>
+                    </div>
+                    <div class="grow">
+                      <span class="glab"><span class="gname">Infants</span><span class="gage">Under <span class="num">2</span> · stays free</span></span>
+                      <span class="gctrl">
+                        <button class="gstep" type="button" aria-label="Remove one infant" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+                        <span class="gnum num" role="status" aria-label="0 infants">0</span>
+                        <button class="gstep" type="button" aria-label="Add one infant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+                      </span>
+                    </div>
+                  </div>
+                  <p class="ghint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <span><b>Who is travelling together is the next step.</b> You will choose the party type on step <span class="num">1</span>, and only then share the document this host's policy needs. Nothing about your party is shared before that.</span>
+                  </p>
+                </section>
+
+              </form>
+            </div>
+
+            <!-- SUMMARY RAIL (SHELL DECISION 2) -->
+            <aside class="railwrap" aria-label="Booking summary">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span>
+                    <span class="iname">Margalla View Apartment</span>
+                    <span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span>
+                  </span>
+                </div>
+
+                <div class="railrule"></div>
+
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Dates</span>
+                    <span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/dates">Change</a>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Guests</span>
+                    <span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/dates">Change</a>
+                </div>
+
+                <div class="railrule"></div>
+
+                <p class="pline">
+                  <span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span>
+                  <span class="pamt num">PKR 37,500</span>
+                </p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+
+                <button class="cta" type="submit" form="reserve-form">Continue to party type</button>
+                <p class="ctanote">You will not be charged yet.</p>
+
+                <div class="trust">
+                  <span class="tline verified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg>
+                    <span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                    <span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span>
+                  </span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
+
+      <footer class="co-footer">
+        <h2 class="sr-only">Footer</h2>
+        <div class="fbar">
+          <span>© <span class="num">2026</span> SalamStay</span>
+          <nav class="flegal" aria-label="Legal">
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/guest-refund-policy">Guest refund policy</a>
+            <a href="/help">Help center</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ================= PANEL 2 · LIGHT · EMPTY — unavailable + below-minimum reading ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · empty — no dates yet · CTA disabled but visible, in place · struck days keep their reason</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/dates" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/dates">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your dates and guests</div>
+            <p class="psub">Pick the nights and who is coming. Nothing is charged yet.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li><span class="scirc">1</span><span class="slab">Party</span></li>
+                  <li><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Next: <b>Step 1 of 4 · Party</b>. Dates and guests come first; the four steps start when you continue.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Dates</div>
+                <p class="sec-sub">Check-in from 2:00 PM, check-out before 11:00 AM. Minimum stay <b>2 nights</b>.</p>
+                <div class="dgroup">
+                  <span class="dcell editing"><span class="overline">Check-in</span><span class="dval empty">Add a date</span></span>
+                  <span class="dcell"><span class="overline">Check-out</span><span class="dval empty">Add a date</span></span>
+                </div>
+                <div class="dfoot">
+                  <span class="dnights">Pick a check-in night to start</span>
+                  <span class="inlink" disabled>Clear dates</span>
+                </div>
+
+                <div class="cal">
+                  <div class="calhead">
+                    <span class="calnav" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                    <div class="mtitles one"><div><div class="mname">August <span class="num">2026</span></div><div class="mhj">Safar – Rabi al-Awwal <span class="num">1448</span> AH</div></div></div>
+                    <span class="calnav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                  </div>
+                  <div class="calms one">
+                    <div>
+                      <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                      <div class="days">
+                        <span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span>
+                        <span class="day today"><span class="inner"><span class="g num">1</span><span class="hj num">17</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">2</span><span class="hj num">18</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">3</span><span class="hj num">19</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">4</span><span class="hj num">20</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">5</span><span class="hj num">21</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">6</span><span class="hj num">22</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">7</span><span class="hj num">23</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">8</span><span class="hj num">24</span></span></span>
+
+                        <span class="day off"><span class="inner"><span class="g num">9</span><span class="hj num">25</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">10</span><span class="hj num">26</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">11</span><span class="hj num">27</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">12</span><span class="hj num">28</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">13</span><span class="hj num">29</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">14</span><span class="hj num">1</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">15</span><span class="hj num">2</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">16</span><span class="hj num">3</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">17</span><span class="hj num">4</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">18</span><span class="hj num">5</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">19</span><span class="hj num">6</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">20</span><span class="hj num">7</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">21</span><span class="hj num">8</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">22</span><span class="hj num">9</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">23</span><span class="hj num">10</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">24</span><span class="hj num">11</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">25</span><span class="hj num">12</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">26</span><span class="hj num">13</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">27</span><span class="hj num">14</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">28</span><span class="hj num">15</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">29</span><span class="hj num">16</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">30</span><span class="hj num">17</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">31</span><span class="hj num">18</span></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="legend">
+                    <span class="lg"><span class="sw ink"></span>Check-in / check-out</span>
+                    <span class="lg"><span class="sw band"></span>Nights in your stay</span>
+                    <span class="lg"><span class="sw ring"></span>Today</span>
+                    <span class="lg"><span class="sw struck"></span>Unavailable or below the minimum</span>
+                  </div>
+                  <p class="calnote">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <span><b><span class="num">8</span> Aug is free</b> but sits between two booked nights, so a stay there would be one night — below this host's <span class="num">2</span>-night minimum. Struck days stay visible so you can see why.</span>
+                  </p>
+                  <p class="calfoot">Hijri dates are approximate and may vary by moon sighting.</p>
+                </div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Guests</div>
+                <p class="sec-sub">This home sleeps up to <b><span class="num">6</span></b>. Infants do not count toward the limit.</p>
+                <div class="ggroup">
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Adults</span><span class="gage">Ages <span class="num">13</span> and up</span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">1</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Children</span><span class="gage">Ages <span class="num">2</span>–<span class="num">12</span></span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">0</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Infants</span><span class="gage">Under <span class="num">2</span> · stays free</span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">0</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval empty">Not set</span></span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">1</span> adult</span></span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> per night</span></p>
+                <p class="strip">Pick your nights and your total appears here. Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>.</p>
+                <span class="cta off">Continue to party type</span>
+                <p class="ctanote">Pick your dates to continue.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 3 · LIGHT · ERRORS — availability conflict + guest limit ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · errors — a night was booked mid-choice (page banner, recovery named) · party arrives over the home's limit (inline field error)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/dates" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/dates">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your dates and guests</div>
+            <p class="psub">Pick the nights and who is coming. Nothing is charged yet.</p>
+          </div>
+
+          <div class="banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <span>
+              <p><b>Sun <span class="num">16</span> Aug was booked while you were choosing.</b> Your check-in on Fri <span class="num">14</span> Aug is still held. Pick a new check-out, or move the whole stay to the next free run of nights — Tue <span class="num">18</span> to Fri <span class="num">21</span> Aug.</p>
+              <span class="inlink">Shift my stay to <span class="num">18</span>–<span class="num">21</span> Aug</span>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li><span class="scirc">1</span><span class="slab">Party</span></li>
+                  <li><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Next: <b>Step 1 of 4 · Party</b>. Dates and guests come first; the four steps start when you continue.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Dates</div>
+                <p class="sec-sub">Check-in from 2:00 PM, check-out before 11:00 AM. Minimum stay <b>2 nights</b>.</p>
+                <div class="dgroup">
+                  <span class="dcell"><span class="overline">Check-in</span><span class="dval">Fri <span class="num">14</span> Aug <span class="num">2026</span></span></span>
+                  <span class="dcell editing"><span class="overline">Check-out</span><span class="dval empty">Add a date</span></span>
+                </div>
+                <div class="dfoot">
+                  <span class="dnights">Pick a check-out night</span>
+                  <span class="inlink">Clear dates</span>
+                </div>
+
+                <div class="cal">
+                  <div class="calhead">
+                    <span class="calnav" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                    <div class="mtitles one"><div><div class="mname">August <span class="num">2026</span></div><div class="mhj">Safar – Rabi al-Awwal <span class="num">1448</span> AH</div></div></div>
+                    <span class="calnav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                  </div>
+                  <div class="calms one">
+                    <div>
+                      <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                      <div class="days">
+                        <span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span>
+                        <span class="day today"><span class="inner"><span class="g num">1</span><span class="hj num">17</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">2</span><span class="hj num">18</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">3</span><span class="hj num">19</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">4</span><span class="hj num">20</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">5</span><span class="hj num">21</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">6</span><span class="hj num">22</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">7</span><span class="hj num">23</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">8</span><span class="hj num">24</span></span></span>
+
+                        <span class="day off"><span class="inner"><span class="g num">9</span><span class="hj num">25</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">10</span><span class="hj num">26</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">11</span><span class="hj num">27</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">12</span><span class="hj num">28</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">13</span><span class="hj num">29</span></span></span>
+                        <span class="day range-start"><span class="inner"><span class="g num">14</span><span class="hj num">1</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">15</span><span class="hj num">2</span></span></span>
+
+                        <span class="day off"><span class="inner"><span class="g num">16</span><span class="hj num">3</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">17</span><span class="hj num">4</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">18</span><span class="hj num">5</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">19</span><span class="hj num">6</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">20</span><span class="hj num">7</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">21</span><span class="hj num">8</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">22</span><span class="hj num">9</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">23</span><span class="hj num">10</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">24</span><span class="hj num">11</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">25</span><span class="hj num">12</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">26</span><span class="hj num">13</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">27</span><span class="hj num">14</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">28</span><span class="hj num">15</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">29</span><span class="hj num">16</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">30</span><span class="hj num">17</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">31</span><span class="hj num">18</span></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="calfoot">Hijri dates are approximate and may vary by moon sighting.</p>
+                </div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Guests</div>
+                <p class="sec-sub">This home sleeps up to <b><span class="num">6</span></b>. Infants do not count toward the limit.</p>
+                <div class="ggroup invalid">
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Adults</span><span class="gage">Ages <span class="num">13</span> and up</span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">5</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Children</span><span class="gage">Ages <span class="num">2</span>–<span class="num">12</span></span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">2</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Infants</span><span class="gage">Under <span class="num">2</span> · stays free</span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">0</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                </div>
+                <p class="errline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                  <span>You brought <b><span class="num">7</span> guests</b> from search and this home sleeps <b><span class="num">6</span></b>. Remove one guest, or <span class="inlink">see homes in F-<span class="num">7</span> that sleep <span class="num">7</span></span>.</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> Aug <span class="num">2026</span> · check-out not set</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval empty"><span class="num">7</span> guests · over this home's limit</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> per night</span></p>
+                <p class="strip">Two things to fix before you continue: a <b>check-out night</b> and <b>one guest too many</b>. Nothing is charged.</p>
+                <span class="cta off">Continue to party type</span>
+                <p class="ctanote">Fix the two items above to continue.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 4 · DARK · CHOSEN ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">Dark · chosen — visual theme rendering (no second h1, no landmarks)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/dates" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/dates">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your dates and guests</div>
+            <p class="psub">Pick the nights and who is coming. Nothing is charged yet.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li><span class="scirc">1</span><span class="slab">Party</span></li>
+                  <li><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Next: <b>Step 1 of 4 · Party</b>. Dates and guests come first; the four steps start when you continue.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Dates</div>
+                <p class="sec-sub">Check-in from 2:00 PM, check-out before 11:00 AM. Minimum stay <b>2 nights</b>.</p>
+                <div class="dgroup">
+                  <span class="dcell editing"><span class="overline">Check-in</span><span class="dval">Fri <span class="num">14</span> Aug <span class="num">2026</span></span></span>
+                  <span class="dcell"><span class="overline">Check-out</span><span class="dval">Mon <span class="num">17</span> Aug <span class="num">2026</span></span></span>
+                </div>
+                <div class="dfoot">
+                  <span class="dnights"><b><span class="num">3</span> nights</b> · Fri <span class="num">14</span> → Mon <span class="num">17</span> Aug</span>
+                  <span class="inlink">Clear dates</span>
+                </div>
+
+                <div class="cal">
+                  <div class="calhead">
+                    <span class="calnav" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                    <div class="mtitles one"><div><div class="mname">August <span class="num">2026</span></div><div class="mhj">Safar – Rabi al-Awwal <span class="num">1448</span> AH</div></div></div>
+                    <span class="calnav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                  </div>
+                  <div class="calms one">
+                    <div>
+                      <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                      <div class="days">
+                        <span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span>
+                        <span class="day today"><span class="inner"><span class="g num">1</span><span class="hj num">17</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">2</span><span class="hj num">18</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">3</span><span class="hj num">19</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">4</span><span class="hj num">20</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">5</span><span class="hj num">21</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">6</span><span class="hj num">22</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">7</span><span class="hj num">23</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">8</span><span class="hj num">24</span></span></span>
+
+                        <span class="day off"><span class="inner"><span class="g num">9</span><span class="hj num">25</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">10</span><span class="hj num">26</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">11</span><span class="hj num">27</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">12</span><span class="hj num">28</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">13</span><span class="hj num">29</span></span></span>
+                        <span class="day range-start"><span class="inner"><span class="g num">14</span><span class="hj num">1</span></span></span>
+                        <span class="day in-range"><span class="inner"><span class="g num">15</span><span class="hj num">2</span></span></span>
+
+                        <span class="day in-range"><span class="inner"><span class="g num">16</span><span class="hj num">3</span></span></span>
+                        <span class="day range-end"><span class="inner"><span class="g num">17</span><span class="hj num">4</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">18</span><span class="hj num">5</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">19</span><span class="hj num">6</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">20</span><span class="hj num">7</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">21</span><span class="hj num">8</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">22</span><span class="hj num">9</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">23</span><span class="hj num">10</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">24</span><span class="hj num">11</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">25</span><span class="hj num">12</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">26</span><span class="hj num">13</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">27</span><span class="hj num">14</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">28</span><span class="hj num">15</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">29</span><span class="hj num">16</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">30</span><span class="hj num">17</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">31</span><span class="hj num">18</span></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="legend">
+                    <span class="lg"><span class="sw ink"></span>Check-in / check-out</span>
+                    <span class="lg"><span class="sw band"></span>Nights in your stay</span>
+                    <span class="lg"><span class="sw ring"></span>Today</span>
+                    <span class="lg"><span class="sw struck"></span>Unavailable or below the minimum</span>
+                  </div>
+                  <p class="calfoot">Hijri dates are approximate and may vary by moon sighting.</p>
+                </div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Guests</div>
+                <p class="sec-sub">This home sleeps up to <b><span class="num">6</span></b>. Infants do not count toward the limit.</p>
+                <div class="ggroup">
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Adults</span><span class="gage">Ages <span class="num">13</span> and up</span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">4</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Children</span><span class="gage">Ages <span class="num">2</span>–<span class="num">12</span></span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">2</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Infants</span><span class="gage">Under <span class="num">2</span> · stays free</span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">0</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+                <span class="cta">Continue to party type</span>
+                <p class="ctanote">You will not be charged yet.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 5 · URDU / RTL · CHOSEN ================= -->
+    <div class="doc rtl" aria-hidden="true" lang="ur" dir="rtl">
+      <div class="panel-tag" style="direction:ltr">Urdu · RTL — layout &amp; direction demo. Western digits inside <code>.num</code>, Urdu prose around them (Pass #31). Stepper lexicon: شناخت = Verify, تصدیق = Confirm. The two §5 claim lines reuse the corpus-established Urdu strings verbatim (ga-002 / gw-006 / gw-001) rather than a fresh paraphrase; all other Urdu here is a direction demo and is human-translated for production.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>آپ کی معلومات محفوظ ہیں</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/dates">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/dates" aria-current="page">اردو</a></div>
+        <span class="exitlink nastaliq">محفوظ کر کے باہر</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>مارگلہ ویو اپارٹمنٹ پر واپس</span></div>
+          <div class="pagehead">
+            <div class="ptitle nastaliq">آپ کی تاریخیں اور مہمان</div>
+            <p class="psub nastaliq">راتیں اور ساتھ آنے والے منتخب کریں۔ ابھی کوئی رقم وصول نہیں کی جائے گی۔</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li><span class="scirc num">1</span><span class="slab nastaliq">پارٹی</span></li>
+                  <li><span class="scirc num">2</span><span class="slab nastaliq">شناخت</span></li>
+                  <li><span class="scirc num">3</span><span class="slab nastaliq">قیمت</span></li>
+                  <li><span class="scirc num">4</span><span class="slab nastaliq">تصدیق</span></li>
+                </ol>
+                <p class="scap nastaliq">اگلا: <b>مرحلہ <span class="num">1</span> از <span class="num">4</span> · پارٹی</b>۔ پہلے تاریخیں اور مہمان؛ چار مرحلے آگے بڑھنے پر شروع ہوتے ہیں۔</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">تاریخیں</div>
+                <p class="sec-sub nastaliq">چیک اِن <span class="num">2:00</span> بجے دوپہر سے، چیک آؤٹ <span class="num">11:00</span> بجے صبح سے پہلے۔ میزبان کم از کم <b><span class="num">2</span> راتیں</b> مانگتا ہے۔</p>
+                <div class="dgroup">
+                  <span class="dcell editing"><span class="overline nastaliq">چیک اِن</span><span class="dval nastaliq">جمعہ <span class="num">14</span> اگست <span class="num">2026</span></span></span>
+                  <span class="dcell"><span class="overline nastaliq">چیک آؤٹ</span><span class="dval nastaliq">پیر <span class="num">17</span> اگست <span class="num">2026</span></span></span>
+                </div>
+                <div class="dfoot">
+                  <span class="dnights nastaliq"><b><span class="num">3</span> راتیں</b> · جمعہ <span class="num">14</span> ← پیر <span class="num">17</span> اگست</span>
+                  <span class="inlink nastaliq">تاریخیں ہٹائیں</span>
+                </div>
+
+                <div class="cal">
+                  <div class="calhead">
+                    <span class="calnav" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                    <div class="mtitles one"><div><div class="mname nastaliq">اگست <span class="num">2026</span></div><div class="mhj nastaliq">صفر – ربیع الاول <span class="num">1448</span> ہجری</div></div></div>
+                    <span class="calnav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                  </div>
+                  <div class="calms one">
+                    <div>
+                      <div class="wk"><span class="nastaliq">اتوار</span><span class="nastaliq">پیر</span><span class="nastaliq">منگل</span><span class="nastaliq">بدھ</span><span class="nastaliq">جمعرات</span><span class="nastaliq">جمعہ</span><span class="nastaliq">ہفتہ</span></div>
+                      <div class="days">
+                        <span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span>
+                        <span class="day today"><span class="inner"><span class="g num">1</span><span class="hj num">17</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">2</span><span class="hj num">18</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">3</span><span class="hj num">19</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">4</span><span class="hj num">20</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">5</span><span class="hj num">21</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">6</span><span class="hj num">22</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">7</span><span class="hj num">23</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">8</span><span class="hj num">24</span></span></span>
+
+                        <span class="day off"><span class="inner"><span class="g num">9</span><span class="hj num">25</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">10</span><span class="hj num">26</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">11</span><span class="hj num">27</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">12</span><span class="hj num">28</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">13</span><span class="hj num">29</span></span></span>
+                        <span class="day range-start"><span class="inner"><span class="g num">14</span><span class="hj num">1</span></span></span>
+                        <span class="day in-range"><span class="inner"><span class="g num">15</span><span class="hj num">2</span></span></span>
+
+                        <span class="day in-range"><span class="inner"><span class="g num">16</span><span class="hj num">3</span></span></span>
+                        <span class="day range-end"><span class="inner"><span class="g num">17</span><span class="hj num">4</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">18</span><span class="hj num">5</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">19</span><span class="hj num">6</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">20</span><span class="hj num">7</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">21</span><span class="hj num">8</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">22</span><span class="hj num">9</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">23</span><span class="hj num">10</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">24</span><span class="hj num">11</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">25</span><span class="hj num">12</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">26</span><span class="hj num">13</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">27</span><span class="hj num">14</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">28</span><span class="hj num">15</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">29</span><span class="hj num">16</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">30</span><span class="hj num">17</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">31</span><span class="hj num">18</span></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="calnote nastaliq">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <span>کاٹی ہوئی تاریخیں دستیاب نہیں یا میزبان کی <span class="num">2</span> راتوں کی کم از کم شرط سے کم ہیں۔ یہ نظر آتی رہتی ہیں تاکہ وجہ سامنے رہے۔</span>
+                  </p>
+                  <p class="calfoot nastaliq">ہجری تاریخیں تخمینی ہیں اور رویتِ ہلال کے مطابق مختلف ہو سکتی ہیں۔</p>
+                </div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">مہمان</div>
+                <p class="sec-sub nastaliq">اس گھر میں زیادہ سے زیادہ <b><span class="num">6</span></b> مہمان رہ سکتے ہیں۔ شیر خوار بچے حد میں شمار نہیں ہوتے۔</p>
+                <div class="ggroup">
+                  <div class="grow">
+                    <span class="glab"><span class="gname nastaliq">بالغ</span><span class="gage nastaliq"><span class="num">13</span> سال اور اس سے زیادہ</span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">4</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname nastaliq">بچے</span><span class="gage nastaliq"><span class="num">2</span>–<span class="num">12</span> سال</span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">2</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname nastaliq">شیر خوار</span><span class="gage nastaliq"><span class="num">2</span> سال سے کم · مفت</span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">0</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                </div>
+                <p class="ghint nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span><b>ساتھ سفر کرنے والوں کی تفصیل اگلا مرحلہ ہے۔</b> پارٹی کی قسم آپ مرحلہ <span class="num">1</span> پر منتخب کریں گے، اور اسی وقت وہ دستاویز شیئر ہوگی جو میزبان کی پالیسی مانگتی ہے۔</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname nastaliq">مارگلہ ویو اپارٹمنٹ</span><span class="iarea nastaliq">پورا اپارٹمنٹ · <span class="num">F-7</span>، اسلام آباد</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">تاریخیں</span><span class="sval nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">مہمان</span><span class="sval nastaliq"><span class="num">6</span> مہمان · <span class="num">4</span> بالغ، <span class="num">2</span> بچے</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="railrule"></div>
+                <p class="pline nastaliq"><span><span class="num">PKR 12,500</span> × <span class="num">3</span> راتیں</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip nastaliq">سروس فیس، ادائیگی کی پروسیسنگ اور سیلز ٹیکس <b>مرحلہ <span class="num">3</span> · قیمت</b> پر شامل اور تفصیل سے دکھائے جاتے ہیں — کسی چارج سے پہلے۔</p>
+                <span class="cta nastaliq">پارٹی کی قسم پر جائیں</span>
+                <p class="ctanote nastaliq">ابھی کوئی رقم وصول نہیں ہوگی۔</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span class="nastaliq"><b>مہمان اور میزبان دونوں کی تصدیق نادرا ویری سِس کے ذریعے کی جاتی ہے</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span class="nastaliq"><b>شفاف فیس اور ٹیکس — بکنگ یا کمائی سے پہلے ہر روپیہ ظاہر۔</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span class="nastaliq">آپ کی رقم امانت میں رکھی جاتی ہے اور چیک اِن کے بعد ہی میزبان کو دی جاتی ہے۔ <a href="/ur/help/payments/how-money-is-held">آپ کی رقم کیسے رکھی جاتی ہے</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 6 · MOBILE 390 · CHOSEN — the rail becomes a bottom bar ================= -->
+    <div class="doc mob" aria-hidden="true">
+      <div class="panel-tag">Mobile <span class="num">390</span> · chosen — rail un-sticks and leaves the flow; identity folds to a top strip; nights + subtotal + CTA move to a hairline-topped sticky bottom bar (no shadow, ever)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="langsw"><a href="/book/is-f7-2bed/dates" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/dates">اردو</a></div>
+        <span class="exitlink">Exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the listing</span></div>
+
+          <div class="mobstrip">
+            <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+            <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+          </div>
+
+          <div class="pagehead">
+            <div class="ptitle">Your dates and guests</div>
+            <p class="psub">Pick the nights and who is coming. Nothing is charged yet.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li><span class="scirc">1</span><span class="slab">Party</span></li>
+                  <li><span class="scirc">2</span><span class="slab">Verify</span></li>
+                  <li><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Next: <b>Step 1 of 4 · Party</b>.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Dates</div>
+                <p class="sec-sub">This host asks for at least <b>2 nights</b>.</p>
+                <div class="dgroup">
+                  <span class="dcell editing"><span class="overline">Check-in</span><span class="dval">Fri <span class="num">14</span> Aug</span></span>
+                  <span class="dcell"><span class="overline">Check-out</span><span class="dval">Mon <span class="num">17</span> Aug</span></span>
+                </div>
+                <div class="dfoot">
+                  <span class="dnights"><b><span class="num">3</span> nights</b></span>
+                  <span class="inlink">Clear dates</span>
+                </div>
+
+                <div class="cal">
+                  <div class="calhead">
+                    <span class="calnav" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+                    <div class="mtitles one"><div><div class="mname">August <span class="num">2026</span></div><div class="mhj">Safar – Rabi al-Awwal <span class="num">1448</span> AH</div></div></div>
+                    <span class="calnav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                  </div>
+                  <div class="calms one">
+                    <div>
+                      <div class="wk"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                      <div class="days">
+                        <span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span><span class="day pad"></span>
+                        <span class="day today"><span class="inner"><span class="g num">1</span><span class="hj num">17</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">2</span><span class="hj num">18</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">3</span><span class="hj num">19</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">4</span><span class="hj num">20</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">5</span><span class="hj num">21</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">6</span><span class="hj num">22</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">7</span><span class="hj num">23</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">8</span><span class="hj num">24</span></span></span>
+
+                        <span class="day off"><span class="inner"><span class="g num">9</span><span class="hj num">25</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">10</span><span class="hj num">26</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">11</span><span class="hj num">27</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">12</span><span class="hj num">28</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">13</span><span class="hj num">29</span></span></span>
+                        <span class="day range-start"><span class="inner"><span class="g num">14</span><span class="hj num">1</span></span></span>
+                        <span class="day in-range"><span class="inner"><span class="g num">15</span><span class="hj num">2</span></span></span>
+
+                        <span class="day in-range"><span class="inner"><span class="g num">16</span><span class="hj num">3</span></span></span>
+                        <span class="day range-end"><span class="inner"><span class="g num">17</span><span class="hj num">4</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">18</span><span class="hj num">5</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">19</span><span class="hj num">6</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">20</span><span class="hj num">7</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">21</span><span class="hj num">8</span></span></span>
+                        <span class="day off"><span class="inner"><span class="g num">22</span><span class="hj num">9</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">23</span><span class="hj num">10</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">24</span><span class="hj num">11</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">25</span><span class="hj num">12</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">26</span><span class="hj num">13</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">27</span><span class="hj num">14</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">28</span><span class="hj num">15</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">29</span><span class="hj num">16</span></span></span>
+
+                        <span class="day"><span class="inner"><span class="g num">30</span><span class="hj num">17</span></span></span>
+                        <span class="day"><span class="inner"><span class="g num">31</span><span class="hj num">18</span></span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="calfoot">Hijri dates are approximate and may vary by moon sighting.</p>
+                </div>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Guests</div>
+                <p class="sec-sub">This home sleeps up to <b><span class="num">6</span></b>.</p>
+                <div class="ggroup">
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Adults</span><span class="gage">Ages <span class="num">13</span> and up</span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">4</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Children</span><span class="gage">Ages <span class="num">2</span>–<span class="num">12</span></span></span>
+                    <span class="gctrl">
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">2</span>
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                  <div class="grow">
+                    <span class="glab"><span class="gname">Infants</span><span class="gage">Under <span class="num">2</span> · stays free</span></span>
+                    <span class="gctrl">
+                      <span class="gstep" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></span>
+                      <span class="gnum num">0</span>
+                      <span class="gstep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                    </span>
+                  </div>
+                </div>
+                <p class="strip">Service fee, payment processing and sales tax are added and itemised at <b>step <span class="num">3</span> · Price</b>, before anything is charged.</p>
+              </div>
+            </div>
+            <div class="railwrap"></div>
+          </div>
+        </div>
+
+        <div class="mobbar">
+          <span class="mobsum">
+            <span class="ms-t num">PKR 37,500</span>
+            <span class="ms-s"><span class="num">3</span> nights · <span class="num">6</span> guests</span>
+          </span>
+          <span class="cta">Continue</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

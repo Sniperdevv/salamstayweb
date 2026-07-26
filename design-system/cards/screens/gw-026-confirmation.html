@@ -1,0 +1,1115 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Booking confirmed, Margalla View Apartment F-7 (GW-026)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     GW-026 · CONFIRMATION — the thank-you page (WEB CHECKOUT, post-flow)
+     route "/book/is-f7-2bed/confirmation" (en) + "/ur/book/is-f7-2bed/confirmation"
+     Reached when step 4 · Confirm resolves successfully. Web twin of ga-064
+     (booking confirmation), with the cash-on-arrival variant carried from
+     ga-121 and the receipt/invoice affordances from ga-134.
+
+     Inherits design-system/cards/screens/CHECKOUT-SHELL.md unchanged except
+     where this comment says otherwise. gw-021-reserve.html is the reference
+     rendering; its token block, chrome, frame, rail and mobile collapse are
+     copied verbatim.
+
+     ---------------------------------------------------------------------------
+     RULING 1 — THE STEPPER AFTER THE FLOW ENDS. **No stepper. Not four
+       complete circles — none at all.**
+       This is not a new state and it is not a judgement call: it is already
+       written down twice. HANDOFF §7.6a: "Post-book screens (pending/declined/
+       held/confirmation) show NO journey stepper — they are after checkout."
+       CHECKOUT-SHELL §3 restates it: "Post-book cards ship no stepper at all."
+       ga-121 and ga-134 both ship post-book with no stepper and say so in their
+       notes. Four brand-filled circles would be the worse of the two options
+       anyway: a stepper answers "where am I in this?", and there is no longer
+       an "in this" — a completed stepper turns a wayfinder into a trophy.
+       WHAT DOES OCCUPY THE SLOT (this part IS new and is proposed, not canon):
+       an `.outcome` block in the stepper's exact slot and exact geometry —
+       main column, directly under `.pagehead`, `padding:0 0 26px`, a status
+       row plus a caption, matching `.stepblk`'s two-part anatomy and rhythm
+       one-for-one. It answers the same question the stepper answered ("what is
+       true right now?") with the one fact that is true: the state, the booking
+       reference, and the money. No box, no fill, no border (TASTE §1 — content
+       blocks carry neither). It replaces the stepper; it never sits beside one.
+
+     RULING 2 — THE RAIL SURVIVES, UNCHANGED IN STRUCTURE. The rail was never
+       really about protecting a CTA; it was about holding the OBJECT the guest
+       is acting on. The object still exists after the flow ends — it is now a
+       confirmed trip instead of a draft booking — so the rail still has a
+       subject, and the guest's eye still lands where it has landed on every
+       previous step. CHECKOUT-SHELL §4's fixed order is kept literally:
+         .ident → .railrule → .sumrow DATES → .sumrow GUESTS → .railrule →
+         .pline → .strip → button.cta → .ctanote → .trust
+       Only the truth inside the slots changes: `.pline` becomes "Total paid"
+       (an underlined amount, because it opens the receipt — TASTE §8's one
+       sanctioned price underline, and the itemisation still lives in ga-134,
+       so §6's "only the Price step itemises" is not breached); `.strip`
+       becomes the cancellation deadline; `.cta` becomes the one enabled
+       primary, "View your trip". Nothing is added, nothing is reordered.
+       The cash-on-arrival variant carries a SECOND `.pline` rather than a new
+       component — a repeat of an existing element, not an addition to the
+       order.
+
+     ---------------------------------------------------------------------------
+     SHELL ADDITIONS (four, all proposed — CHECKOUT-SHELL §13's class inventory
+     does not cover post-flow surfaces and needs these rows added if approved):
+       `.outcome .ostat .ocode .ocap`  the post-flow status block (RULING 1)
+       `.frows .frow .fdt .fdd`        the facts <dl>; borrowed geometry from
+                                       the §5 form group, hairline-divided rows,
+                                       square interior corners, max-width 520
+       `.alist .arow .aic .abody .at .as .achev .arow.off`
+                                       next-step rows; the SAME form-group
+                                       anatomy as `.frows`, so a list of actions
+                                       and a list of facts read as one object
+                                       family. `.arow.off` is the disabled row:
+                                       visible, in place, explains itself
+                                       (TASTE §11.7)
+       `.gbtn` / `.acts`               TASTE §5's gray-fill secondary button,
+                                       first appearance on a checkout surface.
+                                       Not an invention — a documented component
+                                       that had no checkout home until now.
+     `.strip` gains `.striplab` (a 13/600 ink label line) so a quoted note can
+     carry its attribution without bolding a whole sentence (§12).
+
+     ---------------------------------------------------------------------------
+     ROBOTS: noindex, follow — same as every checkout route.
+       No canonical, no hreflang pair, no JSON-LD. `<main class="co-main">`,
+       never `class="indexable"`. No SEO breadcrumb; one ink underlined back
+       link, which on a post-flow page points at `/trips` rather than at the
+       listing (the listing is no longer the thing the guest came from). The
+       header's single exit affordance reads "Done", not "Save & exit" — there
+       is nothing left to save. One <h1>: the page's accessible title.
+
+     GREEN RARITY — three roles, counted, and one success mark that is not
+       brand green: the wordmark dot · the one enabled `.cta` · the verification
+       shield in `.trust`. `grep -c 'var(--int-primary)'` maps to exactly those
+       (no stepper rules ship on this card, so there is no fourth family).
+       The confirmed tick uses `--success-fg`, a different semantic role
+       (`feedback.success`), spent ONCE on the whole surface, on the page whose
+       entire job is to say a thing succeeded. Links stay ink and underlined;
+       icons stay `text.secondary`; the `.aic` discs are `bg.raised`, never
+       `interactive.subtle` (ga-064's phone panel tints them brand — on web
+       that would be a fourth green role repeated four times).
+
+     ---------------------------------------------------------------------------
+     MONEY — every figure traceable, arithmetic balanced, nothing new invented:
+       Nightly   PKR 12,500                                   (ga-050, gw-021)
+       Dates     Fri 14 – Mon 17 Aug 2026 = 3 nights          (gw-021)
+       Subtotal  PKR 12,500 × 3          = PKR 37,500         (gw-021 .pline)
+       + service fee 2,250 + MDR 720 + ICT sales tax 1,880 = PKR 4,850 in fees
+                                          = PKR 42,350 total  (ga-050, ga-134)
+       Cash-on-arrival variant splits the SAME total the way ga-121 splits it:
+       PKR 4,850 paid online, PKR 37,500 cash to the host at check-in.
+       Format is always "PKR 42,350". The bare rupee sign appears nowhere in
+       this file — not in markup, not in copy, not in this comment. Every digit
+       run sits inside `.num`.
+
+     BOOKING REFERENCE — `SS-7F3K9Q`, the shipped reference for this exact stay
+       (Margalla View Apartment, 14–17 Aug 2026, PKR 42,350) recorded in
+       LOOP-COMPLETE.md and rendered by ga-064, ga-121 and ga-134. No new
+       reference is minted here, and no second stay is invented: the cash panel
+       is the SAME booking shown under a different payment choice.
+
+     INVENTED FOR THIS CARD (nothing else is): the cancellation deadline
+       timestamp Wed 12 Aug — arithmetic, not a new policy (48 hours before a
+       2:00 PM check-in on Fri 14 Aug); and the trip URL slug
+       `is-f7-2bed-aug2026`, carried from ga-064.
+
+     KNOWN DIVERGENCE FROM THE APP TWIN, deliberate: ga-064's phone panel shows
+       "2 guests · Couple". This page ends the WEB thread that gw-021 started,
+       and gw-021 ships 6 guests (4 adults, 2 children). The web thread wins —
+       a guest who set 6 guests two screens ago must not be told they booked
+       for 2. Reference, dates and money are the shared canonical stay.
+
+     REPOSITIONED 2026-07-26 (REPOSITIONING.md, founder decision — the record of
+       what changed, kept so a reader of the old card can see the delta).
+       The settlement structure is UNCHANGED and ARCHITECTURE.md is untouched:
+       the money sits in a Meezan custody account, is not spent, not lent out,
+       earns no interest, and is released to the host after check-in; SalamStay
+       never holds it in its own name. Only the WORDS changed — "held in trust",
+       "How your payment is held", pointing at the registry's existing
+       /help/payments/how-money-is-held. "Where your money is" keeps every fact
+       it had, including the cash-on-arrival split; it just no longer asks a
+       guest to look a word up on the screen that confirms their booking.
+
+     CLAIMS: SEO-RULES §5 registry only, verbatim — #1 (CNIC/NADRA Verisys) and
+       #9 (transparent fees and tax). The trust wording is reused byte-for-byte
+       from gw-021 as repositioned above. No SLA, no response time, no host
+       phone number, no ratings, no review prompt, no counts.
+
+     CONTRACT GAP, REPORTED NOT PAPERED OVER: CHECKOUT-SHELL §11 requires an
+       "empty" panel and an "error" panel on every checkout card. A confirmed
+       booking has neither — it is never empty, and its failure modes live on
+       gw-027, not here. The two registers are honoured by their post-flow
+       analogues instead: panel 2 carries a page-level WARNING banner (the
+       exact-cash rule from ga-121) and panel 3 carries a page-level INFO banner
+       plus a control that is disabled, visible, in place and explains itself
+       (the tax invoice still being prepared, ga-134). §11 should say so.
+
+     CARD CONVENTION: panel 1 (light, confirmed) is the authoritative semantic
+       page — one h1, real landmarks. Panels 2–6 are variants and renderings;
+       the dark, Urdu/RTL and mobile panels are aria-hidden and carry no
+       headings or landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — @salamstay/design-tokens, consumed by role.
+     Copied verbatim from gw-021-reserve.html (CHECKOUT-SHELL §9).
+     No raw hex outside this block.
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-floating:0 2px 6px 0 rgba(16,25,27,.08),0 6px 16px 0 rgba(16,25,27,.12);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-floating:0 2px 6px 0 rgba(0,0,0,.4),0 6px 16px 0 rgba(0,0,0,.36);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.mob { max-width:390px; margin:0 auto; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* ---- reduced checkout header (CHECKOUT-SHELL §2) ---- */
+  .co-header { display:flex; align-items:center; gap:16px; height:64px; padding:0 28px; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; z-index:2; }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hspacer { flex:1; }
+  .securenote { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); white-space:nowrap; }
+  .securenote svg { width:15px; height:15px; flex:none; }
+  .langsw { display:inline-flex; align-items:stretch; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { border:none; background:transparent; font-family:inherit; font-size:13px; line-height:1; padding:7px 13px; color:var(--text-secondary); cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:14px; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current="page"] { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .exitlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
+
+  /* ---- page frame ---- */
+  .co-main { display:block; background:var(--bg-canvas); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+  .backrow { padding:20px 0 0; }
+  .backlink { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .backlink svg { width:15px; height:15px; flex:none; }
+  .rtl .backlink svg { transform:scaleX(-1); }
+  .pagehead { padding:20px 0 22px; }
+  .pagehead h1 { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .pagehead .psub { font-size:16px; color:var(--text-secondary); margin-top:8px; max-width:56ch; }
+  .pagehead .psub b { color:var(--text-primary); font-weight:600; }
+  .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+
+  /* ---- the two-column shell ---- */
+  .cols2 { display:grid; grid-template-columns:minmax(0,1fr) 348px; gap:48px; align-items:start; border-top:1px solid var(--border-hairline); padding-bottom:8px; }
+  .lmain { padding-top:4px; }
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); }
+  .fsec:first-child { border-top:none; padding-top:24px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- POST-FLOW STATUS BLOCK (RULING 1) — the stepper's slot and geometry ---- */
+  .outcome { padding:0 0 26px; }
+  .ostat { display:inline-flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:var(--text-primary); }
+  .ostat svg { width:19px; height:19px; flex:none; color:var(--text-secondary); }
+  .ostat.ok svg { color:var(--success-fg); }
+  .ocap { font-size:13px; color:var(--text-secondary); margin-top:10px; max-width:62ch; line-height:1.6; }
+  .ocap b { color:var(--text-primary); font-weight:600; }
+  .ocode { letter-spacing:.02em; }
+
+  /* ---- facts <dl>: the §5 form-group anatomy, hairline-divided rows ---- */
+  .frows { margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); max-width:520px; }
+  .frow { display:flex; align-items:baseline; gap:16px; padding:12px 16px; border-top:1px solid var(--border-hairline); }
+  .frow:first-child { border-top:none; }
+  .fdt { flex:none; width:132px; max-width:40%; font-size:13px; color:var(--text-secondary); }
+  .fdd { flex:1; min-width:0; font-size:15px; color:var(--text-primary); }
+  .fdd b { font-weight:600; }
+  .fdd a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .fdd .fsub { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; }
+
+  /* ---- next-step rows: same anatomy as .frows, so they read as one family ---- */
+  .alist { list-style:none; margin-top:18px; border:1px solid var(--border-default); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); max-width:520px; }
+  .alist li { border-top:1px solid var(--border-hairline); }
+  .alist li:first-child { border-top:none; }
+  .arow { display:flex; align-items:center; gap:14px; padding:13px 16px; text-decoration:none; min-height:64px; }
+  .aic { width:38px; height:38px; border-radius:var(--radius-full); flex:none; display:flex; align-items:center; justify-content:center; background:var(--bg-raised); color:var(--text-secondary); }
+  .aic svg { width:19px; height:19px; }
+  .abody { flex:1; min-width:0; }
+  .at { display:block; font-size:15px; font-weight:500; color:var(--text-primary); }
+  .as { display:block; font-size:13px; color:var(--text-secondary); margin-top:2px; line-height:1.5; }
+  .achev { flex:none; color:var(--text-tertiary); display:flex; }
+  .achev svg { width:18px; height:18px; }
+  .rtl .achev svg { transform:scaleX(-1); }
+  .arow.off { cursor:default; }
+  .arow.off .aic { color:var(--text-disabled); }
+  .arow.off .at { color:var(--text-disabled); }
+  .arow.off .achev { display:none; }
+
+  /* ---- secondary action: TASTE §5 gray-fill button ---- */
+  .acts { display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-top:18px; max-width:520px; }
+  .gbtn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .gbtn:active { transform:scale(0.98); }
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+  .inlink[disabled] { color:var(--text-disabled); text-decoration:none; cursor:default; }
+
+  /* ---- reassurance line under a section (icon + text in open space) ---- */
+  .ghint { display:flex; align-items:flex-start; gap:10px; margin-top:16px; max-width:62ch; font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:16px; height:16px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+  .ghint a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- page-level banner: warning by default, info + error modifiers ---- */
+  .banner { display:flex; align-items:flex-start; gap:11px; margin:20px 0 0; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner svg { width:18px; height:18px; color:var(--warning-fg); flex:none; margin-top:2px; }
+  .banner p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .banner p b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+  .banner.info { border-color:var(--info-border); background:var(--info-bg); }
+  .banner.info svg { color:var(--info-fg); }
+
+  /* ---- the summary rail (CHECKOUT-SHELL §4) ---- */
+  .railwrap { position:sticky; top:24px; padding:24px 0 0; }
+  .railcard { border:1px solid var(--border-default); border-radius:var(--radius-xl); background:var(--bg-canvas); box-shadow:var(--el-floating); padding:20px; }
+  .ident { display:flex; gap:12px; align-items:center; }
+  .thumb { width:56px; height:56px; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .iname { display:block; font-size:16px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .iarea { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .railrule { height:1px; background:var(--border-hairline); margin:16px 0; }
+  .sumrow { display:flex; align-items:baseline; gap:12px; }
+  .sumrow + .sumrow { margin-top:14px; }
+  .sumrow .sbody { flex:1; min-width:0; }
+  .overline { display:block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .sval { display:block; font-size:14px; color:var(--text-primary); margin-top:4px; }
+  .sval.empty { color:var(--text-secondary); }
+  .pline { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:14px; color:var(--text-secondary); }
+  .pline + .pline { margin-top:12px; }
+  .pline .pamt { font-size:16px; font-weight:600; color:var(--text-primary); }
+  a.pamt { text-decoration:underline; text-underline-offset:3px; }
+  .strip { margin-top:14px; padding:11px 13px; border-radius:var(--radius-md); background:var(--bg-raised); font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .strip b { color:var(--text-primary); font-weight:600; }
+  .striplab { display:block; font-size:13px; font-weight:600; color:var(--text-primary); margin-bottom:3px; }
+  .fsec .strip { margin-top:16px; max-width:520px; }
+  .cta { display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; margin-top:16px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .cta:active { transform:scale(0.98); }
+  .cta[disabled], .cta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; transform:none; }
+  .ctanote { font-size:13px; color:var(--text-secondary); text-align:center; margin-top:11px; line-height:1.5; }
+  .trust { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:12px; }
+  .tline { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text-secondary); line-height:1.55; }
+  .tline svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .tline.verified svg { color:var(--int-primary); }
+  .tline b { color:var(--text-primary); font-weight:600; }
+  .tline a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- reduced footer (CHECKOUT-SHELL §2) ---- */
+  .co-footer { background:var(--bg-raised); border-top:1px solid var(--border-hairline); padding:22px 28px; margin-top:16px; }
+  .fbar { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; font-size:13px; color:var(--text-secondary); }
+  .flegal { display:flex; gap:14px 20px; flex-wrap:wrap; }
+  .flegal a { color:var(--text-primary); text-decoration:none; }
+  .flegal a:hover { color:var(--text-primary); text-decoration:underline; }
+
+  /* ---- mobile collapse (CHECKOUT-SHELL §4) ---- */
+  .mobstrip { display:flex; gap:11px; align-items:center; padding:12px 0 0; }
+  .mobbar { position:sticky; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 20px 14px; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); }
+  .mobsum { display:flex; flex-direction:column; }
+  .mobsum .ms-t { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .mobsum .ms-s { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+  .mobbar .cta { width:auto; margin-top:0; padding:0 22px; flex:none; }
+  .mob .wrap { padding:0 20px; }
+  .mob .cols2 { grid-template-columns:1fr; gap:0; }
+  .mob .railwrap { display:none; }
+  .mob .co-header { padding:0 20px; gap:12px; }
+  .mob .frows, .mob .alist, .mob .acts, .mob .fsec .strip { max-width:none; }
+  .mob .fdt { width:112px; }
+  .mob .pagehead h1, .mob .ptitle { font-size:22px; }
+
+  /* ---- interaction: press feedback + hover gating + reduced motion ---- */
+  .arow, .gbtn, .exitlink, .backlink, .inlink { transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  @media (hover:hover) and (pointer:fine) {
+    .cta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .gbtn:hover { background:var(--bg-sunken); }
+    a.arow:hover { background:var(--bg-raised); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .cta, .arow, .gbtn, .exitlink, .backlink, .inlink { transition-duration:var(--dur-instant); }
+    .cta:active, .gbtn:active { transform:none; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl { direction:rtl; }
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+  .rtl .ocap.nastaliq, .rtl .as.nastaliq, .rtl .ghint.nastaliq, .rtl .strip.nastaliq { line-height:1.9; }
+
+  /* ---- real viewport collapse (matches the .mob panel exactly) ---- */
+  @media (max-width:1080px) {
+    .cols2 { grid-template-columns:1fr; gap:0; }
+    .railwrap { position:static; padding:0 0 28px; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">GW-026 — Confirmation · the thank-you page (web checkout, post-flow)</div>
+    <p>The surface step&nbsp;<code>4 · Confirm</code> resolves into: route <code>/book/is-f7-2bed/confirmation</code>, <strong>noindex, follow</strong>. Web twin of <code>ga-064</code>, with the cash-on-arrival split carried from <code>ga-121</code> and the receipt affordances from <code>ga-134</code>. Two post-flow rulings are proposed here and applied identically on <code>gw-027</code>: <strong>no stepper</strong> (already locked by HANDOFF §7.6a and CHECKOUT-SHELL §3 — an <code>.outcome</code> status block takes the slot instead), and <strong>the rail survives unchanged in structure</strong>, holding the receipt rather than protecting a CTA. Panel 1 is the authoritative semantic page; panels 2–6 are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL 1 · LIGHT · CONFIRMED & PAID (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">Light · confirmed &amp; paid — the authoritative page (one h1, real landmarks) · no stepper: the journey has ended</div>
+
+      <header class="co-header">
+        <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+        <span class="hspacer"></span>
+        <span class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Your details are encrypted
+        </span>
+        <div class="langsw" role="group" aria-label="Language">
+          <a href="/book/is-f7-2bed/confirmation" aria-current="page" lang="en">EN</a>
+          <a class="urdu" href="/ur/book/is-f7-2bed/confirmation" lang="ur">اردو</a>
+        </div>
+        <a class="exitlink" href="/trips">Done</a>
+      </header>
+
+      <main class="co-main">
+        <div class="wrap">
+          <div class="backrow">
+            <a class="backlink" href="/trips">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              Back to your trips
+            </a>
+          </div>
+
+          <div class="pagehead">
+            <h1>You're booked</h1>
+            <p class="psub">Your stay at <b>Margalla View Apartment</b> is confirmed. We've let your host know.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <!-- POST-FLOW STATUS BLOCK — the stepper's slot, the stepper's geometry (RULING 1) -->
+              <div class="outcome">
+                <span class="ostat ok">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                  Confirmed and paid
+                </span>
+                <p class="ocap">Booking reference <b class="ocode num">SS-7F3K9Q</b> · <b class="num">PKR 42,350</b> paid on Sat <span class="num">1</span> Aug <span class="num">2026</span>. Checkout is finished; nothing further is needed from you before check-in.</p>
+              </div>
+
+              <!-- YOUR TRIP -->
+              <section class="fsec" aria-labelledby="trip-h">
+                <h2 id="trip-h">Your trip</h2>
+                <p class="sec-sub">The booking as it now stands. Your host sees the same facts.</p>
+
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Stay</dt><dd class="fdd">Margalla View Apartment<span class="fsub">Entire apartment · F-<span class="num">7</span>, Islamabad</span></dd></div>
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span><span class="fsub"><span class="num">3</span> nights</span></dd></div>
+                  <div class="frow"><dt class="fdt">Check-in</dt><dd class="fdd">From <span class="num">2:00</span> PM, Fri <span class="num">14</span> Aug</dd></div>
+                  <div class="frow"><dt class="fdt">Check-out</dt><dd class="fdd">Before <span class="num">11:00</span> AM, Mon <span class="num">17</span> Aug</dd></div>
+                  <div class="frow"><dt class="fdt">Guests</dt><dd class="fdd"><span class="num">6</span> guests<span class="fsub"><span class="num">4</span> adults, <span class="num">2</span> children · Family</span></dd></div>
+                  <div class="frow"><dt class="fdt">Host</dt><dd class="fdd">Ayesha</dd></div>
+                  <div class="frow"><dt class="fdt">Booking reference</dt><dd class="fdd"><b class="ocode num">SS-7F3K9Q</b></dd></div>
+                  <div class="frow"><dt class="fdt">Total paid</dt><dd class="fdd"><a href="/trips/is-f7-2bed-aug2026/receipt"><b class="num">PKR 42,350</b></a><span class="fsub">Itemised on your receipt</span></dd></div>
+                </dl>
+              </section>
+
+              <!-- WHAT HAPPENS NEXT -->
+              <section class="fsec" aria-labelledby="next-h">
+                <h2 id="next-h">What happens next</h2>
+                <p class="sec-sub">Your host has your dates. Everything else you might need is here.</p>
+
+                <ul class="alist">
+                  <li>
+                    <a class="arow" href="/messages/host-margalla-view">
+                      <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                      <span class="abody"><span class="at">Message Ayesha</span><span class="as">Say salam, ask about check-in. Messages stay inside SalamStay.</span></span>
+                      <span class="achev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="arow" href="/trips/is-f7-2bed-aug2026/arrival">
+                      <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                      <span class="abody"><span class="at">Getting there &amp; arrival</span><span class="as">Directions, check-in time and house rules</span></span>
+                      <span class="achev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="arow" href="/trips/is-f7-2bed-aug2026/booking.ics" download>
+                      <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v4M10 16h4"/></svg></span>
+                      <span class="abody"><span class="at">Add to your calendar</span><span class="as">Saves <span class="num">14</span>–<span class="num">17</span> Aug as a calendar file</span></span>
+                      <span class="achev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M4 20h16"/></svg></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="arow" href="/trips/is-f7-2bed-aug2026/receipt">
+                      <span class="aic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                      <span class="abody"><span class="at">Receipt and tax invoice</span><span class="as">Transparent fees and tax — every rupee shown before you book or earn</span></span>
+                      <span class="achev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+
+              <!-- WHERE YOUR MONEY IS -->
+              <section class="fsec" aria-labelledby="money-h">
+                <h2 id="money-h">Where your money is</h2>
+                <p class="sec-sub">Your payment is held in trust and released to the host only after you check in.</p>
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                  <span>It sits in a custody account at Meezan Bank — not spent, not lent out, no interest earned on it. <a href="/help/payments/how-money-is-held">How your payment is held</a></span>
+                </p>
+              </section>
+
+              <!-- IF YOUR PLANS CHANGE -->
+              <section class="fsec" aria-labelledby="change-h">
+                <h2 id="change-h">If your plans change</h2>
+                <p class="sec-sub">Free cancellation up to <b><span class="num">48</span> hours</b> before check-in — that is until <b><span class="num">2:00</span> PM on Wed <span class="num">12</span> Aug</b>. After that the first night is non-refundable and the rest is refunded.</p>
+                <div class="acts">
+                  <a class="gbtn" href="/trips/is-f7-2bed-aug2026/cancel">Cancel this booking</a>
+                  <a class="inlink" href="/trips/is-f7-2bed-aug2026/change">Change your dates instead</a>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- SUMMARY RAIL — CHECKOUT-SHELL §4 order kept literally (RULING 2) -->
+            <aside class="railwrap" aria-label="Booking summary">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span>
+                    <span class="iname">Margalla View Apartment</span>
+                    <span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span>
+                  </span>
+                </div>
+
+                <div class="railrule"></div>
+
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Dates</span>
+                    <span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span>
+                  </span>
+                  <a class="inlink" href="/trips/is-f7-2bed-aug2026/change">Change</a>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Guests</span>
+                    <span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span>
+                  </span>
+                  <a class="inlink" href="/trips/is-f7-2bed-aug2026/change">Change</a>
+                </div>
+
+                <div class="railrule"></div>
+
+                <p class="pline">
+                  <span>Total paid</span>
+                  <a class="pamt num" href="/trips/is-f7-2bed-aug2026/receipt">PKR 42,350</a>
+                </p>
+                <p class="strip">Free cancellation until <b><span class="num">2:00</span> PM, Wed <span class="num">12</span> Aug</b>. After that the first night is non-refundable and the rest is refunded.</p>
+
+                <a class="cta" href="/trips/is-f7-2bed-aug2026">View your trip</a>
+                <p class="ctanote">We have let your host know.</p>
+
+                <div class="trust">
+                  <span class="tline verified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg>
+                    <span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                    <span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span>
+                  </span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
+
+      <footer class="co-footer">
+        <h2 class="sr-only">Footer</h2>
+        <div class="fbar">
+          <span>© <span class="num">2026</span> SalamStay</span>
+          <nav class="flegal" aria-label="Legal">
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/guest-refund-policy">Guest refund policy</a>
+            <a href="/help">Help center</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ================= PANEL 2 · LIGHT · CASH ON ARRIVAL (ga-121) ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · cash on arrival — a materially different confirmation: the platform fee is paid, the room cost is due in cash at check-in (page-level warning banner)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirmation" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirmation">اردو</a></div>
+        <span class="exitlink">Done</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your trips</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle">You're booked</div>
+            <p class="psub">Your stay at <b>Margalla View Apartment</b> is confirmed. The room cost is cash to your host at check-in.</p>
+          </div>
+
+          <div class="banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <span>
+              <p>Carry <b><span class="num">PKR 37,500</span></b> in cash for Ayesha. The host can only ask for this figure — if anyone asks for more, don't pay it, and tell us.</p>
+              <span class="inlink">Report a problem with this booking</span>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat ok">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  Confirmed · service fee paid
+                </span>
+                <p class="ocap">Booking reference <b class="ocode num">SS-7F3K9Q</b>. The SalamStay fee of <b class="num">PKR 4,850</b> is paid. The room cost of <b class="num">PKR 37,500</b> is <b>not paid yet</b> — it is cash to Ayesha when you arrive.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What you pay, and when</div>
+                <p class="sec-sub">The exact figures, with no rounding. Nothing else is owed online.</p>
+
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Paid now</dt><dd class="fdd"><b class="num">PKR 4,850</b><span class="fsub">SalamStay fee · HBL •••• <span class="num">8842</span></span></dd></div>
+                  <div class="frow"><dt class="fdt">Due at check-in</dt><dd class="fdd"><b class="num">PKR 37,500</b><span class="fsub">Room cost · cash to Ayesha, exact amount</span></dd></div>
+                  <div class="frow"><dt class="fdt">Total for your stay</dt><dd class="fdd"><a href="/trips/is-f7-2bed-aug2026/receipt"><b class="num">PKR 42,350</b></a><span class="fsub">Fee paid + cash at check-in</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">At check-in</div>
+                <p class="sec-sub">Two steps, and the second one is your host's.</p>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="2"/><circle cx="12" cy="12.5" r="2.5"/></svg></span>
+                      <span class="abody"><span class="at">Hand Ayesha the cash</span><span class="as">Give exactly <span class="num">PKR 37,500</span> when you arrive — nothing online, nothing more.</span></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                      <span class="abody"><span class="at">Ayesha confirms she received it</span><span class="as">She marks the cash as received, and your receipt updates here.</span></span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Where your money is</div>
+                <p class="sec-sub">The fee you paid online is held in trust and released to the host only after you check in. The cash never passes through SalamStay.</p>
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                  <span>It sits in a custody account at Meezan Bank — not spent, not lent out, no interest earned on it. <a href="/help/payments/how-money-is-held">How your payment is held</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span>Paid now · SalamStay fee</span><span class="pamt num">PKR 4,850</span></p>
+                <p class="pline"><span>Due at check-in · cash</span><span class="pamt num">PKR 37,500</span></p>
+                <p class="strip">Total for your stay <b><span class="num">PKR 42,350</span></b>. Nothing else is owed online.</p>
+                <span class="cta">View your trip</span>
+                <p class="ctanote">We have let your host know.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 3 · LIGHT · FOREIGN GUEST + INVOICE NOT READY ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · foreign guest — stay-registration note in the info register · the tax-invoice row is disabled but visible, in place, and explains itself</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirmation" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirmation">اردو</a></div>
+        <span class="exitlink">Done</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your trips</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle">You're booked</div>
+            <p class="psub">Your stay at <b>Margalla View Apartment</b> is confirmed. We've let your host know.</p>
+          </div>
+
+          <div class="banner info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span>
+              <p><b>About registering your stay.</b> As a visitor to Pakistan, your stay is registered with the local police and reported to FRRO — a standard requirement for foreign guests. SalamStay files this for you, and you'll get a confirmation with a reference number. Nothing more is needed from you now.</p>
+              <span class="inlink">How stay registration works</span>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat ok">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  Confirmed and paid
+                </span>
+                <p class="ocap">Booking reference <b class="ocode num">SS-7F3K9Q</b> · <b class="num">PKR 42,350</b> paid on Sat <span class="num">1</span> Aug <span class="num">2026</span>.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your trip</div>
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Stay</dt><dd class="fdd">Margalla View Apartment<span class="fsub">Entire apartment · F-<span class="num">7</span>, Islamabad</span></dd></div>
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span><span class="fsub"><span class="num">3</span> nights</span></dd></div>
+                  <div class="frow"><dt class="fdt">Booking reference</dt><dd class="fdd"><b class="ocode num">SS-7F3K9Q</b></dd></div>
+                  <div class="frow"><dt class="fdt">Total paid</dt><dd class="fdd"><b class="num">PKR 42,350</b></dd></div>
+                </dl>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What happens next</div>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                      <span class="abody"><span class="at">Message Ayesha</span><span class="as">Ask about arrival and directions</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                      <span class="abody"><span class="at">Receipt</span><span class="as">Ready now — itemised fees and tax</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow off">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></span>
+                      <span class="abody"><span class="at">Tax invoice</span><span class="as">Being prepared. This row becomes a download as soon as the invoice is issued — your receipt above already shows every figure.</span></span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">2</span> guests · <span class="num">2</span> adults</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span>Total paid</span><span class="pamt num">PKR 42,350</span></p>
+                <p class="strip">Free cancellation until <b><span class="num">2:00</span> PM, Wed <span class="num">12</span> Aug</b>.</p>
+                <span class="cta">View your trip</span>
+                <p class="ctanote">We have let your host know.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in.</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 4 · DARK · CONFIRMED & PAID ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">Dark · confirmed &amp; paid — visual theme rendering (no second h1, no landmarks)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirmation" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirmation">اردو</a></div>
+        <span class="exitlink">Done</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your trips</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle">You're booked</div>
+            <p class="psub">Your stay at <b>Margalla View Apartment</b> is confirmed. We've let your host know.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat ok">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  Confirmed and paid
+                </span>
+                <p class="ocap">Booking reference <b class="ocode num">SS-7F3K9Q</b> · <b class="num">PKR 42,350</b> paid on Sat <span class="num">1</span> Aug <span class="num">2026</span>. Checkout is finished; nothing further is needed from you before check-in.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your trip</div>
+                <p class="sec-sub">The booking as it now stands. Your host sees the same facts.</p>
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Stay</dt><dd class="fdd">Margalla View Apartment<span class="fsub">Entire apartment · F-<span class="num">7</span>, Islamabad</span></dd></div>
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span><span class="fsub"><span class="num">3</span> nights</span></dd></div>
+                  <div class="frow"><dt class="fdt">Check-in</dt><dd class="fdd">From <span class="num">2:00</span> PM, Fri <span class="num">14</span> Aug</dd></div>
+                  <div class="frow"><dt class="fdt">Guests</dt><dd class="fdd"><span class="num">6</span> guests<span class="fsub"><span class="num">4</span> adults, <span class="num">2</span> children · Family</span></dd></div>
+                  <div class="frow"><dt class="fdt">Booking reference</dt><dd class="fdd"><b class="ocode num">SS-7F3K9Q</b></dd></div>
+                  <div class="frow"><dt class="fdt">Total paid</dt><dd class="fdd"><b class="num">PKR 42,350</b><span class="fsub">Itemised on your receipt</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What happens next</div>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                      <span class="abody"><span class="at">Message Ayesha</span><span class="as">Say salam, ask about check-in</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                      <span class="abody"><span class="at">Getting there &amp; arrival</span><span class="as">Directions, check-in time and house rules</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                      <span class="abody"><span class="at">Receipt and tax invoice</span><span class="as">Transparent fees and tax — every rupee shown before you book or earn</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">If your plans change</div>
+                <p class="sec-sub">Free cancellation up to <b><span class="num">48</span> hours</b> before check-in — that is until <b><span class="num">2:00</span> PM on Wed <span class="num">12</span> Aug</b>. After that the first night is non-refundable and the rest is refunded.</p>
+                <div class="acts">
+                  <span class="gbtn">Cancel this booking</span>
+                  <span class="inlink">Change your dates instead</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="pline"><span>Total paid</span><span class="pamt num">PKR 42,350</span></p>
+                <p class="strip">Free cancellation until <b><span class="num">2:00</span> PM, Wed <span class="num">12</span> Aug</b>. After that the first night is non-refundable and the rest is refunded.</p>
+                <span class="cta">View your trip</span>
+                <p class="ctanote">We have let your host know.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 5 · URDU / RTL · CONFIRMED & PAID ================= -->
+    <div class="doc rtl" aria-hidden="true" lang="ur" dir="rtl">
+      <div class="panel-tag" style="direction:ltr">Urdu · RTL — layout &amp; direction demo. Western digits inside <code>.num</code>, Urdu prose around them (Pass #31). The two §5 claim lines and the trust sentence reuse the corpus-established Urdu strings verbatim (ga-002 / ga-064 / gw-001 / gw-021) rather than a fresh paraphrase; all other Urdu here is a direction demo and is human-translated for production.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>آپ کی معلومات محفوظ ہیں</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirmation">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirmation" aria-current="page">اردو</a></div>
+        <span class="exitlink nastaliq">مکمل</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>اپنے سفر پر واپس</span></div>
+
+          <div class="pagehead">
+            <div class="ptitle nastaliq">آپ کی بکنگ ہو گئی</div>
+            <p class="psub nastaliq"><b>Margalla View Apartment</b> میں آپ کا قیام تصدیق شدہ ہے۔ ہم نے آپ کے میزبان کو مطلع کر دیا ہے۔</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat ok nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  تصدیق شدہ اور ادا شدہ
+                </span>
+                <p class="ocap nastaliq">تصدیقی نمبر <b class="ocode num">SS-7F3K9Q</b> · <b class="num">PKR 42,350</b> ہفتہ <span class="num">1</span> اگست <span class="num">2026</span> کو ادا۔ چیک اِن سے پہلے آپ کو مزید کچھ نہیں کرنا۔</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">آپ کا سفر</div>
+                <p class="sec-sub nastaliq">بکنگ کی موجودہ تفصیل۔ آپ کے میزبان کو بھی یہی حقائق نظر آتے ہیں۔</p>
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt nastaliq">قیام گاہ</dt><dd class="fdd">Margalla View Apartment<span class="fsub nastaliq">پورا اپارٹمنٹ · <span class="num">F-7</span>، اسلام آباد</span></dd></div>
+                  <div class="frow"><dt class="fdt nastaliq">تاریخیں</dt><dd class="fdd nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست <span class="num">2026</span><span class="fsub nastaliq"><span class="num">3</span> راتیں</span></dd></div>
+                  <div class="frow"><dt class="fdt nastaliq">چیک اِن</dt><dd class="fdd nastaliq">جمعہ <span class="num">14</span> اگست، <span class="num">2:00</span> بجے دوپہر سے</dd></div>
+                  <div class="frow"><dt class="fdt nastaliq">مہمان</dt><dd class="fdd nastaliq"><span class="num">6</span> مہمان<span class="fsub nastaliq"><span class="num">4</span> بالغ، <span class="num">2</span> بچے · خاندان</span></dd></div>
+                  <div class="frow"><dt class="fdt nastaliq">میزبان</dt><dd class="fdd nastaliq">عائشہ</dd></div>
+                  <div class="frow"><dt class="fdt nastaliq">تصدیقی نمبر</dt><dd class="fdd"><b class="ocode num">SS-7F3K9Q</b></dd></div>
+                  <div class="frow"><dt class="fdt nastaliq">کل ادا شدہ</dt><dd class="fdd"><b class="num">PKR 42,350</b><span class="fsub nastaliq">رسید پر تفصیل موجود ہے</span></dd></div>
+                </dl>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">اگلے اقدامات</div>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                      <span class="abody"><span class="at nastaliq">عائشہ کو پیغام بھیجیں</span><span class="as nastaliq">سلام کہیں، چیک اِن کا پوچھیں</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M12 14v4M10 16h4"/></svg></span>
+                      <span class="abody"><span class="at nastaliq">کیلنڈر میں شامل کریں</span><span class="as nastaliq"><span class="num">14</span>–<span class="num">17</span> اگست محفوظ کریں</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M4 20h16"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                      <span class="abody"><span class="at nastaliq">رسید دیکھیں</span><span class="as nastaliq">شفاف فیس اور ٹیکس — بکنگ سے پہلے ہر روپیہ ظاہر</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">آپ کی رقم کہاں ہے</div>
+                <p class="sec-sub nastaliq">آپ کی رقم امانت میں رکھی جاتی ہے اور چیک اِن کے بعد ہی میزبان کو دی جاتی ہے۔</p>
+                <p class="ghint nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                  <span>یہ میزان بینک کے تحویلی کھاتے میں رہتی ہے — نہ خرچ ہوتی ہے، نہ قرض پر دی جاتی ہے، اور نہ اس پر کوئی سود کمایا جاتا ہے۔ <a href="/ur/help/payments/how-money-is-held">آپ کی رقم کیسے رکھی جاتی ہے</a></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname nastaliq">مارگلہ ویو اپارٹمنٹ</span><span class="iarea nastaliq">پورا اپارٹمنٹ · <span class="num">F-7</span>، اسلام آباد</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">تاریخیں</span><span class="sval nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">مہمان</span><span class="sval nastaliq"><span class="num">6</span> مہمان · <span class="num">4</span> بالغ، <span class="num">2</span> بچے</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="railrule"></div>
+                <p class="pline nastaliq"><span>کل ادا شدہ</span><span class="pamt num">PKR 42,350</span></p>
+                <p class="strip nastaliq">بدھ <span class="num">12</span> اگست، <b><span class="num">2:00</span> بجے دوپہر</b> تک منسوخی مفت ہے۔ اس کے بعد پہلی رات ناقابلِ واپسی ہے اور باقی رقم واپس کر دی جاتی ہے۔</p>
+                <span class="cta nastaliq">اپنا سفر دیکھیں</span>
+                <p class="ctanote nastaliq">ہم نے آپ کے میزبان کو مطلع کر دیا ہے۔</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span class="nastaliq"><b>مہمان اور میزبان دونوں کی تصدیق نادرا ویری سِس کے ذریعے کی جاتی ہے</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span class="nastaliq"><b>شفاف فیس اور ٹیکس — بکنگ یا کمائی سے پہلے ہر روپیہ ظاہر۔</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span class="nastaliq">آپ کی رقم امانت میں رکھی جاتی ہے اور چیک اِن کے بعد ہی میزبان کو دی جاتی ہے۔ <a href="/ur/help/payments/how-money-is-held">آپ کی رقم کیسے رکھی جاتی ہے</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 6 · MOBILE 390 · CONFIRMED & PAID ================= -->
+    <div class="doc mob" aria-hidden="true">
+      <div class="panel-tag">Mobile <span class="num">390</span> · confirmed &amp; paid — rail leaves the flow; identity folds to a top strip; total + one CTA move to a hairline-topped sticky bottom bar (no shadow, ever)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="langsw"><a href="/book/is-f7-2bed/confirmation" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/confirmation">اردو</a></div>
+        <span class="exitlink">Done</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to your trips</span></div>
+
+          <div class="mobstrip">
+            <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+            <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+          </div>
+
+          <div class="pagehead">
+            <div class="ptitle">You're booked</div>
+            <p class="psub">Your stay is confirmed. We've let your host know.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <div class="outcome">
+                <span class="ostat ok">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  Confirmed and paid
+                </span>
+                <p class="ocap">Reference <b class="ocode num">SS-7F3K9Q</b> · <b class="num">PKR 42,350</b> paid.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Your trip</div>
+                <dl class="frows">
+                  <div class="frow"><dt class="fdt">Dates</dt><dd class="fdd">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug<span class="fsub"><span class="num">3</span> nights</span></dd></div>
+                  <div class="frow"><dt class="fdt">Check-in</dt><dd class="fdd">From <span class="num">2:00</span> PM</dd></div>
+                  <div class="frow"><dt class="fdt">Guests</dt><dd class="fdd"><span class="num">6</span> guests</dd></div>
+                  <div class="frow"><dt class="fdt">Total paid</dt><dd class="fdd"><b class="num">PKR 42,350</b></dd></div>
+                </dl>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What happens next</div>
+                <ul class="alist">
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></svg></span>
+                      <span class="abody"><span class="at">Message Ayesha</span><span class="as">Say salam, ask about check-in</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.5 7-11a7 7 0 0 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                      <span class="abody"><span class="at">Getting there &amp; arrival</span><span class="as">Directions and house rules</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="arow">
+                      <span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                      <span class="abody"><span class="at">Receipt and tax invoice</span><span class="as">Every rupee, itemised</span></span>
+                      <span class="achev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+                    </span>
+                  </li>
+                </ul>
+                <p class="strip">Your payment is held in trust and released to the host only after you check in.</p>
+              </div>
+            </div>
+            <div class="railwrap"></div>
+          </div>
+        </div>
+
+        <div class="mobbar">
+          <span class="mobsum">
+            <span class="ms-t num">PKR 42,350</span>
+            <span class="ms-s">paid · <span class="num">3</span> nights</span>
+          </span>
+          <span class="cta">View trip</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

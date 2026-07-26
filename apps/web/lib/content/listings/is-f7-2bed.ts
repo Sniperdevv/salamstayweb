@@ -14,7 +14,7 @@ import type { ImageId } from "@/lib/content/image-manifest";
  *  1. **"Show all 24 photos" → "Show all photos".** The manifest holds ten
  *     frames for this home. 24 is a number nothing on disk supports (§12: no
  *     invented counts), and the destination stub is the same either way.
- *  2. **"See all 28 amenities" → "See all amenities".** Same reason: eight
+ *  2. **"See all 28 amenities" → "See all amenities".** Same reason: five
  *     attributes are disclosed, twenty-eight is not a count anyone has made.
  *  3. **"from PKR —" → a skeleton.** §12 is explicit that null data is never a
  *     dash on the live site. The placeholder belongs to the card corpus; the
@@ -26,15 +26,14 @@ import type { ImageId } from "@/lib/content/image-manifest";
  *     their own, is the wallpaper the homepage turns them off to avoid.
  *  5. **Em-dashes are gone from the copy this file authors.** Ten sentences
  *     carried one; in every case it was doing the work of a full stop, a comma
- *     or a colon, and it now does. Same words, same facts, same length. THREE
- *     survive, all of them protected and none of them ours to rewrite: the
- *     title (registry-fixed, and G41 compares it byte-for-byte), and the two
- *     SEO-RULES §5 claims — "Halal-kitchen, prayer-space, and Qibla direction
- *     shown on listings — on every SalamStay home, not only this one" and
- *     "Transparent fees and tax — every rupee shown before you book or earn" —
- *     which §12 requires byte-exact wherever they are claimed. En-dashes inside
- *     numeric and date ranges (`1–2 hrs`, `10:00 PM – 6:00 AM`) stay: a range
- *     dash is not a rhetorical dash, and a hyphen there would read as a minus.
+ *     or a colon, and it now does. Same words, same facts, same length. TWO
+ *     survive, both protected and neither ours to rewrite: the title
+ *     (registry-fixed, and G41 compares it byte-for-byte) and the SEO-RULES §5
+ *     claim "Transparent fees and tax — every rupee shown before you book or
+ *     earn", which §12 requires byte-exact wherever it is claimed. En-dashes
+ *     inside numeric and date ranges (`1–2 hrs`, `10:00 PM – 6:00 AM`) stay: a
+ *     range dash is not a rhetorical dash, and a hyphen there would read as a
+ *     minus.
  *  6. **The primary CTA reads "Reserve", not the card's "Check
  *     availability".** TASTE-RULES §10 names the booking card's last element as
  *     the surface's one primary CTA, the route it opens is literally
@@ -45,10 +44,21 @@ import type { ImageId } from "@/lib/content/image-manifest";
  *     anything is charged. One string, one place, if the corpus wants the
  *     longer label back.
  *
- * Nothing else moved. The eight amenity labels in particular are byte-exact,
- * because `LodgingBusiness.amenityFeature` is derived from this same array
- * (G44: schema names match the visible attributes EXACTLY) — the two cannot
- * disagree, because there is only one list.
+ * A SEVENTH departure, and the largest, arrives with REPOSITIONING.md: the
+ * whole `prayer` block is GONE — its heading, the Qibla bearing, the two
+ * masjid distances, the paragraph carrying the now-retired §5 claim 6, and the
+ * link out. Three amenities go with it (`halal-kitchen`, `prayer-mat`,
+ * `qibla`), leaving five. SalamStay does not model observance; a host who
+ * wants to state any of it states it in their own listing prose. Nothing
+ * replaces the block — the page runs the amenity grid straight into "Home
+ * infrastructure", which is the section it is now actually about.
+ *
+ * The five remaining amenity labels are byte-exact, because
+ * `LodgingBusiness.amenityFeature` is derived from this same array (G44: schema
+ * names match the visible attributes EXACTLY) — the two cannot disagree,
+ * because there is only one list. Removing three amenities therefore removes
+ * three `amenityFeature` entries, which is correct and intended: the schema
+ * describes what the page shows, and the page no longer shows them.
  *
  * The SEO contract carried from the card header:
  *  · title + H1 = "Margalla View Apartment — F-7, Islamabad" (normalised with
@@ -60,12 +70,28 @@ import type { ImageId } from "@/lib/content/image-manifest";
  *  · No Reviews H2, no stars, no rating, no review count — zero real reviews
  *    exist, so the "New listing" chip plus one honest paragraph is the whole
  *    social-proof treatment.
+ *  · The outline is h1 → about h2 (+h3 host) → amenities h2 (+h3
+ *    infrastructure) → verification h2 → rules h2 → location h2. One h3 fewer
+ *    than the card draws, and the one that left is the prayer block's.
  *  · geo is the PUBLISHED APPROXIMATE-AREA centroid for F-7 — the same privacy
  *    radius the map on the page draws, never the exact address.
  *  · The load-shedding figures are this host's own disclosure, published
  *    because a listing MUST publish its own hours (claim 7). The
  *    "never publish a fixed hour count" rule binds city and area pages, where
  *    the same figure would be a generalisation.
+ *
+ * THREE FIELDS THAT RENDER BUT MUST NEVER BE MARKED UP
+ * ----------------------------------------------------
+ * `pricing`, `capacity` and `availability` are here for the booking card and
+ * for the checkout flow at `/book/is-f7-2bed/*` (CHECKOUT-SHELL.md), and for
+ * nothing else. A reader may see all three; a crawler may see none of them.
+ * `Offer`, `AggregateOffer`, `priceRange` and `availability` sit in
+ * `scripts/validate-pages.mjs` FORBIDDEN_TYPES and G74 fails the build the
+ * moment one appears, because a price in prose is a fact about this home while
+ * the same price in schema is an offer with terms, stock and a validity window
+ * that this product does not yet make. `lodgingBusiness()` in
+ * `lib/seo/jsonld.tsx` takes an explicit `LodgingInput` that names none of
+ * them; keep it that way and the gate can never be reached by accident.
  */
 
 /** A run of copy with specific payload words emphasised (§7: payload only). */
@@ -84,9 +110,6 @@ export interface AmenityItem {
 
 export type AmenityId =
   | "no-alcohol"
-  | "halal-kitchen"
-  | "prayer-mat"
-  | "qibla"
   | "family"
   | "wifi"
   | "air-conditioning"
@@ -116,9 +139,38 @@ export interface TableRow {
   readonly affirmed?: boolean;
 }
 
-export interface MasjidEntry {
-  readonly name: string;
-  readonly distance: string;
+/**
+ * The currency a host prices in. One member, deliberately: SalamStay lists
+ * homes in Pakistan, and the USD figure the FX surfaces show (ga-051, and
+ * gw-024's FX variant) is a conversion displayed at payment time, not a second
+ * price anyone set. A union rather than `string` so a second currency cannot
+ * arrive as a typo — it has to arrive as a decision.
+ *
+ * The rendered form is fixed and is not this type's business: `PKR 12,500`,
+ * three-letter code, one space, thousands separator, every digit run wrapped in
+ * `.num` for RTL isolation (CHECKOUT-SHELL §6). The bare rupee sign, U+20A8,
+ * ships in no rendered string anywhere on the site; its one sanctioned use is
+ * as the prefix inside a currency INPUT, where it is an affordance telling the
+ * host what to type rather than a price being quoted to a reader.
+ */
+export type CurrencyCode = "PKR";
+
+/** The three age bands the guest picker counts in (gw-021). */
+export type GuestBand = "adults" | "children" | "infants";
+
+/**
+ * A run of NIGHTS, inclusive at both ends, each `YYYY-MM-DD`.
+ *
+ * Nights, not days, and the distinction decides every calculation downstream. A
+ * stay of Fri 14 → Mon 17 Aug occupies the nights of the 14th, 15th and 16th
+ * and hands the keys back on the 17th, so a range ending on the 16th does not
+ * collide with a check-in on the 17th. Read it as days and every calendar in
+ * the flow loses a night at one end and invents a clash at the other. One
+ * blocked night is `from === to`.
+ */
+export interface NightRange {
+  readonly from: string;
+  readonly to: string;
 }
 
 export interface ListingContent {
@@ -170,15 +222,6 @@ export interface ListingContent {
     readonly allLabel: string;
   };
 
-  readonly prayer: {
-    readonly heading: string;
-    readonly bearing: string;
-    readonly body: RichText;
-    readonly masjids: readonly MasjidEntry[];
-    readonly para: string;
-    readonly link: { readonly href: string; readonly label: string };
-  };
-
   readonly infrastructure: {
     readonly heading: string;
     readonly caption: string;
@@ -215,6 +258,69 @@ export interface ListingContent {
     readonly links: readonly { readonly href: string; readonly label: string }[];
   };
 
+  /**
+   * What a night costs, as a number the flow can multiply.
+   *
+   * Only the nightly rate is here, and that is the whole point. The service
+   * fee, payment processing (MDR) and provincial sales tax are NOT derivable
+   * from it: gw-024 states outright that no rate is ever printed,
+   * because ARCHITECTURE.md fixes the fee ENGINE without fixing any rate this
+   * product could quote. `2,250` happens to be six per cent of the stay and
+   * `1,880` is a clean percentage of nothing at all. A `serviceFeeRate` field
+   * here would be a product decision wearing a type's clothes, so the fee
+   * AMOUNTS stay where they are grounded — ga-050 and its web twin, the Price
+   * step — and this field stops at the one number the host actually set.
+   */
+  readonly pricing: {
+    readonly nightly: number;
+    readonly currency: CurrencyCode;
+  };
+
+  /**
+   * Who fits, and the shortest stay this host accepts. Both are this host's own
+   * disclosure — gw-004's house rules say up to six, gw-021 says at least two
+   * nights — and neither is a platform default that another home inherits.
+   *
+   * `countsTowardLimit` is data rather than a hard-coded pair because it is the
+   * only reason the guest picker can be right. gw-021 disables "add an adult"
+   * and "add a child" at six while leaving "add an infant" enabled, and prints
+   * the reason above the group: infants do not count toward the limit. A picker
+   * sums the bands named here and compares that against `maxGuests`; infants
+   * are absent from the list, so they are absent from the sum, and the rule
+   * lives in one place instead of in every control that has to honour it.
+   *
+   * There is no infant cap, on purpose. No card in the corpus carries one and
+   * gw-021's infant "+" never disables, so writing a number here would invent a
+   * host policy — the same restraint CHECKOUT-SHELL §15 applies to the upload
+   * size limit it refuses to guess at.
+   */
+  readonly capacity: {
+    readonly maxGuests: number;
+    readonly countsTowardLimit: readonly GuestBand[];
+    readonly minNights: number;
+  };
+
+  /**
+   * The nights already committed. Anything absent from the list is open.
+   *
+   * Only the blocks are stored, because the interesting case is not a fact — it
+   * is a consequence. gw-021 strikes 8 Aug 2026 through even though nobody has
+   * booked it: it sits alone between the 5–7 and 9–10 blocks, so the only stay
+   * that fits there is one night, under this host's two. A picker that measures
+   * the free run forward from a night and compares it to `capacity.minNights`
+   * reaches that conclusion by itself, and reaches it again next season without
+   * anyone editing a list. A stored "below minimum" set would be a second
+   * source of truth that goes stale the first time a booking lands, and a
+   * calendar quietly disagreeing with itself is worse than one that is wrong.
+   *
+   * How far ahead the calendar may be asked about is deliberately not declared.
+   * No card states a booking window, and a horizon written here would read as a
+   * host disclosure it is not.
+   */
+  readonly availability: {
+    readonly blockedNights: readonly NightRange[];
+  };
+
   readonly booking: {
     readonly per: string;
     readonly live: string;
@@ -249,7 +355,7 @@ export const isF72Bed: ListingContent = {
   path: PATH,
   title: "Margalla View Apartment — F-7, Islamabad",
   metaDescription:
-    "2-bed apartment in F-7, Islamabad. Halal kitchen, no alcohol, Qibla marked. Load-shedding about 1–2 hours a day, with UPS and generator backup.",
+    "2-bed apartment in F-7, Islamabad. No alcohol on the premises, fibre Wi-Fi, self check-in. Load-shedding about 1–2 hours a day, with UPS and generator backup.",
   crumbs: [
     { name: "Home", path: "/" },
     { name: "Stays in Islamabad", path: "/stays-in-islamabad" },
@@ -276,8 +382,8 @@ export const isF72Bed: ListingContent = {
   about: {
     heading: "About this stay",
     lead: {
-      text: "Margalla View Apartment is a two-bedroom apartment in F-7, Islamabad, four minutes' walk from Jamia Masjid at F-7 Markaz. It sleeps six across three beds and two bathrooms, keeps a halal kitchen and no alcohol on the premises, has the Qibla marked in the main bedroom, and runs a UPS and generator through load-shedding.",
-      bold: ["halal kitchen", "Qibla"],
+      text: "Margalla View Apartment is a two-bedroom apartment in F-7, Islamabad, a few minutes' walk from F-7 Markaz. It sleeps six across three beds and two bathrooms, keeps no alcohol on the premises, and runs a UPS and a generator through load-shedding of about one to two hours a day.",
+      bold: ["no alcohol on the premises", "a UPS and a generator"],
     },
     para:
       "The apartment sits a short walk from Jinnah Super Market for groceries and dinner, with the Margalla Hills behind the sector. Self check-in by lockbox, so a late arrival from the airport is no trouble.",
@@ -296,13 +402,10 @@ export const isF72Bed: ListingContent = {
   },
 
   amenities: {
-    heading: "Amenities & cultural attributes",
-    sub: "Cultural facts sit at the same weight as Wi-Fi. They are attributes of the home, stated plainly.",
+    heading: "Amenities & house rules",
+    sub: "A house rule sits at the same weight as Wi-Fi. Both are facts about the home, stated plainly.",
     items: [
       { id: "no-alcohol", label: "No-alcohol home", detail: "No alcohol on the premises" },
-      { id: "halal-kitchen", label: "Halal kitchen", detail: "No pork; kept halal" },
-      { id: "prayer-mat", label: "Prayer mat provided", detail: "Clean mat in the main room" },
-      { id: "qibla", label: "Qibla marked", detail: "Direction marked in bedroom" },
       { id: "family", label: "Family-friendly", detail: "Suitable for children" },
       { id: "wifi", label: "Wi-Fi (fibre)", detail: "~30 Mbps, whole home" },
       { id: "air-conditioning", label: "Air conditioning", detail: "Inverter AC in bedrooms" },
@@ -310,22 +413,6 @@ export const isF72Bed: ListingContent = {
     ],
     allHref: `${PATH}/amenities`,
     allLabel: "See all amenities",
-  },
-
-  prayer: {
-    heading: "Prayer, Qibla and the nearest masjid",
-    bearing: "Qibla is 255° from this home, west-south-west",
-    body: {
-      text: "The bearing is fixed for the apartment and is marked in the main bedroom. A clean prayer mat is kept in the main room, there is space to pray in the main bedroom, and both bathrooms have a hand-held bidet shower for wudu.",
-      bold: ["marked in the main bedroom"],
-    },
-    masjids: [
-      { name: "Jamia Masjid, F-7 Markaz", distance: "4 min walk · ~300 m" },
-      { name: "Street 12 Masjid, F-7/2", distance: "9 min walk · ~700 m, near Jinnah Super" },
-    ],
-    para:
-      "Halal-kitchen, prayer-space, and Qibla direction shown on listings — on every SalamStay home, not only this one.",
-    link: { href: "/shariah-policy", label: "How prayer details work on SalamStay" },
   },
 
   infrastructure: {
@@ -384,7 +471,7 @@ export const isF72Bed: ListingContent = {
         note: "FRC = the NADRA Family Registration Certificate.",
       },
     ],
-    link: { href: "/shariah-policy", label: "Read our Shariah-respectful approach" },
+    link: { href: "/verification", label: "How verification works" },
   },
 
   rules: {
@@ -420,6 +507,26 @@ export const isF72Bed: ListingContent = {
     ],
   },
 
+  pricing: { nightly: 12500, currency: "PKR" },
+
+  capacity: {
+    maxGuests: 6,
+    countsTowardLimit: ["adults", "children"],
+    minNights: 2,
+  },
+
+  // gw-021's calendar, as the host's blocks rather than as the card's rendering:
+  // 5–7 and 9–10 Aug, 21–22 Aug, 12–13 Sep 2026. 8 Aug is NOT here — it is free,
+  // and the two-night minimum is what rules it out.
+  availability: {
+    blockedNights: [
+      { from: "2026-08-05", to: "2026-08-07" },
+      { from: "2026-08-09", to: "2026-08-10" },
+      { from: "2026-08-21", to: "2026-08-22" },
+      { from: "2026-09-12", to: "2026-09-13" },
+    ],
+  },
+
   booking: {
     per: "/ night",
     live: "Live pricing. Your total is calculated for your dates and party.",
@@ -451,7 +558,7 @@ export const isF72Bed: ListingContent = {
 
   schema: {
     description:
-      "Two-bedroom apartment in F-7, Islamabad, about a four-minute walk from Jamia Masjid at F-7 Markaz. Halal kitchen, no alcohol on the premises, Qibla marked in the main bedroom, UPS and generator backup power.",
+      "Two-bedroom apartment in F-7, Islamabad, a few minutes' walk from F-7 Markaz and Jinnah Super Market. No alcohol on the premises, fibre Wi-Fi, self check-in, and UPS and generator backup power through about one to two hours of load-shedding a day.",
     addressLocality: "Islamabad",
     addressRegion: "Islamabad Capital Territory",
     latitude: 33.7167,

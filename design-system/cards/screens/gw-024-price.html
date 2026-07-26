@@ -1,0 +1,1274 @@
+<!-- @dsCard group="Screens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalamStay — Price: itemised total, Margalla View Apartment F-7 (GW-024)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- ============================================================================
+     GW-024 · PRICE — the itemised total (WEB CHECKOUT, step 3 of 4)
+     route "/book/is-f7-2bed/price" (en) + "/ur/book/is-f7-2bed/price"
+     Web twin of ga-050 (price breakdown, pilot), ga-051 (FX lock) and
+     ga-060 (credits & promo). Inherits the web checkout shell established by
+     gw-021-reserve.html and written out in CHECKOUT-SHELL.md — read that first.
+
+     ---------------------------------------------------------------------------
+     PRECEDENCE, unchanged from the shell: TASTE-RULES.md wins on every rule it
+     states; gw-004 governs what TASTE does not speak to; SalamStay honesty law
+     (SEO-RULES §5, no invented figures) wins over both. Everything gw-021's
+     header comment lists as a deliberate divergence from gw-004 is inherited
+     here verbatim — ink links, ink selection, radius.full CTA, 26/22 type
+     ladder, zero eyebrows, ink-filled language switch.
+
+     ---------------------------------------------------------------------------
+     WHY THIS SCREEN CARRIES THE ARITHMETIC (shell §6)
+       Every other checkout card shows the stay subtotal in `.pline` and then a
+       `.strip` pointing here. This is the ONE surface that itemises, so the
+       itemised `<dl>` takes the rail's money slot — sticky, always on screen,
+       checkable at a glance — and the MAIN column carries what each line IS.
+       Numbers in the rail, meaning in the column: the guest can read the
+       explanation of the service fee without the amount ever leaving the
+       viewport. That is what makes §5 claim 9 literal rather than decorative.
+
+     ARITHMETIC — every figure traceable, and it balances by hand:
+         nightly           PKR 12,500 × 3 nights   =  PKR 37,500   (gw-021 rail)
+       + service fee                               =  PKR  2,250   (ga-050)
+       + payment processing (MDR)                  =  PKR    720   (ga-050)
+       + sales tax · ICT (Islamabad)               =  PKR  1,880   (ga-050)
+       ------------------------------------------------------------------
+       = total                                     =  PKR 42,350
+       Cross-checks that must all hold, and do:
+         · 2,250 + 720 + 1,880 = 4,850 — the aggregate ga-058 charges to the
+           card on the cash-on-arrival rail, and the aggregated fee-and-tax
+           line in the shipped worked example at
+           apps/web/lib/content/legal/guest-refund-policy.ts:230-234.
+         · 25,000 + 12,500 + 4,850 = 42,350 — that same worked example's
+           refund ledger, which is the standard this card is held to.
+         · credit variant: 42,350 − 5,000 = 37,350 (ga-060 ships a PKR 5,000
+           balance; the panel prints the PKR 42,350 subtotal ABOVE the credit
+           line so the subtraction is visible, not asserted).
+         · FX variant: PKR 42,350 ≈ USD 152.30, both reused verbatim from
+           ga-050 / ga-051 / ga-057.
+
+     NO RATE IS EVER PRINTED. 2,250 happens to be 6% of the stay and 1,880 is
+       not a clean percentage of any base on this card. ARCHITECTURE.md §6.8
+       fixes the tax ENGINE (per-province authority, versioned rules) but no
+       rate this card could quote for ICT, and §6.7 fixes the service fee as
+       platform revenue without fixing its rate. Printing "6%" or "5% ICT"
+       would be inventing a number the product cannot honour, so every fee is
+       shown as an AMOUNT with a plain-language explanation and no percentage.
+
+     THE FEE MODEL IS ARCHITECTURE.md's, NOT THIS CARD'S (§6.1, §6.7, §6.8, §6.9)
+       · service fee (the platform commission) → `revenue.commission`, platform
+         revenue (§6.1/§6.7)
+       · MDR → `expense.mdr.{rail}`, passed through at cost, VARIES BY RAIL
+         (§6.1) — hence the "quoted for JazzCash, re-quoted if you switch" line
+       · provincial sales tax → `tax_payable.sales.{province}`; ICT for
+         Islamabad (§6.8)
+       · WITHHOLDING TAX IS NOT ON THIS BILL. §6.9 applies it to HOST PAYOUTS.
+         The card says so in one line rather than leaving a guest to wonder.
+       · SalamStay does not hold customer funds in its own name (§6.18); funds
+         sit in a Meezan custody account and release after check-in. The trust
+         line is gw-021's string verbatim; the service-fee explainer is
+         ga-050's, with only the transliterated term removed (see the
+         REPOSITIONED note below).
+
+     GREEN RARITY (shell §7) — three roles, no more: the wordmark dot, the one
+       enabled `.cta`, and `.tline.verified`'s shield. `.steps li.done/.cur` is
+       stepper state, not a fourth role. The selected method chip is INK
+       (TASTE §3), not the brand fill ga-050 uses on mobile; prices are ink
+       everywhere; the only underlined price is the one that opens this
+       breakdown, and on this card that price IS the breakdown, so nothing is
+       underlined (TASTE §8 — an underline that leads nowhere is a lie).
+
+     ROBOTS: noindex, follow. No canonical, no hreflang pair, no JSON-LD, no
+       breadcrumb. `<main class="co-main">`, never `indexable`. One <h1>, as the
+       page's accessible title. The EN/اردو switch stays — a UI affordance.
+
+     STATES SHIPPED (shell §11, plus the step-3 additions §11 requires be ADDED)
+       1 light · itemised (authoritative: one h1, landmarks, a real form, footer)
+       2 light · empty + calculating — nothing entered, the server total not yet
+         returned; geometry-matched skeleton, CTA disabled BUT IN PLACE, and the
+         `.ctanote` names what happens next. This panel is the §11.2 "empty" and
+         the §11 "loading skeleton" at once, because on a step whose only input
+         is an optional promo code they are the same moment.
+       3 light · errors — both registers: the quote expired (page `.banner`,
+         warning triplet, named recovery) and a promo code that does not apply
+         (inline `.errline` under the offending group)
+       4 light · FX lock — the diaspora branch (ga-051), locked rate, countdown,
+         and the re-quote promise. Conditional: shown only after an overseas
+         card is chosen, which is why the panel says so in plain words.
+       5 dark · SalamStay credit applied — a VARIANT account, not the default.
+       6 Urdu / RTL · itemised
+       7 mobile 390 · itemised — the rail leaves the flow, so the `<dl>` moves
+         into the main column. See the note below.
+
+     SHARED VOCABULARY — `.gbtn` (TASTE §5's gray-fill secondary, here the
+       promo "Apply") is gw-027's name, reused rather than re-minted:
+       `CHECKOUT-SHELL.md` §13's inventory has no row for that button, and one
+       name per anatomy across the seven cards matters more than any single
+       card's preference. Minted here because nothing in the corpus covers
+       them, and flagged for §13: `.bd .brow .blab .bamt` (the itemised total),
+       `.feelist .fee .feeic .feeh .feed` (the fee explanations),
+       `.prow .pgroup .pinput` (the promo field), `.mrow .mchip` (the method
+       chips), `.fxblk .fxhd .fxbody .fxmeter .fxlist` (the FX lock), `.sk`
+       (the skeleton).
+
+     ONE PLACE CHECKOUT-SHELL.md IS UNDERSPECIFIED, resolved here and flagged:
+       §4's mobile collapse sends "nights + amount + CTA" to the `.mobbar` and
+       says the rail leaves the flow. On every other card that is lossless. On
+       THIS card the rail holds the itemised total, so obeying §4 literally
+       would delete the breakdown on mobile — the one thing the screen exists
+       for. Resolution: below 1080px the `<dl>` moves into the main column as
+       its own `.fsec`, and the `.mobbar` carries the TOTAL (not the subtotal)
+       plus the CTA. Nothing is hidden at any width.
+
+     INVENTED FOR THIS CARD (nothing else is): the guest's saved default method
+       is JazzCash, which is what the PKR 720 MDR line is quoted for (ga-050
+       ships JazzCash as the selected chip, so this only names what ga-050
+       already assumed); the promo code "EIDGIFT25" in the error panel, reused
+       from ga-060's invalid-code panel; the 9:41 quote time and 14:52 remaining
+       on the FX lock, reused from ga-051.
+
+     REPOSITIONED 2026-07-26 (REPOSITIONING.md, founder decision — the record of
+       what changed, kept so a reader of the old card can see the delta).
+       THE FEE MODEL AND THE SETTLEMENT STRUCTURE ARE UNCHANGED. Same four
+       lines, same four amounts, same Meezan custody account, same release after
+       check-in, same §6.18 rule that SalamStay never holds customer money in
+       its own name. ARCHITECTURE.md is untouched. Only the WORDS a guest reads
+       changed, and only where they were terms a guest would have to look up:
+         · "Service fee (wakala)"            → "Service fee"
+         · "your booking agent (wakala)"     → "your booking agent"
+         · "held in amanah — a trust —"      → "held in trust"
+         · "How the amanah hold works"       → "How your payment is held",
+           pointing at the registry's existing /help/payments/how-money-is-held
+       Every substantive promise in those sentences survives word for word: a
+       flat, disclosed agency commission, not interest and not a markup on the
+       host's price; MDR passed through at cost; tax collected and remitted;
+       funds released only after check-in. A guest should never have to look up
+       a word to know where their money is.
+
+     CLAIMS: SEO-RULES §5 registry only, verbatim — #1 (CNIC / NADRA Verisys)
+       and #9 (transparent fees and tax). Everything else is plain neutral
+       description. No ratings, no counts, no superlatives, no SLAs, and no
+       claim of any kind about religious compliance or certification.
+
+     CARD CONVENTION: panel 1 is the authoritative semantic page. Panels 2–7 are
+       variants and renderings; they are aria-hidden and carry no headings or
+       landmarks.
+============================================================================ -->
+
+<style>
+  /* ---------------------------------------------------------------------
+     TOKEN BLOCK — copied verbatim from gw-021-reserve.html (shell §9).
+     @salamstay/design-tokens, consumed by role. No raw hex outside this block.
+     --------------------------------------------------------------------- */
+  :root {
+    --bg-canvas:#FFFFFF; --bg-raised:#F7F8F8; --bg-sunken:#F4F5F6;
+    --text-primary:#16191B; --text-secondary:#5F676D; --text-tertiary:#828A90;
+    --text-disabled:#AEB4B9; --text-on-brand:#FFFFFF;
+    --int-primary:#2E7D6A; --int-hover:#256757; --int-subtle:#EEF6F3;
+    --int-selected:#16191B; --int-selected-fg:#FFFFFF;
+    --border-hairline:#E7E9EA; --border-default:#D3D7DA; --border-strong:#828A90; --border-brand:#2E7D6A;
+    --warning-fg:#8A5A16; --warning-bg:#FBF2E3; --warning-border:#EBD3A6;
+    --error-fg:#A8412F; --error-bg:#FBECE9; --error-border:#EBBDB2;
+    --success-fg:#1E7A54; --success-bg:#EAF5EF; --success-border:#B7DEC9;
+    --info-fg:#3A5A86; --info-bg:#ECF1F8; --info-border:#BFD0E6;
+    --scrim:rgba(16,25,27,.44);
+    --el-subtle:0 1px 2px 0 rgba(16,25,27,.05),0 1px 3px 0 rgba(16,25,27,.04);
+    --el-card:0 2px 4px -1px rgba(16,25,27,.06),0 4px 10px -2px rgba(16,25,27,.05);
+    --el-floating:0 2px 6px 0 rgba(16,25,27,.08),0 6px 16px 0 rgba(16,25,27,.12);
+    --shadow-card:var(--el-card);
+    --radius-full:9999px; --radius-2xl:20px; --radius-xl:16px; --radius-lg:12px; --radius-md:8px;
+    --focus-ring:0 0 0 2px var(--bg-canvas),0 0 0 4px var(--border-brand);
+    --dur-instant:120ms; --dur-fast:180ms; --dur-normal:240ms;
+    --ease-standard:cubic-bezier(0.2,0,0,1); --ease-decelerate:cubic-bezier(0,0,0,1);
+  }
+  .dark {
+    --bg-canvas:#0E1211; --bg-raised:#161B1A; --bg-sunken:#0A0E0D;
+    --text-primary:#EDEFEF; --text-secondary:#A7AFAD; --text-tertiary:#8A938F;
+    --text-disabled:#5B6663; --text-on-brand:#0E1211;
+    --int-primary:#579D8B; --int-hover:#82BCAB; --int-subtle:#16231F;
+    --int-selected:#EEF0F1; --int-selected-fg:#16191B;
+    --border-hairline:#2A3230; --border-default:#39413F; --border-strong:#5B6663; --border-brand:#579D8B;
+    --warning-fg:#E0B36B; --warning-bg:#2A2115; --warning-border:#4C3E24;
+    --error-fg:#E39385; --error-bg:#2C1B18; --error-border:#4E322C;
+    --success-fg:#5FC79A; --success-bg:#13251E; --success-border:#2C4A3D;
+    --info-fg:#8FB0DB; --info-bg:#171F2B; --info-border:#31435C;
+    --scrim:rgba(0,0,0,.6);
+    --el-subtle:0 1px 2px 0 rgba(0,0,0,.3),0 1px 3px 0 rgba(0,0,0,.24);
+    --el-card:0 2px 4px -1px rgba(0,0,0,.36),0 4px 10px -2px rgba(0,0,0,.32);
+    --el-floating:0 2px 6px 0 rgba(0,0,0,.4),0 6px 16px 0 rgba(0,0,0,.36);
+    --shadow-card:var(--el-card);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#EEF0F1; color:var(--text-primary); -webkit-font-smoothing:antialiased; padding:32px; line-height:1.5; }
+
+  /* ---- doc chrome (the card's own frame, not the product) ---- */
+  .head { max-width:1200px; margin:0 auto 24px; }
+  .head .doc-title { font-size:24px; font-weight:600; letter-spacing:-0.01em; color:#16191B; }
+  .head p { font-size:14px; color:#5F676D; margin-top:6px; max-width:900px; }
+  .head code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; color:#5F676D; background:#E4E7E8; padding:1px 5px; border-radius:4px; }
+  .stack { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+  .doc { border-radius:24px; overflow:hidden; box-shadow:var(--shadow-card); border:1px solid var(--border-hairline); background:var(--bg-canvas); color:var(--text-primary); }
+  .doc.mob { max-width:390px; margin:0 auto; }
+  .panel-tag { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-tertiary); padding:16px 28px 0; background:var(--bg-canvas); }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .num { direction:ltr; unicode-bidi:isolate; font-variant-numeric:tabular-nums; }
+
+  /* ---- reduced checkout header (shell §2) ---- */
+  .co-header { display:flex; align-items:center; gap:16px; height:64px; padding:0 28px; background:var(--bg-canvas); box-shadow:var(--el-subtle); position:relative; z-index:2; }
+  .wordmark { font-size:20px; font-weight:600; color:var(--text-primary); letter-spacing:-0.01em; white-space:nowrap; text-decoration:none; }
+  .wordmark .dot { color:var(--int-primary); }
+  .hspacer { flex:1; }
+  .securenote { display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--text-secondary); white-space:nowrap; }
+  .securenote svg { width:15px; height:15px; flex:none; }
+  .langsw { display:inline-flex; align-items:stretch; border:1px solid var(--border-default); border-radius:var(--radius-full); overflow:hidden; }
+  .langsw a { border:none; background:transparent; font-family:inherit; font-size:13px; line-height:1; padding:7px 13px; color:var(--text-secondary); cursor:pointer; text-decoration:none; display:flex; align-items:center; }
+  .langsw a.urdu { font-family:'Noto Nastaliq Urdu',serif; font-size:14px; padding-top:5px; padding-bottom:9px; }
+  .langsw a[aria-current="page"] { background:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .exitlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
+
+  /* ---- page frame ---- */
+  .co-main { display:block; background:var(--bg-canvas); }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 28px; }
+  .backrow { padding:20px 0 0; }
+  .backlink { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .backlink svg { width:15px; height:15px; flex:none; }
+  .rtl .backlink svg { transform:scaleX(-1); }
+  .pagehead { padding:20px 0 22px; }
+  .pagehead h1 { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+  .pagehead .psub { font-size:16px; color:var(--text-secondary); margin-top:8px; max-width:56ch; }
+  .ptitle { font-size:26px; line-height:1.22; font-weight:600; color:var(--text-primary); }
+
+  /* ---- the two-column shell ---- */
+  .cols2 { display:grid; grid-template-columns:minmax(0,1fr) 348px; gap:48px; align-items:start; border-top:1px solid var(--border-hairline); padding-bottom:8px; }
+  .lmain { padding-top:4px; }
+  .fsec { padding:28px 0; border-top:1px solid var(--border-hairline); }
+  .fsec:first-child { border-top:none; padding-top:24px; }
+  .fsec h2, .fsec .h2 { font-size:22px; font-weight:600; color:var(--text-primary); line-height:1.25; }
+  .sec-sub { font-size:14px; color:var(--text-secondary); margin-top:8px; max-width:62ch; }
+  .sec-sub b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- stepper: locked 4 named circles · step 3 current (shell §3) ---- */
+  .stepblk { padding:0 0 26px; }
+  .steps { display:flex; align-items:flex-start; list-style:none; max-width:440px; }
+  .steps li { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+  .steps li:not(:first-child)::before { content:""; position:absolute; top:13px; inset-inline-start:-50%; width:100%; height:2px; background:var(--border-default); z-index:0; }
+  .scirc { width:28px; height:28px; border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; z-index:1; border:1.5px solid var(--border-default); color:var(--text-tertiary); background:var(--bg-canvas); }
+  .scirc svg { width:14px; height:14px; }
+  .slab { font-size:11px; font-weight:600; color:var(--text-tertiary); margin-top:8px; letter-spacing:.02em; }
+  .steps li.done .scirc { background:var(--int-primary); border-color:var(--int-primary); color:var(--text-on-brand); }
+  .steps li.done .slab { color:var(--text-secondary); }
+  .steps li.done::before, .steps li.cur::before { background:var(--int-primary); }
+  .steps li.cur .scirc { border:2px solid var(--int-primary); color:var(--int-primary); }
+  .steps li.cur .slab { color:var(--int-primary); }
+  .scap { font-size:13px; color:var(--text-secondary); margin-top:14px; }
+  .scap b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- what each line covers: content blocks in OPEN SPACE (TASTE §1) ---- */
+  .feelist { list-style:none; margin-top:20px; display:flex; flex-direction:column; gap:20px; max-width:62ch; }
+  .fee { display:flex; gap:13px; align-items:flex-start; }
+  .feeic { width:22px; height:22px; flex:none; color:var(--text-secondary); margin-top:1px; }
+  .feeic svg { width:22px; height:22px; }
+  .feeh { display:block; font-size:16px; font-weight:600; color:var(--text-primary); }
+  .feed { display:block; font-size:14px; color:var(--text-secondary); margin-top:5px; line-height:1.6; }
+  .feed em { font-style:italic; }
+  .feed a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+  .feed b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- promo / credit: one form group, gray-fill Apply (shell §5, TASTE §5) ---- */
+  .prow { display:flex; gap:12px; align-items:stretch; margin-top:18px; max-width:520px; }
+  .pgroup { flex:1; min-width:0; border:1px solid var(--border-default); border-radius:var(--radius-md); background:var(--bg-canvas); padding:10px 16px 11px; }
+  .pgroup.invalid { border-color:var(--error-fg); }
+  .overline { display:block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--text-tertiary); }
+  .pinput { display:block; width:100%; border:none; background:transparent; font-family:inherit; font-size:16px; color:var(--text-primary); padding:0; margin-top:4px; }
+  .pinput::placeholder { color:var(--text-secondary); }
+  /* TASTE §5 gray-fill secondary — the shared checkout name, introduced by gw-027 */
+  .gbtn { flex:none; display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 20px; border:none; border-radius:var(--radius-md); background:var(--bg-raised); color:var(--text-primary); font-family:inherit; font-size:16px; font-weight:500; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .gbtn:active { transform:scale(0.98); }
+  .gbtn[disabled] { color:var(--text-disabled); cursor:default; transform:none; }
+  .errline { display:flex; align-items:flex-start; gap:9px; margin-top:12px; max-width:520px; font-size:13px; color:var(--error-fg); line-height:1.55; }
+  .errline svg { width:16px; height:16px; flex:none; margin-top:1px; }
+  .errline b { font-weight:600; }
+  .ghint { display:flex; align-items:flex-start; gap:10px; margin-top:18px; max-width:62ch; font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .ghint svg { width:16px; height:16px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .ghint b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- how you'll pay: method chips, INK selection (TASTE §3) ---- */
+  .mrow { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+  .mchip { display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:0 15px; border-radius:var(--radius-full); border:1px solid var(--border-default); font-size:14px; font-weight:500; color:var(--text-primary); background:var(--bg-canvas); }
+  .mchip svg { width:16px; height:16px; color:var(--text-secondary); }
+  .mchip.on { background:var(--int-selected); border-color:var(--int-selected); color:var(--int-selected-fg); font-weight:600; }
+  .mchip.on svg { color:var(--int-selected-fg); }
+
+  /* ---- FX lock: the diaspora branch (ga-051) — border, no shadow (shell §8) ---- */
+  .fxblk { margin-top:18px; max-width:520px; border:1px solid var(--info-border); border-radius:var(--radius-lg); background:var(--info-bg); padding:15px 16px; }
+  .fxhd { display:flex; align-items:center; gap:9px; font-size:14px; font-weight:600; color:var(--info-fg); }
+  .fxhd svg { width:17px; height:17px; flex:none; }
+  .fxbody { font-size:14px; color:var(--text-secondary); margin-top:7px; line-height:1.6; }
+  .fxbody b { color:var(--text-primary); font-weight:600; }
+  .fxmeter { height:3px; border-radius:var(--radius-full); background:var(--bg-canvas); margin-top:12px; overflow:hidden; }
+  .fxmeter i { display:block; height:100%; background:var(--info-fg); border-radius:var(--radius-full); }
+  .fxlist { list-style:none; margin-top:18px; max-width:62ch; display:flex; flex-direction:column; gap:14px; }
+  .fxlist li { display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text-secondary); line-height:1.55; }
+  .fxlist svg { width:17px; height:17px; color:var(--text-tertiary); flex:none; margin-top:2px; }
+  .fxlist b { color:var(--text-primary); font-weight:600; }
+
+  /* ---- page-level banner (shell §11.3 · warning triplet) ---- */
+  .banner { display:flex; align-items:flex-start; gap:11px; margin:20px 0 0; padding:14px 16px; border:1px solid var(--warning-border); border-radius:var(--radius-lg); background:var(--warning-bg); }
+  .banner svg { width:18px; height:18px; color:var(--warning-fg); flex:none; margin-top:2px; }
+  .banner p { font-size:14px; color:var(--text-secondary); line-height:1.6; }
+  .banner p b { color:var(--text-primary); font-weight:600; }
+  .banner .inlink { margin-top:6px; display:inline-block; }
+  .inlink { font-size:14px; font-weight:500; color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; background:none; border:none; font-family:inherit; cursor:pointer; padding:0; }
+  .inlink[disabled] { color:var(--text-disabled); text-decoration:none; cursor:default; }
+
+  /* ---- the summary rail (shell §4) ---- */
+  .railwrap { position:sticky; top:24px; padding:24px 0 0; }
+  .railcard { border:1px solid var(--border-default); border-radius:var(--radius-xl); background:var(--bg-canvas); box-shadow:var(--el-floating); padding:20px; }
+  .ident { display:flex; gap:12px; align-items:center; }
+  .thumb { width:56px; height:56px; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-sunken); flex:none; }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .iname { display:block; font-size:16px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .iarea { display:block; font-size:13px; color:var(--text-secondary); margin-top:3px; }
+  .railrule { height:1px; background:var(--border-hairline); margin:16px 0; }
+  .sumrow { display:flex; align-items:baseline; gap:12px; }
+  .sumrow + .sumrow { margin-top:14px; }
+  .sumrow .sbody { flex:1; min-width:0; }
+  .sval { display:block; font-size:14px; color:var(--text-primary); margin-top:4px; }
+  .sval.empty { color:var(--text-secondary); }
+
+  /* ---- THE ITEMISED TOTAL — this card's replacement for `.pline` (shell §4/§6) ---- */
+  .bd { display:block; }
+  .brow { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:9px 0; }
+  .brow + .brow { border-top:1px solid var(--border-hairline); }
+  .blab { font-size:14px; color:var(--text-secondary); min-width:0; }
+  .bamt { font-size:14px; color:var(--text-primary); white-space:nowrap; }
+  .brow.sub { border-top:1px solid var(--border-hairline); }
+  .brow.sub .blab, .brow.sub .bamt { color:var(--text-secondary); }
+  .brow.total { border-top:2px solid var(--border-default); margin-top:2px; padding-top:12px; }
+  .brow.total .blab { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .brow.total .bamt { font-size:18px; font-weight:600; color:var(--text-primary); }
+  .pline { display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:14px; color:var(--text-secondary); }
+  .pline .pamt { font-size:16px; font-weight:600; color:var(--text-primary); }
+  .strip { margin-top:14px; padding:11px 13px; border-radius:var(--radius-md); background:var(--bg-raised); font-size:13px; color:var(--text-secondary); line-height:1.6; }
+  .strip b { color:var(--text-primary); font-weight:600; }
+  .cta { display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; margin-top:16px; border:none; border-radius:var(--radius-full); background:var(--int-primary); color:var(--text-on-brand); font-family:inherit; font-size:16px; font-weight:600; cursor:pointer; text-decoration:none; transition:transform var(--dur-instant) var(--ease-standard), background-color var(--dur-instant) var(--ease-standard); }
+  .cta:active { transform:scale(0.98); }
+  .cta[disabled], .cta.off { background:var(--bg-raised); color:var(--text-disabled); cursor:default; transform:none; }
+  .ctanote { font-size:13px; color:var(--text-secondary); text-align:center; margin-top:11px; line-height:1.5; }
+  .trust { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-hairline); display:flex; flex-direction:column; gap:12px; }
+  .tline { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text-secondary); line-height:1.55; }
+  .tline svg { width:16px; height:16px; color:var(--text-secondary); flex:none; margin-top:1px; }
+  .tline.verified svg { color:var(--int-primary); }
+  .tline b { color:var(--text-primary); font-weight:600; }
+  .tline a { color:var(--text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---- loading skeleton: geometry-matched, transform-only (shell §11) ---- */
+  .sk { position:relative; overflow:hidden; display:inline-block; background:var(--bg-sunken); border-radius:var(--radius-full); height:13px; vertical-align:middle; }
+  .sk::after { content:""; position:absolute; inset:0; transform:translateX(-100%); background:linear-gradient(90deg,transparent,var(--bg-raised),transparent); animation:skshine 1.4s ease-in-out infinite; }
+  @keyframes skshine { 100% { transform:translateX(100%); } }
+  .sk.tall { height:18px; }
+
+  /* ---- reduced footer (shell §2) ---- */
+  .co-footer { background:var(--bg-raised); border-top:1px solid var(--border-hairline); padding:22px 28px; margin-top:16px; }
+  .fbar { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px 24px; flex-wrap:wrap; font-size:13px; color:var(--text-secondary); }
+  .flegal { display:flex; gap:14px 20px; flex-wrap:wrap; }
+  .flegal a { color:var(--text-primary); text-decoration:none; }
+  .flegal a:hover { color:var(--text-primary); text-decoration:underline; }
+
+  /* ---- mobile collapse (shell §4, plus this card's documented §4 adaptation) ---- */
+  .mobstrip { display:flex; gap:11px; align-items:center; padding:12px 0 0; }
+  .mobbar { position:sticky; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 20px 14px; background:var(--bg-canvas); border-top:1px solid var(--border-hairline); }
+  .mobsum { display:flex; flex-direction:column; }
+  .mobsum .ms-t { font-size:15px; font-weight:600; color:var(--text-primary); }
+  .mobsum .ms-s { font-size:12px; color:var(--text-secondary); margin-top:1px; }
+  .mobbar .cta { width:auto; margin-top:0; padding:0 22px; flex:none; }
+  .mob .wrap { padding:0 20px; }
+  .mob .cols2 { grid-template-columns:1fr; gap:0; }
+  .mob .railwrap { display:none; }
+  .mob .co-header { padding:0 20px; gap:12px; }
+  .mob .steps { max-width:none; }
+  .mob .prow, .mob .errline, .mob .fxblk { max-width:none; }
+  .mob .pagehead h1, .mob .ptitle { font-size:22px; }
+
+  /* ---- interaction: press feedback + hover gating + reduced motion (shell §10) ---- */
+  .exitlink, .backlink, .inlink, .mchip { transition:transform var(--dur-instant) var(--ease-standard), border-color var(--dur-instant) var(--ease-standard); }
+  @media (hover:hover) and (pointer:fine) {
+    .cta:not([disabled]):not(.off):hover { background:var(--int-hover); }
+    .gbtn:not([disabled]):hover { background:var(--bg-sunken); }
+    .pgroup:hover { border-color:var(--border-strong); }
+  }
+  :focus-visible { outline:none; box-shadow:var(--focus-ring); border-radius:var(--radius-md); }
+  @media (prefers-reduced-motion:reduce) {
+    .cta, .gbtn, .exitlink, .backlink, .inlink, .mchip { transition-duration:var(--dur-instant); }
+    .cta:active, .gbtn:active { transform:none; }
+    .sk::after { animation:none; opacity:.5; }
+  }
+
+  /* ---- RTL / Urdu ---- */
+  .rtl { direction:rtl; }
+  .rtl .nastaliq { font-family:'Noto Nastaliq Urdu',serif; }
+  .rtl .ptitle.nastaliq { line-height:1.6; font-weight:700; }
+  .rtl .feed, .rtl .ghint, .rtl .banner p, .rtl .fxbody { line-height:1.9; }
+
+  /* ---- real viewport collapse (matches the .mob panel exactly) ---- */
+  @media (max-width:1080px) {
+    .cols2 { grid-template-columns:1fr; gap:0; }
+    .railwrap { position:static; padding:0 0 28px; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="doc-title">GW-024 — Price · the itemised total (web checkout, step 3 of 4)</div>
+    <p>Route <code>/book/is-f7-2bed/price</code>, <strong>noindex, follow</strong>. Web twin of <code>ga-050</code> (pilot) with <code>ga-051</code>'s FX lock and <code>ga-060</code>'s credit line. Per <code>CHECKOUT-SHELL.md</code> §6 this is the <strong>only</strong> checkout surface that itemises, so the <code>&lt;dl&gt;</code> takes the rail's money slot and the main column carries what each line means. The arithmetic is <code>PKR 12,500 × 3 = 37,500</code>, <code>+ 2,250 + 720 + 1,880</code>, <code>= PKR 42,350</code> — the same figures the shipped refund worked example balances against. Panel 1 is the authoritative semantic page; panels 2–7 are variants.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- ================= PANEL 1 · LIGHT · ITEMISED (AUTHORITATIVE) ================= -->
+    <div class="doc">
+      <div class="panel-tag">Light · itemised — the authoritative page (one h1, real landmarks, a real form; reduced header + rail + reduced footer)</div>
+
+      <header class="co-header">
+        <a class="wordmark" href="/">Salam<span class="dot">.</span>Stay</a>
+        <span class="hspacer"></span>
+        <span class="securenote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Your details are encrypted
+        </span>
+        <div class="langsw" role="group" aria-label="Language">
+          <a href="/book/is-f7-2bed/price" aria-current="page" lang="en">EN</a>
+          <a class="urdu" href="/ur/book/is-f7-2bed/price" lang="ur">اردو</a>
+        </div>
+        <a class="exitlink" href="/stays-in-islamabad/f-7/is-f7-2bed">Save &amp; exit</a>
+      </header>
+
+      <main class="co-main">
+        <div class="wrap">
+          <div class="backrow">
+            <a class="backlink" href="/stays-in-islamabad/f-7/is-f7-2bed">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              Back to Margalla View Apartment
+            </a>
+          </div>
+
+          <div class="pagehead">
+            <h1>Your price breakdown</h1>
+            <p class="psub">Every line that makes up your total. Nothing is charged on this step.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+
+              <!-- STEPPER — locked 4 named circles, step 3 current (shell §3) -->
+              <div class="stepblk">
+                <ol class="steps" aria-label="Checkout progress">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="cur" aria-current="step"><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">3</span> of <span class="num">4</span> · Price</b>. Your total is on the right. Nothing moves until you confirm on step <span class="num">4</span>.</p>
+              </div>
+
+              <form id="price-form" action="/book/is-f7-2bed/confirm" method="get">
+
+                <!-- WHAT EACH LINE COVERS -->
+                <section class="fsec" aria-labelledby="lines-h">
+                  <h2 id="lines-h">What each line covers</h2>
+                  <p class="sec-sub">Four lines, and that is the whole bill. <b>Transparent fees and tax — every rupee shown before you book or earn</b></p>
+
+                  <ul class="feelist">
+                    <li class="fee">
+                      <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+                      <span>
+                        <span class="feeh">Nightly rate</span>
+                        <span class="feed">Set by the host, multiplied by your nights. SalamStay adds nothing to it, and the host cannot change it once your dates are held.</span>
+                      </span>
+                    </li>
+                    <li class="fee">
+                      <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                      <span>
+                        <span class="feeh">Service fee</span>
+                        <span class="feed">SalamStay acts as your booking agent and charges a fixed, disclosed commission for arranging and safeguarding your stay. It's a flat agency fee shown up front — not interest, and not a hidden markup on the host's price. <a href="/help/payments/how-fees-and-taxes-work">How our fees and taxes work</a></span>
+                      </span>
+                    </li>
+                    <li class="fee">
+                      <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                      <span>
+                        <span class="feeh">Payment processing (MDR)</span>
+                        <span class="feed">The merchant-discount rate your card or wallet network charges to process the payment. We pass it through at cost and it changes with the method you pick — the line in your breakdown is quoted for <b>JazzCash</b>, your saved method.</span>
+                      </span>
+                    </li>
+                    <li class="fee">
+                      <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M6 20V9M12 20V5M18 20v-7"/></svg></span>
+                      <span>
+                        <span class="feeh">Sales tax · ICT (Islamabad)</span>
+                        <span class="feed">Charged in Pakistani Rupees. Tax lines follow the property's province — here, Islamabad Capital Territory (ICT). We collect it and remit it; none of it is ours.</span>
+                      </span>
+                    </li>
+                  </ul>
+
+                  <p class="ghint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                    <span><b>Withholding tax is not on your bill.</b> It applies to what the host is paid, is deducted from the host's payout, and never appears on a guest total.</span>
+                  </p>
+                </section>
+
+                <!-- PROMO CODE OR CREDIT -->
+                <section class="fsec" aria-labelledby="promo-h">
+                  <h2 id="promo-h">Promo code or credit</h2>
+                  <p class="sec-sub">Optional. Codes are not case-sensitive.</p>
+
+                  <div class="prow">
+                    <div class="pgroup">
+                      <label class="overline" for="promo-1">Promo code</label>
+                      <input class="pinput" id="promo-1" name="promo" type="text" inputmode="latin" autocomplete="off" placeholder="Enter a code" />
+                    </div>
+                    <button class="gbtn" type="submit" formaction="/book/is-f7-2bed/price" formmethod="post">Apply</button>
+                  </div>
+
+                  <p class="ghint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7"/><path d="M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg>
+                    <span><b>Credit comes off here, in plain sight.</b> Any SalamStay credit on your account is applied automatically as a line you can read in the breakdown — never as a silent discount. This account has none.</span>
+                  </p>
+                </section>
+
+                <!-- HOW YOU'LL PAY -->
+                <section class="fsec" aria-labelledby="pay-h">
+                  <h2 id="pay-h">How you'll pay</h2>
+                  <p class="sec-sub">Processing (MDR) is quoted per method. Choose another and the line is re-quoted before you confirm — your total never changes silently.</p>
+
+                  <div class="mrow" role="group" aria-label="Payment methods available at step 4">
+                    <span class="mchip on">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                      JazzCash · saved
+                    </span>
+                    <span class="mchip">Card (HBL)</span>
+                    <span class="mchip">EasyPaisa</span>
+                    <span class="mchip">Raast</span>
+                    <span class="mchip">Overseas card</span>
+                    <span class="mchip">Cash on arrival</span>
+                  </div>
+                </section>
+
+              </form>
+            </div>
+
+            <!-- SUMMARY RAIL — the itemised total takes the money slot (shell §4/§6) -->
+            <aside class="railwrap" aria-label="Booking summary">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span>
+                    <span class="iname">Margalla View Apartment</span>
+                    <span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span>
+                  </span>
+                </div>
+
+                <div class="railrule"></div>
+
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Dates</span>
+                    <span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/dates">Change</a>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Guests</span>
+                    <span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/dates">Change</a>
+                </div>
+                <div class="sumrow">
+                  <span class="sbody">
+                    <span class="overline">Party</span>
+                    <span class="sval">Family · FRC verified</span>
+                  </span>
+                  <a class="inlink" href="/book/is-f7-2bed/party">Change</a>
+                </div>
+
+                <div class="railrule"></div>
+
+                <dl class="bd">
+                  <div class="brow">
+                    <dt class="blab"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</dt>
+                    <dd class="bamt num">PKR 37,500</dd>
+                  </div>
+                  <div class="brow">
+                    <dt class="blab">Service fee</dt>
+                    <dd class="bamt num">PKR 2,250</dd>
+                  </div>
+                  <div class="brow">
+                    <dt class="blab">Payment processing (MDR)</dt>
+                    <dd class="bamt num">PKR 720</dd>
+                  </div>
+                  <div class="brow">
+                    <dt class="blab">Sales tax · ICT (Islamabad)</dt>
+                    <dd class="bamt num">PKR 1,880</dd>
+                  </div>
+                  <div class="brow total">
+                    <dt class="blab">Total (PKR)</dt>
+                    <dd class="bamt num">PKR 42,350</dd>
+                  </div>
+                </dl>
+
+                <p class="strip">Charged in Pakistani Rupees. Nothing is charged on this step — you choose how to pay and confirm at <b>step <span class="num">4</span> · Confirm</b>.</p>
+
+                <button class="cta" type="submit" form="price-form">Continue to payment</button>
+                <p class="ctanote">You will not be charged yet.</p>
+
+                <div class="trust">
+                  <span class="tline verified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                    <span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg>
+                    <span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span>
+                  </span>
+                  <span class="tline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                    <span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span>
+                  </span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </main>
+
+      <footer class="co-footer">
+        <h2 class="sr-only">Footer</h2>
+        <div class="fbar">
+          <span>© <span class="num">2026</span> SalamStay</span>
+          <nav class="flegal" aria-label="Legal">
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/guest-refund-policy">Guest refund policy</a>
+            <a href="/help">Help center</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+
+    <!-- ================= PANEL 2 · LIGHT · EMPTY + CALCULATING ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · empty + calculating — nothing entered, the server total not yet returned · geometry-matched skeleton · CTA disabled but visible, in place</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/price" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/price">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your price breakdown</div>
+            <p class="psub">Every line that makes up your total. Nothing is charged on this step.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="cur"><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">3</span> of <span class="num">4</span> · Price</b>. We're working out your total now.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What each line covers</div>
+                <p class="sec-sub">Four lines, and that is the whole bill. <b>Transparent fees and tax — every rupee shown before you book or earn</b></p>
+                <ul class="feelist">
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+                    <span><span class="feeh">Nightly rate</span><span class="feed">Set by the host, multiplied by your nights. SalamStay adds nothing to it.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                    <span><span class="feeh">Service fee</span><span class="feed">A flat agency fee shown up front — not interest, and not a hidden markup on the host's price.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                    <span><span class="feeh">Payment processing (MDR)</span><span class="feed">Passed through at cost. It changes with the method you pick.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V9M12 20V5M18 20v-7"/></svg></span>
+                    <span><span class="feeh">Sales tax · ICT (Islamabad)</span><span class="feed">Tax lines follow the property's province. We collect it and remit it; none of it is ours.</span></span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Promo code or credit</div>
+                <p class="sec-sub">Optional. Codes are not case-sensitive.</p>
+                <div class="prow">
+                  <span class="pgroup"><span class="overline">Promo code</span><span class="pinput">Enter a code</span></span>
+                  <span class="gbtn" disabled>Apply</span>
+                </div>
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+                  <span>Apply becomes available once your total has finished calculating.</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · FRC verified</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <p class="sr-only" role="status">Calculating your total.</p>
+                <dl class="bd" aria-busy="true">
+                  <div class="brow"><dt class="blab"><span class="sk" style="width:116px"></span></dt><dd class="bamt"><span class="sk" style="width:76px"></span></dd></div>
+                  <div class="brow"><dt class="blab"><span class="sk" style="width:128px"></span></dt><dd class="bamt"><span class="sk" style="width:62px"></span></dd></div>
+                  <div class="brow"><dt class="blab"><span class="sk" style="width:146px"></span></dt><dd class="bamt"><span class="sk" style="width:56px"></span></dd></div>
+                  <div class="brow"><dt class="blab"><span class="sk" style="width:136px"></span></dt><dd class="bamt"><span class="sk" style="width:64px"></span></dd></div>
+                  <div class="brow total"><dt class="blab"><span class="sk tall" style="width:84px"></span></dt><dd class="bamt"><span class="sk tall" style="width:100px"></span></dd></div>
+                </dl>
+                <p class="strip">Your nightly rate, service fee, processing and tax appear here the moment the quote returns. Nothing is charged on this step.</p>
+                <span class="cta off">Continue to payment</span>
+                <p class="ctanote">Wait for your total, then continue.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 3 · LIGHT · ERRORS — quote expired + code not found ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · errors — the quote expired while the page sat open (page banner, recovery named) · a promo code that doesn't apply (inline field error)</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/price" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/price">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your price breakdown</div>
+            <p class="psub">Every line that makes up your total. Nothing is charged on this step.</p>
+          </div>
+
+          <div class="banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            <span>
+              <p><b>This quote has expired.</b> The total below is the last one we gave you, at <span class="num">9:41 AM</span>. Fees or tax can change between quotes, so we never carry an old price forward silently — get an updated total and it will be shown before anything is charged.</p>
+              <span class="inlink">Get an updated total</span>
+            </span>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="cur"><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">3</span> of <span class="num">4</span> · Price</b>. Two things to sort out before you continue.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Promo code or credit</div>
+                <p class="sec-sub">Optional. Codes are not case-sensitive.</p>
+                <div class="prow">
+                  <span class="pgroup invalid"><span class="overline">Promo code</span><span class="pinput">EIDGIFT25</span></span>
+                  <span class="gbtn">Apply</span>
+                </div>
+                <p class="errline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+                  <span>We couldn't find this code, or it has expired. Check the spelling and try again — codes aren't case-sensitive.</span>
+                </p>
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+                  <span><b>Nothing was charged.</b> A code that doesn't apply never affects your balance or any booking.</span>
+                </p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">How you'll pay</div>
+                <p class="sec-sub">Processing (MDR) is quoted per method. Choose another and the line is re-quoted before you confirm.</p>
+                <div class="mrow">
+                  <span class="mchip on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>JazzCash · saved</span>
+                  <span class="mchip">Card (HBL)</span>
+                  <span class="mchip">EasyPaisa</span>
+                  <span class="mchip">Raast</span>
+                  <span class="mchip">Overseas card</span>
+                  <span class="mchip">Cash on arrival</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · FRC verified</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <dl class="bd">
+                  <div class="brow"><dt class="blab"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</dt><dd class="bamt num">PKR 37,500</dd></div>
+                  <div class="brow"><dt class="blab">Service fee</dt><dd class="bamt num">PKR 2,250</dd></div>
+                  <div class="brow"><dt class="blab">Payment processing (MDR)</dt><dd class="bamt num">PKR 720</dd></div>
+                  <div class="brow"><dt class="blab">Sales tax · ICT (Islamabad)</dt><dd class="bamt num">PKR 1,880</dd></div>
+                  <div class="brow total"><dt class="blab">Last-quoted total</dt><dd class="bamt num">PKR 42,350</dd></div>
+                </dl>
+                <p class="strip">Two things to fix before you continue: <b>an expired quote</b> and <b>a code that doesn't apply</b>. Nothing is charged.</p>
+                <span class="cta off">Continue to payment</span>
+                <p class="ctanote">Get an updated total to continue.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 4 · LIGHT · FX LOCK (overseas-card branch) ================= -->
+    <div class="doc" aria-hidden="true">
+      <div class="panel-tag">Light · FX lock — the diaspora branch (ga-051). Shown only after an overseas card is chosen; the rupee total never moves, and expiry is a calm re-quote, never a penalty</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/price" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/price">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your price breakdown</div>
+            <p class="psub">Every line that makes up your total. Nothing is charged on this step.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="cur"><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">3</span> of <span class="num">4</span> · Price</b>. Your booking is in Pakistani Rupees; your card is charged in US Dollars.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Paying from outside Pakistan</div>
+                <p class="sec-sub">You chose to pay by <b>overseas card</b>, so we've fixed today's conversion for this booking while you finish. A guest paying by JazzCash, HBL card, EasyPaisa, Raast or cash never sees this section.</p>
+
+                <div class="fxblk" role="status">
+                  <div class="fxhd">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                    Rate locked · <span class="num">14:52</span> left
+                  </div>
+                  <p class="fxbody">Your overseas card will be charged <b><span class="num">≈ USD 152.30</span></b> for this <b><span class="num">PKR 42,350</span></b> booking, at today's locked rate.</p>
+                  <div class="fxmeter" aria-hidden="true"><i style="width:99%"></i></div>
+                </div>
+
+                <ul class="fxlist">
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    <span><b>The rate we locked at <span class="num">9:41 AM</span> today.</b> Held for this booking only, for <span class="num">15</span> minutes.</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg>
+                    <span><b>A booking total of <span class="num">PKR 42,350</span>.</b> Nightly, service fee, processing and tax, exactly as itemised on the right.</span>
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>
+                    <span><b>No fee from your own bank.</b> Any foreign-transaction fee your issuer adds is not in this figure.</span>
+                  </li>
+                </ul>
+
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span><b>Your bank may convert differently.</b> The <span class="num">≈ USD</span> figure is today's locked estimate; your card issuer may use a slightly different rate or add a foreign-transaction fee — that's between you and them. This is the rate we're holding for your booking — not a market rate, and not a forecast. If the timer runs out nothing is lost: the rupee total stays exactly as it is and we re-quote the estimate before you pay.</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · FRC verified</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <dl class="bd">
+                  <div class="brow"><dt class="blab"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</dt><dd class="bamt num">PKR 37,500</dd></div>
+                  <div class="brow"><dt class="blab">Service fee</dt><dd class="bamt num">PKR 2,250</dd></div>
+                  <div class="brow"><dt class="blab">Payment processing (MDR)</dt><dd class="bamt num">PKR 720</dd></div>
+                  <div class="brow"><dt class="blab">Sales tax · ICT (Islamabad)</dt><dd class="bamt num">PKR 1,880</dd></div>
+                  <div class="brow total"><dt class="blab">Total (PKR)</dt><dd class="bamt num">PKR 42,350</dd></div>
+                </dl>
+                <p class="strip">Booked in Pakistani Rupees, charged in US Dollars. Your card will be billed <b><span class="num">≈ USD 152.30</span></b> at today's locked rate.</p>
+                <span class="cta">Continue to payment</span>
+                <p class="ctanote">You will not be charged yet.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 5 · DARK · SALAMSTAY CREDIT APPLIED ================= -->
+    <div class="doc dark" aria-hidden="true">
+      <div class="panel-tag">Dark · SalamStay credit applied — a variant account (ga-060 ships a <span class="num">PKR 5,000</span> balance). The subtotal is printed above the credit line so the subtraction is visible: <span class="num">42,350</span> − <span class="num">5,000</span> = <span class="num">37,350</span></div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Your details are encrypted</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/price" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/price">اردو</a></div>
+        <span class="exitlink">Save &amp; exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to Margalla View Apartment</span></div>
+          <div class="pagehead">
+            <div class="ptitle">Your price breakdown</div>
+            <p class="psub">Every line that makes up your total. Nothing is charged on this step.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="cur"><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">3</span> of <span class="num">4</span> · Price</b>. Your credit is already off the total on the right.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What each line covers</div>
+                <p class="sec-sub">Four lines, and that is the whole bill. <b>Transparent fees and tax — every rupee shown before you book or earn</b></p>
+                <ul class="feelist">
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+                    <span><span class="feeh">Nightly rate</span><span class="feed">Set by the host, multiplied by your nights. SalamStay adds nothing to it.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                    <span><span class="feeh">Service fee</span><span class="feed">A flat agency fee shown up front — not interest, and not a hidden markup on the host's price.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                    <span><span class="feeh">Payment processing (MDR)</span><span class="feed">Passed through at cost. Quoted for JazzCash; re-quoted if you switch method.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V9M12 20V5M18 20v-7"/></svg></span>
+                    <span><span class="feeh">Sales tax · ICT (Islamabad)</span><span class="feed">Tax lines follow the property's province. We collect it and remit it; none of it is ours.</span></span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Promo code or credit</div>
+                <p class="sec-sub">Optional. Codes are not case-sensitive.</p>
+                <div class="prow">
+                  <span class="pgroup"><span class="overline">Promo code</span><span class="pinput">Enter a code</span></span>
+                  <span class="gbtn">Apply</span>
+                </div>
+                <p class="ghint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7"/><path d="M12 7S10.5 3 8 3a2 2 0 0 0 0 4M12 7s1.5-4 4-4a2 2 0 0 1 0 4"/></svg>
+                  <span><b><span class="num">PKR 5,000</span> of SalamStay credit has been applied.</b> It comes off automatically as a line you can read in the breakdown — never as a silent discount. Your remaining balance after this booking is <b><span class="num">PKR 0</span></b>.</span>
+                </p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">How you'll pay</div>
+                <p class="sec-sub">Processing (MDR) is quoted per method. Choose another and the line is re-quoted before you confirm.</p>
+                <div class="mrow">
+                  <span class="mchip on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>JazzCash · saved</span>
+                  <span class="mchip">Card (HBL)</span>
+                  <span class="mchip">EasyPaisa</span>
+                  <span class="mchip">Raast</span>
+                  <span class="mchip">Overseas card</span>
+                  <span class="mchip">Cash on arrival</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname">Margalla View Apartment</span><span class="iarea">Entire apartment · F-<span class="num">7</span>, Islamabad</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Dates</span><span class="sval">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug <span class="num">2026</span> · <span class="num">3</span> nights</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Guests</span><span class="sval"><span class="num">6</span> guests · <span class="num">4</span> adults, <span class="num">2</span> children</span></span><span class="inlink">Change</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline">Party</span><span class="sval">Family · FRC verified</span></span><span class="inlink">Change</span></div>
+                <div class="railrule"></div>
+                <dl class="bd">
+                  <div class="brow"><dt class="blab"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</dt><dd class="bamt num">PKR 37,500</dd></div>
+                  <div class="brow"><dt class="blab">Service fee</dt><dd class="bamt num">PKR 2,250</dd></div>
+                  <div class="brow"><dt class="blab">Payment processing (MDR)</dt><dd class="bamt num">PKR 720</dd></div>
+                  <div class="brow"><dt class="blab">Sales tax · ICT (Islamabad)</dt><dd class="bamt num">PKR 1,880</dd></div>
+                  <div class="brow sub"><dt class="blab">Subtotal</dt><dd class="bamt num">PKR 42,350</dd></div>
+                  <div class="brow"><dt class="blab">SalamStay credit applied</dt><dd class="bamt num">−PKR 5,000</dd></div>
+                  <div class="brow total"><dt class="blab">Total (PKR)</dt><dd class="bamt num">PKR 37,350</dd></div>
+                </dl>
+                <p class="strip">Charged in Pakistani Rupees. Nothing is charged on this step — you choose how to pay and confirm at <b>step <span class="num">4</span> · Confirm</b>.</p>
+                <span class="cta">Continue to payment</span>
+                <p class="ctanote">You will not be charged yet.</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span><b>CNIC-verified guests and hosts via NADRA Verisys</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span><b>Transparent fees and tax — every rupee shown before you book or earn</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Your payment is held in trust and released to the host only after you check in. <a href="/help/payments/how-money-is-held">How your payment is held</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 6 · URDU / RTL · ITEMISED ================= -->
+    <div class="doc rtl" aria-hidden="true" lang="ur" dir="rtl">
+      <div class="panel-tag" style="direction:ltr">Urdu · RTL — layout &amp; direction demo. Western digits inside <code>.num</code>, Urdu prose around them (Pass #31). Stepper lexicon: شناخت = Verify, تصدیق = Confirm; caption مرحلہ 3 از 4 · قیمت. The two §5 claim lines reuse the corpus-established Urdu strings verbatim (ga-002 / gw-006 / gw-001 / ga-050); the service-fee explainer is ga-050's Urdu string with only the transliterated term removed. All other Urdu here is a direction demo and is human-translated for production.</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <span class="securenote nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>آپ کی معلومات محفوظ ہیں</span>
+        <div class="langsw"><a href="/book/is-f7-2bed/price">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/price" aria-current="page">اردو</a></div>
+        <span class="exitlink nastaliq">محفوظ کر کے باہر</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink nastaliq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>مارگلہ ویو اپارٹمنٹ پر واپس</span></div>
+          <div class="pagehead">
+            <div class="ptitle nastaliq">قیمت کی تفصیل</div>
+            <p class="psub nastaliq">آپ کے کل میں شامل ہر لائن۔ اس مرحلے پر کوئی رقم وصول نہیں کی جاتی۔</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab nastaliq">پارٹی</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab nastaliq">شناخت</span></li>
+                  <li class="cur"><span class="scirc num">3</span><span class="slab nastaliq">قیمت</span></li>
+                  <li><span class="scirc num">4</span><span class="slab nastaliq">تصدیق</span></li>
+                </ol>
+                <p class="scap nastaliq"><b>مرحلہ <span class="num">3</span> از <span class="num">4</span> · قیمت</b>۔ آپ کا کل دائیں طرف ہے۔ مرحلہ <span class="num">4</span> پر تصدیق تک کچھ وصول نہیں ہوتا۔</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">ہر لائن کیا ہے</div>
+                <p class="sec-sub nastaliq">چار لائنیں، اور یہی پورا بل ہے۔ <b>شفاف فیس اور ٹیکس — بکنگ یا کمائی سے پہلے ہر روپیہ ظاہر</b></p>
+                <ul class="feelist">
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+                    <span><span class="feeh nastaliq">فی رات کرایہ</span><span class="feed nastaliq">میزبان مقرر کرتا ہے، آپ کی راتوں سے ضرب دیا جاتا ہے۔ سلام اسٹے اس میں کچھ نہیں جوڑتا۔</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                    <span><span class="feeh nastaliq">سروس فیس</span><span class="feed nastaliq">سلام اسٹے آپ کے بکنگ ایجنٹ کے طور پر کام کرتا ہے اور آپ کے قیام کا بندوبست اور حفاظت کرنے کے لیے ایک مقررہ، ظاہر کردہ کمیشن لیتا ہے۔ یہ پہلے سے دکھائی جانے والی مقررہ ایجنسی فیس ہے — نہ سود، نہ میزبان کی قیمت پر کوئی چھپا ہوا اضافہ۔ <a href="/ur/help/payments/how-fees-and-taxes-work">فیس اور ٹیکس کیسے کام کرتے ہیں</a></span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                    <span><span class="feeh nastaliq">ادائیگی کی پروسیسنگ (<span class="num">MDR</span>)</span><span class="feed nastaliq">آپ کے کارڈ یا والٹ نیٹ ورک کی وصول کردہ فیس، جو ہم لاگت پر آگے منتقل کرتے ہیں۔ یہ آپ کے منتخب کردہ طریقے کے ساتھ بدلتی ہے — تفصیل میں دکھائی گئی لائن <b>JazzCash</b> کے لیے ہے۔</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V9M12 20V5M18 20v-7"/></svg></span>
+                    <span><span class="feeh nastaliq">سیلز ٹیکس · <span class="num">ICT</span> (اسلام آباد)</span><span class="feed nastaliq">ادائیگی پاکستانی روپے میں۔ ٹیکس پراپرٹی کے صوبے کے مطابق — یہاں اسلام آباد (<span class="num">ICT</span>)۔ ہم یہ جمع کر کے آگے ادا کرتے ہیں؛ اس میں سے کچھ ہمارا نہیں۔</span></span>
+                  </li>
+                </ul>
+                <p class="ghint nastaliq">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+                  <span><b>ود ہولڈنگ ٹیکس آپ کے بل پر نہیں ہے۔</b> یہ میزبان کی ادائیگی پر لاگو ہوتا ہے اور اسی سے کاٹا جاتا ہے، مہمان کے کل میں کبھی شامل نہیں ہوتا۔</span>
+                </p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2 nastaliq">پرومو کوڈ یا کریڈٹ</div>
+                <p class="sec-sub nastaliq">اختیاری۔ کوڈ میں چھوٹے بڑے حروف کا فرق نہیں۔</p>
+                <div class="prow">
+                  <span class="pgroup"><span class="overline nastaliq">پرومو کوڈ</span><span class="pinput nastaliq">کوڈ درج کریں</span></span>
+                  <span class="gbtn nastaliq">لاگو کریں</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="railwrap">
+              <div class="railcard">
+                <div class="ident">
+                  <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+                  <span><span class="iname nastaliq">مارگلہ ویو اپارٹمنٹ</span><span class="iarea nastaliq">پورا اپارٹمنٹ · <span class="num">F-7</span>، اسلام آباد</span></span>
+                </div>
+                <div class="railrule"></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">تاریخیں</span><span class="sval nastaliq">جمعہ <span class="num">14</span> – پیر <span class="num">17</span> اگست <span class="num">2026</span> · <span class="num">3</span> راتیں</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">مہمان</span><span class="sval nastaliq"><span class="num">6</span> مہمان · <span class="num">4</span> بالغ، <span class="num">2</span> بچے</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="sumrow"><span class="sbody"><span class="overline nastaliq">پارٹی</span><span class="sval nastaliq">خاندان · <span class="num">FRC</span> تصدیق شدہ</span></span><span class="inlink nastaliq">تبدیل کریں</span></div>
+                <div class="railrule"></div>
+                <dl class="bd">
+                  <div class="brow"><dt class="blab nastaliq"><span class="num">PKR 12,500</span> × <span class="num">3</span> راتیں</dt><dd class="bamt num">PKR 37,500</dd></div>
+                  <div class="brow"><dt class="blab nastaliq">سروس فیس</dt><dd class="bamt num">PKR 2,250</dd></div>
+                  <div class="brow"><dt class="blab nastaliq">ادائیگی کی پروسیسنگ (<span class="num">MDR</span>)</dt><dd class="bamt num">PKR 720</dd></div>
+                  <div class="brow"><dt class="blab nastaliq">سیلز ٹیکس · <span class="num">ICT</span></dt><dd class="bamt num">PKR 1,880</dd></div>
+                  <div class="brow total"><dt class="blab nastaliq">کل (<span class="num">PKR</span>)</dt><dd class="bamt num">PKR 42,350</dd></div>
+                </dl>
+                <p class="strip nastaliq">ادائیگی پاکستانی روپے میں۔ اس مرحلے پر کچھ وصول نہیں ہوتا — ادائیگی کا طریقہ اور تصدیق <b>مرحلہ <span class="num">4</span> · تصدیق</b> پر۔</p>
+                <span class="cta nastaliq">ادائیگی کی طرف جاری رکھیں</span>
+                <p class="ctanote nastaliq">ابھی کوئی رقم وصول نہیں ہوگی۔</p>
+                <div class="trust">
+                  <span class="tline verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-2.9 7.8-7 9-4.1-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span class="nastaliq"><b>مہمان اور میزبان دونوں کی تصدیق نادرا ویری سِس کے ذریعے کی جاتی ہے</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg><span class="nastaliq"><b>شفاف فیس اور ٹیکس — بکنگ یا کمائی سے پہلے ہر روپیہ ظاہر۔</b></span></span>
+                  <span class="tline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span class="nastaliq">آپ کی رقم امانت میں رکھی جاتی ہے اور چیک اِن کے بعد ہی میزبان کو دی جاتی ہے۔ <a href="/ur/help/payments/how-money-is-held">آپ کی رقم کیسے رکھی جاتی ہے</a></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PANEL 7 · MOBILE 390 · ITEMISED ================= -->
+    <div class="doc mob" aria-hidden="true">
+      <div class="panel-tag">Mobile <span class="num">390</span> — the rail leaves the flow, so the itemised <code>dl</code> moves into the main column (this card's documented adaptation of shell §4); the <code>mobbar</code> carries the TOTAL, not the subtotal</div>
+
+      <div class="co-header">
+        <span class="wordmark">Salam<span class="dot">.</span>Stay</span>
+        <span class="hspacer"></span>
+        <div class="langsw"><a href="/book/is-f7-2bed/price" aria-current="page">EN</a><a class="urdu" href="/ur/book/is-f7-2bed/price">اردو</a></div>
+        <span class="exitlink">Exit</span>
+      </div>
+
+      <div class="co-main">
+        <div class="wrap">
+          <div class="backrow"><span class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the listing</span></div>
+
+          <div class="mobstrip">
+            <span class="thumb"><img src="../../assets/photos/is-f7-living.jpg" alt="" data-prod-loading="lazy" /></span>
+            <span><span class="iname">Margalla View Apartment</span><span class="iarea">Fri <span class="num">14</span> – Mon <span class="num">17</span> Aug · <span class="num">3</span> nights · <span class="num">6</span> guests</span></span>
+          </div>
+
+          <div class="pagehead">
+            <div class="ptitle">Your price breakdown</div>
+            <p class="psub">Every line that makes up your total.</p>
+          </div>
+
+          <div class="cols2">
+            <div class="lmain">
+              <div class="stepblk">
+                <ol class="steps">
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Party</span></li>
+                  <li class="done"><span class="scirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span class="slab">Verify</span></li>
+                  <li class="cur"><span class="scirc">3</span><span class="slab">Price</span></li>
+                  <li><span class="scirc">4</span><span class="slab">Confirm</span></li>
+                </ol>
+                <p class="scap">Step <b><span class="num">3</span> of <span class="num">4</span> · Price</b>.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Itemised total</div>
+                <dl class="bd">
+                  <div class="brow"><dt class="blab"><span class="num">PKR 12,500</span> × <span class="num">3</span> nights</dt><dd class="bamt num">PKR 37,500</dd></div>
+                  <div class="brow"><dt class="blab">Service fee</dt><dd class="bamt num">PKR 2,250</dd></div>
+                  <div class="brow"><dt class="blab">Payment processing (MDR)</dt><dd class="bamt num">PKR 720</dd></div>
+                  <div class="brow"><dt class="blab">Sales tax · ICT (Islamabad)</dt><dd class="bamt num">PKR 1,880</dd></div>
+                  <div class="brow total"><dt class="blab">Total (PKR)</dt><dd class="bamt num">PKR 42,350</dd></div>
+                </dl>
+                <p class="strip">Charged in Pakistani Rupees. Nothing is charged on this step — you choose how to pay and confirm at <b>step <span class="num">4</span> · Confirm</b>.</p>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">What each line covers</div>
+                <ul class="feelist">
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5M9.5 12.5h5"/></svg></span>
+                    <span><span class="feeh">Service fee</span><span class="feed">A flat agency fee shown up front — not interest, and not a hidden markup on the host's price.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span>
+                    <span><span class="feeh">Payment processing (MDR)</span><span class="feed">Passed through at cost. Quoted for JazzCash; re-quoted if you switch method.</span></span>
+                  </li>
+                  <li class="fee">
+                    <span class="feeic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V9M12 20V5M18 20v-7"/></svg></span>
+                    <span><span class="feeh">Sales tax · ICT (Islamabad)</span><span class="feed">Tax lines follow the property's province. We collect it and remit it; none of it is ours.</span></span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="fsec">
+                <div class="h2">Promo code or credit</div>
+                <div class="prow">
+                  <span class="pgroup"><span class="overline">Promo code</span><span class="pinput">Enter a code</span></span>
+                  <span class="gbtn">Apply</span>
+                </div>
+              </div>
+            </div>
+            <div class="railwrap"></div>
+          </div>
+        </div>
+
+        <div class="mobbar">
+          <span class="mobsum">
+            <span class="ms-t num">PKR 42,350</span>
+            <span class="ms-s">Total · all fees and tax</span>
+          </span>
+          <span class="cta">Continue</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

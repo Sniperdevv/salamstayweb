@@ -8,7 +8,6 @@ import {
   Prose,
   ProseSection,
   StepList,
-  Term,
 } from "@/components/prose/prose-blocks";
 import { column, factRow, headingGap, prose, sectionGap, shell } from "@/components/prose/shell";
 import { inlineAction } from "@/components/ui";
@@ -26,7 +25,8 @@ import { pageMetadata } from "@/lib/seo/metadata";
  *  · title + meta description + robots + canonical come off the route registry
  *    and the card's own meta line (G4/G6/G41/G42).
  *  · JSON-LD is BreadcrumbList + WebPage. NO FAQPage — this page ships no Q&A
- *    block; the genuine FAQ lives on GW-007. No AggregateRating anywhere.
+ *    block; the genuine FAQ lives on `/verification`. No AggregateRating
+ *    anywhere.
  *  · Visible breadcrumb ≡ BreadcrumbList, off one `CRUMBS` array (G40).
  *  · Every claim is a SEO-RULES §5 registry claim, byte-exact: 1, 4 and 9 in
  *    the hero strip; 1, 2 and 3 one per verification row; 9 in "your money";
@@ -43,7 +43,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
  * TASTE v2 (prose-page treatment). What changed from the card's drawing, and
  * why — the copy is untouched, the containers are not:
  *  · Zero eyebrows. All seven `.sec-eyebrow` labels are gone (§7 / §11.20).
- *  · Zero card plates. The three verification claims, the four amanah steps,
+ *  · Zero card plates. The three verification claims, the four custody steps,
  *    the reporting and trip-safety rows and the two police authorities were
  *    bordered, rounded cards; §1 puts content blocks in open space with neither
  *    border nor shadow, so they are hairline-separated rows now.
@@ -61,7 +61,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
 const PATH = "/trust-and-safety";
 
 const META_DESCRIPTION =
-  "Trust at SalamStay: CNIC-verified guests and hosts via NADRA Verisys, payments held in amanah until check-in, and two-way reviews and 24/7 Urdu + English support.";
+  "Trust at SalamStay: CNIC-verified guests and hosts via NADRA Verisys, payments held in trust until check-in, and two-way reviews and 24/7 Urdu + English support.";
 
 export const metadata = pageMetadata(PATH, META_DESCRIPTION);
 
@@ -100,9 +100,9 @@ export default function TrustAndSafetyPage() {
               // §5 claim 2 is "Nikah Nama–verified couples' bookings" with a U+2013
               // EN DASH, and a claim is byte-exact wherever it is claimed — including
               // inside a JSON-LD description, which is machine-read copy about the page.
-              "How SalamStay keeps stays trustworthy: CNIC-verified guests and hosts via NADRA Verisys, Nikah Nama–verified couples' bookings, FRC-verified family bookings, payments held in amanah until check-in, reporting and blocking, trip-safety privacy defaults, guest registration filed with local police, and dispute mediation that hears both sides.",
+              "How SalamStay keeps stays trustworthy: CNIC-verified guests and hosts via NADRA Verisys, Nikah Nama–verified couples' bookings, FRC-verified family bookings, payments held in trust until check-in, reporting and blocking, trip-safety privacy defaults, guest registration filed with local police, and dispute mediation that hears both sides.",
             significantLink: [
-              "/shariah-policy",
+              "/verification",
               "/about",
               "/help/verification",
               "/legal/community-standards",
@@ -122,8 +122,7 @@ export default function TrustAndSafetyPage() {
           <p className={`mt-3 ${prose}`}>
             SalamStay is a home-sharing marketplace for Pakistan. Every booking is verified on
             both sides — <strong>CNIC-verified guests and hosts via NADRA Verisys</strong> — your
-            payment is held in <Term>amanah</Term>, a
-            trust, until you check in, and every stay carries{" "}
+            payment is held in trust until you check in, and every stay carries{" "}
             <strong>
               two-way reviews and <span className="num">24/7</span> Urdu + English support
             </strong>. This page explains
@@ -200,7 +199,7 @@ export default function TrustAndSafetyPage() {
                 label: "How Nikah Nama verification works",
               },
               { href: "/help/verification/what-is-an-frc", label: "What is an FRC?" },
-              { href: "/shariah-policy", label: "See verification by booking type" },
+              { href: "/verification", label: "See verification by booking type" },
             ]}
           />
 
@@ -218,13 +217,14 @@ export default function TrustAndSafetyPage() {
           </NoteStrip>
         </ProseSection>
 
-        {/* 2 · MONEY — GA-059's amanah language verbatim; claim 9 */}
+        {/* 2 · MONEY — plain-language custody wording (REPOSITIONING.md closes
+            the parked GA-059 decision: the mechanism is unchanged, the
+            vocabulary is now words a guest already knows); claim 9 */}
         <ProseSection id="money" heading="How your money is protected">
           <Prose>
             <p>
-              When you pay, your money doesn&apos;t go straight to the host. We hold it in{" "}
-              <Term>amanah</Term> — a trust — and
-              release it <strong>only after you&apos;ve checked in</strong>. It protects both
+              When you pay, your money doesn&apos;t go straight to the host. We hold it in trust
+              and release it <strong>only after you&apos;ve checked in</strong>. It protects both
               sides: you know the host is paid once you&apos;ve arrived, and the host knows the
               money is really there.
             </p>
@@ -237,7 +237,7 @@ export default function TrustAndSafetyPage() {
                 detail: "Your payment leaves your card or wallet in Pakistani Rupees.",
               },
               {
-                term: "Held in amanah",
+                term: "Held in trust",
                 detail:
                   "It sits in a custody account at Meezan Bank — not spent, not lent out, no interest earned on it.",
               },
@@ -254,10 +254,10 @@ export default function TrustAndSafetyPage() {
 
           <Prose gap={false}>
             <p>
+              {/* Registry claim 9, byte-exact — stop outside the claim (§5 verbatim, §7). */}
               <strong>
-                Transparent fees and tax — every rupee shown before you book or earn.
-              </strong>{" "}
-              The full price, fees and tax included, is visible before you commit; the same
+                Transparent fees and tax — every rupee shown before you book or earn
+              </strong>. The full price, fees and tax included, is visible before you commit; the same
               breakdown is shown to your host before they earn. Nothing is added afterwards.
             </p>
             <p>
@@ -465,13 +465,7 @@ export default function TrustAndSafetyPage() {
               },
               {
                 term: "SalamStay mediates",
-                detail: (
-                  <>
-                    Our team reviews both statements. The{" "}
-                    <Term>amanah</Term> hold stays in
-                    place until the case resolves.
-                  </>
-                ),
+                detail: "Our team reviews both statements. The payment stays held until the case resolves.",
               },
               {
                 term: "Resolution",
@@ -503,8 +497,8 @@ export default function TrustAndSafetyPage() {
                 help center
               </Link>
               , read{" "}
-              <Link href="/shariah-policy" className={inlineAction}>
-                our Shariah-respectful approach
+              <Link href="/verification" className={inlineAction}>
+                how verification works
               </Link>
               , or learn{" "}
               <Link href="/about" className={inlineAction}>

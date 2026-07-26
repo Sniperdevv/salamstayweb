@@ -53,16 +53,111 @@ const stub = (path: string, title: string): RouteEntry => ({
   title,
 });
 
+/**
+ * The checkout flow, one listing at a time.
+ *
+ * WHY LITERAL PATHS AND NOT A PATTERN
+ * -----------------------------------
+ * Checkout is served by a dynamic segment — `/book/{slug}/{step}` — and this
+ * registry is a flat array of literal strings, so the obvious move is to teach
+ * `resolvesInternally` a `/book/:slug/:step` pattern and stop there. That move
+ * is wrong, and the reason is `RouteEntry.title`.
+ *
+ * The registry is not a link checker. It is where robots, canonical and TITLE
+ * are declared per route so a page cannot improvise them (G4/G6/G41), and G41
+ * compares the served `<title>` to `entry.title` byte for byte. A pattern
+ * satisfies the resolver and gives `routeByPath` nothing to return, which means
+ * no title, no `pageMetadata()` call, no `--all` enumeration, and seven routes
+ * that no gate can see. So the entries stay literal and the FACTORY is what
+ * scales: a second listing's checkout is one call, not seven rows, and its
+ * titles are constructed the same way the first one's were.
+ *
+ * `resolvesInternally` therefore needs no change. `/book/is-f7-2bed/dates` is a
+ * key in the map like any other path.
+ *
+ * ONE LISTING IS REGISTERED, AND THAT IS NOT AN OVERSIGHT. `is-f7-2bed` is the
+ * only listing with a real page; the other ten are resolver stubs whose bodies
+ * carry no Reserve affordance, so nothing on the site links into their
+ * checkout. Registering seventy routes nobody can reach would be seventy things
+ * for `--all` to fetch and seventy titles nobody has written.
+ */
+interface CheckoutStepEntry {
+  readonly segment: string;
+  readonly card: string;
+  /** Prefixed to " — {listing}". The card's own H1, except where noted. */
+  readonly title: string;
+}
+
+const CHECKOUT_STEPS: readonly CheckoutStepEntry[] = [
+  { segment: "dates", card: "gw-021", title: "Your dates and guests" },
+  { segment: "party", card: "gw-022", title: "Who is staying?" },
+  { segment: "verify", card: "gw-023", title: "Verify who is staying" },
+  { segment: "price", card: "gw-024", title: "Your price breakdown" },
+  { segment: "confirm", card: "gw-025", title: "Review and confirm" },
+  { segment: "confirmation", card: "gw-026", title: "You're booked" },
+  /**
+   * The one title that is NOT its card's H1. gw-027 renders two outcomes on
+   * this route and each writes its own H1 ("Waiting for Ayesha to reply" when
+   * pending, another when declined), while G41 requires the served title to
+   * match this string exactly on every load. A title that names one outcome
+   * would be wrong on the other, so the route gets the state-neutral noun and
+   * the H1 keeps doing the specific work. (Payment failure is NOT on this
+   * route: gw-027 keeps it on `/confirm`, at step 4, because no money moved and
+   * the guest never left the step.)
+   */
+  { segment: "status", card: "gw-027", title: "Booking status" },
+];
+
+/**
+ * Titles carry the listing name because titles must be unique across an `--all`
+ * run (G41) and "Your price breakdown" is a sentence every home in the country
+ * would want. It is the same reason the listing page's own title was
+ * normalised with its area.
+ */
+const checkout = (slug: string, listing: string): readonly RouteEntry[] =>
+  CHECKOUT_STEPS.map((step) => ({
+    path: `/book/${slug}/${step.segment}`,
+    status: "page" as const,
+    // CHECKOUT-SHELL §1: noindex on every checkout route, no canonical, no
+    // hreflang, no JSON-LD. robots.txt disallows /book/ as well; the meta tag
+    // is what a crawler that ignored the file still has to obey.
+    robots: "noindex,follow" as const,
+    canonical: null,
+    card: step.card,
+    title: `${step.title} — ${listing}`,
+  }));
+
 export const ROUTES: readonly RouteEntry[] = [
   // ——— Discovery spine ———
-  page("/", "gw-001", "SalamStay — Shariah-respectful stays across Pakistan"),
-  page("/stays-in-islamabad", "gw-002", "Stays in Islamabad — verified Shariah-respectful homes"),
-  page("/stays-in-karachi", "gw-002 (template)", "Stays in Karachi — verified Shariah-respectful homes"),
-  page("/stays-in-lahore", "gw-002 (template)", "Stays in Lahore — verified Shariah-respectful homes"),
-  page("/stays-in-peshawar", "gw-002 (template)", "Stays in Peshawar — verified Shariah-respectful homes"),
-  page("/stays-in-faisalabad", "gw-002 (template)", "Stays in Faisalabad — verified Shariah-respectful homes"),
-  page("/stays-in-rawalpindi", "gw-002 (template)", "Stays in Rawalpindi — verified Shariah-respectful homes"),
+  // Titles repositioned 2026-07-26 (REPOSITIONING.md): the discovery spine used
+  // to sell "Shariah-respectful" in seven <title>s. The product is not marketed
+  // to a faith, so the word is gone; "verified" is what actually distinguishes
+  // these pages and it is true.
+  page("/", "gw-001", "SalamStay — verified stays across Pakistan"),
+  page("/stays-in-islamabad", "gw-002", "Stays in Islamabad — verified homes and rooms"),
+  page("/stays-in-karachi", "gw-002 (template)", "Stays in Karachi — verified homes and rooms"),
+  page("/stays-in-lahore", "gw-002 (template)", "Stays in Lahore — verified homes and rooms"),
+  page("/stays-in-peshawar", "gw-002 (template)", "Stays in Peshawar — verified homes and rooms"),
+  page("/stays-in-faisalabad", "gw-002 (template)", "Stays in Faisalabad — verified homes and rooms"),
+  page("/stays-in-rawalpindi", "gw-002 (template)", "Stays in Rawalpindi — verified homes and rooms"),
   page("/stays-in-islamabad/f-7", "gw-003", "Stays in F-7, Islamabad — verified homes"),
+  /**
+   * F-7's four siblings. gw-003 is an area TEMPLATE — it says so in its own
+   * title — so these are not four undesigned pages, they are four instances of
+   * a card that already shipped, and they were only stubs because no route
+   * folder rendered them yet. Promoting them here is the declaration; the route
+   * that satisfies it is a separate piece of work, and until it lands these
+   * four paths fall out of the `[...registered]` stub resolver (which serves
+   * `status === "stub"` and nothing else) and 404.
+   */
+  // Reverted to stub 2026-07-26: promoting these to `page` before their route
+  // folders exist turned four links live on /stays-in-islamabad into 404s. A
+  // "being written" stub is the honest interim; the agent that builds each area
+  // page flips its own row back to `page` in the same change.
+  page("/stays-in-islamabad/f-6", "gw-003", "Stays in F-6, Islamabad — verified homes"),
+  page("/stays-in-islamabad/f-8", "gw-003", "Stays in F-8, Islamabad — verified homes"),
+  page("/stays-in-islamabad/e-7", "gw-003", "Stays in E-7, Islamabad — verified homes"),
+  page("/stays-in-islamabad/blue-area", "gw-003", "Stays in Blue Area, Islamabad — verified homes"),
   page("/stays-in-islamabad/f-7/is-f7-2bed", "gw-004", "Margalla View Apartment — F-7, Islamabad"),
   // /search: noindex,follow forever (GATE 76). Canonical points at "/", never itself.
   {
@@ -74,9 +169,21 @@ export const ROUTES: readonly RouteEntry[] = [
     title: "Search results",
   },
 
+  // ——— Checkout (CHECKOUT-SHELL.md) ———
+  // Seven noindex routes, no canonical on any of them, no JSON-LD on any of
+  // them. See the `checkout` factory for why these are literal paths.
+  ...checkout("is-f7-2bed", "Margalla View Apartment"),
+
   // ——— Trust cluster + host funnel + guide ———
   page("/trust-and-safety", "gw-006", "Trust & safety — SalamStay"),
-  page("/shariah-policy", "gw-007", "Our Shariah approach — SalamStay"),
+  /**
+   * `/shariah-policy` was renamed to `/verification` on 2026-07-26
+   * (REPOSITIONING.md). Nothing was indexed and no redirect infrastructure
+   * exists, so the rename is a move, not a redirect: the old path is NOT
+   * registered, NOT stubbed, and returns 404 like any other unknown route.
+   * The route folder moved with this row — `app/verification/page.tsx`.
+   */
+  page("/verification", "gw-007 (repositioned)", "How verification works — SalamStay"),
   page("/about", "gw-008", "About SalamStay"),
   page("/become-a-host", "ha-001", "Become a host on SalamStay"),
   page("/guides/where-to-stay-in-islamabad", "gw-009", "Where to stay in Islamabad — a guide by sector"),
@@ -120,7 +227,10 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/help/tourism-registration", "Tourism registration — SalamStay Help"),
   stub("/help/getting-started", "Getting started — SalamStay Help"),
   stub("/help/foreign-guests", "Visiting from abroad — SalamStay Help"),
-  stub("/help/shariah-how-it-works", "How Shariah-respectful works — SalamStay Help"),
+  // Was `/help/shariah-how-it-works`. The article it promised no longer has a
+  // subject (REPOSITIONING.md retires the framing); what a guest actually needs
+  // from that slot is what a host's house rules mean on a listing.
+  stub("/help/house-rules", "House rules on a listing — SalamStay Help"),
   stub("/help/verified-home-facts", "Verified home facts — SalamStay Help"),
   stub("/guides", "Guides — SalamStay"),
   stub("/guides/where-to-stay-in-karachi", "Where to stay in Karachi — SalamStay"),
@@ -137,31 +247,83 @@ export const ROUTES: readonly RouteEntry[] = [
   // /host/help/fees is the payout breakdown the fees block points at.
   stub("/become-a-host/earnings-estimator", "Estimate your hosting earnings — SalamStay"),
   stub("/host/help/fees", "How host fees and payouts are calculated — SalamStay"),
-  // Area siblings linked from gw-002/gw-003/gw-009 (area cards not yet designed):
-  stub("/stays-in-islamabad/f-6", "Stays in F-6, Islamabad"),
-  stub("/stays-in-islamabad/f-8", "Stays in F-8, Islamabad"),
-  stub("/stays-in-islamabad/e-7", "Stays in E-7, Islamabad"),
-  stub("/stays-in-islamabad/blue-area", "Stays in Blue Area, Islamabad"),
+  // The four area siblings that used to sit here are `page()` entries in the
+  // discovery spine above, against gw-003.
   // In-area listings referenced by gw-002/gw-003/gw-004/gw-009:
-  stub("/stays-in-islamabad/f-7/cedar-lodge-f7", "Cedar Lodge — F-7, Islamabad"),
-  stub("/stays-in-islamabad/f-7/central-studio-by-jinnah-super", "Central Studio by Jinnah Super — F-7, Islamabad"),
-  stub("/stays-in-islamabad/f-7/family-portion-jinnah-super", "Family portion near Jinnah Super — F-7, Islamabad"),
-  stub("/stays-in-islamabad/f-7/quiet-1-bed-street-12", "Quiet 1-bed on Street 12 — F-7, Islamabad"),
-  stub("/stays-in-islamabad/f-7/upper-portion-f-7-markaz", "Upper portion near F-7 Markaz — F-7, Islamabad"),
+  page("/stays-in-islamabad/f-7/cedar-lodge-f7", "gw-004", "Cedar Lodge — F-7, Islamabad"),
+  page("/stays-in-islamabad/f-7/central-studio-by-jinnah-super", "gw-004", "Central Studio by Jinnah Super — F-7, Islamabad"),
+  page("/stays-in-islamabad/f-7/family-portion-jinnah-super", "gw-004", "Family portion near Jinnah Super — F-7, Islamabad"),
+  page("/stays-in-islamabad/f-7/quiet-1-bed-street-12", "gw-004", "Quiet 1-bed on Street 12 — F-7, Islamabad"),
+  page("/stays-in-islamabad/f-7/upper-portion-f-7-markaz", "gw-004", "Upper portion near F-7 Markaz — F-7, Islamabad"),
   stub("/stays-in-islamabad/f-7/is-f7-2bed/photos", "All photos — Margalla View Apartment"),
   stub("/stays-in-islamabad/f-7/is-f7-2bed/amenities", "All amenities — Margalla View Apartment"),
-  stub("/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market", "Sunlit 2-bed near Kohsar Market — F-6, Islamabad"),
-  stub("/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz", "Quiet family home — F-8 Markaz, Islamabad"),
-  stub("/stays-in-islamabad/e-7/margalla-view-apartment", "Margalla View Apartment — E-7, Islamabad"),
-  stub("/stays-in-islamabad/blue-area/business-studio-jinnah-avenue", "Business studio on Jinnah Avenue — Blue Area, Islamabad"),
-  stub("/stays-in-islamabad/f-6/garden-guest-house-near-kohsar", "Garden guest house near Kohsar — F-6, Islamabad"),
+  page("/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market", "gw-004", "Sunlit 2-bed near Kohsar Market — F-6, Islamabad"),
+  page("/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz", "gw-004", "Quiet family home — F-8 Markaz, Islamabad"),
+  page("/stays-in-islamabad/e-7/margalla-view-apartment", "gw-004", "Margalla View Apartment — E-7, Islamabad"),
+  page("/stays-in-islamabad/blue-area/business-studio-jinnah-avenue", "gw-004", "Business studio on Jinnah Avenue — Blue Area, Islamabad"),
+  page("/stays-in-islamabad/f-6/garden-guest-house-near-kohsar", "gw-004", "Garden guest house near Kohsar — F-6, Islamabad"),
+
+  // ——— Listing children, added with the ten listings 2026-07-26 ———
+  // Every listing links its photo set, its full amenity list, a reserve deep
+  // link and its host's profile. None is built; all four are §3.10 thin stubs,
+  // and G37 fails the build on any of them missing.
+  stub("/stays-in-islamabad/blue-area/business-studio-jinnah-avenue/photos", "Photos — Business studio on Jinnah Avenue"),
+  stub("/stays-in-islamabad/blue-area/business-studio-jinnah-avenue/amenities", "Amenities — Business studio on Jinnah Avenue"),
+  stub("/rooms/business-studio-jinnah-avenue/reserve", "Reserve — Business studio on Jinnah Avenue"),
+  stub("/users/mehreen-i", "Hosted by Mehreen — host profile"),
+  stub("/stays-in-islamabad/f-7/cedar-lodge-f7/photos", "Photos — Cedar Lodge"),
+  stub("/stays-in-islamabad/f-7/cedar-lodge-f7/amenities", "Amenities — Cedar Lodge"),
+  stub("/rooms/cedar-lodge-f7/reserve", "Reserve — Cedar Lodge"),
+  stub("/users/imran-s", "Hosted by Imran — host profile"),
+  stub("/stays-in-islamabad/f-7/central-studio-by-jinnah-super/photos", "Photos — Central Studio by Jinnah Super"),
+  stub("/stays-in-islamabad/f-7/central-studio-by-jinnah-super/amenities", "Amenities — Central Studio by Jinnah Super"),
+  stub("/rooms/central-studio-by-jinnah-super/reserve", "Reserve — Central Studio by Jinnah Super"),
+  stub("/users/farah-r", "Hosted by Farah — host profile"),
+  stub("/stays-in-islamabad/f-7/family-portion-jinnah-super/photos", "Photos — Family portion near Jinnah Super"),
+  stub("/stays-in-islamabad/f-7/family-portion-jinnah-super/amenities", "Amenities — Family portion near Jinnah Super"),
+  stub("/rooms/family-portion-jinnah-super/reserve", "Reserve — Family portion near Jinnah Super"),
+  stub("/users/nadia-q", "Hosted by Nadia — host profile"),
+  stub("/stays-in-islamabad/f-6/garden-guest-house-near-kohsar/photos", "Photos — Garden guest house near Kohsar"),
+  stub("/stays-in-islamabad/f-6/garden-guest-house-near-kohsar/amenities", "Amenities — Garden guest house near Kohsar"),
+  stub("/rooms/garden-guest-house-near-kohsar/reserve", "Reserve — Garden guest house near Kohsar"),
+  stub("/users/imran-a", "Hosted by Imran — host profile"),
+  stub("/stays-in-islamabad/e-7/margalla-view-apartment/photos", "Photos — Margalla View Apartment"),
+  stub("/stays-in-islamabad/e-7/margalla-view-apartment/amenities", "Amenities — Margalla View Apartment"),
+  stub("/rooms/margalla-view-apartment/reserve", "Reserve — Margalla View Apartment"),
+  stub("/users/talha-h", "Hosted by Talha — host profile"),
+  stub("/stays-in-islamabad/f-7/quiet-1-bed-street-12/photos", "Photos — Quiet 1-bed on Street 12"),
+  stub("/stays-in-islamabad/f-7/quiet-1-bed-street-12/amenities", "Amenities — Quiet 1-bed on Street 12"),
+  stub("/rooms/quiet-1-bed-street-12/reserve", "Reserve — Quiet 1-bed on Street 12"),
+  stub("/users/usman-b", "Hosted by Usman — host profile"),
+  stub("/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz/photos", "Photos — Quiet family home"),
+  stub("/stays-in-islamabad/f-8/quiet-family-home-f-8-markaz/amenities", "Amenities — Quiet family home"),
+  stub("/rooms/quiet-family-home-f-8-markaz/reserve", "Reserve — Quiet family home"),
+  stub("/users/rabia-t", "Hosted by Rabia — host profile"),
+  stub("/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market/photos", "Photos — Sunlit 2-bed near Kohsar Market"),
+  stub("/stays-in-islamabad/f-6/sunlit-2-bed-near-kohsar-market/amenities", "Amenities — Sunlit 2-bed near Kohsar Market"),
+  stub("/rooms/sunlit-2-bed-near-kohsar-market/reserve", "Reserve — Sunlit 2-bed near Kohsar Market"),
+  stub("/users/sana-m", "Hosted by Sana — host profile"),
+  stub("/stays-in-islamabad/f-7/upper-portion-f-7-markaz/photos", "Photos — Upper portion near F-7 Markaz"),
+  stub("/stays-in-islamabad/f-7/upper-portion-f-7-markaz/amenities", "Amenities — Upper portion near F-7 Markaz"),
+  stub("/rooms/upper-portion-f-7-markaz/reserve", "Reserve — Upper portion near F-7 Markaz"),
+  stub("/users/nazia-r", "Hosted by Nazia — host profile"),
 ];
 
 export const routeByPath: ReadonlyMap<string, RouteEntry> = new Map(
   ROUTES.map((r) => [r.path, r]),
 );
 
-/** True when an internal href (path + optional query/hash) resolves in the registry. */
+/**
+ * True when an internal href (path + optional query/hash) resolves in the
+ * registry.
+ *
+ * Checkout's dynamic `/book/{slug}/{step}` segment deliberately did NOT earn a
+ * pattern branch here. Every checkout path is a literal key in `routeByPath`
+ * (see the `checkout` factory), so the map lookup on the line below already
+ * answers for them, and a pattern would have let a `/book/{anything}/{step}`
+ * href resolve against a slug no listing owns. The one exception below stays
+ * one exception.
+ */
 export function resolvesInternally(href: string): boolean {
   const path = href.split(/[?#]/)[0] ?? "";
   if (path === "") return false;

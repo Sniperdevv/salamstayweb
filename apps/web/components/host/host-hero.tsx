@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ArrowRightIcon } from "@/components/icons";
 import { Num } from "@/components/numerals";
 import {
+  BoltIcon,
   FeesReceiptIcon,
-  HalalKitchenIcon,
   ShieldCheckIcon,
 } from "@/components/home-icons";
 import { focusRing } from "@/components/ui";
@@ -91,10 +91,12 @@ const submitCircle =
  */
 const HERO_MEDIA_SIZES = "(min-width: 1280px) 592px, (min-width: 1024px) 46vw, 100vw";
 
+// `power` was `halal` until 2026-07-26: claim 6 is retired and the third slot
+// carries claim 7, so the glyph follows the claim (REPOSITIONING.md).
 const CLAIM_ICONS = {
   shield: ShieldCheckIcon,
   fees: FeesReceiptIcon,
-  halal: HalalKitchenIcon,
+  power: BoltIcon,
 } as const;
 
 export function HostHero() {

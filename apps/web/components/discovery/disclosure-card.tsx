@@ -71,10 +71,16 @@ const RING_OFFSET = {
  * the content, so a 4px gap would open a hole between the ring and the words it
  * is pointing at, where on a plated control the offset is reading against the
  * plate's own edge.
+ *
+ * The ring colour is `ring-focus-ring`, matching `components/ui.ts` — the offset
+ * is the only thing this hand-rolled copy is allowed to differ on. `focus-ring`
+ * resolves to the same value as `interactive` today; naming the dedicated role
+ * is what lets one token edit move every ring on the site instead of this one
+ * being the copy somebody's grep misses.
  */
 const summary =
   "block cursor-pointer list-none rounded-md focus-visible:outline-none focus-visible:ring-2 " +
-  "focus-visible:ring-interactive focus-visible:ring-offset-2 " +
+  "focus-visible:ring-focus-ring focus-visible:ring-offset-2 " +
   "[&::-webkit-details-marker]:hidden";
 
 /**
@@ -100,9 +106,15 @@ const body = "mt-2 line-clamp-2 text-bodySm text-secondary group-[[open]]:line-c
  * underlined AT REST, in ink. Not brand — §2 spends green on four roles and a
  * disclosure toggle is none of them. The hover dims rather than decorating,
  * because the decoration is already there.
+ *
+ * `label` (13), not `caption` (12): §7's ladder bottoms out at 13, and this is
+ * the control the reader has to find to finish the note — the one line in the
+ * block that is an ACTION rather than prose, which is the last place to set
+ * below the floor. It still steps down from the 14 body above it, so the
+ * hierarchy the clamp depends on is unchanged.
  */
 const affordance =
-  "mt-2 items-center gap-1 text-caption font-medium text-primary underline underline-offset-4 " +
+  "mt-2 items-center gap-1 text-label font-medium text-primary underline underline-offset-4 " +
   "transition-colors duration-instant ease-decelerate group-hover:text-secondary " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";

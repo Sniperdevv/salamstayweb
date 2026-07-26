@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { focusRing } from "@/components/ui";
 import { image } from "@/lib/content/image-manifest";
 import type { FeaturedStay } from "@/lib/content/featured-stays";
@@ -62,6 +63,9 @@ import { WishlistHeart } from "./wishlist-heart";
  * differently on the same page read as two design systems — and this one in
  * particular must not lift, because it is already the thing that is up.
  *
+ * A stay with `href: null` has no page yet and draws the same card with no
+ * anchor and no motion — see the `linked` comment in the component.
+ *
  * Placed by `app/page.tsx`, leading rail 1: one Islamabad home lifted out of
  * the row, the other eight running as the ordinary rail beneath it.
  */
@@ -72,11 +76,24 @@ const cardShell =
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate";
 
+/**
+ * The shell for an unlinked card: the SAME elevation, radius, padding and
+ * surface — §1's "this is above the page you are scrolling" is a statement
+ * about the card's place in the stack, not about whether it can be clicked —
+ * minus the hover shadow step, which is the shell's own affordance and would be
+ * promising a destination that does not exist.
+ */
+const cardShellStatic = "relative rounded-2xl bg-canvas p-3 shadow-floating";
+
 const cardLink =
   "group flex flex-col items-start gap-3 rounded-xl transition-transform duration-instant ease-decelerate active:scale-[0.99] " +
   "sm:flex-row sm:items-center sm:gap-4 " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+
+/** The unlinked wrapper: the anchor's layout without the anchor's motion. */
+const cardStatic =
+  "flex flex-col items-start gap-3 rounded-xl sm:flex-row sm:items-center sm:gap-4";
 
 /** Concentric with the `2xl` shell at `space-3` padding (§4 rule 1). */
 const mediaFrame = "relative block w-full shrink-0 overflow-hidden rounded-lg sm:w-2/5";
@@ -86,12 +103,15 @@ const mediaImage =
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:group-hover:scale-100";
 
+/** Same frame, no hover scale — nothing here is about to be clicked. */
+const mediaImageStatic = "aspect-[3/2] w-full object-cover";
+
 /**
- * See `stay-card-compact.tsx` for why this is a skeleton and not a dash, and
- * why the two colour classes are named rather than a `bg-skeleton` role.
+ * See `stay-card-compact.tsx` for why this is a skeleton and not a dash. The
+ * bar is the compact card's verbatim, `bg-skeleton` and all: two card families
+ * standing in for the same missing number must draw the same placeholder.
  */
-const skeletonBar =
-  "inline-block h-3 w-16 rounded-sm bg-slate-100 align-middle dark:bg-raised";
+const skeletonBar = "inline-block h-3 w-16 rounded-sm bg-skeleton align-middle";
 
 export interface FeaturedStayCardProps {
   readonly stay: FeaturedStay;
@@ -105,59 +125,89 @@ export interface FeaturedStayCardProps {
 export function FeaturedStayCard({ stay, sizes, priority = false }: FeaturedStayCardProps) {
   const img = image(stay.image);
 
+  /**
+   * `href: null` — this home has no page yet (`lib/content/stays.ts`). Same
+   * rule as the compact card, same reasoning: the card is drawn in full,
+   * because the home is real and the photograph, the name, the place and both
+   * attributes are all true of it; what is dropped is every signal that says
+   * "clicking this goes somewhere" — anchor, focus ring, press, hover scale,
+   * hover shadow. Nothing is dimmed or disabled. The listing is not
+   * unavailable; a page about it is not written yet.
+   */
+  const linked = stay.href !== null;
+
+  const body = (
+    <>
+      <span className={mediaFrame}>
+        <Image
+          src={img.file}
+          alt={img.alt}
+          width={img.width}
+          height={img.height}
+          sizes={sizes}
+          {...(priority ? { priority: true } : { loading: "lazy" as const })}
+          className={linked ? mediaImage : mediaImageStatic}
+        />
+      </span>
+
+      {/* `sm:pr-11` reserves the heart's 44px target so a long title cannot
+          run under it. Reserved space, not a truncation guess — and only from
+          `sm`, because in the stacked layout the heart is up on the
+          photograph and the text column owns its full width. */}
+      <span className="flex w-full min-w-0 flex-1 flex-col sm:pr-11">
+        {/* `Num` on both rows, the same canon the compact card draws (§12).
+            The name carries runs like "Bright 2-bed in Clifton" and the place
+            line is the SAME field the 208px tile already isolates — a run that
+            reverses under RTL does not stop doing so because the card it sits
+            on is the promoted one. */}
+        <span className="truncate text-bodyMd font-semibold text-primary">
+          <Num>{stay.name}</Num>
+        </span>
+        <span className="truncate text-bodySm text-secondary">
+          <Num>{stay.area}</Num>
+        </span>
+        {/* The §10 recipe asks for FOUR text rows, and this card shipped
+            three: name, place, and both attributes chained onto one line
+            with a `·`. Three rows against a 3:2 photograph left the text
+            column short and the price skeleton alone at the bottom of a
+            visibly empty half-card.
+
+            The fourth row is not new data — it is the second attribute,
+            given its own line. At rail scale the chain is right, because the
+            tile is 208px and one line is all there is; at reading scale two
+            short true statements read as two facts about the home, which is
+            what they are. Nothing is invented to fill the height: §12 says
+            this home has no rating, no review count and no published price,
+            and it still has none. */}
+        {stay.attributes
+          ? stay.attributes.map((attribute) => (
+              <span key={attribute} className="truncate text-bodySm text-secondary">
+                {attribute}
+              </span>
+            ))
+          : null}
+
+        {/* The one deliberate break: the price row is a different kind of
+            statement from the four above it. */}
+        <span className="mt-4 block text-bodySm">
+          <span aria-hidden="true" className={skeletonBar} />
+        </span>
+      </span>
+    </>
+  );
+
   return (
-    <div className={cardShell}>
+    <div className={linked ? cardShell : cardShellStatic}>
       {/* The heart is a SIBLING of the anchor, never a child: a <button> inside
           an <a> is invalid, and browsers recover by moving it out. Same rule as
           the compact card. */}
-      <Link href={stay.href} className={`${cardLink} ${focusRing}`}>
-        <span className={mediaFrame}>
-          <Image
-            src={img.file}
-            alt={img.alt}
-            width={img.width}
-            height={img.height}
-            sizes={sizes}
-            {...(priority ? { priority: true } : { loading: "lazy" as const })}
-            className={mediaImage}
-          />
-        </span>
-
-        {/* `sm:pr-11` reserves the heart's 44px target so a long title cannot
-            run under it. Reserved space, not a truncation guess — and only from
-            `sm`, because in the stacked layout the heart is up on the
-            photograph and the text column owns its full width. */}
-        <span className="flex w-full min-w-0 flex-1 flex-col sm:pr-11">
-          <span className="truncate text-bodyMd font-semibold text-primary">{stay.name}</span>
-          <span className="truncate text-bodySm text-secondary">{stay.area}</span>
-          {/* The §10 recipe asks for FOUR text rows, and this card shipped
-              three: name, place, and both attributes chained onto one line
-              with a `·`. Three rows against a 3:2 photograph left the text
-              column short and the price skeleton alone at the bottom of a
-              visibly empty half-card.
-
-              The fourth row is not new data — it is the second attribute,
-              given its own line. At rail scale the chain is right, because the
-              tile is 208px and one line is all there is; at reading scale two
-              short true statements read as two facts about the home, which is
-              what they are. Nothing is invented to fill the height: §12 says
-              this home has no rating, no review count and no published price,
-              and it still has none. */}
-          {stay.attributes
-            ? stay.attributes.map((attribute) => (
-                <span key={attribute} className="truncate text-bodySm text-secondary">
-                  {attribute}
-                </span>
-              ))
-            : null}
-
-          {/* The one deliberate break: the price row is a different kind of
-              statement from the four above it. */}
-          <span className="mt-4 block text-bodySm">
-            <span aria-hidden="true" className={skeletonBar} />
-          </span>
-        </span>
-      </Link>
+      {stay.href !== null ? (
+        <Link href={stay.href} className={`${cardLink} ${focusRing}`}>
+          {body}
+        </Link>
+      ) : (
+        <div className={cardStatic}>{body}</div>
+      )}
 
       {/* `size-11` makes this a real 44px box so the heart's own
           `absolute right-0 top-0` lands on the card's 12px padding edge rather

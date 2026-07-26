@@ -1,20 +1,20 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { ChevronRightIcon, InfoIcon } from "@/components/icons";
 import { ShieldCheckIcon } from "@/components/home-icons";
 import { sectionH2 } from "@/components/discovery/shell";
 import { focusRing } from "@/components/ui";
 import type { ListingContent } from "@/lib/content/listings/is-f7-2bed";
-import { Copy, Plain, listingH3, listingLead, listingPara, listingSection } from "./shell";
+import { Copy, listingH3, listingLead, listingPara, listingSection } from "./shell";
 
 /**
  * About this stay, and the host row under it.
  *
- * **Answer-first, in 54 words.** The lead names the home, the sector, the walk
- * to the masjid, the sleeping capacity, the kitchen, the alcohol policy, the
- * Qibla and the backup power — everything the query behind this page is
- * actually asking — before the reader has scrolled. Two payload phrases carry
- * 600 weight and nothing else does (§7: bold the payload word only, never a
- * sentence).
+ * **Answer-first, in 48 words.** The lead names the home, the sector, the walk
+ * to the markaz, the sleeping capacity, the alcohol policy and the backup power
+ * — everything the query behind this page is actually asking — before the
+ * reader has scrolled. Two payload phrases carry 600 weight and nothing else
+ * does (§7: bold the payload word only, never a sentence).
  *
  * **The host row is open, not a card.** §1's third clause: content blocks carry
  * neither border nor shadow, and a person is content. The card corpus draws a
@@ -59,7 +59,7 @@ export function ListingAbout({ listing }: { readonly listing: ListingContent }) 
         <Copy {...about.lead} />
       </p>
       <p className={`mt-4 ${listingPara}`}>
-        <Plain>{about.para}</Plain>
+        <Num>{about.para}</Num>
       </p>
 
       <h3 className={`mt-8 ${listingH3}`}>{host.heading}</h3>
@@ -81,7 +81,7 @@ export function ListingAbout({ listing }: { readonly listing: ListingContent }) 
         <span className="min-w-0">
           <span className="block text-bodyMd font-semibold text-primary">{host.name}</span>
           <span className="mt-0.5 block text-bodySm text-secondary">
-            <Plain>{host.meta}</Plain>
+            <Num>{host.meta}</Num>
           </span>
         </span>
 

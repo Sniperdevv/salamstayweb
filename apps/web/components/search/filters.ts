@@ -25,14 +25,20 @@ import type { AttributeIcon } from "@/lib/content/stays";
  *   homes that do qualify, which is a false negative dressed as a filter.
  * - **No alcohol**. It is the default on every listing (§5 claim 4), so a chip
  *   for it would narrow nothing. It is stated under the row instead.
+ * - **Halal kitchen, prayer space, Qibla marked**. Retired from the lexicon by
+ *   REPOSITIONING.md — SalamStay does not model observance, so there is nothing
+ *   for a chip to filter on. They are gone rather than hidden: the union under
+ *   this array is four values wide now, and the `satisfies` below is what
+ *   stopped them being left here as dead ids.
+ *
+ * Three chips, not six, and `backup-power` leads: the practical facts are the
+ * product's lead differentiator, so the first control on the row is the one
+ * that filters on them.
  */
 export const FILTER_IDS = [
-  "halal-kitchen",
+  "backup-power",
   "women-only",
   "family-friendly",
-  "prayer-space",
-  "backup-power",
-  "qibla-marked",
 ] as const satisfies readonly AttributeIcon[];
 
 export type FilterId = (typeof FILTER_IDS)[number];

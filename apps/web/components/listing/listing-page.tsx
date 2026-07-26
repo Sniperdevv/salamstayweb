@@ -63,8 +63,12 @@ import { listingColumn } from "./shell";
  *    for the whole site at once.
  *
  * The heading outline is fixed by section order (G78) and is gap-free:
- *   h1 → about h2 (+h3 host) → amenities h2 (+h3 prayer, +h3 infrastructure)
+ *   h1 → about h2 (+h3 host) → amenities h2 (+h3 infrastructure)
  *   → verification h2 → rules h2 (+h3 ×2) → location h2 → nearby h2.
+ *
+ * One h3 fewer than the shipped card, and the one that left is the prayer
+ * block's: REPOSITIONING.md retires it, so `ListingAmenities` runs its grid
+ * straight into the infrastructure table. The outline is still gap-free.
  *
  * ── Motion ───────────────────────────────────────────────────────────────
  * Hover, press, and ONE state change: the anchor bar's CTA cluster crossfading

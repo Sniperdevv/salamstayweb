@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { MessageIcon } from "@/components/icons";
 import { FeesReceiptIcon, ShieldCheckIcon } from "@/components/home-icons";
 import { focusRing, inlineAction, pressable } from "@/components/ui";
 import type { ListingContent } from "@/lib/content/listings/is-f7-2bed";
-import { Copy, Plain, priceSkeleton, stickyUnderAnchorBar } from "./shell";
+import { Copy, priceSkeleton, stickyUnderAnchorBar } from "./shell";
 
 /**
  * Booking card — TASTE-RULES §10, in the recipe's own order: total → form group
@@ -96,7 +97,7 @@ export function ListingBookingCard({ listing, id }: ListingBookingCardProps) {
           <span className="text-bodySm text-secondary">{booking.per}</span>
         </p>
         <p className="mt-1.5 text-label text-secondary">
-          <Plain>{booking.live}</Plain>
+          <Num>{booking.live}</Num>
         </p>
 
         <div className="mt-5 grid grid-cols-2 overflow-hidden rounded-md border border-border-default">
@@ -138,7 +139,7 @@ export function ListingBookingCard({ listing, id }: ListingBookingCardProps) {
         </Link>
 
         <p className="mt-3 text-center text-label text-secondary">
-          <Plain>{booking.note}</Plain>
+          <Num>{booking.note}</Num>
         </p>
 
         <div className="mt-5 flex flex-col gap-3 border-t border-hairline pt-5">

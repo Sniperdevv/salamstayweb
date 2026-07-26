@@ -72,7 +72,7 @@ export const communityStandardsPage: LegalPageContent = {
             "SalamStay is not a religious authority and does not certify compliance — we build features that respect how our guests live.",
           ],
           source: [
-            "This applies to every standard below. Where a home is described as no-alcohol, halal-kitchen or women-only, that is ",
+            "This applies to every standard below. Where a home is described as no-alcohol or women-only, that is ",
             bold("the host's stated policy for their home"),
             ", shown as a fact you can read and act on — not a judgement SalamStay makes about anyone.",
           ],
@@ -146,12 +146,8 @@ export const communityStandardsPage: LegalPageContent = {
               quote: '"This is a no-alcohol home."',
             },
             {
-              title: ["Kitchen is kept halal"],
-              quote: '"Please don\'t bring pork into the home."',
-            },
-            {
-              title: ["Prayer mat & marked Qibla"],
-              quote: '"In the main bedroom, there if you\'d like them."',
+              title: ["Generator hours"],
+              quote: '"The backup runs the fans and lights, not the AC."',
             },
             {
               title: ["Shoes off inside, please"],
@@ -184,11 +180,9 @@ export const communityStandardsPage: LegalPageContent = {
         {
           kind: "p",
           text: [
-            "The same logic covers the other attributes a host can state — ",
-            bold("Halal-kitchen, prayer-space, and Qibla direction shown on listings"),
-            ", and ",
+            "The same logic covers the other options a host can set — ",
             bold("Women-only stays hosted by women"),
-            ". These are options some hosts set for their home, stated on the listing as host policy — never assumed for you, never applied to your account.",
+            ", and family-only bookings. These are choices some hosts make for their home, stated on the listing as host policy — never assumed for you, never applied to your account.",
           ],
         },
       ],
@@ -332,7 +326,7 @@ export const communityStandardsPage: LegalPageContent = {
             {
               title: ["Attributes must be true"],
               body: [
-                "Load-shedding hours, backup power, halal kitchen, prayer space, Qibla and women-only are facts about the home. ",
+                "Load-shedding hours, backup power, water supply, gas and women-only are facts about the home. ",
                 bold("Listings show load-shedding hours and backup power"),
                 " — stating them wrongly is the same breach as a wrong photo.",
               ],
@@ -430,9 +424,7 @@ export const communityStandardsPage: LegalPageContent = {
             {
               title: ["SalamStay mediates"],
               body: [
-                "Our team reviews both statements. The ",
-                term("amanah"),
-                " hold stays in place until the case resolves.",
+                "Our team reviews both statements. The payment stays held until the case resolves.",
               ],
             },
             {
@@ -521,7 +513,7 @@ export const communityStandardsPage: LegalPageContent = {
       "Read ",
       link("/trust-and-safety", "trust & safety"),
       ", ",
-      link("/shariah-policy", "our Shariah-respectful approach"),
+      link("/verification", "verification and house rules"),
       ", the ",
       link("/legal/terms", "Terms of Service"),
       ", or the ",

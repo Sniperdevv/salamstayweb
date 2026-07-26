@@ -4,8 +4,16 @@ import { inlineAction } from "@/components/ui";
 import type { RichText } from "@/lib/content/listings/is-f7-2bed";
 
 /**
- * Listing-page grammar — the type roles, the section rhythm and the two text
- * renderers every block on gw-004 reads from.
+ * Listing-page grammar — the type roles, the section rhythm and the one text
+ * renderer every block on gw-004 reads from.
+ *
+ * It used to export two. `Plain` was `Num` from `components/numerals.tsx` with
+ * a different key prefix and the same docstring, word for word, over the same
+ * `withNumerals` call — a second name for one behaviour, which is how the
+ * behaviours diverge. `Num` is the survivor because it is the canonical
+ * module's, already read by seven other surfaces; the nineteen call sites in
+ * this directory now import it from there. `Copy` stays, because it is
+ * genuinely local: payload emphasis (§7/§11.12) on top of the same isolation.
  *
  * The measures and the H2 role are the discovery templates' own
  * (`components/discovery/shell.ts`), imported rather than re-derived so a
@@ -60,9 +68,10 @@ export const listingLink = `inline-flex items-center gap-2 text-bodySm font-medi
  * here and is not published yet", which is what a skeleton says without asking
  * anyone to parse punctuation as a value.
  *
- * `backgrounds.skeleton.base` is `slate-100` in light and `darkSurface.raised`
- * in dark; the preset ships no `bg-skeleton` role yet, so both are named
- * directly — byte-identical to the token, not picked.
+ * `bg-skeleton` is the role, one class for both themes — `#EEF0F1` light,
+ * `#161B1A` dark, which is `backgrounds.skeleton.*.base` and exactly what the
+ * hand-named `bg-slate-100 dark:bg-raised` pair resolved to before the preset
+ * exposed it.
  *
  * STATIC, deliberately: no pulse. A shimmer means "this is arriving", and
  * nothing is arriving — pricing is not on its way over this request, or over
@@ -75,8 +84,7 @@ export const listingLink = `inline-flex items-center gap-2 text-bodySm font-medi
  * the honest reading; a skeleton announced as "loading" would promise the same
  * number the pulse used to.
  */
-export const priceSkeleton =
-  "inline-block h-5 w-24 rounded-sm bg-slate-100 align-middle dark:bg-raised";
+export const priceSkeleton = "inline-block h-5 w-24 rounded-sm bg-skeleton align-middle";
 
 /**
  * Sticky offsets. The header is 64px and the anchor bar 56px, both sticky, so
@@ -120,9 +128,4 @@ export function Copy({ text, bold }: RichText) {
       )}
     </>
   );
-}
-
-/** Plain text with digit isolation and no emphasis. */
-export function Plain({ children }: { readonly children: string }) {
-  return <>{withNumerals(children, "p")}</>;
 }

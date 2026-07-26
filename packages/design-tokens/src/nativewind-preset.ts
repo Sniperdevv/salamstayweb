@@ -27,6 +27,7 @@ import {
 } from "./typography.js";
 import { space } from "./spacing.js";
 import { radius as radiusScale } from "./radii.js";
+import { skeleton } from "./backgrounds.js";
 import { duration, easingCss } from "./motion.js";
 
 export interface NativeWindPreset {
@@ -44,12 +45,18 @@ function themeColorEntries(
   theme: ThemeColors,
   dv: DatavizTheme,
   suffix: "" | "-dark",
+  skeletonTheme: { readonly base: string },
 ): Record<string, string> {
   return {
     [`canvas${suffix}`]: theme.bg.canvas,
     [`raised${suffix}`]: theme.bg.raised,
     [`sunken${suffix}`]: theme.bg.sunken,
     [`inverse${suffix}`]: theme.bg.inverse,
+    // `backgrounds.skeleton.*.base` only — the resting placeholder fill. The
+    // token's `highlight`/`durationMs` sweep is deliberately not exposed, so
+    // `bg-skeleton` is a still bar on both platforms and the two presets cannot
+    // disagree about whether a placeholder animates.
+    [`skeleton${suffix}`]: skeletonTheme.base,
     [`primary${suffix}`]: theme.text.primary,
     [`secondary${suffix}`]: theme.text.secondary,
     [`tertiary${suffix}`]: theme.text.tertiary,
@@ -93,8 +100,8 @@ function themeColorEntries(
 }
 
 const themedColors = {
-  ...themeColorEntries(color.light, dataviz.light, ""),
-  ...themeColorEntries(color.dark, dataviz.dark, "-dark"),
+  ...themeColorEntries(color.light, dataviz.light, "", skeleton.light),
+  ...themeColorEntries(color.dark, dataviz.dark, "-dark", skeleton.dark),
 } as const;
 
 // Spacing in px (RN-native units).

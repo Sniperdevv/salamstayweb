@@ -1,0 +1,74 @@
+# GO-LIVE.md — production blockers for salamstayweb
+
+**Status: NOT production-ready. Localhost/demo only.**
+
+Founder ruling, 2026-07-25: work may ship to localhost with known gaps, but **nothing is deferred silently** — every gap lands here and must be closed before the site is served from a real domain. Nothing on this page is a suggestion; each item is a blocker with a stated close condition.
+
+Companion documents: `WEB-BUILD.md` (build ledger + parked wave items), `LOOP-COMPLETE.md` (the 20-item parked founder-decision list from the design loop), `gates/semantic-seo/` (the gate system), `SEO-RULES.md`, `TASTE-RULES.md`.
+
+---
+
+## A. Honesty blockers — these become live misrepresentations at go-live
+
+| # | Blocker | Close condition |
+|---|---|---|
+| A1 | **Homepage rails link a named stay to a city page.** ~21 fixtures in `apps/web/lib/content/featured-stays.ts` carry `href: "/stays-in-{city}"` under names like "Bright 2-bed in Clifton". The card promises a specific home and delivers a city listing. Not a schema lie and **not caught by G79** — a UX one. Founder deferred 2026-07-25 (localhost phase). | Set `href: null` (the machinery exists and is type-enforced), or point each at a real listing route. Cards render unlinked automatically. |
+| A2 | **65 of 79 shipped images are `authentic:false` stand-ins.** `scripts/verify-images.mjs` passes because it splits alt-text rules by authenticity — the pass is not evidence of authenticity. `UNCOVERED_SUBJECTS` is the commissioned-photo list. | Commission or license real photography for every indexable surface. Stand-ins must not reach production. |
+| A3 | **Five city pages have zero real supply.** `SCREENS.md` §6 is unambiguous and LOAD-BEARING: *"A city page exists only when that city has real listing supply. No supply → no page. Ever."* Karachi/Lahore/Peshawar/Faisalabad/Rawalpindi currently render nine invented (now unlinked, schema-free) stays. Rule (4): *"instances are earned, not minted."* | Either real supply per city, or set those routes `noindex` / `coming_soon` before the domain goes live. **This is the single largest Google-penalty risk on the site.** |
+| A4 | **Six Islamabad listing links resolve to `stub()` routes** — HTTP 200, noindex, "being written" body (`lib/seo/route-registry.ts`). Legitimate today; a dead end for a real visitor. | Build the six listing pages, or unlink per A1. |
+| A5 | **Legal pages assert app behaviour that cannot be verified from this repo** — ~15 claims across `terms.ts`, `privacy.ts`, `guest-refund-policy.ts`, `community-standards.ts`, plus two in `cookie-policy.ts` naming "notification and channel preferences". Unverifiable here, not provably false. | Verify each against the shipped mobile app, or reword. A claim that survives to production unverified is a live misrepresentation. |
+| A6 | **Nine unwritable legal facts ship as labelled counsel slots** — governing law, legal entity + SECP + NTN, retention periods, data residency, processor list, force majeure, conduct-enforcement ladder, photography rule, cookie names/lifetimes/vendors (`LOOP-COMPLETE.md` §15). | Counsel sign-off. A public site cannot serve labelled blanks in place of terms. |
+| A7 | **Foreign passport holders have no §5 claim and no row in the verification matrix**, though `MISSION.md` and `COMPLIANCE_MAP.md` F9 both treat them as a real case (FRRO C-Form filing is a genuine per-foreigner obligation on the operator). Deliberately not invented during the 2026-07-26 repositioning — a tenth claim and a fourth matrix row are both founder-gated. Currently covered only as plain descriptive prose. | Founder decision: mint the claim and the matrix row, or rule that foreign guests stay outside the registry. |
+| A8 | **The 226-card app design corpus contradicts the repositioning.** Every `ga-*` and `ha-*` card still carries Qibla, prayer space, halal kitchen, masjid distance and the Shariah framing retired on 2026-07-26. `SEO-RULES.md` §1.6 now states it is not a source of truth for copy and never overrides §5 — but it will read as the product's design intent to anyone who opens it. | Sweep the corpus, or formally mark it superseded. Scoped out of the web build deliberately: weeks of work on a surface nobody is building. |
+| A9 | **`/legal/guest-refund-policy` still carries a "Ramadan and Eid" section** — a cancellation-window extension over the year's largest travel peak. `MISSION.md` explicitly listed "Eid-week policy" as retired on 2026-07-26, but the section is a **real guest protection**, and naming a travel season is arguably geography rather than religion (the Pakistani equivalent of a Christmas/New Year clause). It also states that boundaries "follow the Hijri calendar" — **a calendar the product no longer has anywhere**, since the Hijri date picker was dropped the same day. Left standing pending a ruling rather than deleting a protection unilaterally. | Founder ruling. If it stays, the Hijri sentence must be re-grounded on something the product actually ships. If it goes, the guest loses a genuine cancellation allowance and that should be a deliberate choice, not a side effect of a copy sweep. |
+| A10 | **`EIDGIFT25` is the invalid-promo-code fixture on `gw-024`.** Carried from `ga-060`. It names a national travel peak rather than making a faith claim, and it appears only as a code that *fails* validation — but it is the one retired-adjacent string left in the checkout corpus. | Founder call. A one-string change if it reads as faith marketing. |
+
+---
+
+## B. Gate-system blockers
+
+| # | Blocker | Close condition |
+|---|---|---|
+| B1 | **`validate-pages.mjs` is not wired into CI.** `.github/workflows/ci.yml` runs typecheck, build, test, format:check, gitleaks and `validate-screens.mjs` — but **not** the page gate system, because it needs a running server. The 79 gates are a manual local check. | Stand up the server in CI and run `validate-pages.mjs --all`; HARD failures block merge. Until then the gate system is advisory in practice, whatever the documents say. |
+| B1a | **Gates have only ever been run against the dev server**, never against `next start` production output. Dev and production HTML can differ in exactly the places these gates read — RSC payload vs initial HTML, streaming boundaries, prerendered vs on-demand. `WEB-BUILD.md` already records one such divergence (the Next 15 404 body shipping in the RSC payload rather than initial HTML). A gate that passes on dev output is not evidence about what Google will fetch. | Run the gate suite against `next build && next start` — and make that the CI form, not the dev form. |
+| B2 | **`pnpm format:check` fails on 95 files** in `apps/web` alone — pre-existing, unrelated to any recent change. CI is presumably already red. | One dedicated `pnpm format` commit, on its own, not folded into feature work. |
+| B3 | **Two cited spec files do not exist** — `specs/redirects-canonicals.md` and `specs/design-to-nextjs-conversion.md`. G75 and G78 currently lean on `SEO-RULES.md` §4 and the approved cards instead. Already flagged in `EXTENDED-GATES.md`. | Author both. When they land they become the cited sources and **must not loosen** those gates. |
+| B4 | **G79 registered 2026-07-25** (ItemList entity integrity, HARD). Closed — recorded here as the precedent: it exists because 45 fabricated list entities passed every other gate. | ✅ Done. Keep the incident note in `EXTENDED-GATES.md`; it is the argument for why value-level gates are needed at all. |
+| B5 | **G49 was passing vacuously and has been repaired (2026-07-25).** The FAQ verbatim gate matched `mainEntity[].name` against `stripTags(html)` — applied to the **whole document, including the `<script type="application/ld+json">` block**, so every string was found by matching *itself*. It also replaced each tag with a space, so the shipped `.num` isolation split `F-7` into `F- 7` and no isolated run could ever have matched. Fixed with a dedicated `visibleText()` that drops script/style bodies and removes tags with the empty string. | ✅ Repaired. **The lesson is the point**: G49 and G79 both failed the same way — checking structure, never truth. Audit the remaining gates for gates that cannot fail. |
+| B6 | **Six gate artifacts still encode the retired framing** — `two-layer-gates.csv` (G17/G41/G57 expected values), `pages.csv`, `page-intent-map.csv`, `internal-links.csv`, `internal-link-graph.json`, `specs/entity-register.md` §Cultural, and `specs/similarity-and-content-quality.md` (whose shared-phrasing example is still `"2-bed home, halal kitchen"`). `SEO-RULES.md` §13.1 tabulates them and states plainly that a stale example **never** licenses shipping a retired string. | Refresh each artifact. Never resolve a mismatch by shipping the old value or skipping the gate. |
+
+---
+
+## C. Design / craft blockers
+
+| # | Blocker | Close condition |
+|---|---|---|
+| C1 | **Web-header RTL panel was never built.** Fable audit finding H-3. `design-system/cards/web-header-footer.html` has **zero** `rtl` occurrences in 311 lines; the mobile chrome cards got theirs. `SCREENS.md:729` claimed this resolved — corrected 2026-07-25. | Build the RTL panel on the web header card, then mirror it in `components/site-header.tsx`. |
+| C2 | **Urdu locale is not built.** `/ur` routes, `next-intl`, and the `en-PK`/`ur-PK` hreflang pair are deferred (`WEB-BUILD.md:68`). Nastaliq is specced but unshipped. | Required before launch — the product is bilingual by design, and hreflang is a HARD gate. |
+| C3 | **`focusRing` hard-codes `ring-offset-canvas`.** ~~Verified latent, not active.~~ **CORRECTED 2026-07-25 by the re-audit: it is ACTIVE.** The global footer band is `bg-raised` (`#F7F8F8`) and every link in it draws `ring-offset-canvas` (`#FFFFFF`) — on every page of the site. The delta is imperceptible today, which is why nobody saw it, but the mechanism is live rather than hypothetical, and it will be visible the first time a `focusRing` lands on a darker plate. Also affects `legal-page.tsx`'s two `bg-raised` plates once content puts a link in one. | Make `focusRing` offset-agnostic and supply the ground at the call site, as `discovery/disclosure-card.tsx` already does with its `RING_OFFSET` map. ~60 call sites. |
+| C4 | **`host-hero.tsx` pill is 4px short of TASTE §10** (`h-16` pill, `size-12` circle; redline wants 52px). Deliberate: 52px is not on the token scale. The header pill *could* hit the redline with a token and now does — so the two pills reason differently. | Founder ruling: does §10's redline or the token scale win when they conflict? Apply the answer to both pills. |
+| C6 | **No `on-media` ink role exists in the token set.** `components/stays/wishlist-heart.tsx` consumes `text-slate-0` directly because every themed ink role inverts light→dark, and a glyph sitting on a photograph must not — the photo does not get lighter because the UI did. The elevation family has `shadow-on-media` / `drop-shadow-on-media` but no text member. `text.onInverse` exists in `colors.ts` but is never emitted into `themeVars`, so it is unreachable from Tailwind. | Add a non-inverting `on-media` ink role to `packages/design-tokens`, then consume it in `wishlist-heart.tsx`. Until then the raw ramp value is the correct call, not a defect. |
+| C7 | **WCAG AA: `text-tertiary` is used at 12–14px in 13 places.** `packages/design-tokens/src/colors.ts` documents the role as *"AA-large only, use ≥18.66px"* — its light value `#828A90` measures ≈3.5:1 on canvas, which clears AA-large (3:1) but fails AA normal text (4.5:1). Five of the 13 are **breadcrumbs** (`text-bodySm text-tertiary` in `discovery/`, `area/`, `listing/`, `prose/`, `legal/`), so this ships on nearly every page. Two instances were corrected on 2026-07-25 (`city/city-areas.tsx`, `stays/city-card-compact.tsx`); the rest are untouched pending one ruling. | One systematic decision, not 13 edits: either raise these sites to `text-secondary`, or darken the tertiary ramp value so the role is AA at body sizes, or formally restrict tertiary to ≥18.66px and fix every violation. Accessibility is not a taste call — it blocks launch. |
+| C8 | **14 digit runs remain unisolated** in `components/city/**`, `components/area/**` and `components/listing/**` (city intro/support, area intro/about/getting-around, four breadcrumb `crumb.name` renders, listing location labels). TASTE §12 requires `.num` on **every** run — an unisolated run reverses under RTL, which is why this matters before C2 (Urdu) lands, not after. **Two are structurally blocked**: `discovery/disclosure-card.tsx` types `body` as `readonly string`, so no wrapper can be passed. | Widen `disclosure-card`'s `body` to accept `ReactNode`, then sweep the remaining 14. Verify with the byte-identity method already used in this pass, not by eye. |
+| C5 | **gw-003 (`/stays-in-islamabad/f-7`) still `gated`.** Its blocker is discharged, but no pass row records it as reviewed-and-approved; the REVIEW pass scoped itself to *new* surfaces. | One `design-reviewer` pass, then flip to `done`. |
+
+---
+
+## D. Engineering practice
+
+| # | Item | Rule |
+|---|---|---|
+| D1 | **Parallel agents must never share a build directory.** On 2026-07-25 up to four agents ran `next build` against the same `apps/web/.next`, producing non-deterministic failures — chunks written then missing, `app-paths-manifest.json` truncated to 3–7 of 31 routes despite "Compiled successfully". Two agents independently misdiagnosed it as filesystem/iCloud eviction; iCloud sync for `~/Documents` is **off**. The cause was concurrent builds. | Serialize builds, or give each agent its own git worktree. A build result from a contended tree is not evidence. |
+| D2 | **The repo path contains a trailing space** (`/Users/teamclaw/Documents/salam Stay /`). Harmless so far but every script and agent must quote paths. | Consider renaming before more tooling accretes around it. |
+
+---
+
+## E. Standing product decisions still open
+
+The 20-item parked list in `LOOP-COMPLETE.md` is not restated here — it remains canonical. The items that become **live misrepresentations** at go-live rather than merely unfinished are lifted into section A above. The rest (SalamStar programme criteria, mahram/co-host scoping, route-registry namespacing, illustrative star ratings on discovery surfaces) are product decisions that block their own surfaces, not the domain.
+
+**One to re-read before launch:** `LOOP-COMPLETE.md` item 1 — illustrative star ratings on ~20 discovery surfaces, against the no-pre-launch-social-proof rule. Same class as A1–A3: honest on localhost, a fabricated rating in production.
+
+---
+
+*Created 2026-07-25 from the two-audit + six-agent remediation pass. Update it in place; do not delete closed rows — mark them ✅ so the record of what was owed survives.*

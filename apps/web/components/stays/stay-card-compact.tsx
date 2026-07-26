@@ -47,16 +47,22 @@ import { WishlistHeart } from "./wishlist-heart";
  *   ladder bottoms out there and `caption` (12) is below the floor for a line
  *   a reader is expected to actually read. The area and attribute lines are
  *   information, not fine print.
- * - **Digits isolated on the area line.** "Clifton Block 2", "DHA Phase 5",
+ * - **Digits isolated on the name AND the area line.** "Bright 2-bed in
+ *   Clifton", "High-floor flat in Askari 14", "Clifton Block 2", "DHA Phase 5",
  *   "F-10, Islamabad" — every one of these carries a digit run, and an
- *   unisolated run reverses under RTL. `Num` wraps the runs and leaves the
- *   prose in the text flow (the shipped `.num` canon).
+ *   unisolated run reverses under RTL. The area line shipped wrapped and the
+ *   title did not, which is the failure mode `numerals.tsx` names outright: a
+ *   hand-tagged run is a run somebody forgets, and the two rows sit four pixels
+ *   apart drawing the same kind of string. `Num` wraps the runs on both and
+ *   leaves the prose in the text flow (the shipped `.num` canon).
  * - **The attribute line.** Two real attributes from the home's own list, in
  *   the shipped `ATTRIBUTES` wording, joined by ONE `·` (§7: one separator per
  *   gap, never chained). It replaced a third line that said "PKR — night", and
  *   that is the point: a row of six cards each reading "PKR —" told a visitor
- *   nothing six times over, where "Halal kitchen · Backup power" is six
- *   different true sentences about six different homes.
+ *   nothing six times over, where "Women-only · Backup power" is six different
+ *   true sentences about six different homes. The lexicon is four values wide
+ *   now (REPOSITIONING.md), so the fixtures carry the load: no two neighbouring
+ *   cards in a rail are given the same pair.
  * - **The price row is a skeleton, not a dash.** §12: null data is never
  *   rendered as an em-dash on the live site — it is suppressed or it ships a
  *   `backgrounds.skeleton` placeholder. Pricing is real and coming; the bar
@@ -69,6 +75,9 @@ import { WishlistHeart } from "./wishlist-heart";
  * reads it as a glitch rather than as depth. The press answers on the whole
  * card at 0.99. Both collapse to nothing under reduced motion, and hover is
  * behind `hover:hover` globally via the Tailwind config.
+ *
+ * A stay whose `href` is `null` has no page yet and draws the SAME card with
+ * no anchor and no motion at all — see the `linked` comment in the component.
  */
 
 /**
@@ -88,10 +97,9 @@ const overlayChip =
   "absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-canvas px-3 py-1 text-bodySm font-semibold text-primary shadow-on-media";
 
 /**
- * The price placeholder (§12). `backgrounds.skeleton.base` is `slate-100` in
- * light and `darkSurface.raised` in dark; the preset ships no `bg-skeleton`
- * role yet, so those two are named directly — the values are byte-identical to
- * the token, not picked. Flagged for a `bg-skeleton` role in the next cut.
+ * The price placeholder (§12). `bg-skeleton` is the role for exactly this:
+ * `backgrounds.skeleton.*.base`, one class carrying both themes, so the bar
+ * never names a ramp step or a surface that happens to match it today.
  *
  * `w-16` is `space-16` (64px), the nearest step to the ~60px the recipe asks
  * for; `h-3` is the caption size, so the bar reads as a line of type that has
@@ -108,8 +116,7 @@ const overlayChip =
  * which is the honest reading. A skeleton announced as "loading" would promise
  * a number that is not on its way over this request.
  */
-const skeletonBar =
-  "inline-block h-3 w-16 rounded-sm bg-slate-100 align-middle dark:bg-raised";
+const skeletonBar = "inline-block h-3 w-16 rounded-sm bg-skeleton align-middle";
 
 const mediaFrame =
   "relative block overflow-hidden rounded-lg border border-hairline";
@@ -119,10 +126,20 @@ const mediaImage =
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:group-hover:scale-100";
 
+/**
+ * The same photograph on a card that is not a link. Identical box, identical
+ * frame, no hover scale — the 1.03 answers a pointer that is about to click,
+ * and there is nothing here to click. See `cardBody` below.
+ */
+const mediaImageStatic = "aspect-[20/19] w-full object-cover";
+
 const cardLink =
   "block rounded-lg transition-transform duration-instant ease-decelerate active:scale-[0.99] " +
   "motion-reduce:transition-[opacity,background-color,border-color,color] motion-reduce:duration-instant " +
   "motion-reduce:ease-decelerate motion-reduce:active:scale-100";
+
+/** The unlinked wrapper: the anchor's box without the anchor's motion. */
+const cardStatic = "block rounded-lg";
 
 export interface StayCardCompactProps {
   readonly stay: FeaturedStay;
@@ -183,57 +200,81 @@ export function StayCardCompact({
 }: StayCardCompactProps) {
   const img = image(stay.image);
 
-  return (
-    // The group is the outer box, not the anchor, so crossing onto the heart
-    // does not interrupt the photograph's hover scale mid-transition.
-    <div className="group relative w-full">
-      <Link href={stay.href} className={`${cardLink} ${focusRing}`}>
-        <span className={mediaFrame}>
-          <Image
-            src={img.file}
-            alt={img.alt}
-            width={img.width}
-            height={img.height}
-            sizes={sizes}
-            {...(priority ? { priority: true } : { loading: "lazy" as const })}
-            className={mediaImage}
-          />
-          {newChip && stay.isNew ? (
-            <span className={overlayChip}>
-              <SparkIcon className="size-3.5 shrink-0" />
-              New
-            </span>
-          ) : null}
-        </span>
+  /**
+   * `href: null` means this home has no page yet (see `lib/content/stays.ts`).
+   * The card still draws the home in full — same photograph, same three rows,
+   * same skeleton — because the home is real; only the destination is missing.
+   *
+   * What goes away is the promise of a destination, and only that: no anchor,
+   * no focus ring, no press at 0.99, no hover scale on the photograph. A card
+   * that lifts and scales under the pointer and then does nothing when clicked
+   * is a worse failure than a card that never offered. It is NOT dimmed,
+   * greyed or marked "coming soon" — a disabled treatment would say the home is
+   * unavailable, and what is actually unavailable is a page about it.
+   */
+  const linked = stay.href !== null;
 
-        {/* Two lines, with the box for both reserved whether or not the second
-            is used. `truncate` shipped first and cut real names mid-word; a
-            bare `line-clamp-2` fixed that but let a one-line card's area line
-            start a whole line above its two-line neighbour's, so a rail of six
-            read as a ragged staircase. `2lh` is the element's OWN computed
-            line-height, so the reserve is the type token's value rather than a
-            pixel guess, and a browser without the unit ignores the rule and
-            gets the clamp alone.
-
-            No `block`: `line-clamp-2` sets `display: -webkit-box`, and a
-            `block` emitted after it in the cascade would kill the clamp. */}
-        <span
-          className={`mt-2.5 line-clamp-2 min-h-[2lh] text-primary ${TITLE_SIZE[titleSize]}`}
-        >
-          {stay.name}
-        </span>
-        <span className="mt-1 block truncate text-label text-tertiary">
-          <Num>{stay.area}</Num>
-        </span>
-        {stay.attributes ? (
-          <span className="mt-1 block truncate text-label text-secondary">
-            {stay.attributes[0]} &middot; {stay.attributes[1]}
+  const body = (
+    <>
+      <span className={mediaFrame}>
+        <Image
+          src={img.file}
+          alt={img.alt}
+          width={img.width}
+          height={img.height}
+          sizes={sizes}
+          {...(priority ? { priority: true } : { loading: "lazy" as const })}
+          className={linked ? mediaImage : mediaImageStatic}
+        />
+        {newChip && stay.isNew ? (
+          <span className={overlayChip}>
+            <SparkIcon className="size-3.5 shrink-0" />
+            New
           </span>
         ) : null}
-        <span className="mt-1 block text-label">
-          <span aria-hidden="true" className={skeletonBar} />
+      </span>
+
+      {/* Two lines, with the box for both reserved whether or not the second
+          is used. `truncate` shipped first and cut real names mid-word; a
+          bare `line-clamp-2` fixed that but let a one-line card's area line
+          start a whole line above its two-line neighbour's, so a rail of six
+          read as a ragged staircase. `2lh` is the element's OWN computed
+          line-height, so the reserve is the type token's value rather than a
+          pixel guess, and a browser without the unit ignores the rule and
+          gets the clamp alone.
+
+          No `block`: `line-clamp-2` sets `display: -webkit-box`, and a
+          `block` emitted after it in the cascade would kill the clamp. */}
+      <span className={`mt-2.5 line-clamp-2 min-h-[2lh] text-primary ${TITLE_SIZE[titleSize]}`}>
+        <Num>{stay.name}</Num>
+      </span>
+      <span className="mt-1 block truncate text-label text-tertiary">
+        <Num>{stay.area}</Num>
+      </span>
+      {stay.attributes ? (
+        <span className="mt-1 block truncate text-label text-secondary">
+          {stay.attributes[0]} &middot; {stay.attributes[1]}
         </span>
-      </Link>
+      ) : null}
+      <span className="mt-1 block text-label">
+        <span aria-hidden="true" className={skeletonBar} />
+      </span>
+    </>
+  );
+
+  return (
+    // The group is the outer box, not the anchor, so crossing onto the heart
+    // does not interrupt the photograph's hover scale mid-transition. It is
+    // dropped when the card is unlinked: nothing inside is listening for it,
+    // and a `group` with no `group-hover` is a hook that says something moves.
+    <div className={linked ? "group relative w-full" : "relative w-full"}>
+      {stay.href !== null ? (
+        <Link href={stay.href} className={`${cardLink} ${focusRing}`}>
+          {body}
+        </Link>
+      ) : (
+        <div className={cardStatic}>{body}</div>
+      )}
 
       <WishlistHeart stayName={stay.name} />
     </div>

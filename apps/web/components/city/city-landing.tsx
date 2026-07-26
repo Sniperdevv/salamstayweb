@@ -40,8 +40,10 @@ import { CityStays } from "./city-stays";
  *    landmarks come from the shared chrome in `app/layout.tsx`.
  *  · NO breadcrumb, visible or schema. A top-level city page is the head of
  *    the trail, which begins one level down at area pages (§2/§3.2, G40).
- *  · JSON-LD is ItemList + FAQPage only, built by the `lib/seo/jsonld`
- *    builders (G74 matrix). No BreadcrumbList. No AggregateRating — no real
+ *  · JSON-LD is FAQPage, plus ItemList ONLY where the listed homes have pages
+ *    of their own to be listed at — built by the `lib/seo/jsonld` builders
+ *    (G74 matrix). Today that is Islamabad; the five template cities emit
+ *    FAQPage alone. No BreadcrumbList. No AggregateRating — no real
  *    review exists yet. No Offer / price / priceRange / availability, ever
  *    (§3.4): the visible "PKR —" is a placeholder and marking it up as a price
  *    would be marking up nothing.
@@ -65,12 +67,22 @@ export function CityLandingPage({ city }: { readonly city: CityContent }) {
     <>
       <JsonLdScript
         data={[
-          itemList(
-            city.stays.items.map((stay) => ({ name: stay.schemaName, path: stay.href })),
-          ),
-          faqPage(
-            city.faq.items.map((f) => ({ question: f.question, answer: f.answer })),
-          ),
+          /* Only the homes that HAVE a page get a ListItem, and a city where
+             none of them do gets no ItemList at all — `itemList` returns null
+             and `JsonLdScript` drops it.
+
+             Islamabad's six point at registered listing routes and list
+             normally. The other five carry `href: null` for every stay, and
+             what they used to emit was nine ListItems whose `url` was this
+             page's own canonical, nine times over: a URL invented to fill a
+             required field (SEO-RULES §1.5), and to a crawler the doorway
+             signature SCREENS §6 exists to keep off this site. An empty
+             ItemList is not the fix — it claims a list and delivers none — so
+             the block is absent until the routes are earned. Safe against the
+             G74 matrix: `validate-pages.mjs` exempts ItemList from the
+             missing-expected-type warning precisely because it is earned. */
+          itemList(city.stays.items.map((stay) => ({ name: stay.schemaName, path: stay.href }))),
+          faqPage(city.faq.items.map((f) => ({ question: f.question, answer: f.answer }))),
         ]}
       />
 

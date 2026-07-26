@@ -31,6 +31,15 @@ import type { CityContent } from "./types";
  * Deliberate absences, all load-bearing:
  * - NO area links. The registry carries no `/stays-in-faisalabad/{area}` route,
  *   and a content file never mints one (G37/G5).
+ * - NO listing links, and so NO ItemList. Every stay here carries
+ *   `href: null`: the registry holds no `/stays-in-faisalabad/{area}/{listing}`
+ *   route to point at, and the value this replaced was this page's own path —
+ *   nine cards linking to the page they sit on, and nine schema entries whose
+ *   `url` was this page's canonical. Both were invented (SEO-RULES §1.5), and
+ *   minting them is the doorway pattern §6 forbids: instances are earned, not
+ *   minted. The tiles are photographs, names and lines until the listing
+ *   pages exist; `CityLandingPage` then emits no ItemList for this city at
+ *   all, rather than an empty one.
  * - NO price figure, NO ratings, NO review counts, NO listing tallies.
  * - NO breadcrumb. A top-level city page is the head of its trail (§2/§3.2).
  * - NO verification FAQ: verification is nationwide, and restating Islamabad's
@@ -41,7 +50,7 @@ export const faisalabad: CityContent = {
   path: "/stays-in-faisalabad",
   name: "Faisalabad",
   metaDescription:
-    "Verified Faisalabad stays near D Ground, Madina Town, Peoples Colony and the Clock Tower bazaars, with no-alcohol and halal-kitchen filters.",
+    "Verified Faisalabad stays near D Ground, Madina Town, Peoples Colony and the Clock Tower bazaars, with no-alcohol and backup-power filters.",
 
   h1: "Stays in Faisalabad",
   /** Sixteen words. Runs from the modern commercial side back to the radial
@@ -59,7 +68,7 @@ export const faisalabad: CityContent = {
     heading: "Featured stays in Faisalabad",
     items: [
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Studio near D Ground",
         areaPin: "D Ground",
         location: "D Ground, Faisalabad",
@@ -68,52 +77,52 @@ export const faisalabad: CityContent = {
         schemaName: "Studio near D Ground — D Ground, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Quiet 1-bed in Madina Town",
         areaPin: "Madina Town",
         location: "Madina Town, Faisalabad",
         image: CITY_STAY_CARDS["/stays-in-faisalabad"][1],
-        attributes: ["halal-kitchen", "backup-power"],
+        attributes: ["no-alcohol", "family-friendly"],
         schemaName: "Quiet 1-bed in Madina Town — Madina Town, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Single room in Peoples Colony",
         areaPin: "Peoples Colony",
         location: "Peoples Colony, Faisalabad",
         image: CITY_STAY_CARDS["/stays-in-faisalabad"][2],
-        attributes: ["women-only", "halal-kitchen"],
+        attributes: ["women-only", "backup-power"],
         schemaName: "Single room in Peoples Colony — Peoples Colony, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Whole portion on Susan Road",
         areaPin: "Susan Road",
         location: "Susan Road, Faisalabad",
         image: CITY_STAY_CARDS["/stays-in-faisalabad"][3],
-        attributes: ["halal-kitchen", "prayer-space"],
+        attributes: ["backup-power", "family-friendly"],
         schemaName: "Whole portion on Susan Road — Susan Road, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Family flat in Gulberg",
         areaPin: "Gulberg",
         location: "Gulberg, Faisalabad",
         image: CITY_STAY_CARDS["/stays-in-faisalabad"][4],
-        attributes: ["family-friendly", "halal-kitchen"],
+        attributes: ["family-friendly", "no-alcohol"],
         schemaName: "Family flat in Gulberg — Gulberg, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Upper portion near the Clock Tower",
         areaPin: "Clock Tower",
         location: "Clock Tower, Faisalabad",
         image: CITY_STAY_CARDS["/stays-in-faisalabad"][5],
-        attributes: ["no-alcohol", "backup-power"],
+        attributes: ["backup-power", "no-alcohol"],
         schemaName: "Upper portion near the Clock Tower — Clock Tower, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Whole house in Batala Colony",
         areaPin: "Batala Colony",
         location: "Batala Colony, Faisalabad",
@@ -122,7 +131,7 @@ export const faisalabad: CityContent = {
         schemaName: "Whole house in Batala Colony — Batala Colony, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Guest room in Millat Town",
         areaPin: "Millat Town",
         location: "Millat Town, Faisalabad",
@@ -131,12 +140,12 @@ export const faisalabad: CityContent = {
         schemaName: "Guest room in Millat Town — Millat Town, Faisalabad",
       },
       {
-        href: "/stays-in-faisalabad",
+        href: null,
         title: "Compact flat on Jaranwala Road",
         areaPin: "Jaranwala Road",
         location: "Jaranwala Road, Faisalabad",
         image: CITY_STAY_CARDS["/stays-in-faisalabad"][8],
-        attributes: ["halal-kitchen", "no-alcohol"],
+        attributes: ["no-alcohol", "backup-power"],
         schemaName: "Compact flat on Jaranwala Road — Jaranwala Road, Faisalabad",
       },
     ],
@@ -190,11 +199,9 @@ export const faisalabad: CityContent = {
   filters: {
     heading: "Popular filters in Faisalabad",
     items: [
-      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=faisalabad&no_alcohol=1" },
-      { icon: "halal-kitchen", label: "Halal kitchen", href: "/search?city=faisalabad&halal_kitchen=1" },
-      { icon: "women-only", label: "Women-only stays", href: "/search?city=faisalabad&women_only=1" },
-      { icon: "prayer-space", label: "Prayer space", href: "/search?city=faisalabad&prayer_space=1" },
       { icon: "backup-power", label: "Backup power", href: "/search?city=faisalabad&backup_power=1" },
+      { icon: "no-alcohol", label: "No-alcohol listings", href: "/search?city=faisalabad&no_alcohol=1" },
+      { icon: "women-only", label: "Women-only stays", href: "/search?city=faisalabad&women_only=1" },
       { icon: "family-friendly", label: "Family-friendly", href: "/search?city=faisalabad&family=1" },
     ],
   },
@@ -249,7 +256,7 @@ export const faisalabad: CityContent = {
         heading: "Trust & hosting",
         links: [
           { href: "/trust-and-safety", label: "Trust & safety" },
-          { href: "/shariah-policy", label: "Our Shariah-respectful approach" },
+          { href: "/verification", label: "How verification works" },
           { href: "/become-a-host", label: "Become a host in Faisalabad" },
         ],
       },

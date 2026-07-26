@@ -1,12 +1,13 @@
 import type { ReactElement } from "react";
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { ArrowRightIcon } from "@/components/icons";
 import { NoAlcoholIcon } from "@/components/home-icons";
 import { sectionH2 } from "@/components/discovery/shell";
 import { focusRing } from "@/components/ui";
 import type { ListingContent, RuleId } from "@/lib/content/listings/is-f7-2bed";
 import { ClockIcon, GuestsIcon, NoPartiesIcon, NoSmokingIcon, QuietHoursIcon } from "./icons";
-import { Copy, Plain, listingH3, listingLink, listingPara, listingSection } from "./shell";
+import { Copy, listingH3, listingLink, listingPara, listingSection } from "./shell";
 
 /**
  * House rules & host policy — the page's "things to know" block, and the
@@ -66,11 +67,11 @@ export function ListingRules({ listing }: { readonly listing: ListingContent }) 
                   <Icon className="mt-0.5 size-5 shrink-0 text-secondary" />
                   <span className="min-w-0">
                     <span className="block text-bodySm font-medium text-primary">
-                      <Plain>{rule.title}</Plain>
+                      <Num>{rule.title}</Num>
                     </span>
                     {rule.detail ? (
                       <span className="mt-0.5 block text-bodySm text-secondary">
-                        <Plain>{rule.detail}</Plain>
+                        <Num>{rule.detail}</Num>
                       </span>
                     ) : null}
                   </span>

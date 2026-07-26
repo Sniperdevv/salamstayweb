@@ -75,7 +75,7 @@ const CATEGORIES: readonly HelpCategory[] = [
       "Making an account, finding a home, and what happens between booking and check-in.",
     links: [
       { href: "/help/getting-started", label: "Getting started on SalamStay" },
-      { href: "/help/shariah-how-it-works", label: "How Shariah-respectful works" },
+      { href: "/help/house-rules", label: "House rules on a listing" },
       { href: "/help/verified-home-facts", label: "Verified home facts on a listing" },
     ],
   },
@@ -83,8 +83,9 @@ const CATEGORIES: readonly HelpCategory[] = [
     id: "verification",
     title: "Verification and documents",
     covers:
-      "Which document each booking type needs, who checks it, and who can see it afterwards.",
+      "Which document each booking type needs, why it is asked for, and who can see it afterwards.",
     links: [
+      { href: "/verification", label: "How verification works" },
       { href: "/help/verification", label: "Every document we ask for" },
       {
         href: "/help/verification/how-cnic-verification-works",
@@ -181,8 +182,12 @@ export default function HelpHubPage() {
                       >
                         {l.label}
                       </Link>
+                      {/* `label` (13), not `caption` (12) — §7's ladder bottoms
+                          out at 13. This is the word that tells a reader the
+                          link they are about to follow is not finished yet, so
+                          it has to be read, not skimmed past. */}
                       {isBeingWritten(l.href) ? (
-                        <span className="text-caption text-secondary">Being written</span>
+                        <span className="text-label text-secondary">Being written</span>
                       ) : null}
                     </li>
                   ))}

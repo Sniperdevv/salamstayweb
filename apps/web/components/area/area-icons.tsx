@@ -1,11 +1,10 @@
 import type { ReactElement } from "react";
-import { BoltIcon } from "@/components/home-icons";
+import { BoltIcon, FamilyIcon } from "@/components/home-icons";
 import {
   BusIcon,
   HillsIcon,
   LandmarkIcon,
   MarketIcon,
-  MasjidIcon,
   WalkIcon,
   type GlyphProps,
 } from "@/components/stays/icons";
@@ -29,12 +28,20 @@ import type { AreaContextIcon, AreaNoteIcon } from "@/lib/content/areas/types";
 
 type IconComponent = (props: GlyphProps) => ReactElement;
 
-/** "About {area}" context cards. */
+/**
+ * "About {area}" context cards.
+ *
+ * `masjid` left this map with its role (REPOSITIONING.md), and `MasjidIcon`
+ * left `components/stays/icons.tsx` with it rather than sitting there unused.
+ * `family` resolves to the shipped `FamilyIcon` — the same mark the
+ * `family-friendly` attribute pill draws — for the same reason `civic` reuses
+ * `LandmarkIcon`: one glyph per meaning, never a near-duplicate redraw.
+ */
 export const AREA_CONTEXT_ICONS: Record<AreaContextIcon, IconComponent> = {
   market: MarketIcon,
-  masjid: MasjidIcon,
   civic: LandmarkIcon,
   hills: HillsIcon,
+  family: FamilyIcon,
 };
 
 /** "Getting around {area}" notes. */

@@ -46,9 +46,14 @@ const row =
 
 const plate = "grid size-8 shrink-0 place-items-center rounded-full bg-sunken text-secondary";
 
+/**
+ * `label` (13), not `caption` (12): §7's ladder bottoms out at 13. This line
+ * carries the only number that makes the row worth pressing — how many stays
+ * come back — and a count nobody can read is a count nobody acts on.
+ */
 function Gain({ count }: { readonly count: number }) {
   return (
-    <span className="mt-0.5 block text-caption text-secondary">
+    <span className="mt-0.5 block text-label text-secondary">
       See <span className="num">{count}</span> {count === 1 ? "stay" : "stays"}
     </span>
   );

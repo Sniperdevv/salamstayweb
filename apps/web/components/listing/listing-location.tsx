@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { ArrowRightIcon } from "@/components/icons";
 import { sectionH2 } from "@/components/discovery/shell";
 import { focusRing } from "@/components/ui";
 import type { ListingContent } from "@/lib/content/listings/is-f7-2bed";
-import { Plain, anchorOffset, listingLink, listingPara, listingSection } from "./shell";
+import { anchorOffset, listingLink, listingPara, listingSection } from "./shell";
 
 /**
  * Where you'll be — the approximate-area map, the privacy note, and three ways
@@ -48,7 +49,7 @@ export function ListingLocation({ listing }: { readonly listing: ListingContent 
         {location.heading}
       </h2>
       <p className={`mt-2 ${listingPara}`}>
-        <Plain>{location.sub}</Plain>
+        <Num>{location.sub}</Num>
       </p>
 
       <div className="relative mt-5 overflow-hidden rounded-lg border border-hairline bg-sunken">
@@ -71,6 +72,12 @@ export function ListingLocation({ listing }: { readonly listing: ListingContent 
             strokeWidth={1.5}
             strokeDasharray="5 4"
           />
+          {/* The three map labels STAY at `caption` (12). §7's ladder governs
+              copy a reader reads a line of; these are cartography — names
+              placed on a drawing, sized to sit inside it without covering the
+              roads they name, and read at a glance rather than in sequence.
+              The whole substrate also carries `role="img"` with the card's
+              aria-label, so nothing here is the only route to any fact. */}
           <text x={316} y={112} className="fill-secondary text-caption">
             F-7 Markaz
           </text>
@@ -85,7 +92,7 @@ export function ListingLocation({ listing }: { readonly listing: ListingContent 
       </div>
 
       <p className={`mt-4 ${listingPara}`}>
-        <Plain>{location.privacy}</Plain>
+        <Num>{location.privacy}</Num>
       </p>
 
       <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3">

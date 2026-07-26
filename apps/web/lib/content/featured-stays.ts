@@ -13,11 +13,30 @@
  * which are appended after the shipped six rather than edited into them.
  *
  * Rules this file enforces by construction:
- * - Every `href` resolves in `lib/seo/route-registry.ts` (G37). Islamabad's six
- *   point at registered listing stubs because those routes exist. Everything
- *   else points at its own `/stays-in-{city}` landing, because minting
- *   `/stays-in-karachi/clifton/…` here would emit links to routes the router
- *   cannot serve. When listing routes land, only the `href` changes.
+ * - Every `href` is either a route that resolves in `lib/seo/route-registry.ts`
+ *   (G37) or `null`. Islamabad's six point at registered listing stubs because
+ *   those routes exist; nothing here mints `/stays-in-karachi/clifton/…`,
+ *   because a content file cannot create a route the router will not serve.
+ *
+ *   The fixtures below carry `/stays-in-{city}` for a different reason from the
+ *   one that was written here before. This file's own doc used to call the
+ *   self-href a deliberate convention — "everything else points at its own
+ *   `/stays-in-{city}` landing" — and the city CONTENT files copied it. On a
+ *   city page that convention produced a card linking to the page it was
+ *   already on and an `ItemList` whose every entry carried that page's own
+ *   canonical, which is a fabricated schema value (SEO-RULES §1.5) and the
+ *   doorway pattern SCREENS §6 forbids. The convention is gone: a home with no
+ *   page of its own now carries `href: null`, and the card renders unlinked.
+ *
+ *   What remains here is not that convention. These are HOMEPAGE and /search
+ *   rail fixtures, rendered on `/` and `/search`, and `/stays-in-karachi` is a
+ *   real other page — a genuine link one level down into the city, not a link
+ *   back to the page the reader is standing on. It is still a card that names
+ *   one home and navigates to a city, which is a weaker promise than the card
+ *   makes; flagged, and it changes when listing routes land.
+ * - `href: null` means the home has no page yet. Consumers must handle it: the
+ *   compact and featured cards render an unlinked card, and `itemList` drops
+ *   the entry rather than inventing a URL for it.
  * - Photography is an `ImageId` off `CITY_STAY_CARDS` (or, for Islamabad's
  *   three extras, `ISLAMABAD_EXTRA_STAY_CARDS`), in the manifest's own card
  *   order, so each city keeps the frames the manifest already assigned it and
@@ -27,7 +46,10 @@
  *   of those numbers exists, and the card has no slot for them.
  * - Attributes are the shipped `ATTRIBUTES` lexicon and nothing else. Two per
  *   card, derived from the home's own attribute list where a content file
- *   exists, so no card can claim something the listing page does not.
+ *   exists, so no card can claim something the listing page does not. No two
+ *   neighbouring cards in a rail carry the same pair of attributes: four values
+ *   make six pairs, and a rail where every card says the same two things is
+ *   visibly generated even when each line is individually true.
  *
  * On `isNew`: the chip means "no two-way review has been published for this
  * home yet". Pre-launch that is true of every listing, so every entry carries
@@ -50,8 +72,15 @@ import { f7Islamabad } from "@/lib/content/areas/f7-islamabad";
 
 /** One stay as the compact card draws it: photograph, name, area line, chip. */
 export interface FeaturedStay {
-  /** Registry-resolvable route (G37). */
-  readonly href: string;
+  /**
+   * Registry-resolvable route (G37), or `null` when this home has no page yet.
+   *
+   * Nullable for the same reason `StayCardContent.href` is, and it arrives here
+   * through `fromStayCard`: a city whose listing routes do not exist projects
+   * nine `null` hrefs into this shape, and the card has to be able to draw a
+   * home it cannot link to.
+   */
+  readonly href: string | null;
   /** Card title. One line, truncated by the card, never wrapped. */
   readonly name: string;
   /** The line under the name — sector or neighbourhood, then city. */
@@ -66,8 +95,9 @@ export interface FeaturedStay {
    * Strings, not `AttributeIcon` ids, because the card renders them as prose
    * rather than as pills — but every string here is produced by
    * `label()` below, so the only wording that can ever appear is the shipped
-   * `ATTRIBUTES` lexicon. "Verified", "Alcohol-free", "Superhost" and every
-   * other invented badge are unreachable by construction (§12).
+   * `ATTRIBUTES` lexicon — four values, since REPOSITIONING.md retired the
+   * three observance attributes. "Verified", "Alcohol-free", "Superhost" and
+   * every other invented badge are unreachable by construction (§12).
    *
    * Optional: a stay with fewer than two real attributes ships no line at all
    * rather than a padded one.
@@ -78,8 +108,10 @@ export interface FeaturedStay {
 /**
  * The shipped label for one attribute id. The single source is the icon map in
  * `components/stays/attributes.ts` — the same map the pills on the city and
- * area pages read — so "Halal kitchen" on a rail card and "Halal kitchen" on a
- * listing pill cannot drift apart.
+ * area pages read — so "Backup power" on a rail card and "Backup power" on a
+ * listing pill cannot drift apart. That map is exhaustive over a four-value
+ * union (REPOSITIONING.md), so an id retired from the lexicon cannot be spelled
+ * here at all.
  */
 const label = (id: AttributeIcon): string => ATTRIBUTES[id].label;
 
@@ -110,6 +142,11 @@ export type CitySlug =
  * card has no price row, so the mapper carries no price rather than inventing a
  * shorter version of one; the attribute PILLS become the card's third text
  * line, and the first two of the home's own attributes are what it says.
+ *
+ * `href` passes through unchanged INCLUDING its null, which is the point: a
+ * home with no page keeps having no page on the other side of the projection.
+ * A mapper that substituted the city path here would put the self-link back one
+ * layer down from where it was removed.
  */
 export function fromStayCard(stay: StayCardContent, area?: string): FeaturedStay {
   const attributes = attributePair(stay.attributes);
@@ -126,8 +163,9 @@ export function fromStayCard(stay: StayCardContent, area?: string): FeaturedStay
 /**
  * Islamabad's three extra rail cards. The city page's own six are re-projected
  * untouched below; these sit after them so the rail reaches nine without any
- * edit to the shipped set. Their `href` is the city landing, not a minted
- * listing slug, for the same G37 reason the template cities point at theirs.
+ * edit to the shipped set. Their `href` is the Islamabad landing, not a minted
+ * listing slug (G37) — and these three only ever render on `/`, where that is a
+ * link one level down rather than a link to the current page.
  */
 const ISLAMABAD_EXTRA_STAYS: readonly FeaturedStay[] = [
   {
@@ -136,7 +174,7 @@ const ISLAMABAD_EXTRA_STAYS: readonly FeaturedStay[] = [
     area: "F-10, Islamabad",
     image: ISLAMABAD_EXTRA_STAY_CARDS[0],
     isNew: true,
-    attributes: pair("family-friendly", "halal-kitchen"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-islamabad",
@@ -144,7 +182,7 @@ const ISLAMABAD_EXTRA_STAYS: readonly FeaturedStay[] = [
     area: "G-11, Islamabad",
     image: ISLAMABAD_EXTRA_STAY_CARDS[1],
     isNew: true,
-    attributes: pair("halal-kitchen", "backup-power"),
+    attributes: pair("backup-power", "family-friendly"),
   },
   {
     href: "/stays-in-islamabad",
@@ -152,7 +190,7 @@ const ISLAMABAD_EXTRA_STAYS: readonly FeaturedStay[] = [
     area: "Bani Gala, Islamabad",
     image: ISLAMABAD_EXTRA_STAY_CARDS[2],
     isNew: true,
-    attributes: pair("no-alcohol", "prayer-space"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
 ];
 
@@ -182,7 +220,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "Clifton Block 2, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][0],
     isNew: true,
-    attributes: pair("halal-kitchen", "no-alcohol"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-karachi",
@@ -190,7 +228,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "Bahadurabad, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][1],
     isNew: true,
-    attributes: pair("no-alcohol", "backup-power"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-karachi",
@@ -198,7 +236,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "PECHS Block 6, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][2],
     isNew: true,
-    attributes: pair("family-friendly", "halal-kitchen"),
+    attributes: pair("family-friendly", "backup-power"),
   },
   {
     href: "/stays-in-karachi",
@@ -206,7 +244,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "DHA Phase 5, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][3],
     isNew: true,
-    attributes: pair("halal-kitchen", "backup-power"),
+    attributes: pair("no-alcohol", "backup-power"),
   },
   {
     href: "/stays-in-karachi",
@@ -214,7 +252,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "Gulshan-e-Iqbal, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][4],
     isNew: true,
-    attributes: pair("women-only", "halal-kitchen"),
+    attributes: pair("women-only", "backup-power"),
   },
   {
     href: "/stays-in-karachi",
@@ -222,7 +260,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "North Nazimabad, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][5],
     isNew: true,
-    attributes: pair("family-friendly", "backup-power"),
+    attributes: pair("family-friendly", "no-alcohol"),
   },
   {
     href: "/stays-in-karachi",
@@ -238,7 +276,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "DHA Phase 6, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][7],
     isNew: true,
-    attributes: pair("halal-kitchen", "prayer-space"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-karachi",
@@ -246,7 +284,7 @@ const KARACHI_STAYS: readonly FeaturedStay[] = [
     area: "Nazimabad, Karachi",
     image: CITY_STAY_CARDS["/stays-in-karachi"][8],
     isNew: true,
-    attributes: pair("no-alcohol", "qibla-marked"),
+    attributes: pair("no-alcohol", "women-only"),
   },
 ];
 
@@ -265,7 +303,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "Model Town, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][1],
     isNew: true,
-    attributes: pair("halal-kitchen", "no-alcohol"),
+    attributes: pair("women-only", "backup-power"),
   },
   {
     href: "/stays-in-lahore",
@@ -273,7 +311,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "Walled City, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][2],
     isNew: true,
-    attributes: pair("family-friendly", "prayer-space"),
+    attributes: pair("family-friendly", "backup-power"),
   },
   {
     href: "/stays-in-lahore",
@@ -281,7 +319,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "Johar Town, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][3],
     isNew: true,
-    attributes: pair("halal-kitchen", "backup-power"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-lahore",
@@ -289,7 +327,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "Garden Town, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][4],
     isNew: true,
-    attributes: pair("qibla-marked", "halal-kitchen"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-lahore",
@@ -297,7 +335,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "DHA Phase 5, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][5],
     isNew: true,
-    attributes: pair("family-friendly", "halal-kitchen"),
+    attributes: pair("backup-power", "family-friendly"),
   },
   {
     href: "/stays-in-lahore",
@@ -305,7 +343,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "Askari 11, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][6],
     isNew: true,
-    attributes: pair("backup-power", "no-alcohol"),
+    attributes: pair("no-alcohol", "backup-power"),
   },
   {
     href: "/stays-in-lahore",
@@ -321,7 +359,7 @@ const LAHORE_STAYS: readonly FeaturedStay[] = [
     area: "Allama Iqbal Town, Lahore",
     image: CITY_STAY_CARDS["/stays-in-lahore"][8],
     isNew: true,
-    attributes: pair("halal-kitchen", "prayer-space"),
+    attributes: pair("family-friendly", "backup-power"),
   },
 ];
 
@@ -332,7 +370,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Saddar, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][0],
     isNew: true,
-    attributes: pair("halal-kitchen", "backup-power"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-peshawar",
@@ -340,7 +378,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Gulbahar, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][1],
     isNew: true,
-    attributes: pair("no-alcohol", "backup-power"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-peshawar",
@@ -348,7 +386,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "University Town, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][2],
     isNew: true,
-    attributes: pair("prayer-space", "halal-kitchen"),
+    attributes: pair("no-alcohol", "backup-power"),
   },
   {
     href: "/stays-in-peshawar",
@@ -356,7 +394,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Hayatabad Phase 3, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][3],
     isNew: true,
-    attributes: pair("family-friendly", "halal-kitchen"),
+    attributes: pair("family-friendly", "backup-power"),
   },
   {
     href: "/stays-in-peshawar",
@@ -364,7 +402,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Warsak Road, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][4],
     isNew: true,
-    attributes: pair("family-friendly", "backup-power"),
+    attributes: pair("family-friendly", "no-alcohol"),
   },
   {
     href: "/stays-in-peshawar",
@@ -372,7 +410,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Hayatabad Phase 6, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][5],
     isNew: true,
-    attributes: pair("halal-kitchen", "no-alcohol"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-peshawar",
@@ -380,7 +418,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Dalazak Road, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][6],
     isNew: true,
-    attributes: pair("no-alcohol", "qibla-marked"),
+    attributes: pair("women-only", "backup-power"),
   },
   {
     href: "/stays-in-peshawar",
@@ -388,7 +426,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Board Bazaar, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][7],
     isNew: true,
-    attributes: pair("halal-kitchen", "qibla-marked"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-peshawar",
@@ -396,7 +434,7 @@ const PESHAWAR_STAYS: readonly FeaturedStay[] = [
     area: "Nasir Bagh Road, Peshawar",
     image: CITY_STAY_CARDS["/stays-in-peshawar"][8],
     isNew: true,
-    attributes: pair("family-friendly", "prayer-space"),
+    attributes: pair("family-friendly", "backup-power"),
   },
 ];
 
@@ -415,7 +453,7 @@ const FAISALABAD_STAYS: readonly FeaturedStay[] = [
     area: "Madina Town, Faisalabad",
     image: CITY_STAY_CARDS["/stays-in-faisalabad"][1],
     isNew: true,
-    attributes: pair("halal-kitchen", "backup-power"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-faisalabad",
@@ -423,7 +461,7 @@ const FAISALABAD_STAYS: readonly FeaturedStay[] = [
     area: "Peoples Colony, Faisalabad",
     image: CITY_STAY_CARDS["/stays-in-faisalabad"][2],
     isNew: true,
-    attributes: pair("women-only", "halal-kitchen"),
+    attributes: pair("women-only", "backup-power"),
   },
   {
     href: "/stays-in-faisalabad",
@@ -431,7 +469,7 @@ const FAISALABAD_STAYS: readonly FeaturedStay[] = [
     area: "Susan Road, Faisalabad",
     image: CITY_STAY_CARDS["/stays-in-faisalabad"][3],
     isNew: true,
-    attributes: pair("halal-kitchen", "prayer-space"),
+    attributes: pair("backup-power", "family-friendly"),
   },
   {
     href: "/stays-in-faisalabad",
@@ -439,7 +477,7 @@ const FAISALABAD_STAYS: readonly FeaturedStay[] = [
     area: "Gulberg, Faisalabad",
     image: CITY_STAY_CARDS["/stays-in-faisalabad"][4],
     isNew: true,
-    attributes: pair("family-friendly", "halal-kitchen"),
+    attributes: pair("family-friendly", "no-alcohol"),
   },
   {
     href: "/stays-in-faisalabad",
@@ -447,7 +485,7 @@ const FAISALABAD_STAYS: readonly FeaturedStay[] = [
     area: "Clock Tower, Faisalabad",
     image: CITY_STAY_CARDS["/stays-in-faisalabad"][5],
     isNew: true,
-    attributes: pair("no-alcohol", "backup-power"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-faisalabad",
@@ -471,7 +509,7 @@ const FAISALABAD_STAYS: readonly FeaturedStay[] = [
     area: "Jaranwala Road, Faisalabad",
     image: CITY_STAY_CARDS["/stays-in-faisalabad"][8],
     isNew: true,
-    attributes: pair("halal-kitchen", "no-alcohol"),
+    attributes: pair("no-alcohol", "backup-power"),
   },
 ];
 
@@ -482,7 +520,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Satellite Town, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][0],
     isNew: true,
-    attributes: pair("halal-kitchen", "no-alcohol"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -490,7 +528,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Bahria Town Phase 4, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][1],
     isNew: true,
-    attributes: pair("backup-power", "halal-kitchen"),
+    attributes: pair("no-alcohol", "family-friendly"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -498,7 +536,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Chaklala Scheme 3, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][2],
     isNew: true,
-    attributes: pair("no-alcohol", "backup-power"),
+    attributes: pair("women-only", "backup-power"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -506,7 +544,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Westridge, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][3],
     isNew: true,
-    attributes: pair("halal-kitchen", "backup-power"),
+    attributes: pair("no-alcohol", "backup-power"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -514,7 +552,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "DHA Phase 2, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][4],
     isNew: true,
-    attributes: pair("family-friendly", "halal-kitchen"),
+    attributes: pair("family-friendly", "backup-power"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -522,7 +560,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Saddar, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][5],
     isNew: true,
-    attributes: pair("qibla-marked", "halal-kitchen"),
+    attributes: pair("backup-power", "no-alcohol"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -530,7 +568,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Askari 14, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][6],
     isNew: true,
-    attributes: pair("backup-power", "prayer-space"),
+    attributes: pair("backup-power", "family-friendly"),
   },
   {
     href: "/stays-in-rawalpindi",
@@ -538,7 +576,7 @@ const RAWALPINDI_STAYS: readonly FeaturedStay[] = [
     area: "Gulraiz, Rawalpindi",
     image: CITY_STAY_CARDS["/stays-in-rawalpindi"][7],
     isNew: true,
-    attributes: pair("women-only", "halal-kitchen"),
+    attributes: pair("women-only", "no-alcohol"),
   },
   {
     href: "/stays-in-rawalpindi",

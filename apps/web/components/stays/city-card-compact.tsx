@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { focusRing } from "@/components/ui";
 import { image, type ImageId } from "@/lib/content/image-manifest";
 
@@ -15,6 +16,17 @@ import { image, type ImageId } from "@/lib/content/image-manifest";
  *
  * The one-liner is a truncated single line by design. If a city needs two lines
  * to be understood, it needs its own page, and it has one.
+ *
+ * That line is `label` (13), not `caption` (12). §7's ladder bottoms out at 13,
+ * and this is the same slot the stay tile fills one grid over — one line under
+ * a card title, on the same page, at the same reading distance. It is where a
+ * reader finds out that Islamabad means "F-6, F-7, Margalla foothills", which
+ * is information rather than fine print, and two tiles in one scroll drawing
+ * the same slot at two sizes reads as a mistake even to someone who could not
+ * name the pixel.
+ *
+ * Its digits are isolated (§12): "F-6, F-7, Margalla foothills" and "D-Ground,
+ * Clock Tower" are sector strings, and an unwrapped run reverses under RTL.
  *
  * Motion matches the stay card exactly: the photograph scales 1.03 under the
  * pointer, the tile presses to 0.99, nothing lifts. Two card families that move
@@ -75,7 +87,13 @@ export function CityCardCompact({
       <span className="mt-2.5 block truncate text-bodySm font-semibold text-primary">
         {name}
       </span>
-      <span className="mt-1 block truncate text-caption text-tertiary">{line}</span>
+      {/* `secondary`, not `tertiary`: the tertiary role is documented in
+          `packages/design-tokens/src/colors.ts` as AA-large only, "use ≥18.66px",
+          and this line is 13. Same correction applied to the identical field in
+          `city/city-areas.tsx` on 2026-07-25 — one field, one legible ink. */}
+      <span className="mt-1 block truncate text-label text-secondary">
+        <Num>{line}</Num>
+      </span>
     </Link>
   );
 }

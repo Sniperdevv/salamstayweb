@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Num } from "@/components/numerals";
 import { focusRing } from "@/components/ui";
 import { inlineLink } from "@/components/stays/styles";
 import type { CityContent } from "@/lib/content/cities/types";
@@ -46,12 +47,20 @@ export function CityRelated({ city }: { readonly city: CityContent }) {
               {col.links.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={`${inlineLink} ${focusRing}`}>
-                    {link.label}
+                    <Num>{link.label}</Num>
                   </Link>
                 </li>
               ))}
             </ul>
-            {col.note ? <p className="mt-2.5 text-caption text-tertiary">{col.note}</p> : null}
+            {/* 13/400 (`label`), not 12: §7's ladder bottoms out at 13. The
+                note says why a column is short, which is the one line here a
+                reader is meant to actually read; at `caption` it was set
+                smaller than anything else on the page. */}
+            {col.note ? (
+              <p className="mt-2.5 text-label text-tertiary">
+                <Num>{col.note}</Num>
+              </p>
+            ) : null}
           </nav>
         ))}
       </div>
