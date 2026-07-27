@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { inlineAction } from "@/components/ui";
 import { QUOTE } from "@/lib/booking/quote";
 import {
@@ -137,12 +137,15 @@ export default async function TripReceiptRoute({
           <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
             <dt className="w-24 shrink-0 text-bodySm text-secondary">Home</dt>
             <dd className="text-bodySm font-medium text-primary">
-              <Link className={inlineAction} href={TRIP.listingHref}>
-                {TRIP.home}
-              </Link>
-              <span className="ms-2 font-regular text-secondary">
-                <Num>{TRIP.where}</Num>
-              </span>
+              {/* A17: the sector isolate jumped in front of the home name. */}
+              <Phrase>
+                <Link className={inlineAction} href={TRIP.listingHref}>
+                  {TRIP.home}
+                </Link>
+                <span className="ms-2 font-regular text-secondary">
+                  <Num>{TRIP.where}</Num>
+                </span>
+              </Phrase>
             </dd>
           </div>
           <div className="flex flex-col gap-1 border-t border-hairline px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
@@ -179,8 +182,12 @@ export default async function TripReceiptRoute({
         <dl className="mt-4 max-w-[62ch]">
           <div className={moneyRow}>
             <dt className={moneyLabel}>
-              <span className="num">{formatPkr(QUOTE.nightly)}</span> ×{" "}
-              <span className="num">{QUOTE.nights}</span> nights
+              {/* A17: two money isolates and the word `nights` in one line —
+                  it rendered `nights 3 × PKR 12,500`. */}
+              <Phrase>
+                <span className="num">{formatPkr(QUOTE.nightly)}</span> ×{" "}
+                <span className="num">{QUOTE.nights}</span> nights
+              </Phrase>
             </dt>
             <dd className={moneyAmount}>{formatPkr(QUOTE.stay)}</dd>
           </div>
@@ -215,26 +222,29 @@ export default async function TripReceiptRoute({
         </p>
 
         <p className="mt-3 max-w-[62ch] text-bodySm font-regular leading-relaxed text-secondary">
-          {checkedIn ? (
-            <>
-              Your payment was <b className={payload}>held in trust until you checked in</b> on{" "}
-              <span>
-                <Num>{formatTripDate(TRIP.checkIn)}</Num>
-              </span>
-              .
-            </>
-          ) : (
-            <>
-              Your payment is <b className={payload}>held in trust until you check in</b> on{" "}
-              <span>
-                <Num>{formatTripDate(TRIP.checkIn)}</Num>
-              </span>
-              .
-            </>
-          )}{" "}
-          <Link className={inlineAction} href="/legal/guest-refund-policy">
-            What happens if you cancel
-          </Link>
+          {/*
+            A17, and the reason the `Phrase` is out here rather than around the
+            sentence inside the ternary: an isolate wrapping only the sentence
+            leaves the link after it as a second run, and the paragraph then puts
+            the two in RTL order — `What happens if you cancel` came FIRST. The
+            isolate has to reach the last word in the paragraph, link included.
+          */}
+          <Phrase>
+            {checkedIn ? (
+              <>
+                Your payment was <b className={payload}>held in trust until you checked in</b> on{" "}
+                <Num>{formatTripDate(TRIP.checkIn)}</Num>.
+              </>
+            ) : (
+              <>
+                Your payment is <b className={payload}>held in trust until you check in</b> on{" "}
+                <Num>{formatTripDate(TRIP.checkIn)}</Num>.
+              </>
+            )}{" "}
+            <Link className={inlineAction} href="/legal/guest-refund-policy">
+              What happens if you cancel
+            </Link>
+          </Phrase>
         </p>
       </TripSection>
 

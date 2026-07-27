@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ChevronLeftIcon, ChevronRightIcon, InfoIcon } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { btnSecondaryMd, btnSecondaryOnTint, focusRing, inlineAction, pressableCircle } from "@/components/ui";
 import { Segment, Segmented } from "@/components/ui/segmented";
 import { CheckMark } from "@/components/ui/marks";
@@ -386,7 +386,7 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
     const noun = count === 1 ? "night" : "nights";
     toast({
       message: (
-        <span dir="auto">
+        <Phrase>
           <Num>{`${String(count)} ${noun} ${opening ? "opened" : "blocked"}`}</Num>
           {selectedRange === null ? null : (
             <>
@@ -394,7 +394,7 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
               <span className="num">{selectedRange}</span>
             </>
           )}
-        </span>
+        </Phrase>
       ),
       icon: <CheckMark className="size-5" />,
       action: {
@@ -433,9 +433,9 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
             }}
             label="Which home"
             hint={
-              <span dir="auto">
+              <Phrase>
                 {`${listing.city}. Blocked nights belong to one home at a time.`}
-              </span>
+              </Phrase>
             }
             /*
              * `w-fit` so the track hugs its labels instead of spanning 1072px.
@@ -482,9 +482,9 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
           wrong edge of an RTL page.
         */}
         <h2 className="text-h6 font-semibold text-primary">
-          <span dir="auto">
+          <Phrase>
             <Num>{month.title}</Num>
-          </span>
+          </Phrase>
         </h2>
 
         <div className="flex items-center gap-2">
@@ -523,9 +523,14 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
 
       <p className="mt-4 flex max-w-[62ch] items-start gap-2 text-label font-regular leading-relaxed text-secondary">
         <InfoIcon className="mt-0.5 size-4 shrink-0 text-tertiary" />
-        <span dir="auto">
-          Prices are per night, in PKR. A booked night cannot be blocked, so a guest who has
-          already paid can never be shut out of the home.
+        <span>
+          {/* Nested, not replacing the flex item: `dir` on a flex item
+              blockifies it, and a blockified isolate resolves its own
+              `text-align` (`numerals.tsx`). */}
+          <Phrase>
+            Prices are per night, in PKR. A booked night cannot be blocked, so a guest who has
+            already paid can never be shut out of the home.
+          </Phrase>
         </span>
       </p>
 
@@ -548,7 +553,7 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
               otherwise let an RTL container reorder them past each other. */}
           <p className="text-bodyMd font-semibold text-primary">
             {hasSelection ? (
-              <span dir="auto">
+              <Phrase>
                 <Num>{`${String(selectedNights.length)} ${
                   selectedNights.length === 1 ? "night" : "nights"
                 } selected`}</Num>
@@ -558,7 +563,7 @@ function HostCalendarSurface({ today }: HostCalendarProps) {
                     <span className="num font-regular text-secondary">{selectedRange}</span>
                   </>
                 )}
-              </span>
+              </Phrase>
             ) : (
               "Block nights you need for yourself"
             )}

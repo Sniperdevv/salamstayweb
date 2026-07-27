@@ -63,7 +63,7 @@ import { controlRing, hostFieldSub } from "@/components/ui";
  * WHY THIS IS A CLIENT COMPONENT
  * ------------------------------
  * The gate. §3's `.capnote` is a FIXED SLOT whose text is the blocking reason
- * while the primary is disabled and the autosave line while it is enabled — so
+ * while the primary is disabled and the not-saved line while it is enabled — so
  * the step has to know what has been ticked to write it, and a server component
  * cannot. The cost is the `metadata` export (a client page may not carry one);
  * `noindex, follow` still arrives from `app/host/layout.tsx`, which is the field
@@ -304,14 +304,14 @@ export default function AmenitiesStepPage() {
       step={4}
       stepName="Amenities"
       /**
-       * §3: the caption's second line is a FIXED SLOT — the autosave line while
+       * §3: the caption's second line is a FIXED SLOT — the not-saved line while
        * the primary is enabled, the blocking reason while it is disabled — so
        * answering the question never shoves the page by a line. The disabled
        * string is hw-003 panel D's, verbatim.
        */
       note={
         answered
-          ? "Your progress saves as you go."
+          ? "Nothing you enter is saved yet."
           : "Tick one amenity, or the box below them, to continue."
       }
       backHref="/host/listings/new/capacity"

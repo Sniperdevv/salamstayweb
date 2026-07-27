@@ -207,7 +207,7 @@ export default function HouseRulesStep() {
     <WizardStep
       step={8}
       stepName="House rules"
-      note={blocked ?? "Your progress saves as you go."}
+      note={blocked ?? "Nothing you enter is saved yet."}
       backHref="/host/listings/new/title-description"
       nextHref="/host/listings/new/pricing"
       nextDisabled={blocked !== null}

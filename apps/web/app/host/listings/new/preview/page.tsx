@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { iconStroke } from "@salamstay/design-tokens/icons";
 import { HelpIcon, InfoIcon } from "@/components/icons";
+import { Phrase } from "@/components/numerals";
 import {
   FactRow,
   FactRows,
@@ -212,11 +213,18 @@ function GuestEyePreview() {
           `·` one per gap, spaces both sides, never chained decoratively
           (TASTE §7). Each digit run is its own `.num`, and each sits inside the
           same text run as its noun so no flex gap can open inside a phrase.
+
+          `Phrase` around the line — GO-LIVE A17. Three isolates in one sentence,
+          the last of them at the end of the run, so under RTL that one took the
+          paragraph direction and led: `6 Entire place · 3 bedrooms · 2 bathrooms
+          · sleeps`. Inside the block span, never on it (`numerals.tsx`).
         */}
         <span className="mt-1.5 block text-bodySm font-regular text-secondary">
-          {L.stayType} · <span className="num">{L.bedrooms}</span> bedrooms ·{" "}
-          <span className="num">{L.bathrooms}</span> bathrooms · sleeps{" "}
-          <span className="num">{L.sleeps}</span>
+          <Phrase>
+            {L.stayType} · <span className="num">{L.bedrooms}</span> bedrooms ·{" "}
+            <span className="num">{L.bathrooms}</span> bathrooms · sleeps{" "}
+            <span className="num">{L.sleeps}</span>
+          </Phrase>
         </span>
 
         {/*

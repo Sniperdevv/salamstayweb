@@ -9,6 +9,7 @@ import {
   hostFieldSub,
   tintTransition,
 } from "@/components/ui";
+import { Phrase } from "@/components/numerals";
 import { CheckMark } from "@/components/ui/marks";
 import { countUnits, type TextareaCounter } from "@/components/ui/textarea";
 
@@ -210,8 +211,12 @@ export function TextField({
           edge in both directions, with no rule of its own.
         */
         <div className="mt-2 flex items-baseline justify-between gap-4">
+          {/* `Phrase` around whatever `countLabel` composed — GO-LIVE A17.
+              The prop hands out an already-isolated digit and asks for prose
+              beside it, which is the bug by construction: this rendered
+              `characters 0`. Nested inside the flex item, never on it. */}
           <span className="whitespace-nowrap text-label font-regular text-tertiary">
-            {counter.countLabel(<span className="num">{count}</span>)}
+            <Phrase>{counter.countLabel(<span className="num">{count}</span>)}</Phrase>
           </span>
 
           <span
@@ -226,7 +231,9 @@ export function TextField({
               is the word beside it.
             */}
             <CheckMark className={`size-4 flex-none ${settled ? "opacity-100" : "opacity-0"}`} />
-            {settled ? counter.guideSettled : counter.guide}
+            <span>
+              <Phrase>{settled ? counter.guideSettled : counter.guide}</Phrase>
+            </span>
           </span>
         </div>
       ) : null}

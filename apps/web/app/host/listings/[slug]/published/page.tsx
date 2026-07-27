@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { iconStroke } from "@salamstay/design-tokens/icons";
+import { Phrase } from "@/components/numerals";
 import {
   FactRow,
   FactRows,
@@ -270,7 +271,13 @@ export default async function ListingPublishedPage({
           <span className="min-w-0 flex-1">
             <b className="block text-bodyMd font-semibold text-primary">{L.title}</b>
             <span className="mt-0.5 block text-bodySm font-regular text-secondary">
-              {L.area} · {L.stayType} · sleeps <span className="num">{L.sleeps}</span>
+              {/* A17: the count closes the line, so under RTL the isolate took
+                  the paragraph direction and led — `6 · sleeps Rawalpindi
+                  Cantonment · Entire place · sleeps`. Inside the block span,
+                  never on it (`components/numerals.tsx`). */}
+              <Phrase>
+                {L.area} · {L.stayType} · sleeps <span className="num">{L.sleeps}</span>
+              </Phrase>
             </span>
             <span className="mt-2 flex flex-wrap items-center gap-2.5">
               {/*

@@ -1,4 +1,4 @@
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 
 /**
  * The two pieces of furniture the edit hub and the lifecycle controls share.
@@ -73,12 +73,24 @@ export function ListingSampleStrip({ className = "" }: { readonly className?: st
  * precisely: *"the isolate has to wrap the SENTENCE, not the number in it."*
  *
  * So the lead and the trail are parameters rather than sibling text, which
- * makes the correct thing the only thing a call site can express. `dir="auto"`
- * resolves from the first strong character, so this reads as one LTR run inside
- * an RTL page today and will resolve from the Urdu on the `/ur/` route.
+ * makes the correct thing the only thing a call site can express.
  *
- * INLINE, never on the block: a block would take its `text-align` from the
- * resolved direction and pull the heading to the wrong edge.
+ * THE MECHANISM IS NOW SHARED; THIS API IS WHAT STAYED LOCAL.
+ * ----------------------------------------------------------
+ * The `dir="auto"` span this used to draw by hand is
+ * `components/numerals.tsx`'s `Phrase`, hoisted there on 2026-07-27 when the
+ * A17 sweep found the same reordering live on eleven more surfaces and it
+ * became clear the isolate belonged in the primitive rather than in whichever
+ * file happened to be reviewed next. `Num` carries it for whole-string phrases
+ * and `Phrase` for composed ones; this component is a third thing and keeps its
+ * own shape.
+ *
+ * What it keeps is the RIGIDITY, which is the part that generalises badly and
+ * is worth the most here. `Phrase` takes `children`, so a careless call site can
+ * still wrap the name and leave the words outside it. `lead`/`name`/`trail`
+ * cannot express that — the trail is a parameter, so it is inside the isolate by
+ * construction. This is the shape to copy whenever a phrase has exactly one
+ * variable in it and is built in more than one place.
  */
 export function ListingPhrase({
   lead,
@@ -90,10 +102,24 @@ export function ListingPhrase({
   readonly trail?: string;
 }) {
   return (
-    <span dir="auto">
-      {lead}
-      <Num>{name}</Num>
-      {trail}
+    /*
+     * The plain outer span is not decoration — it is what lets this be dropped
+     * into a laid-out box without the isolate changing anything.
+     *
+     * The status page puts it inside an `inline-flex` back link, which
+     * BLOCKIFIES its children; an isolate blockified that way starts resolving
+     * its own `text-align` and can pull the label off its edge
+     * (`components/numerals.tsx`). Every call site would otherwise have to know
+     * that, which is the class of thing this component exists to stop anyone
+     * needing to know. The outer span takes the blockification and the `Phrase`
+     * inside it stays inline.
+     */
+    <span>
+      <Phrase>
+        {lead}
+        <Num>{name}</Num>
+        {trail}
+      </Phrase>
     </span>
   );
 }

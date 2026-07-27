@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { btnSecondary, inlineAction } from "@/components/ui";
 import {
   TRIP,
@@ -129,19 +129,19 @@ export default async function TripReviewRoute({
 
       <div className="mt-8 max-w-[62ch] border-t border-hairline pt-6">
         <p className="text-bodyMd font-regular leading-relaxed text-secondary">
-          You are staying at{" "}
-          <Link className={inlineAction} href={TRIP.listingHref}>
-            {TRIP.home}
-          </Link>{" "}
-          from{" "}
-          <span>
-            <Num>{formatStayRange()}</Num>
-          </span>
-          . This page opens on{" "}
-          <b className="font-semibold text-primary">
-            <Num>{formatTripDate(TRIP.checkOut)}</Num>
-          </b>
-          , the day you check out.
+          {/* A17: two date isolates in one sentence put the closing clause at
+              the head of the line. The isolate is the whole sentence. */}
+          <Phrase>
+            You are staying at{" "}
+            <Link className={inlineAction} href={TRIP.listingHref}>
+              {TRIP.home}
+            </Link>{" "}
+            from <Num>{formatStayRange()}</Num>. This page opens on{" "}
+            <b className="font-semibold text-primary">
+              <Num>{formatTripDate(TRIP.checkOut)}</Num>
+            </b>
+            , the day you check out.
+          </Phrase>
         </p>
 
         <p className="mt-3 text-bodySm font-regular leading-relaxed text-secondary">

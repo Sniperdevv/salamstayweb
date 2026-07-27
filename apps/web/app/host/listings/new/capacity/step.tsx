@@ -140,7 +140,7 @@ export default function CapacityStepPage() {
    * and disappears and shoves the page every time the host answers something.
    */
   const note = answered
-    ? "Your progress saves as you go."
+    ? "Nothing you enter is saved yet."
     : guests === 0 && beds === 0
       ? "Set the number of guests and beds to continue."
       : guests === 0

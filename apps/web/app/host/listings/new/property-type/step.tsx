@@ -379,7 +379,7 @@ export default function PropertyTypePage() {
     <WizardStep
       step={1}
       stepName="Property type"
-      note={blocking ?? "Your progress saves as you go."}
+      note={blocking ?? "Nothing you enter is saved yet."}
       /* HOST-SHELL §4: at step 1 Back LEAVES the wizard rather than going
          nowhere, and `hw-001` panel B plus `hw-002` panels A/C/D all draw
          `/host/listings`. The API spec this step was handed said `null`; that

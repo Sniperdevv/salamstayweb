@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Phrase } from "@/components/numerals";
 import { CheckMark } from "@/components/ui/marks";
 import { formatPkr } from "@/lib/money";
 
@@ -210,18 +211,22 @@ export function EarningsBreakdown({
           this rendered `nights 3 × PKR 9,500`. The isolate has to wrap the
           SENTENCE, not each number in it.
 
-          It goes on this span because the span is already inline and already
-          wraps the whole phrase. Never on the block — a block would take its
-          text-align from the resolved direction and pull the line to the wrong
-          edge. `auto` resolves from the first strong character, so it is right
-          in Latin now and in Nastaliq on the future `/ur/` route.
+          It is `Phrase` (`components/numerals.tsx`) rather than a hand-written
+          `dir="auto"` since the A17 sweep hoisted the isolate into the
+          primitive, and it is NESTED inside the flex item rather than being it:
+          this row is `display:flex`, so an isolate placed directly on the child
+          would be blockified and would resolve its own `text-align`. `auto`
+          resolves from the first strong character, so it is right in Latin now
+          and in Nastaliq on the future `/ur/` route.
 
           Reaches `/host/earnings` and `/host/reservations/[id]`, which both
           render this component.
         */}
-        <span dir="auto" className="text-bodySm font-regular text-secondary">
-          <span className="num">{formatPkr(money.nightly)}</span> ×{" "}
-          <span className="num">{nights}</span> {nights === 1 ? "night" : "nights"}
+        <span className="text-bodySm font-regular text-secondary">
+          <Phrase>
+            <span className="num">{formatPkr(money.nightly)}</span> ×{" "}
+            <span className="num">{nights}</span> {nights === 1 ? "night" : "nights"}
+          </Phrase>
         </span>
         <span className="whitespace-nowrap text-bodySm font-regular text-primary">
           <span className="num">{formatPkr(money.gross)}</span>

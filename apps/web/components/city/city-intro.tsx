@@ -1,6 +1,6 @@
 import type { CityContent } from "@/lib/content/cities/types";
 import { FACT_ICONS } from "./city-icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { shell, rhythm } from "@/components/discovery/shell";
 
 /**
@@ -69,7 +69,12 @@ export function CityIntro({ city }: { readonly city: CityContent }) {
                   three numerals and leaves the sector letters and the separator
                   in the text flow) and leaves everything else alone. */}
               <dd className="mt-1.5 text-bodySm text-secondary">
-                <Num>{fact.value}</Num> {fact.muted}
+                {/* A17: the value and its muted tail are two runs, so under RTL
+                    the tail led — `· Blue Area F-6 · F-7 · E-7`. `Phrase` closes
+                    the cell around both. */}
+                <Phrase>
+                  <Num>{fact.value}</Num> {fact.muted}
+                </Phrase>
               </dd>
             </div>
           );

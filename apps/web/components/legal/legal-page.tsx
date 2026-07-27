@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ConsentResetButton } from "@/components/consent-banner";
+import { Phrase } from "@/components/numerals";
 import { ConsentStateLine } from "@/components/legal/consent-state-line";
 import {
   blockTitle,
@@ -236,8 +237,15 @@ function BlockNode({ block }: { readonly block: Block }) {
               className="border-t border-hairline py-4 first:border-t-0 first:pt-0 sm:[&:nth-child(2)]:border-t-0 sm:[&:nth-child(2)]:pt-0"
             >
               <p className={factTitle}>
-                <span className="num mr-2 text-secondary">{i + 1}</span>
-                <Runs runs={item.title} />
+                {/* A17: the ordinal is a `.num` isolate opening the line, so
+                    under RTL it took the paragraph direction and the clause read
+                    `Claims are matched against the closed list 1`. `Phrase`
+                    resolves the whole title from its own first strong character,
+                    which keeps the ordinal leading in either script. */}
+                <Phrase>
+                  <span className="num mr-2 text-secondary">{i + 1}</span>
+                  <Runs runs={item.title} />
+                </Phrase>
               </p>
               <p className={`mt-1 ${detailText}`}>
                 <Runs runs={item.body} />

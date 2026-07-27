@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { CertificateIcon } from "@/components/booking/verification-copy";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { btnSecondary, inlineAction } from "@/components/ui";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { DocumentId } from "@/lib/booking/booking";
@@ -178,9 +178,9 @@ const CHECKED_FIELDS = [
         question, and word order is the first thing an Urdu translation changes.
         Do not delete it on the grounds that removing it looks identical.
       */
-      <span dir="auto">
+      <Phrase>
         <Num>Your 13-digit identity number</Num>
-      </span>
+      </Phrase>
     ),
   },
   { field: "Date of birth", what: <>Confirms the match against NADRA&apos;s record</> },

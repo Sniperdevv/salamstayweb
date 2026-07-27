@@ -464,6 +464,22 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/host/listings/cantt-view-residence/edit", "ha-036", "Edit Cantt View Residence — SalamStay hosting", "noindex,follow", null),
   page("/host/listings/gulberg-2-residence/status", "ha-076", "Status of Gulberg 2 Residence — SalamStay hosting", "noindex,follow", null),
   page("/host/listings/cantt-view-residence/status", "ha-076", "Status of Cantt View Residence — SalamStay hosting", "noindex,follow", null),
+  /**
+   * Both halves of the review loop, built 2026-07-27, and both are empty states
+   * — which is the finished shape, not a stage. This product has zero reviews:
+   * no model, no route, no fixture, no rating anywhere.
+   *
+   * HA-077 (respond to a review) is deliberately NOT a route. A reply composer
+   * for a review nobody wrote has no record and no date that would ever open a
+   * gate, unlike `/trips/{id}/review`, which could ship one because a real
+   * check-out date stands behind it. A route file is itself a claim that a
+   * surface exists.
+   *
+   * Neither page has an inbound link yet — `/host/reviews` is not one of the six
+   * nav tabs, and the account menu has no reviews row.
+   */
+  page("/host/reviews", "ha-062", "Reviews from guests — SalamStay hosting", "noindex,follow", null),
+  page("/account/profile/reviews", "ga-101", "Your reviews — SalamStay", "noindex,follow", null),
   page("/host/messages", "ha-052", "Your messages — SalamStay hosting", "noindex,follow", null),
   page(
     "/host/messages/host-margalla-view",

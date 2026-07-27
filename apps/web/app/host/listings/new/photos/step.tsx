@@ -513,7 +513,7 @@ export default function PhotosStepPage() {
     ? "Add at least one photo to continue."
     : working
       ? "The photos you just added are still being resized."
-      : "Your progress saves as you go.";
+      : "Nothing you enter is saved yet.";
 
   return (
     <WizardStep

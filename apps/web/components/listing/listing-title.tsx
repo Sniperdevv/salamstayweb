@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { PinIcon } from "@/components/icons";
 import { inlineAction, focusRing } from "@/components/ui";
 import { shell } from "@/components/discovery/shell";
@@ -84,21 +84,30 @@ export function ListingTitle({ listing }: { readonly listing: ListingContent }) 
 
       <p className="mt-3 text-bodySm leading-relaxed text-secondary">
         <PinIcon className="mr-2 inline size-4 align-[-3px] text-tertiary" />
-        <Link href={place.areaHref} className={`${inlineAction} ${focusRing}`}>
-          <Num>{place.areaLabel}</Num>
-        </Link>
-        {", "}
-        <Link href={place.cityHref} className={`${inlineAction} ${focusRing}`}>
-          <Num>{place.cityLabel}</Num>
-        </Link>
-        {place.facts.map((fact) => (
-          <Fragment key={fact}>
-            {" "}
-            <span className="whitespace-nowrap">
-              <span className="text-border-strong">&middot;</span> <Num>{fact}</Num>
-            </span>
-          </Fragment>
-        ))}
+        {/*
+          A17: seven isolates on one line — two place links and five facts, each
+          carrying digits — and under RTL the whole line ran backwards:
+          `2 baths · 3 beds · 2 bedrooms · 6 guests · Entire apartment ·
+          Islamabad, F-7`. This is the site's most-linked indexable page and the
+          line under its H1, so the isolate wraps the entire meta line.
+        */}
+        <Phrase>
+          <Link href={place.areaHref} className={` `}>
+            <Num>{place.areaLabel}</Num>
+          </Link>
+          {", "}
+          <Link href={place.cityHref} className={` `}>
+            <Num>{place.cityLabel}</Num>
+          </Link>
+          {place.facts.map((fact) => (
+            <Fragment key={fact}>
+              {" "}
+              <span className="whitespace-nowrap">
+                <span className="text-border-strong">&middot;</span> <Num>{fact}</Num>
+              </span>
+            </Fragment>
+          ))}
+        </Phrase>
       </p>
     </div>
   );

@@ -109,7 +109,7 @@ export default function TitleDescriptionStepPage() {
    * beside it is also empty. A host who has a name for their place and nothing
    * else to say today can still move on.
    */
-  const note = hasTitle ? "Your progress saves as you go." : "Add a title to continue.";
+  const note = hasTitle ? "Nothing you enter is saved yet." : "Add a title to continue.";
 
   return (
     <WizardStep

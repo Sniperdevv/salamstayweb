@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { CalendarIcon, ChevronRightIcon, ClockIcon, HomeIcon } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { HostEmpty } from "@/components/host/host-empty";
 import { Tab, TabList, TabPanel, Tabs } from "@/components/ui/tab-strip";
 import {
@@ -233,16 +233,32 @@ function RequestCard({ reservation: r }: { readonly reservation: Reservation }) 
           </p>
           <p className="mt-2 flex items-start gap-2 text-bodySm font-regular text-secondary">
             <CalendarIcon className="mt-0.5 size-4 flex-none text-tertiary" />
+            {/*
+              GO-LIVE A17. Two `.num` isolates with a `·` and the word "nights"
+              between them reordered under RTL and this read `nights 3 · Fri 14 –
+              Mon 17 Aug 2026`. The isolate has to wrap the sentence, not each
+              number in it. It goes INSIDE the flex item, not on it: `dir` on a
+              flex item blockifies it and would move the calendar glyph.
+            */}
             <span>
-              <Num>{r.dates}</Num> · <Num>{String(r.nights)}</Num>{" "}
-              {r.nights === 1 ? "night" : "nights"}
+              <Phrase>
+                <Num>{r.dates}</Num> · <Num>{String(r.nights)}</Num>{" "}
+                {r.nights === 1 ? "night" : "nights"}
+              </Phrase>
             </span>
           </p>
           <p className="mt-2 text-bodySm font-regular text-secondary">
             {/* No underline: TASTE §8 underlines a price only where the price
                 itself opens a breakdown. This one does not — `Review request`
-                does, and it says so in words. */}
-            <span className="num">{formatPkr(r.money.nightly)}</span> a night
+                does, and it says so in words.
+
+                A17: the money idiom puts `.num` on the whole `PKR 12,500` (see
+                `lib/money.ts`), which keeps the code with its digits but leaves
+                `a night` loose in the RTL flow — it rendered `a night PKR
+                12,500`. `Phrase` closes the sentence around both. */}
+            <Phrase>
+              <span className="num">{formatPkr(r.money.nightly)}</span> a night
+            </Phrase>
           </p>
 
           {r.respondBy === undefined ? null : (
@@ -254,8 +270,13 @@ function RequestCard({ reservation: r }: { readonly reservation: Reservation }) 
                 a shape" without saying "you are late".
               */}
               <StatusChip tone="info" icon={<ClockIcon className="size-4" />}>
+                {/* A17: `Respond by Mon 27 Jul, 3:00 PM` rendered `Mon 27 Jul,
+                    3:00 PM Respond by` — the two words are the part that moved,
+                    so the isolate goes around both of them and the date. */}
                 <span>
-                  Respond by <Num>{r.respondBy}</Num>
+                  <Phrase>
+                    Respond by <Num>{r.respondBy}</Num>
+                  </Phrase>
                 </span>
               </StatusChip>
             </div>
@@ -308,7 +329,12 @@ function ReservationRow({ reservation: r }: { readonly reservation: Reservation 
         <span className="min-w-0 flex-1">
           <span className="block text-bodyMd font-semibold text-primary">{r.guest}</span>
           <span className="mt-0.5 block text-bodySm font-regular text-secondary">
-            {r.party} · <Num>{r.datesShort}</Num>
+            {/* A17, pre-emptively: the party string carries its own digits and
+                the dates arrive isolated, so the `·` gap is the seam the RTL
+                paragraph would reorder across. */}
+            <Phrase>
+              {r.party} · <Num>{r.datesShort}</Num>
+            </Phrase>
           </span>
           <span className="mt-2 flex flex-wrap items-center gap-2">
             <StatusChip tone={status.tone}>{ROW_STATUS_LABEL[r.status]}</StatusChip>

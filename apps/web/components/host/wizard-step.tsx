@@ -140,8 +140,9 @@ export interface WizardStepProps {
   /**
    * The caption's second line, and **it is required** — that is the whole
    * anti-reflow mechanism (§3: `.capnote` is a fixed slot). Enabled primary:
-   * `Your progress saves as you go.` Disabled: the blocking reason, naming ONE
-   * action. See `WizardProgressCaption`.
+   * `Nothing you enter is saved yet.` Disabled: the blocking reason, naming ONE
+   * action. See `WizardProgressCaption`, which carries the ruling behind that
+   * enabled string.
    */
   readonly note: ReactNode;
   /**

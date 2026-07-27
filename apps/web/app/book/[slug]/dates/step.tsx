@@ -6,7 +6,7 @@ import { CheckoutStep } from "@/components/booking/checkout-step";
 import { DateRangePicker } from "@/components/booking/date-range-picker";
 import { dateRange, shortDate } from "@/components/booking/calendar-model";
 import { AlertCircleIcon, InfoIcon } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import {
   fieldErrorLine,
   fieldGroup,
@@ -225,11 +225,16 @@ export default function DatesStep({ listing, today }: DatesStepProps) {
             Guests
           </h2>
           <p className={sectionSub}>
-            This home sleeps up to{" "}
-            <b className={payload}>
-              <span className="num">{listing.capacity.maxGuests}</span>
-            </b>
-            . Infants do not count toward the limit.
+            {/* A17: a bolded `.num` mid-sentence, and the sentence broke around
+                it under RTL — `. Infants do not count toward the limit. This
+                home sleeps up to 6`. */}
+            <Phrase>
+              This home sleeps up to{" "}
+              <b className={payload}>
+                <span className="num">{listing.capacity.maxGuests}</span>
+              </b>
+              . Infants do not count toward the limit.
+            </Phrase>
           </p>
 
           <div
@@ -355,7 +360,14 @@ function StayWindow({ listing }: { readonly listing: ListingContent }) {
   const minNights = listing.capacity.minNights;
 
   return (
-    <>
+    /*
+     * A17: three isolates across two sentences, and the trailing one took the
+     * paragraph direction under RTL — every `/book/{slug}` step opened this line
+     * `. Minimum stay 2 nights. Check-in after 2:00 PM · Check-out before 11:00
+     * AM`. The isolate is the whole note, so it belongs on the component that
+     * composes it rather than on each of the seven surfaces that print it.
+     */
+    <Phrase>
       {rule === undefined ? null : (
         <>
           <Num>{rule.detail === undefined ? rule.title : `${rule.title} · ${rule.detail}`}</Num>.{" "}
@@ -366,7 +378,7 @@ function StayWindow({ listing }: { readonly listing: ListingContent }) {
         <span className="num">{minNights}</span> {minNights === 1 ? "night" : "nights"}
       </b>
       .
-    </>
+    </Phrase>
   );
 }
 

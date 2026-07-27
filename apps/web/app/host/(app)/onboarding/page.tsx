@@ -5,6 +5,7 @@ import Link from "next/link";
 import { iconStroke } from "@salamstay/design-tokens/icons";
 
 import { HomeIcon } from "@/components/icons";
+import { Phrase } from "@/components/numerals";
 import { IdCardIcon } from "@/components/host/host-icons";
 import { CREATE_LISTING_HREF } from "@/components/host/host-nav";
 import { inlineAction } from "@/components/ui";
@@ -218,10 +219,10 @@ const SETUP_STEPS: readonly SetupStep[] = [
      * publish button that creates nothing is a hub that lies by omission.
      */
     body: (
-      <span dir="auto">
+      <Phrase>
         All <span className="num">9</span> steps of the listing form are built. Nothing behind them
         is: there is no listing store, so reaching the end of the form creates no listing.
-      </span>
+      </Phrase>
     ),
     state: { kind: "open", href: CREATE_LISTING_HREF, label: "Open the listing form" },
   },

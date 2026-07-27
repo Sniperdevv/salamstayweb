@@ -62,13 +62,23 @@ export default function HostListingsPage() {
         glyph={<HomeIcon className="size-6" />}
         title="No listings yet"
         /*
-         * `ha-035` panel E's sentence, unchanged. The second half is the one
-         * genuinely reassuring fact about the form, and it is the same promise
-         * the wizard's action bar makes in `.capnote` ("Your progress saves as
-         * you go") — one product saying one thing in two places, which is the
-         * only way a host believes it.
+         * `ha-035` panel E's first sentence, unchanged. THE SECOND ONE IS NOT
+         * THE CARD'S — `GO-LIVE` A18, and the same edit as the wizard footer's.
+         *
+         * Panel E ends "The listing form saves as you go, so you can stop and
+         * come back", which is the same promise `.capnote` was making, and A13
+         * records that neither was true: no draft store, every wizard step's
+         * answers in its own `useState`, discarded by the `<Link>` to the next
+         * step. A host who stopped and came back found nothing. A18 rules the
+         * copy changes and the draft store stays a separate founder call.
+         *
+         * The replacement is the wizard caption's own sentence, which keeps the
+         * property the old pair had and is the only reason a host believes
+         * either one: **one product saying one thing in two places.** Change one
+         * and change the other, in the same commit, in both directions — the day
+         * a draft store exists, the reassurance comes back to both.
          */
-        body="Your homes will appear here once you publish one. The listing form saves as you go, so you can stop and come back."
+        body="Your homes will appear here once you publish one. Nothing you enter in the listing form is saved yet."
         actions={
           /*
            * The surface's one primary, which is why the nav's `Create a listing`

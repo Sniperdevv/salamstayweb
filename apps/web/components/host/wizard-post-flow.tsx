@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { ChevronLeftIcon } from "@/components/icons";
+import { Phrase } from "@/components/numerals";
 import { focusRing } from "@/components/ui";
 import { WizardProgressTrack } from "./wizard-progress";
 
@@ -151,8 +152,19 @@ export function FactRow({ icon, title, detail, tone = "neutral" }: FactRowProps)
       </span>
       <span className="min-w-0 flex-1">
         <b className="block text-bodySm font-semibold text-primary">{title}</b>
+        {/*
+          `Phrase` around the detail — GO-LIVE A17, and here rather than in the
+          fixture that writes the sentences. A fact detail is prose with a figure
+          in it by definition ("About **4 hours** on a typical day, usually
+          between 2 and 5 PM", "**25 Mbps**, measured on the guest room's own
+          connection"), so every one of them is a phrase whose `.num` isolates
+          reorder under RTL — the Wi-Fi row opened `, measured on the guest
+          room's own connection. Mbps`. The row owns the isolate so that a
+          content author writing the next fact writes a sentence and nothing
+          else.
+        */}
         <span className="mt-0.5 block max-w-[62ch] text-label font-regular leading-relaxed text-secondary">
-          {detail}
+          <Phrase>{detail}</Phrase>
         </span>
       </span>
     </li>

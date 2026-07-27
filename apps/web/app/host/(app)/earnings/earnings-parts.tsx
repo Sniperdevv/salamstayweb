@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { FeesReceiptIcon } from "@/components/home-icons";
 import { HostEmpty } from "@/components/host/host-empty";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { btnSecondary, inlineAction } from "@/components/ui";
 import { formatPkr } from "@/lib/money";
 
@@ -149,8 +149,14 @@ export function StayPayout({ reservation: r }: { readonly reservation: Reservati
         <p className="text-bodyMd font-semibold text-primary">{r.listing}</p>
         <p className="mt-1 text-bodySm font-regular text-secondary">{r.guest}</p>
         <p className="mt-0.5 text-bodySm font-regular text-secondary">
-          <Num>{r.dates}</Num> · <Num>{String(r.nights)}</Num>{" "}
-          {r.nights === 1 ? "night" : "nights"}
+          {/* A17: `Phrase`, not a bare pair of `Num`s. Two isolates with a `·`
+              and the unit word between them reordered under RTL and this read
+              `nights 3 · Sat 1 – Tue 4 Aug 2026`. Same line, same fix, as
+              `../reservations/tabs.tsx`. */}
+          <Phrase>
+            <Num>{r.dates}</Num> · <Num>{String(r.nights)}</Num>{" "}
+            {r.nights === 1 ? "night" : "nights"}
+          </Phrase>
         </p>
 
         <p className="mt-4 lg:mt-auto lg:pt-6">

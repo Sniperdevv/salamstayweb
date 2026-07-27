@@ -68,7 +68,7 @@ import { TextField } from "@/components/ui/text-field";
  * WHY THIS IS A CLIENT COMPONENT
  * ------------------------------
  * The gate. §3's `.capnote` is a FIXED SLOT carrying the blocking reason while
- * the primary is disabled and the autosave line while it is enabled, so the step
+ * the primary is disabled and the not-saved line while it is enabled, so the step
  * has to know what has been answered to write it. The cost is the `metadata`
  * export (a client page may not carry one); `noindex, follow` still arrives from
  * `app/host/layout.tsx`, which is the field that matters on a host route.
@@ -346,7 +346,7 @@ export default function PracticalFactsStepPage() {
       ? "Choose a backup power option. None is one of them."
       : !runtimeAnswered
         ? "Add how many hours the backup runs, or choose None above."
-        : "Your progress saves as you go.";
+        : "Nothing you enter is saved yet.";
 
   return (
     <WizardStep

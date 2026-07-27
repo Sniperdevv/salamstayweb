@@ -196,8 +196,32 @@ export interface WizardProgressCaptionProps {
    * The second line, and **it is required** — that is the whole anti-reflow
    * mechanism. See the note on the component below.
    *
-   * Enabled primary: `Your progress saves as you go.`
+   * Enabled primary: `Nothing you enter is saved yet.`
    * Disabled primary: the blocking reason — `Pick a property type to continue.`
+   *
+   * THE ENABLED STRING WAS A PROMISE AND IT WAS FALSE. DO NOT RESTORE IT.
+   * ---------------------------------------------------------------------
+   * It read `Your progress saves as you go.` until 2026-07-27, and `HOST-SHELL`
+   * §3 and `ha-019` both printed it that way. `GO-LIVE` A13 records why it
+   * could not stay: there is no draft store. Every step holds its answers in
+   * its own `useState`, each step is a separate route, and a `<Link>` to the
+   * next one unmounts the last — so nothing survives the step it was typed on,
+   * let alone a host who closes the tab. A18 is the founder ruling on that: the
+   * copy changes, the draft store is a separate feature and a separate call.
+   *
+   * The replacement states the absence and stops. It is not a warning: the slot
+   * is `text.tertiary` at caption scale, there is no error colour, no icon and
+   * no banner, and it reads in the same register as `HostSetupStrip`'s "nothing
+   * you enter is kept" and `ListingSampleStrip`'s "SalamStay has no listing
+   * store yet" — the two sibling host surfaces that already name what is
+   * missing without apologising for it. `yet` is doing the same work there:
+   * unbuilt, not broken.
+   *
+   * It deliberately does NOT tell the host to finish in one sitting. One
+   * sitting does not help either — step 1's answers are gone by step 2 — so
+   * that sentence would have replaced one false promise with a smaller one.
+   * When the draft store lands, the true sentence comes back here, and it comes
+   * back to `/host/listings`' empty state in the same commit.
    */
   readonly note: ReactNode;
   /** The lead word. `Step`; pass `مرحلہ` on the Urdu route. */

@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { Phrase } from "@/components/numerals";
 import {
   ArrowRightIcon,
   ChevronRightIcon,
@@ -65,7 +67,11 @@ export default function NotFound() {
               green is spent on the wordmark dot, the search submit, the one
               primary CTA and verification marks (§2). */}
           <p className="text-overline uppercase text-tertiary">
-            Error <span className="num">404</span>
+            {/* A17: `404` is a `.num` isolate ending the line, so under RTL it
+                took the paragraph direction and the status read `404 Error`. */}
+            <Phrase>
+              Error <span className="num">404</span>
+            </Phrase>
           </p>
           <h1 className="mt-3 max-w-[18ch] text-h2 font-semibold tracking-tighter text-primary md:text-h1 md:font-semibold">
             Page not found

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Phrase } from "./numerals";
 import { focusRing, gutter } from "./ui";
 
 /**
@@ -185,7 +186,13 @@ export function SiteFooter() {
             size a footer uses when it wants the links unread. */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-hairline py-5 text-label text-secondary">
           <span>
-            © <span className="num">2026</span> SalamStay
+            {/* A17: the year is a `.num` isolate opening the line, so under RTL it
+                took the paragraph direction and the copyright read `SalamStay
+                2026 ©` on every public page. `Phrase` nested inside the flex
+                item, never on it (`components/numerals.tsx`). */}
+            <Phrase>
+              © <span className="num">2026</span> SalamStay
+            </Phrase>
           </span>
           <div className="flex flex-wrap gap-x-5 gap-y-3">
             {BOTTOM.map((l) => (

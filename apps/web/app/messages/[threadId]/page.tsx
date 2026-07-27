@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ActionList, ActionRow } from "@/components/booking/post-flow";
 import { CalendarIcon } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { GUEST_STUB_LINKS, RegistryStub, stubMetadata } from "@/components/registry-stub";
 import { inlineAction } from "@/components/ui";
 import { TRIP, formatStayRange, tripPath } from "@/lib/booking/trip-record";
@@ -252,10 +252,15 @@ export default async function ThreadRoute({
         per gap with spaces both sides (TASTE §7).
       */}
       <p className="mt-2 max-w-[56ch] text-bodyMd font-regular leading-relaxed text-secondary">
-        <Link className={inlineAction} href={TRIP.listingHref}>
-          {TRIP.home}
-        </Link>{" "}
-        · <Num>{stayRange}</Num>
+        {/* A17: the date isolate ends the line, so under RTL it took the
+            paragraph direction and led it — `Fri 14 – Mon 17 Aug 2026 ·
+            Margalla View Apartment`. `Phrase` closes the line around both. */}
+        <Phrase>
+          <Link className={inlineAction} href={TRIP.listingHref}>
+            {TRIP.home}
+          </Link>{" "}
+          · <Num>{stayRange}</Num>
+        </Phrase>
       </p>
 
       {/*

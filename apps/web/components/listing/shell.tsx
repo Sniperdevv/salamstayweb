@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { withNumerals } from "@/components/numerals";
+import { Phrase, withNumerals } from "@/components/numerals";
 import { inlineAction } from "@/components/ui";
 import type { RichText } from "@/lib/content/listings/is-f7-2bed";
 
@@ -110,13 +110,20 @@ const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
  * emphasis list lives in the content object beside the sentence it belongs to,
  * so a copy edit and its emphasis cannot drift apart, and a payload that no
  * longer appears in the text simply renders plain rather than throwing.
+ *
+ * `Phrase` around the lot, and it is why this reaches for `withNumerals`
+ * directly rather than `Num` — GO-LIVE A17. One sentence here becomes up to
+ * five nodes (bold runs, plain runs, and a `.num` isolate inside any of them),
+ * and under RTL every one of those isolates is free to reorder past the others.
+ * `Num` would draw an isolate per SEGMENT, which is the half-right fix; the
+ * segments have to sit inside a single isolate that spans the whole sentence.
  */
 export function Copy({ text, bold }: RichText) {
-  if (!bold || bold.length === 0) return <>{withNumerals(text, "c")}</>;
+  if (!bold || bold.length === 0) return <Phrase>{withNumerals(text, "c")}</Phrase>;
 
   const pattern = new RegExp(`(${bold.map(escapeRe).join("|")})`, "g");
   return (
-    <>
+    <Phrase>
       {text.split(pattern).map((part, i) =>
         i % 2 === 1 ? (
           <strong key={`b${i}`} className="font-semibold text-primary">
@@ -126,6 +133,6 @@ export function Copy({ text, bold }: RichText) {
           <Fragment key={`s${i}`}>{withNumerals(part, `s${i}`)}</Fragment>
         ),
       )}
-    </>
+    </Phrase>
   );
 }

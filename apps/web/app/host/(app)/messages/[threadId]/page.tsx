@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ChevronLeftIcon } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { RegistryStubBody, stubLayout } from "@/components/registry-stub";
 import { inlineAction } from "@/components/ui";
 import { CheckMark } from "@/components/ui/marks";
@@ -296,9 +296,9 @@ function Message({
         block: a block would take its text-align from the resolved direction and
         pull the line to the wrong edge.
       */}
-      <span dir="auto" className="mt-1.5 px-1 text-label font-regular text-tertiary">
+      <Phrase className="mt-1.5 px-1 text-label font-regular text-tertiary">
         <Num>{time}</Num>
-      </span>
+      </Phrase>
     </li>
   );
 }
@@ -392,9 +392,9 @@ export default async function HostThreadRoute({
         page has no reason to reopen it.
       */}
       <p className="mt-1 text-bodyMd font-regular text-secondary">
-        <span dir="auto">
+        <Phrase>
           <Num>{TRIP.where}</Num> · <Num>{formatStayRange()}</Num>
-        </span>
+        </Phrase>
       </p>
 
       <ExampleThreadStrip className="mt-5" />
@@ -432,9 +432,9 @@ export default async function HostThreadRoute({
             is written and a lie every day after.
           */}
           <p className="text-center text-label font-regular text-tertiary">
-            <span dir="auto">
+            <Phrase>
               <Num>{THREAD_DAY}</Num>
-            </span>
+            </Phrase>
           </p>
           <p className="mx-auto mt-1 max-w-[46ch] text-center text-label font-regular leading-normal text-tertiary">
             This conversation opened when the booking was confirmed.

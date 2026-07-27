@@ -318,7 +318,7 @@ export default function PricingStep() {
     <WizardStep
       step={9}
       stepName="Pricing & availability"
-      note={blocked ?? "Your progress saves as you go."}
+      note={blocked ?? "Nothing you enter is saved yet."}
       backHref="/host/listings/new/house-rules"
       nextHref="/host/listings/new/preview"
       nextDisabled={blocked !== null}

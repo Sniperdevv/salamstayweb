@@ -242,7 +242,7 @@ export default function LocationStepPage() {
    * reassures; disabled it names the one thing standing in the way.
    */
   const note = addressComplete
-    ? "Your progress saves as you go."
+    ? "Nothing you enter is saved yet."
     : !hasAddressLines && !hasCity
       ? "Add the address and choose a city to continue."
       : hasCity

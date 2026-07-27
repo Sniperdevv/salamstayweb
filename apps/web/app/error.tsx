@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+
+import { Phrase } from "@/components/numerals";
 import {
   ArrowRightIcon,
   CalendarIcon,
@@ -60,7 +62,11 @@ export default function Error({
       <section className="bg-canvas">
         <div className={`mx-auto max-w-page py-12 md:py-16 ${gutter}`}>
           <p className="text-overline uppercase text-tertiary">
-            Error <span className="num">500</span>
+            {/* A17: `500` is a `.num` isolate ending the line, so under RTL it
+                took the paragraph direction and the status read `500 Error`. */}
+            <Phrase>
+              Error <span className="num">500</span>
+            </Phrase>
           </p>
           <h1 className="mt-3 max-w-[19ch] text-h2 font-semibold tracking-tighter text-primary md:text-h1 md:font-semibold">
             Something went wrong on our side

@@ -12,7 +12,7 @@ import {
   LockIcon,
   MessageIcon,
 } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { RadioGroup, RadioRow } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
@@ -198,9 +198,12 @@ export default function ReservationDetail({ reservation: r }: { readonly reserva
           content page's H1 at the 24-26 rung). */}
       <h1 className="mt-3 text-h4 font-semibold text-primary">{reservationTitle(r)}</h1>
       <p className="mt-1 text-bodyMd font-regular text-secondary">
-        <span>
+        {/* A17: the name and the date are two isolates with a `·` between them,
+            and under RTL they swapped — this read `Fri 14 – Mon 17 Aug 2026 ·
+            Gulberg 2 Residence, Lahore`. The isolate goes around the line. */}
+        <Phrase>
           {r.listing}, {r.city} · <Num>{r.dates}</Num>
-        </span>
+        </Phrase>
       </p>
 
       <SampleDataStrip className="mt-5" />
@@ -536,7 +539,12 @@ function PendingDecision({
         <p className="mt-5 flex items-center gap-2 text-bodySm font-regular text-secondary">
           <ClockIcon className="size-4 flex-none text-tertiary" />
           <span>
-            Respond by <Num>{r.respondBy}</Num>
+            {/* A17 — it read `Mon 27 Jul, 3:00 PM Respond by`. The `Phrase` is
+                nested inside this flex item rather than replacing it: `dir` on a
+                flex item blockifies it and would move the clock glyph. */}
+            <Phrase>
+              Respond by <Num>{r.respondBy}</Num>
+            </Phrase>
           </span>
         </p>
       )}
@@ -714,10 +722,11 @@ function GuestPreview({
         “This stay isn’t available for your dates”
       </p>
       <p className="mt-1 text-bodySm font-regular leading-relaxed text-secondary">
-        <span>
+        <Phrase>
+          {/* A17: a date isolate mid-sentence. The quote is the phrase. */}
           “The host couldn’t take your booking for <Num>{r.dates}</Num>. It happens sometimes — this
           is about the dates, not about you.”
-        </span>
+        </Phrase>
       </p>
       <p className="mt-2 text-label font-regular leading-relaxed text-tertiary">
         {wrote

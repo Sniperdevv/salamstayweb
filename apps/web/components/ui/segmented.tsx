@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useId, type ReactNode } from "react";
 
+import { Phrase } from "@/components/numerals";
 import { controlRing, tintTransition } from "@/components/ui";
 
 /**
@@ -150,7 +151,17 @@ export function Segmented({
             id={hintId}
             className="mt-2 max-w-[62ch] text-label font-regular leading-normal text-tertiary"
           >
-            {hint}
+            {/*
+              `Phrase` around the whole hint — GO-LIVE A17, and it belongs to
+              this component rather than to the sixteen call sites that write
+              one. A hint is a SENTENCE, and the sentences that need it are the
+              ones a step author naturally writes: `.seghint` on the wizard's
+              gas field ends "…finding out at 7 AM in January", whose `.num`
+              isolate sat at the end of the run and under RTL took the paragraph
+              direction with it, so the line opened `AM in January.`. Isolating
+              here means a hint author writes prose and is right by default.
+            */}
+            <Phrase>{hint}</Phrase>
           </p>
         ) : null}
       </div>

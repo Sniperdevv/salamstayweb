@@ -14,6 +14,7 @@ import {
   RetryIcon,
 } from "@/components/icons";
 import { ShieldCheckIcon } from "@/components/home-icons";
+import { Phrase } from "@/components/numerals";
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { CheckMark } from "@/components/ui/marks";
 import {
@@ -247,9 +248,9 @@ export default function ListingStatus({
       */}
       {state === "removed" ? null : (
         <p className="mt-1 text-bodySm font-regular text-tertiary">
-          <span dir="auto">
+          <Phrase>
             {listing.city} · <span className="num">{confirmed}</span> {stayCountPhrase(confirmed)}
-          </span>
+          </Phrase>
         </p>
       )}
 
@@ -387,10 +388,10 @@ export default function ListingStatus({
               <Consequence
                 glyph={<CheckMark className="size-4" />}
                 title={
-                  <span dir="auto">
+                  <Phrase>
                     Your <span className="num">{confirmed}</span> {stayCountPhrase(confirmed)}{" "}
                     {confirmed === 1 ? "is" : "are"} honoured
-                  </span>
+                  </Phrase>
                 }
                 body="Those guests check in exactly as agreed. Nothing about their stay changes."
               />
@@ -475,7 +476,7 @@ export default function ListingStatus({
               </span>
               <div className="min-w-0">
                 <p className="text-bodySm font-semibold text-warning">
-                  <span dir="auto">{stays} to resolve first</span>
+                  <Phrase>{stays} to resolve first</Phrase>
                 </p>
                 <p className="mt-1 text-bodySm font-regular leading-relaxed text-secondary">
                   A listing guests are still booked into can’t be deleted. Let those stays finish,

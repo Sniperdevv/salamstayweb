@@ -14,7 +14,7 @@ import {
 } from "@/components/booking/post-flow";
 import { ShieldCheckIcon } from "@/components/home-icons";
 import { CalendarIcon, LockIcon, PinIcon } from "@/components/icons";
-import { Num } from "@/components/numerals";
+import { Num, Phrase } from "@/components/numerals";
 import { GUEST_STUB_LINKS, RegistryStub, stubMetadata } from "@/components/registry-stub";
 import { btnSecondary, btnSecondaryMd, inlineAction } from "@/components/ui";
 import { CheckMark } from "@/components/ui/marks";
@@ -295,10 +295,15 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
         is a real indexable page rather than a stub.
       */}
       <p className="mt-2 max-w-[56ch] text-bodyMd font-regular leading-relaxed text-secondary">
-        <Link className={inlineAction} href={TRIP.listingHref}>
-          {TRIP.home}
-        </Link>{" "}
-        · Entire apartment · <Num>{TRIP.where}</Num>
+        {/* A17: the sector isolate reordered past the two prose segments and
+            this read `F-7, Islamabad · Entire apartment · Margalla View
+            Apartment`. The isolate wraps the sentence, not the sector. */}
+        <Phrase>
+          <Link className={inlineAction} href={TRIP.listingHref}>
+            {TRIP.home}
+          </Link>{" "}
+          · Entire apartment · <Num>{TRIP.where}</Num>
+        </Phrase>
       </p>
 
       {/*
@@ -465,7 +470,9 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
         id="change"
         heading="If your plans change"
         sub={
-          <>
+          /* A17: two bolded isolates inside one sentence, which under RTL put
+             the trailing clause first. `Phrase` closes the sentence. */
+          <Phrase>
             Free cancellation up to{" "}
             <b className="font-semibold text-primary">
               <Num>{`${TRIP.freeCancellationHours} hours`}</Num>
@@ -475,7 +482,7 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
               <Num>{freeUntil}</Num>
             </b>
             . After that the first night is non-refundable and the rest is refunded.
-          </>
+          </Phrase>
         }
         className="mt-8"
       >

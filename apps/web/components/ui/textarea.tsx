@@ -9,6 +9,7 @@ import {
   hostFieldSub,
   tintTransition,
 } from "@/components/ui";
+import { Phrase } from "@/components/numerals";
 import { CheckMark } from "@/components/ui/marks";
 
 /**
@@ -119,6 +120,11 @@ export interface TextareaCounter {
    * `(count) => <>{count} characters</>` and cannot ship an un-isolated digit
    * run that reverses inside Urdu prose. Reach for `countUnits()` if the step
    * needs the raw number for something else.
+   *
+   * Whatever the caller composes around that node is wrapped in a `Phrase` by
+   * the row that renders it, so the label reads as one run under RTL rather
+   * than letting the isolated digit slide past its own unit word (A17). Write
+   * the label as prose and do not add a `dir` of your own.
    */
   readonly countLabel: (count: ReactNode) => ReactNode;
   /** The aim, on the reading-end edge, before it is met — "Aim for 30 to 60". */
@@ -220,8 +226,22 @@ export function Textarea({
           reading-end edge in both directions, with no rule of its own.
         */
         <div className="mt-2 flex items-baseline justify-between gap-4">
+          {/*
+            `Phrase` around the RETURN of `countLabel`, and it is this file's job
+            rather than the caller's — GO-LIVE A17.
+
+            The prop hands the caller a number that is already a `.num` isolate
+            and asks for prose around it: `(count) => <>{count} characters</>`.
+            That shape guarantees the bug — the isolate lands on the digit and
+            `characters` stays loose in the RTL flow, and this rendered
+            `characters 0` on the title-description step. A contract that makes
+            the wrong thing the natural thing has to carry the fix itself, so the
+            isolate goes around whatever the caller composed. Every existing
+            `countLabel` becomes correct without being touched, and so does the
+            next one somebody writes.
+          */}
           <span className="whitespace-nowrap text-label font-regular text-tertiary">
-            {counter.countLabel(<span className="num">{count}</span>)}
+            <Phrase>{counter.countLabel(<span className="num">{count}</span>)}</Phrase>
           </span>
 
           <span
@@ -236,7 +256,14 @@ export function Textarea({
               changes is the word beside it.
             */}
             <CheckMark className={`size-4 flex-none ${settled ? "opacity-100" : "opacity-0"}`} />
-            {settled ? counter.guideSettled : counter.guide}
+            {/* The guide is prose with a range in it — "Aim for 30 to 60" — so
+                it is a `Phrase` too. Nested INSIDE the flex row rather than on
+                it: `dir` on a flex container remaps `row` to the resolved
+                direction, which would move the check to the other side of the
+                sentence (A17's fix must never change layout). */}
+            <span>
+              <Phrase>{settled ? counter.guideSettled : counter.guide}</Phrase>
+            </span>
           </span>
         </div>
       ) : null}

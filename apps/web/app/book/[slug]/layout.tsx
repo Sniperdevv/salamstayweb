@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { LockIcon } from "@/components/icons";
 import { LanguageGroup } from "@/components/language-group";
+import { Phrase } from "@/components/numerals";
 import { focusRing, inlineAction } from "@/components/ui";
 import { BookingProvider } from "@/lib/booking/booking-state";
 import { bookableListing, listingName } from "@/lib/content/listings";
@@ -174,10 +175,17 @@ export default async function CheckoutLayout({
       <footer className="mt-4 border-t border-hairline bg-raised px-5 py-6 md:px-7">
         <h2 className="sr-only">Footer</h2>
         <div className="mx-auto flex max-w-page flex-wrap items-center justify-between gap-x-6 gap-y-4 text-label font-regular text-secondary">
+          {/* GO-LIVE A17. The year is a `.num` isolate with prose on both sides
+              of it, so under RTL the line read `SalamStay · Booking Margalla
+              View Apartment © 2026`. The isolate wraps the copyright line, not
+              the year inside it — and sits inside this flex item rather than
+              replacing it, so the footer row keeps its own direction. */}
           <span>
-            © <span className="num">2026</span> SalamStay ·{" "}
-            <span className="sr-only">Booking </span>
-            {listingName(listing)}
+            <Phrase>
+              © <span className="num">2026</span> SalamStay ·{" "}
+              <span className="sr-only">Booking </span>
+              {listingName(listing)}
+            </Phrase>
           </span>
           {/* Ink, not gray, and no underline at rest — TASTE §10's footer recipe.
               §8's underline-at-rest governs inline text actions inside prose;

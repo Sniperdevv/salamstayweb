@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Phrase } from "@/components/numerals";
 import { ProseBreadcrumb } from "@/components/prose/prose-breadcrumb";
 import { LinkRow, Prose, ProseSection, Term } from "@/components/prose/prose-blocks";
 import { ProseFaq } from "@/components/prose/prose-faq";
@@ -280,20 +281,25 @@ export default function WhereToStayInIslamabadGuide() {
                 chained item, and "Updated" appears only when it differs from
                 "Published", which is the only case where it says anything. */}
             <p className="mt-5 text-bodySm text-secondary">
-              <span className="font-medium text-primary">SalamStay Editorial</span> &middot;{" "}
-              Published{" "}
-              <time className="num" dateTime={PUBLISHED}>
-                {PUBLISHED_LABEL}
-              </time>
-              {UPDATED !== PUBLISHED ? (
-                <>
-                  {" "}
-                  &middot; Updated{" "}
-                  <time className="num" dateTime={UPDATED}>
-                    {UPDATED_LABEL}
-                  </time>
-                </>
-              ) : null}
+              {/* A17: the `time.num` dates are isolates at the end of the run,
+                  so under RTL the byline read `24 July 2026 SalamStay Editorial
+                  · Published`. The isolate is the byline. */}
+              <Phrase>
+                <span className="font-medium text-primary">SalamStay Editorial</span> &middot;{" "}
+                Published{" "}
+                <time className="num" dateTime={PUBLISHED}>
+                  {PUBLISHED_LABEL}
+                </time>
+                {UPDATED !== PUBLISHED ? (
+                  <>
+                    {" "}
+                    &middot; Updated{" "}
+                    <time className="num" dateTime={UPDATED}>
+                      {UPDATED_LABEL}
+                    </time>
+                  </>
+                ) : null}
+              </Phrase>
             </p>
             <p className="mt-2">
               <Link href="/legal/editorial-policy" className={`text-bodySm ${inlineAction}`}>
