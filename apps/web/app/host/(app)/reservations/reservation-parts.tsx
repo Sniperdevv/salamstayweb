@@ -202,7 +202,24 @@ export function EarningsBreakdown({
         item and break the sentence apart.
       */}
       <div className="flex items-baseline justify-between gap-4 py-3">
-        <span className="text-bodySm font-regular text-secondary">
+        {/*
+          `dir="auto"` — GO-LIVE A17, found on `/host/calendar` and confirmed
+          here. The two `.num` runs each isolate correctly, which solves the
+          flex-item problem this row was built for but NOT the bidi-reorder
+          one: inside an RTL container the isolates reorder past the prose and
+          this rendered `nights 3 × PKR 9,500`. The isolate has to wrap the
+          SENTENCE, not each number in it.
+
+          It goes on this span because the span is already inline and already
+          wraps the whole phrase. Never on the block — a block would take its
+          text-align from the resolved direction and pull the line to the wrong
+          edge. `auto` resolves from the first strong character, so it is right
+          in Latin now and in Nastaliq on the future `/ur/` route.
+
+          Reaches `/host/earnings` and `/host/reservations/[id]`, which both
+          render this component.
+        */}
+        <span dir="auto" className="text-bodySm font-regular text-secondary">
           <span className="num">{formatPkr(money.nightly)}</span> ×{" "}
           <span className="num">{nights}</span> {nights === 1 ? "night" : "nights"}
         </span>

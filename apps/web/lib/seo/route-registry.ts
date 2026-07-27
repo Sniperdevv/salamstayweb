@@ -322,7 +322,13 @@ export const ROUTES: readonly RouteEntry[] = [
   // Title changed from the stub's "Message your host" — an instruction, not a
   // page name, and G43's first-word check would miss the <h1> "Messages with Ayesha".
   page("/messages/host-margalla-view", "ga-098", "Messages with Ayesha — Margalla View Apartment", "noindex,follow", null),
-  stub("/account/verification", "Your verification — SalamStay"),
+  /**
+   * The signed-in counterpart to the public `/verification` explainer, built
+   * 2026-07-27. It never states a party-type → document mapping: which
+   * documents an account owes is a function of a booking's party type, and
+   * there is no booking. It names the public page and links it once.
+   */
+  page("/account/verification", "ga-049", "Your verification — SalamStay", "noindex,follow", null),
   stub("/legal/data-handling", "How we handle your documents — SalamStay"),
   stub("/help/payments/cash-on-arrival", "Paying cash on arrival — SalamStay help"),
   // A "similar stay" the confirmation card links. G-6 has no area page yet, so
@@ -401,7 +407,19 @@ export const ROUTES: readonly RouteEntry[] = [
    * payouts. A host who noticed would be right to stop trusting both screens.
    */
   page("/host/earnings", "ha-055", "Your earnings — SalamStay hosting", "noindex,follow", null),
-  stub("/host/insights", "Insights — SalamStay hosting"),
+  /**
+   * Insights, built 2026-07-27 — the last of the six host nav tabs.
+   *
+   * It renders NO figure, and that is the finished state rather than a stage.
+   * `ha-066` is built on occupancy, attention and reputation; SalamStay takes
+   * none of those three measurements, and the page says so in its own words.
+   * It has no conditional branch either: a completed stay would not unlock
+   * occupancy, reviews or a benchmark, so there is no honest second branch.
+   * `SampleDataStrip` is deliberately absent — a strip asserting "the
+   * reservations on this page are written into it" would be false on a page
+   * with no reservations on it.
+   */
+  page("/host/insights", "ha-066", "Insights — SalamStay hosting", "noindex,follow", null),
   /**
    * The nine listing-wizard steps (HOST-SHELL §15), built 2026-07-26. All nine
    * folders exist under `app/host/listings/new/` and render — verified before
