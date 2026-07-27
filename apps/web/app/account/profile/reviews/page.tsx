@@ -166,7 +166,7 @@ export default function AccountReviewsPage() {
         will actually have come from. This line becomes `/account/profile` the
         day `ga-122` is built, and nothing else on the page changes.
       */}
-      <AccountBackLink href="/account">Your account</AccountBackLink>
+      <AccountBackLink href="/account/profile">Your profile</AccountBackLink>
 
       <AccountPageHead
         className="mt-5"

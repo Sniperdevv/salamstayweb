@@ -285,7 +285,20 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/account/settings/personal", "ga-047", "Personal info — SalamStay", "noindex,follow", null),
   page("/account/settings/notifications", "ga-069", "Notifications — SalamStay", "noindex,follow", null),
   page("/account/settings/payment", "ga-062", "Payment methods — SalamStay", "noindex,follow", null),
-  stub("/account/profile", "Your profile — SalamStay"),
+  /**
+   * The profile, built 2026-07-27. GA-122 is collapsed into GA-128 and
+   * `/account/profile/view` is deliberately NOT minted: GA-122 is a phone TAB
+   * destination whose five doors all already exist on web, so a hub here would
+   * be `/account`'s list a second time, and a separate `/view` would be a second
+   * URL for an identical document.
+   *
+   * The stub → page flip matters beyond tidiness: a concrete `page.tsx` now
+   * serves this path, and `validate-pages --all` only fetches `page` rows — left
+   * as a stub the surface would go ungated.
+   */
+  page("/account/profile", "ga-122/ga-128", "Your profile — SalamStay", "noindex,follow", null),
+  page("/account/profile/edit", "ga-129", "Edit your profile — SalamStay", "noindex,follow", null),
+  page("/account/settings/security", "ga-079", "Security — SalamStay", "noindex,follow", null),
   page("/account/settings/accessibility", "ga-068", "Language and accessibility — SalamStay", "noindex,follow", null),
   page("/account/settings/privacy", "ga-125", "Privacy — SalamStay", "noindex,follow", null),
   page("/trips", "ga-070", "Your trips — SalamStay", "noindex,follow", null),
@@ -488,6 +501,20 @@ export const ROUTES: readonly RouteEntry[] = [
     "noindex,follow",
     null,
   ),
+  /**
+   * Host verification, built 2026-07-27. The dashboard ships the six checks
+   * hosting in Pakistan actually requires and who requires them — every basis
+   * traced to `COMPLIANCE_MAP.md` — and NO status column, because there is no
+   * verification record. Row state reuses `/host/onboarding`'s two-shape union
+   * verbatim, written as a discriminated union so a third state is a type error.
+   *
+   * HA-009's rejection screen is deliberately NOT a route: a re-take screen
+   * would report a review that never happened. Its content lands in the three
+   * places it is true — as pre-emptive photo guidance, as a live verdict about
+   * a FILE, and as a stated commitment about how a future rejection will read.
+   */
+  page("/host/verify", "ha-018", "Your verification — SalamStay hosting", "noindex,follow", null),
+  page("/host/verify/cnic", "ha-007", "Verify your CNIC — SalamStay hosting", "noindex,follow", null),
   page("/host/onboarding", "ha-004", "Set up hosting — SalamStay hosting", "noindex,follow", null),
   page("/host/payout-settings", "ha-016", "Payout details — SalamStay hosting", "noindex,follow", null),
   /**

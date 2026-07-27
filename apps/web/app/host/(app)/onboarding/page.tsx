@@ -183,8 +183,12 @@ const SETUP_STEPS: readonly SetupStep[] = [
   {
     title: "Identity",
     icon: <IdCardIcon className="size-6" />,
-    body: "The CNIC check that establishes who is letting the home. There is no host verification route on this site, so there is nothing for this row to open.",
-    state: { kind: "unbuilt" },
+    // Was `unbuilt` until 2026-07-27, and its body correctly said "there is no
+    // host verification route on this site". `/host/verify` exists now, so that
+    // sentence became false the moment it landed — which is why the row that
+    // names an absence has to be re-read every time a route is added.
+    body: "The CNIC check that establishes who is letting the home, and the regulatory checks that sit beside it. There is no verification record behind any of them, and that page says which parts are built.",
+    state: { kind: "open", href: "/host/verify", label: "Open your verification" },
   },
   {
     title: "Property documents",
