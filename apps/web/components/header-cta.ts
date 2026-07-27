@@ -48,6 +48,10 @@ const CTA_OWNED_BY_PAGE: ReadonlySet<string> = new Set([
    * control spends no green.
    */
   "/messages",
+  // `/wishlists` — the empty state's one pill. Verified live: without this the
+  // server frame ships a green Sign up beside it. `/wishlists/{slug}` owns no
+  // green and must NOT be added.
+  "/wishlists",
 ]);
 
 /**

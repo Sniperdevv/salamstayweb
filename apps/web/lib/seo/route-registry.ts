@@ -333,7 +333,19 @@ export const ROUTES: readonly RouteEntry[] = [
   // `not-found` from a menu the header ships — a dead link out of live chrome,
   // which is worse than a stub that says the surface is coming.
   page("/messages", "ga-097", "Your messages — SalamStay", "noindex,follow", null),
-  stub("/wishlists", "Your wishlists — SalamStay"),
+  /**
+   * Wishlists, built 2026-07-27. The detail route is HARD-BLOCKED on its row:
+   * `pageMetadata` throws on an unregistered path, so without the second line
+   * `/wishlists/islamabad-in-august` emits no <title> and no robots meta.
+   *
+   * No stub-shadow branch was written and none is needed — the registry holds
+   * exactly one `/wishlists*` key, one segment, so `[slug]` takes nothing from
+   * `[...registered]`. The day a SINGLE-segment stub lands here (`/wishlists/new`
+   * is the likely one), add the branch AND move the <main> out of the layout in
+   * the same edit, because `RegistryStub` brings its own landmark.
+   */
+  page("/wishlists", "ga-126", "Your wishlists — SalamStay", "noindex,follow", null),
+  page("/wishlists/islamabad-in-august", "ga-102", "Your wishlist — Islamabad in August", "noindex,follow", null),
   stub("/rooms/is-f7-2bed/reserve", "Reserve — Margalla View Apartment"),
   // The two host surfaces built 2026-07-26. `page()`, not `stub()`, because both
   // folders exist and render — `app/host/(app)/{today,listings}/page.tsx`. The
@@ -348,7 +360,15 @@ export const ROUTES: readonly RouteEntry[] = [
   // Hrefs the host nav and empty states emit that have no folder yet. `stub()`
   // deliberately — a `page()` entry ahead of its folder serves a live 404, which
   // is how four pages broke earlier in this project.
-  stub("/host/calendar", "Your calendar — SalamStay hosting"),
+  /**
+   * The calendar, built 2026-07-27 — the last of the four dead nav tabs bar
+   * insights. Homes, rates, booked and requested nights are all DERIVED from
+   * `../reservations/reservations.ts`, the same move earnings made, with dev
+   * asserts that throw if the two stop agreeing. Blocked nights are the only
+   * invented data — a blocked night is not a booking and exists nowhere else —
+   * and an assert throws if one collides with a stay.
+   */
+  page("/host/calendar", "ha-041", "Your calendar — SalamStay hosting", "noindex,follow", null),
   /**
    * Reservations, built 2026-07-26 — the first surface on which a host can see
    * that a booking exists at all.

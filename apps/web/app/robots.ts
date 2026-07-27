@@ -19,7 +19,7 @@ import { ORIGIN } from "@/lib/seo/route-registry";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/search?", "/book/", "/host/", "/trips/", "/messages/", "/account/"] },
+      { userAgent: "*", allow: "/", disallow: ["/search?", "/book/", "/host/", "/trips/", "/messages/", "/account/", "/wishlists/"] },
     ],
     sitemap: `${ORIGIN}/sitemap.xml`,
   };
