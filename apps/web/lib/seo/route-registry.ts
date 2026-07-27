@@ -286,8 +286,8 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/account/settings/notifications", "ga-069", "Notifications — SalamStay", "noindex,follow", null),
   page("/account/settings/payment", "ga-062", "Payment methods — SalamStay", "noindex,follow", null),
   stub("/account/profile", "Your profile — SalamStay"),
-  stub("/account/settings/accessibility", "Language and accessibility — SalamStay"),
-  stub("/account/settings/privacy", "Privacy — SalamStay"),
+  page("/account/settings/accessibility", "ga-068", "Language and accessibility — SalamStay", "noindex,follow", null),
+  page("/account/settings/privacy", "ga-125", "Privacy — SalamStay", "noindex,follow", null),
   page("/trips", "ga-070", "Your trips — SalamStay", "noindex,follow", null),
 
   /**
@@ -420,6 +420,24 @@ export const ROUTES: readonly RouteEntry[] = [
    * with no reservations on it.
    */
   page("/host/insights", "ha-066", "Insights — SalamStay hosting", "noindex,follow", null),
+
+  /**
+   * Host setup, built 2026-07-27. `/host/onboarding` was the most-linked
+   * unbuilt route in the corpus — 114 hrefs across the cards point at it.
+   *
+   * The hub's `StepState` union has literally two variants, so a third is a
+   * type error rather than a copy edit: a row you can open carries an inline
+   * action, a row you cannot carries a neutral `Not built` chip and links
+   * nowhere. No progress bar, no fraction, no percentage.
+   *
+   * Payout setup collects a DESTINATION KIND and a name, and does not collect
+   * an account number at all — it has a section saying so rather than a gap.
+   * A masked instrument is not a redaction of real data; it is an invented
+   * instrument asserting that money is reachable. Same rule the guest side
+   * applied to `HBL •••• 8842`, harder, because this is the host's money.
+   */
+  page("/host/onboarding", "ha-004", "Set up hosting — SalamStay hosting", "noindex,follow", null),
+  page("/host/payout-settings", "ha-016", "Payout details — SalamStay hosting", "noindex,follow", null),
   /**
    * The nine listing-wizard steps (HOST-SHELL §15), built 2026-07-26. All nine
    * folders exist under `app/host/listings/new/` and render — verified before

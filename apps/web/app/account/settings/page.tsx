@@ -25,6 +25,7 @@ import {
   notificationHint,
   paymentHint,
   personalHint,
+  privacyHint,
 } from "./settings-model";
 
 /**
@@ -144,11 +145,14 @@ export default function AccountSettingsPage() {
           href="/account/settings/privacy"
           icon={<ShieldIcon className="size-5" />}
           title="Privacy"
-          /* No state to read — the page is unbuilt — so this describes what the
-             row holds rather than claiming a setting. `ga-125`'s own hint names
-             two features ("Messaging limited to your hosts · Trip safety on")
-             that would be promises here. */
-          hint="What you share, and who can reach you"
+          /* The row carried a plain description while the page was unbuilt,
+             which §5 permits for a row with no state to read. The page now ships
+             two real defaults, so the hint states them — derived in
+             `./settings-model.ts` from the same two constants the page seeds its
+             radiogroups with, never retyped. `ga-125`'s own hint ("Messaging
+             limited to your hosts · Trip safety on") is still not copied: half
+             of it names a surface that does not exist. */
+          hint={privacyHint}
         />
       </RowGroup>
 

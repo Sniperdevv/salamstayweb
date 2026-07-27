@@ -162,3 +162,62 @@ export const notificationHint = MARKETING_OPT_IN_DEFAULT
  * cannot deliver it.
  */
 export const INTERFACE_LANGUAGE = "English";
+
+/* ── Privacy (GA-125) ────────────────────────────────────────────────────── */
+
+/**
+ * THE TWO PRIVACY DEFAULTS ARE THE SHIPPED PRIVACY POLICY'S, NOT `ga-125`'S —
+ * WHICH HAPPENS TO AGREE, AND THAT IS WHY THEY LIVE HERE RATHER THAN IN THE PAGE.
+ *
+ * `lib/content/legal/privacy.ts` serves an indexable section called *"Your
+ * privacy defaults"* at `/legal/privacy#defaults`, and it commits to both:
+ *
+ *   > You're in control of what others can see and who can reach you. **We start
+ *   > you on the more private choice** — you don't have to go hunting through
+ *   > settings to be safe by default.
+ *   >  · *Who can see your profile — hosts you book with.*
+ *   >  · *Who can message you — hosts with a booking.*
+ *
+ * A public page states the starting position; the screen behind the login has to
+ * open on the same one, or a guest meets two products. So the two values are
+ * constants read by the child page AND by the hub hint below — §5's rule that
+ * *"the hint must be read from the same source of truth as the child page"*, in
+ * the only form that makes it structurally true.
+ *
+ * These are the ONLY two `ga-125` rows that survive as controls, and the other
+ * two are absent for reasons written out in `privacy/step.tsx`: approximate
+ * location is a rule of the product rather than a setting (the policy files it
+ * under *"What we never share"*, which opens *"not as a setting you have to
+ * find"*), and blocked people has no store, no count, and no registered route
+ * for G37 to resolve.
+ */
+export type ProfileVisibility = "hosts-you-book-with" | "everyone";
+export type MessagingScope = "hosts-with-a-booking" | "anyone";
+
+export const PROFILE_VISIBILITY_DEFAULT: ProfileVisibility = "hosts-you-book-with";
+export const MESSAGING_SCOPE_DEFAULT: MessagingScope = "hosts-with-a-booking";
+
+/**
+ * The hub's Privacy hint, derived from the two constants above so it cannot
+ * describe a screen that opens on something else.
+ *
+ * Until this page was built the hub carried a plain description ("What you share,
+ * and who can reach you"), which §5 permits for a row with no state to read —
+ * *"The rows that carry no state (Support, Legal, Privacy) carry a plain
+ * description instead."* That row now has state, so it states it. `ga-125`'s own
+ * hub hint ("Messaging limited to your hosts · Trip safety on") is still not
+ * copied: half of it names a surface that does not exist.
+ *
+ * `·` once, spaces both sides, never chained (TASTE §7).
+ */
+const VISIBILITY_HINT: Readonly<Record<ProfileVisibility, string>> = {
+  "hosts-you-book-with": "Profile: hosts you book with",
+  everyone: "Profile: everyone",
+};
+
+const MESSAGING_HINT: Readonly<Record<MessagingScope, string>> = {
+  "hosts-with-a-booking": "messages: hosts with a booking",
+  anyone: "messages: anyone",
+};
+
+export const privacyHint = `${VISIBILITY_HINT[PROFILE_VISIBILITY_DEFAULT]} · ${MESSAGING_HINT[MESSAGING_SCOPE_DEFAULT]}`;
