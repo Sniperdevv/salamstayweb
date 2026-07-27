@@ -436,6 +436,42 @@ export const ROUTES: readonly RouteEntry[] = [
    * instrument asserting that money is reachable. Same rule the guest side
    * applied to `HBL •••• 8842`, harder, because this is the host's money.
    */
+  /**
+   * Host messages, built 2026-07-27. The thread IMPORTS the guest side's
+   * `thread.ts` rather than restating it — add a message there and it appears
+   * on both screens at once, and the two halves of one conversation cannot
+   * disagree about what was said.
+   *
+   * The inbox renders EMPTY and the thread is a labelled worked example. See
+   * GO-LIVE A19: the fixtures make Aqib the host of Gulberg 2 and Cantt View,
+   * and Margalla View's host is Ayesha with Aqib as its guest — so listing
+   * this thread as the account's own would have it messaging itself.
+   */
+  /**
+   * Edit-listing hub and status, built 2026-07-27. HOST-SHELL's "Unresolved"
+   * said editing a live listing was undrawn at web width; `ha-036` settles the
+   * shape as app chrome with sectioned forms, and this is that.
+   *
+   * The homes are re-exported from `calendar-data.ts`, which derives them from
+   * `reservations.ts` — so this is the FOURTH surface on one account's homes,
+   * not a fourth account. Emptying `RESERVATIONS` empties all four.
+   *
+   * TWO rows link; TEN carry a neutral `Not built` chip and link nowhere. The
+   * three retired sections are not rows at all — a `Not built` chip on a
+   * retired section would say a retired thing is coming.
+   */
+  page("/host/listings/gulberg-2-residence/edit", "ha-036", "Edit Gulberg 2 Residence — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/cantt-view-residence/edit", "ha-036", "Edit Cantt View Residence — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/gulberg-2-residence/status", "ha-076", "Status of Gulberg 2 Residence — SalamStay hosting", "noindex,follow", null),
+  page("/host/listings/cantt-view-residence/status", "ha-076", "Status of Cantt View Residence — SalamStay hosting", "noindex,follow", null),
+  page("/host/messages", "ha-052", "Your messages — SalamStay hosting", "noindex,follow", null),
+  page(
+    "/host/messages/host-margalla-view",
+    "ha-053",
+    "Messages about Margalla View Apartment — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
   page("/host/onboarding", "ha-004", "Set up hosting — SalamStay hosting", "noindex,follow", null),
   page("/host/payout-settings", "ha-016", "Payout details — SalamStay hosting", "noindex,follow", null),
   /**
