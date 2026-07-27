@@ -268,7 +268,26 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/safety/contacts", "Trusted contacts — SalamStay"),
   stub("/login", "Log in — SalamStay"),
   stub("/signup", "Sign up — SalamStay"),
-  stub("/account", "Your account — SalamStay"),
+  /**
+   * The guest's own account, built 2026-07-27 against `GUEST-SHELL.md`.
+   *
+   * ZERO brand green across all eleven files, so no row here belongs in
+   * `header-cta.ts`: no route owns a page primary, and `Sign up` never has to
+   * yield. That fell out of the surfaces rather than being enforced.
+   *
+   * `/account/profile` stays a stub on purpose. GUEST-SHELL records "are
+   * `/account` and `/account/profile` the same page?" as Unresolved, and
+   * redirecting one to the other, or rebuilding `ga-122` at the wrong route,
+   * would answer a founder question silently.
+   */
+  page("/account", "GUEST-SHELL §1a", "Your account — SalamStay", "noindex,follow", null),
+  page("/account/settings", "ga-123", "Settings — SalamStay", "noindex,follow", null),
+  page("/account/settings/personal", "ga-047", "Personal info — SalamStay", "noindex,follow", null),
+  page("/account/settings/notifications", "ga-069", "Notifications — SalamStay", "noindex,follow", null),
+  page("/account/settings/payment", "ga-062", "Payment methods — SalamStay", "noindex,follow", null),
+  stub("/account/profile", "Your profile — SalamStay"),
+  stub("/account/settings/accessibility", "Language and accessibility — SalamStay"),
+  stub("/account/settings/privacy", "Privacy — SalamStay"),
   page("/trips", "ga-070", "Your trips — SalamStay", "noindex,follow", null),
 
   /**
@@ -300,7 +319,9 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/trips/is-f7-2bed-aug2026/review", "ga-099", "Write a review — Margalla View Apartment", "noindex,follow", null),
   stub("/trips/is-f7-2bed-aug2026/arrival", "Getting there — Margalla View Apartment"),
   stub("/trips/is-f7-2bed-aug2026/booking.ics", "Add to calendar — Margalla View Apartment"),
-  stub("/messages/host-margalla-view", "Message your host — Margalla View Apartment"),
+  // Title changed from the stub's "Message your host" — an instruction, not a
+  // page name, and G43's first-word check would miss the <h1> "Messages with Ayesha".
+  page("/messages/host-margalla-view", "ga-098", "Messages with Ayesha — Margalla View Apartment", "noindex,follow", null),
   stub("/account/verification", "Your verification — SalamStay"),
   stub("/legal/data-handling", "How we handle your documents — SalamStay"),
   stub("/help/payments/cash-on-arrival", "Paying cash on arrival — SalamStay help"),
@@ -311,7 +332,7 @@ export const ROUTES: readonly RouteEntry[] = [
   // Both are rows in the account menu (`hw-007`). Unregistered, they rendered
   // `not-found` from a menu the header ships — a dead link out of live chrome,
   // which is worse than a stub that says the surface is coming.
-  stub("/messages", "Your messages — SalamStay"),
+  page("/messages", "ga-097", "Your messages — SalamStay", "noindex,follow", null),
   stub("/wishlists", "Your wishlists — SalamStay"),
   stub("/rooms/is-f7-2bed/reserve", "Reserve — Margalla View Apartment"),
   // The two host surfaces built 2026-07-26. `page()`, not `stub()`, because both
@@ -348,7 +369,18 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/host/reservations/bilal-gulberg2-aug2026", "ha-048", "Reservation for Bilal Khan — SalamStay hosting", "noindex,follow", null),
   page("/host/reservations/omar-sana-canttview-aug2026", "ha-048", "Reservation for Omar & Sana — SalamStay hosting", "noindex,follow", null),
   page("/host/reservations/ayesha-khan-gulberg2-jul2026", "ha-048", "Reservation for Ayesha Khan — SalamStay hosting", "noindex,follow", null),
-  stub("/host/earnings", "Your earnings — SalamStay hosting"),
+  /**
+   * Earnings, built 2026-07-27. No client sibling — the page holds no state, so
+   * `page.tsx` exports `metadata` directly and the G41 duplicate-title trap
+   * never opens.
+   *
+   * It writes NO fixture of its own: it reads `reservations.ts` and groups it.
+   * `ha-055` draws PKR 1,181,471 across 11 payouts, and writing that would have
+   * put two fictional accounts in one product — `/host/reservations` states this
+   * host has completed nothing, while `/host/earnings` would claim eleven
+   * payouts. A host who noticed would be right to stop trusting both screens.
+   */
+  page("/host/earnings", "ha-055", "Your earnings — SalamStay hosting", "noindex,follow", null),
   stub("/host/insights", "Insights — SalamStay hosting"),
   /**
    * The nine listing-wizard steps (HOST-SHELL §15), built 2026-07-26. All nine

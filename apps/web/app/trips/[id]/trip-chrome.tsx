@@ -41,6 +41,25 @@ import { inlineAction } from "@/components/ui";
  * a note to a colleague, not a component.
  */
 export function TripMain({ children }: { readonly children: ReactNode }) {
+  /**
+   * A passthrough, deliberately — `app/trips/layout.tsx` renders the landmark
+   * for the whole tree.
+   *
+   * It has to live there and not here. The three child surfaces (receipt,
+   * cancel, review) return fragments and never call this, so a landmark that
+   * only existed inside `TripMain` reached `/trips/[id]` and nothing else. For
+   * one pass NOTHING rendered it: the layout's comment said `TripMain` owned it
+   * and `TripMain` was `<>{children}</>` — two files each describing a division
+   * of labour, each assuming the other held up its end, and five routes shipping
+   * with no `<main>` and no `co-main`.
+   *
+   * `validate-pages --all` did not catch it. It reads `co-main` on routes that
+   * declare one; a route with no landmark declares nothing to compare. A gate
+   * that can only fail on a wrong value cannot fail on an absent element.
+   *
+   * Kept rather than deleted only because `app/trips/[id]/page.tsx` still calls
+   * it; delete both together.
+   */
   return <>{children}</>;
 }
 

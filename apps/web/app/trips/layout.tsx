@@ -39,5 +39,15 @@ export const metadata: Metadata = {
 };
 
 export default function TripsLayout({ children }: { readonly children: ReactNode }) {
-  return <>{children}</>;
+  /**
+   * The landmark lives HERE, not in `TripMain`, because the three child
+   * surfaces return fragments and never call it. The column is byte-identical
+   * to `HostAppShell`'s — GUEST-SHELL §4's "one authenticated content width
+   * across both sides of the product".
+   */
+  return (
+    <main className="co-main mx-auto w-full max-w-page px-6 pb-10 pt-7 outline-none">
+      {children}
+    </main>
+  );
 }

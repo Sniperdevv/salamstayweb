@@ -39,6 +39,15 @@ import { routeByPath } from "@/lib/seo/route-registry";
 const CTA_OWNED_BY_PAGE: ReadonlySet<string> = new Set([
   "/become-a-host",
   "/trips",
+  /**
+   * `/messages` — the empty inbox's one action ("Find a place to stay"). Same
+   * reasoning as `/trips` directly above: `lib/mode.ts` opens at `pending`, so
+   * the server render of the inbox draws the LOGGED-OUT header, and without this
+   * row the first frame ships a green Sign up beside a green page primary.
+   * The THREAD needs no row — its only primary is disabled, and a disabled
+   * control spends no green.
+   */
+  "/messages",
 ]);
 
 /**

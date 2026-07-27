@@ -77,7 +77,7 @@ const REDUCED_CHROME_ROOTS = ["/host", "/book"] as const;
  * boundary is structural rather than remembered: `/messages`, `/wishlists` and
  * `/account` join this list when their folders land.
  */
-const NO_FOOTER_ROOTS = ["/trips"] as const;
+const NO_FOOTER_ROOTS = ["/trips", "/messages", "/account"] as const;
 
 /**
  * `slot` is REQUIRED rather than defaulted. The two call sites in
