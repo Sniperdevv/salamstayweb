@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { FeesReceiptIcon } from "@/components/home-icons";
 import { HostEmpty } from "@/components/host/host-empty";
+import { ChevronLeftIcon } from "@/components/icons";
 import { Num, Phrase } from "@/components/numerals";
 import { btnSecondary, inlineAction } from "@/components/ui";
 import { formatPkr } from "@/lib/money";
@@ -41,6 +42,86 @@ import { DEDUCTION_TERMS, type PayoutGroup } from "./earnings";
  * exactly what to do about it: **"Add nothing to it."** So the money is ink
  * (§2: prices are ink), and every link is ink and underlined at rest (§8).
  */
+
+/* ─────────────────────── chrome shared with the sub-routes ──────────────── */
+
+/**
+ * The way back from `/host/earnings/{payouts,tax}`.
+ *
+ * A SINGLE BACK LINK, NOT A BREADCRUMB. `HOST-SHELL.md` §1 rules a breadcrumb
+ * out on every host route, and `/host/reservations/[id]` already ships this
+ * exact shape for the same situation: a real page whose parent the section nav
+ * names but whose own route it does not, so the nav cannot mark itself current
+ * and something has to say where the host is. Ink, underlined at rest, never
+ * brand (TASTE §8); the chevron mirrors under RTL.
+ *
+ * It lives here rather than in either sub-route because both need it and
+ * because it belongs to the earnings family — the alternative was extending
+ * `HostSetupContext`, whose link is hard-wired to `/host/onboarding` and which
+ * three other pages depend on.
+ */
+export function BackToEarnings() {
+  return (
+    <Link href="/host/earnings" className={`inline-flex items-center gap-1 ${inlineAction}`}>
+      <ChevronLeftIcon className="size-4 rtl:-scale-x-100" />
+      Back to earnings
+    </Link>
+  );
+}
+
+/**
+ * The two surfaces behind this one, at the foot of the page that owns the
+ * money.
+ *
+ * WHY IT IS DOWN HERE AND NOT UP TOP: a host arrives at `/host/earnings` for
+ * the figure and the itemisation, and both are above this. These are the two
+ * questions they ask NEXT — where has it gone, and what about tax — so they sit
+ * where those questions occur, after the fee glossary has answered the one
+ * about deductions.
+ *
+ * OPEN SPACE, NO PLATE. Two rows of a title and a line is a content block, and
+ * TASTE §1 is explicit that a content block gets no box: "this restraint is
+ * most of the premium read." The titles ARE the links, ink and underlined at
+ * rest (§8), because a title that is also the affordance is one target rather
+ * than a heading with a "Learn more" hung off it.
+ */
+const SUBPAGES: readonly { href: string; title: string; body: string }[] = [
+  {
+    href: "/host/earnings/payouts",
+    title: "Payouts",
+    body: "Where each stay's money is right now, and what still has to happen before it reaches your account.",
+  },
+  {
+    href: "/host/earnings/tax",
+    title: "Tax on your earnings",
+    body: "The withholding line from each booking, and what SalamStay can and cannot give you for filing.",
+  },
+];
+
+export function MoneySubpages() {
+  return (
+    <section aria-labelledby="more-money-h" className="mt-12 border-t border-hairline pt-9">
+      <h2 id="more-money-h" className="text-h6 font-semibold text-primary">
+        More about your money
+      </h2>
+
+      <ul className="mt-6 grid grid-cols-1 gap-x-10 gap-y-6 md:grid-cols-2">
+        {SUBPAGES.map((item) => (
+          <li key={item.href}>
+            <p className="text-bodyMd font-semibold">
+              <Link href={item.href} className={inlineAction}>
+                {item.title}
+              </Link>
+            </p>
+            <p className="mt-1.5 text-bodySm font-regular leading-relaxed text-secondary">
+              {item.body}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 
 /* ─────────────────────────── the first-run empty ────────────────────────── */
 
@@ -146,7 +227,17 @@ export function StayPayout({ reservation: r }: { readonly reservation: Reservati
           corners instead of trailing 150px of air under a four-line column.
           Stacked, `mt-4` is the rule and `lg:mt-auto` never applies. */}
       <div className="min-w-0 lg:flex lg:flex-1 lg:flex-col">
-        <p className="text-bodyMd font-semibold text-primary">{r.listing}</p>
+        {/* `Num` on the listing name, added with the payouts and tax routes:
+            "Gulberg 2 Residence" is an unisolated digit run, and TASTE §12 /
+            BUILD-DECISIONS #2 is "every digit run" with no carve-out for a name
+            that happens to contain one. Caught by a mechanical sweep of the
+            served HTML rather than by eye — it renders correctly in Latin
+            because the whole name resolves as one LTR run, which is exactly why
+            nobody spots it until the Urdu route lands. `Num` wraps the run and
+            draws the phrase isolate around the name in one go. */}
+        <p className="text-bodyMd font-semibold text-primary">
+          <Num>{r.listing}</Num>
+        </p>
         <p className="mt-1 text-bodySm font-regular text-secondary">{r.guest}</p>
         <p className="mt-0.5 text-bodySm font-regular text-secondary">
           {/* A17: `Phrase`, not a bare pair of `Num`s. Two isolates with a `·`

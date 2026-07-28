@@ -33,7 +33,13 @@ import {
   StatusChip,
   VerifiedChip,
 } from "../reservation-parts";
-import { STATUS_LABEL, reservationTitle, type Reservation } from "../reservations";
+import {
+  STATUS_LABEL,
+  canOpenCase,
+  casePath,
+  reservationTitle,
+  type Reservation,
+} from "../reservations";
 
 /**
  * HA-048 (the reservation) and HA-049 (the decision), on one web route.
@@ -200,9 +206,15 @@ export default function ReservationDetail({ reservation: r }: { readonly reserva
       <p className="mt-1 text-bodyMd font-regular text-secondary">
         {/* A17: the name and the date are two isolates with a `·` between them,
             and under RTL they swapped — this read `Fri 14 – Mon 17 Aug 2026 ·
-            Gulberg 2 Residence, Lahore`. The isolate goes around the line. */}
+            Gulberg 2 Residence, Lahore`. The isolate goes around the line.
+
+            The listing half goes through `Num` too, added 2026-07-28: "Gulberg 2
+            Residence" is a digit run and BUILD-DECISIONS #2 has no carve-out for
+            one inside a proper noun — left bare, the `2` inherits Nastaliq in an
+            Urdu sentence. `./case/page.tsx` draws the same line and they now
+            agree. */}
         <Phrase>
-          {r.listing}, {r.city} · <Num>{r.dates}</Num>
+          <Num>{`${r.listing}, ${r.city}`}</Num> · <Num>{r.dates}</Num>
         </Phrase>
       </p>
 
@@ -362,6 +374,43 @@ export default function ReservationDetail({ reservation: r }: { readonly reserva
               note={note}
             />
           )}
+        </section>
+      ) : null}
+
+      {/*
+        ─────────────────── the way into a case (HA-072) ──────────────────
+        One inline entrance, and only on a stay that has started —
+        `../reservations.ts` carries the ruling: the four things a case can be
+        about all presuppose that the guest has arrived, and an "open a case"
+        affordance on a request nobody has answered would read as the product
+        expecting trouble from someone who has not walked through the door.
+
+        An INLINE ACTION rather than the §5 gray-fill button, and rather than the
+        whole form inlined here. A button would give opening a case the visual
+        weight of `Accept request`, which is the one thing `ha-072` spends its
+        entire first panel arguing against; the form itself would tell a host, on
+        every reservation they open, that something is expected to have gone
+        wrong. `./case/page.tsx` records the full argument.
+
+        No `respondBy`, no deadline and no window: nothing in this product times
+        a case, and inventing one here would be the invented SLA the whole tree
+        refuses.
+      */}
+      {canOpenCase(r) ? (
+        <section className={section} aria-labelledby={`${baseId}-case`}>
+          <h2 id={`${baseId}-case`} className={sectionHeading}>
+            Something not right about this stay?
+          </h2>
+          <p className="mt-2 text-bodyMd font-regular leading-relaxed text-secondary">
+            If you and {r.guest} see something differently — damage, a house rule, a charge —
+            SalamStay can help resolve it. Both of you are asked for your side, and neither account
+            is treated as the default truth.
+          </p>
+          <p className="mt-4">
+            <Link href={casePath(r.id)} className={inlineAction}>
+              Get help with this stay
+            </Link>
+          </p>
         </section>
       ) : null}
 

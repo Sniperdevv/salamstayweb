@@ -4,7 +4,12 @@ import Link from "next/link";
 import { inlineAction } from "@/components/ui";
 
 import { SampleDataStrip } from "../reservations/reservation-parts";
-import { DeductionGlossary, EarningsEmpty, PayoutSection } from "./earnings-parts";
+import {
+  DeductionGlossary,
+  EarningsEmpty,
+  MoneySubpages,
+  PayoutSection,
+} from "./earnings-parts";
 import { hasUnansweredRequests, payoutGroups } from "./earnings";
 
 /**
@@ -139,6 +144,18 @@ export default function HostEarningsPage() {
       ) : null}
 
       <DeductionGlossary />
+
+      {/*
+        The two surfaces behind this one, at the foot rather than the head.
+
+        A host arrives here for the figure and the itemisation, and both are
+        above. Where has it gone, and what about tax, are the questions they ask
+        NEXT — so the links sit after the glossary has answered the one about
+        deductions, not competing with the money for the top of the page.
+
+        Both are `page()` routes with folders under this one; neither is a stub.
+      */}
+      <MoneySubpages />
     </>
   );
 }

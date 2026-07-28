@@ -128,9 +128,24 @@ export function HostHeader() {
       */}
       <span className="hidden shrink-0 text-bodySm text-secondary md:inline">PKR</span>
 
+      {/*
+        REPOINTED TO THE HOST HELP CENTRE, 2026-07-28.
+
+        It pointed at `/help` because that was the only help hub that existed —
+        the guest one. `/host/help` now exists (HA-070), it is scoped entirely to
+        hosting, and it is the hub the two `/host/help/*` articles hang off. A
+        help control inside the host shell that left the shell was the wrong
+        answer the moment there was a right one, and this is also `/host/help`'s
+        only entrance from the chrome: a route whose only way in is its own
+        children is not reachable.
+
+        The guest help centre is not orphaned by this — `/host/help` links out to
+        `/help/cantonment-stays` and to the trust pages, which is where a host
+        reads the same rules a guest does.
+      */}
       <Link
-        href="/help"
-        aria-label="Help center"
+        href="/host/help"
+        aria-label="Help for hosts"
         className={`hidden size-10 shrink-0 place-items-center rounded-full border border-border-default bg-canvas text-secondary transition-colors duration-instant ease-decelerate hover:border-border-strong motion-reduce:transition-[opacity,border-color] md:grid ${focusRing}`}
       >
         <HelpIcon className="size-5" />

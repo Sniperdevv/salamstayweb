@@ -269,27 +269,80 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/help", "SEO-RULES §3.10 (help hub)", "Help center — SalamStay"),
   page("/help/cantonment-stays", "gw-020", "How cantonment rules work — SalamStay Help"),
 
+  /**
+   * ——— The help corpus, 2026-07-28 ———
+   *
+   * Twelve articles on `gw-020`'s frame (extracted once into
+   * `app/help/help-article.tsx`) plus one SCREEN, and the screen is the row
+   * that reads oddly next to its neighbours.
+   *
+   * `/help/contact` is `noindex, follow` with NO canonical, alone in this
+   * block, because it is `ga-109` rather than an article: no answer-first
+   * block, no body a crawler could describe, and **it cannot take a message**.
+   * A page that ranked for "salamstay contact" and then could not receive one
+   * would waste the single arrival where the reader most needed something to
+   * happen. One line to flip the day a ticket store exists.
+   *
+   * THREE TITLES CHANGED from the stubs they replace, each because the stub
+   * title named the wrong thing and three shipped anchors already disagreed
+   * with it:
+   *
+   *  · `/help/tourism-registration` — "Tourism registration" is the HOST-side
+   *    object (a tourism licence, `ha-010`). `/help`, `/verification` and
+   *    `/trust-and-safety` all call this path guest registration with the
+   *    police. The path stays, because live links point at it; the title moves
+   *    to what the page is.
+   *  · `/help/payments/refund-status` → "Where your refund is"
+   *  · `/help/foreign-guests` → "Booking a stay from abroad"
+   *
+   * Each of the three was tripping a G43 warning (H1 not reflected in title)
+   * and clears with the new title.
+   */
+  page("/help/contact", "ga-109", "Contact SalamStay", "noindex,follow", null),
+  page("/help/report", "gw-020 (ga-036/ga-132)", "Report a problem — SalamStay Help"),
+  page("/help/verification", "gw-020 · SEO-RULES §3.10 (help category)", "Verification — SalamStay Help"),
+  page("/help/verification/how-cnic-verification-works", "gw-020", "How CNIC verification works — SalamStay Help"),
+  page("/help/verification/what-is-an-frc", "gw-020", "What is an FRC — SalamStay Help"),
+  page("/help/payments/how-money-is-held", "gw-020", "How your money is held — SalamStay Help"),
+  page("/help/payments/how-fees-and-taxes-work", "gw-020", "How fees and taxes work — SalamStay Help"),
+  page("/help/payments/refund-status", "gw-020", "Where your refund is — SalamStay Help"),
+  page("/help/cancellation", "gw-020", "Cancellation options — SalamStay Help"),
+  page("/help/foreign-guests", "gw-020", "Booking a stay from abroad — SalamStay Help"),
+  page(
+    "/help/tourism-registration",
+    "gw-020",
+    "Guest registration with the local police — SalamStay Help",
+  ),
+  page("/help/verified-home-facts", "gw-020", "Verified home facts — SalamStay Help"),
+  page("/help/house-rules", "gw-020", "House rules on a listing — SalamStay Help"),
+
   // ——— Resolver stubs (shipped card links with no card of their own yet) ———
   stub("/legal/host-terms", "Host terms — SalamStay"),
-  stub("/help/contact", "Contact SalamStay"),
-  stub("/help/report", "Report a problem — SalamStay Help"),
-  stub("/help/cancellation", "Cancellation options — SalamStay Help"),
-  stub("/help/verification", "Verification — SalamStay Help"),
-  stub("/help/verification/how-cnic-verification-works", "How CNIC verification works — SalamStay Help"),
+  /**
+   * FOUR HELP PATHS DELIBERATELY LEFT AS STUBS, each blocked on something a
+   * writer cannot decide. A "being written" stub is honest; an article that
+   * invents a policy is not.
+   *
+   *  · `how-nikah-nama-verification-works` — **needs a founder ruling.** §3.10
+   *    makes the legal BASIS mandatory in a document article, and `/verification`
+   *    gives three different answers inside one file (see the E-block). Even the
+   *    ruling-consistent line ("SalamStay asks for it when a couple books
+   *    together") states who asks and when, not why, so it is none of §9.7's
+   *    four permitted bases. `/help/verification` carries it in one line under a
+   *    page-level rationale instead.
+   *  · `trip-safety` — `GUEST-SHELL.md` Unresolved says it outright: the four
+   *    safety cards are app-only rows and "what the web half of trip safety
+   *    actually contains is undrawn." Writing it means DESIGNING the surface.
+   *  · `getting-started` — `/help`'s own description promises "making an
+   *    account", and there is no account system. An article that walked a reader
+   *    through signing up would describe a flow that does not exist; one that
+   *    skipped it would not answer its own title.
+   *  · `payments/cash-on-arrival` — the rail's split is grounded for exactly the
+   *    canonical booking. Generalising it into an article needs a product rule.
+   */
   stub("/help/verification/how-nikah-nama-verification-works", "How Nikah Nama verification works — SalamStay Help"),
-  stub("/help/verification/what-is-an-frc", "What is an FRC — SalamStay Help"),
-  stub("/help/payments/how-money-is-held", "How your money is held — SalamStay Help"),
-  stub("/help/payments/how-fees-and-taxes-work", "How fees and taxes work — SalamStay Help"),
-  stub("/help/payments/refund-status", "Refund status — SalamStay Help"),
   stub("/help/trip-safety", "Trip safety — SalamStay Help"),
-  stub("/help/tourism-registration", "Tourism registration — SalamStay Help"),
   stub("/help/getting-started", "Getting started — SalamStay Help"),
-  stub("/help/foreign-guests", "Visiting from abroad — SalamStay Help"),
-  // Was `/help/shariah-how-it-works`. The article it promised no longer has a
-  // subject (REPOSITIONING.md retires the framing); what a guest actually needs
-  // from that slot is what a host's house rules mean on a listing.
-  stub("/help/house-rules", "House rules on a listing — SalamStay Help"),
-  stub("/help/verified-home-facts", "Verified home facts — SalamStay Help"),
   stub("/guides", "Guides — SalamStay"),
   stub("/guides/where-to-stay-in-karachi", "Where to stay in Karachi — SalamStay"),
   stub("/guides/where-to-stay-in-lahore", "Where to stay in Lahore — SalamStay"),
@@ -438,6 +491,31 @@ export const ROUTES: readonly RouteEntry[] = [
   page("/host/reservations/omar-sana-canttview-aug2026", "ha-048", "Reservation for Omar & Sana — SalamStay hosting", "noindex,follow", null),
   page("/host/reservations/ayesha-khan-gulberg2-jul2026", "ha-048", "Reservation for Ayesha Khan — SalamStay hosting", "noindex,follow", null),
   /**
+   * `ha-072`, the host dispute — and it is registered HERE, under a
+   * reservation, rather than under `/host/help`, because the card routes itself:
+   * its back chevron goes to `/host/reservations/{id}` and panel B's goes to
+   * `/host/reservations/{id}/case`. **A case has no subject without the stay.**
+   *
+   * ONE ROW, NOT FIVE. All four of the card's subjects presuppose the guest
+   * arrived, so the surface exists only for a stay that has STARTED — `current`
+   * and `past`. Today that is one reservation; the other four 404 rather than
+   * offering a host a form about a stay nobody has taken yet. Pre-arrival money
+   * questions go to `/host/help/contact`.
+   *
+   * It is a child route rather than a section on the reservation for a reason
+   * that is about tone, not layout: a subject select and a statement field
+   * sitting permanently under every completed stay would tell a host, on every
+   * reservation they open, that the product expects something to have gone
+   * wrong. `ha-072` spends its whole first panel arguing the opposite.
+   */
+  page(
+    "/host/reservations/ayesha-khan-gulberg2-jul2026/case",
+    "ha-072",
+    "Get help with this stay — Ayesha Khan, SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
+  /**
    * Earnings, built 2026-07-27. No client sibling — the page holds no state, so
    * `page.tsx` exports `metadata` directly and the G41 duplicate-title trap
    * never opens.
@@ -449,6 +527,41 @@ export const ROUTES: readonly RouteEntry[] = [
    * payouts. A host who noticed would be right to stop trusting both screens.
    */
   page("/host/earnings", "ha-055", "Your earnings — SalamStay hosting", "noindex,follow", null),
+  /**
+   * The two money sub-pages, 2026-07-28 — **two routes out of five cards**, and
+   * the collapse is the decision worth recording.
+   *
+   * `ha-060` earns its own route because `/host/earnings` deliberately stops at
+   * "released" and nothing in the product answers *has it moved, and where to?*
+   * The two pages partition the same money the same way, and the split is
+   * enforced in both directions rather than described: no fee chain on payouts,
+   * no state chip on earnings. Blocks mean arithmetic; hairline rows mean a
+   * ledger.
+   *
+   * `ha-061` + `ha-057` + `ha-059` are ONE route, because each of the other two
+   * collapses once this build strips what it cannot assert. `ha-057` without a
+   * rate, a filer chip and an FBR re-check is an amount already printed on two
+   * surfaces. `ha-059` without an invoice number, an NTN and an issue date is a
+   * download with no file behind it. Three routes would have been three pages
+   * about unbuilt subject matter, two of them carrying nothing but a dead
+   * button. When a document generator lands, `ha-059`'s per-booking list is the
+   * section that grows a route — and it will have a file to serve.
+   *
+   * `ha-056` got NO route. `/host/earnings/bookings/{id}` would be the third
+   * rendering of one calculation: the card IS `StayPayout` + `EarningsBreakdown`
+   * + `DeductionGlossary`, already shipping on `/host/earnings` off the same
+   * fixture id. Its stated reason for existing is that `ha-057` links to it
+   * twice — which is a phone's height budget, not a fact about the product. At
+   * 1120 the breakdown is already on the page.
+   */
+  page("/host/earnings/payouts", "ha-060", "Payouts — SalamStay hosting", "noindex,follow", null),
+  page(
+    "/host/earnings/tax",
+    "ha-061 (+ha-057, ha-059)",
+    "Tax on your earnings — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
   /**
    * Insights, built 2026-07-27 — the last of the six host nav tabs.
    *
@@ -622,11 +735,55 @@ export const ROUTES: readonly RouteEntry[] = [
     null,
   ),
 
-  stub("/host/help/regulations/cantonment-noc", "Cantonment NOC — SalamStay hosting help"),
+  /**
+   * ——— Host help, 2026-07-28 ———
+   *
+   * The two articles below were the only `/host/help/*` paths that existed, and
+   * they existed as stubs with **no hub above them** — so this tree was two
+   * leaves and no trunk. `/host/help` is that trunk.
+   *
+   * BOTH CONVERSIONS KEEP THEIR STUB TITLE BYTE-FOR-BYTE. The pages were
+   * written to the strings that were already here rather than the other way
+   * round, so a `stub()` → `page()` conversion cannot move G41 — which is the
+   * only safe way to promote a row that other pages already link to.
+   *
+   * `/host/help` ships as **a list of what exists** and has NO SEARCH FIELD.
+   * `ha-070` draws a help centre with search results, a category drill-in and
+   * an empty-search state, all reading off an index this product does not have,
+   * over a "4 results · 5 articles" count of a two-article corpus. A field that
+   * accepts a query and returns nothing is the one control a help centre must
+   * not have. The card's 2×3 category grid is not minted either: a tile is a
+   * promise something is behind it.
+   *
+   * `/host/help/regulations` has no landing page — the hub links the article
+   * directly. Minting an index over one article is the same invented
+   * table-of-contents problem one level down.
+   */
+  page("/host/help", "ha-070", "Help for hosts — SalamStay hosting", "noindex,follow", null),
+  page(
+    "/host/help/contact",
+    "ha-071",
+    "Contact host support — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
+  page(
+    "/host/help/regulations/cantonment-noc",
+    "ha-070 (content: gw-020 · ha-014)",
+    "Cantonment NOC — SalamStay hosting help",
+    "noindex,follow",
+    null,
+  ),
+  page(
+    "/host/help/fees",
+    "ha-070 (content: ha-055)",
+    "How host fees and payouts are calculated — SalamStay",
+    "noindex,follow",
+    null,
+  ),
   // Linked from ha-001. HA-002 is a designed card awaiting its build wave;
   // /host/help/fees is the payout breakdown the fees block points at.
   stub("/become-a-host/earnings-estimator", "Estimate your hosting earnings — SalamStay"),
-  stub("/host/help/fees", "How host fees and payouts are calculated — SalamStay"),
   // The four area siblings that used to sit here are `page()` entries in the
   // discovery spine above, against gw-003.
   // In-area listings referenced by gw-002/gw-003/gw-004/gw-009:

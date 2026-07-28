@@ -100,6 +100,30 @@ const SCHEMA_MATRIX = {
   // which is the only thing that would license FAQPage (G49/G72).
   "/help": ["BreadcrumbList"],
   "/help/cantonment-stays": ["BreadcrumbList", "Article"],
+  // ——— The help corpus, 2026-07-28 ———
+  // Every one of these is GW-020 instantiated through `app/help/help-article.tsx`,
+  // so they all emit exactly BreadcrumbList + Article and none of them may emit
+  // FAQPage: §3.10 and G74 are explicit that a single how-to article is
+  // `Article`, and wrapping prose in FAQ markup to farm rich results is the
+  // banned move. An article that grows a GENUINE visible multi-Q&A block can
+  // add FAQPage — by editing its row here, deliberately, not by accident.
+  "/help/report": ["BreadcrumbList", "Article"],
+  "/help/verification": ["BreadcrumbList", "Article"],
+  "/help/verification/how-cnic-verification-works": ["BreadcrumbList", "Article"],
+  "/help/verification/what-is-an-frc": ["BreadcrumbList", "Article"],
+  "/help/payments/how-money-is-held": ["BreadcrumbList", "Article"],
+  "/help/payments/how-fees-and-taxes-work": ["BreadcrumbList", "Article"],
+  "/help/payments/refund-status": ["BreadcrumbList", "Article"],
+  "/help/cancellation": ["BreadcrumbList", "Article"],
+  "/help/foreign-guests": ["BreadcrumbList", "Article"],
+  "/help/tourism-registration": ["BreadcrumbList", "Article"],
+  "/help/verified-home-facts": ["BreadcrumbList", "Article"],
+  "/help/house-rules": ["BreadcrumbList", "Article"],
+  // GA-109 is a SCREEN, not an article: `noindex, follow`, no canonical, no
+  // structured data at all. An empty array is not a missing row — it says the
+  // question was asked and the answer is none, which is the distinction
+  // `/search` and the checkout steps above already draw.
+  "/help/contact": [],
 };
 
 // Types that must NEVER appear anywhere (G74/G45/G46 HARD).

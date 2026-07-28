@@ -307,6 +307,51 @@ export function reservationHref(id: string): string {
   return `/host/reservations/${id}`;
 }
 
+/* ─────────────────────── resolution cases (HA-072) ──────────────────────── */
+
+/**
+ * Where a resolution case lives, and which stays have one.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  A CASE IS A CHILD OF A BOOKING, NOT AN ARTICLE IN THE HELP CENTRE
+ * ═══════════════════════════════════════════════════════════════════════════
+ * `ha-072` is drawn as a host help surface, and it is not one. Every panel of
+ * it is scoped to one reservation: the card's own back chevron goes to
+ * `/host/reservations/{id}`, its second panel's back goes to
+ * `/host/reservations/{id}/case`, and its content is a named guest, a booking
+ * reference and a set of dates. A case has no meaning without the booking it is
+ * about, so it hangs off the booking — the help tree owns what is true of
+ * hosting, and this is true of one stay.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  ONLY A STAY THAT HAS STARTED CAN BE DISAGREED ABOUT
+ * ═══════════════════════════════════════════════════════════════════════════
+ * `ha-072`'s four subjects are property damage during the stay, a house rule
+ * that was not followed, a disagreement about a charge, and something else
+ * about the stay. Every one of them presupposes that the guest has arrived. A
+ * request nobody has answered and a confirmed booking nobody has checked into
+ * have nothing to see differently yet, and an "open a case" affordance sitting
+ * on a request would read as the product expecting trouble from a guest who has
+ * not walked through the door.
+ *
+ * So the entrance appears on `current` and `past` stays and nowhere else, and
+ * the route 404s for the rest rather than rendering a case about a stay that
+ * has not happened.
+ *
+ * A money disagreement BEFORE arrival — a cancellation, a payout that looks
+ * wrong — is not lost by this: it is a support question, and
+ * `/host/help/contact` carries it.
+ */
+const CASE_STATUSES: readonly ReservationStatus[] = ["current", "past"];
+
+export function canOpenCase(r: Reservation): boolean {
+  return CASE_STATUSES.includes(r.status);
+}
+
+export function casePath(id: string): string {
+  return `${reservationHref(id)}/case`;
+}
+
 /**
  * The `<title>` and the `<h1>`, from one place.
  *
