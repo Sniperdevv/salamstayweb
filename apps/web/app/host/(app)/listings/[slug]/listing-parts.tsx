@@ -1,4 +1,5 @@
 import { Num, Phrase } from "@/components/numerals";
+import { exampleStrip } from "@/components/ui/example-strip";
 
 /**
  * The two pieces of furniture the edit hub and the lifecycle controls share.
@@ -48,7 +49,7 @@ import { Num, Phrase } from "@/components/numerals";
 export function ListingSampleStrip({ className = "" }: { readonly className?: string }) {
   return (
     <p
-      className={`max-w-prose rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStrip} ${className}`}
     >
       <b className="font-semibold text-primary">Example data.</b> SalamStay has no listing store
       yet, so this home is read from the same written-in reservations the rest of hosting uses.

@@ -1,3 +1,5 @@
+import { exampleStrip } from "@/components/ui/example-strip";
+
 /**
  * The furniture `/host/messages` and `/host/messages/{threadId}` share.
  *
@@ -69,7 +71,7 @@
 export function ExampleThreadStrip({ className = "" }: { readonly className?: string }) {
   return (
     <p
-      className={`max-w-prose rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStrip} ${className}`}
     >
       <b className="font-semibold text-primary">Example data.</b> SalamStay has no message store
       yet, so the conversation below is written into the site — the host&rsquo;s side of the example

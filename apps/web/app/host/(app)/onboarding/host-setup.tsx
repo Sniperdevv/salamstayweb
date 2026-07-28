@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { inlineAction } from "@/components/ui";
+import { exampleStrip } from "@/components/ui/example-strip";
 
 /**
  * The two pieces of furniture the host-setup pair shares — `/host/onboarding`
@@ -51,7 +52,7 @@ import { inlineAction } from "@/components/ui";
 export function HostSetupStrip({ className = "" }: { readonly className?: string }) {
   return (
     <p
-      className={`max-w-prose rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStrip} ${className}`}
     >
       <b className="font-semibold text-primary">Nothing here is your account.</b> SalamStay has no
       host account, no verification record and no payout record yet, so nothing on this page is read

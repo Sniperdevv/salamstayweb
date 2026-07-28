@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { iconStroke } from "@salamstay/design-tokens/icons";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import { inlineAction, pressableSurface } from "@/components/ui";
+import { exampleStripGuest } from "@/components/ui/example-strip";
 
 /**
  * The furniture every `/account/*` surface shares.
@@ -276,7 +277,7 @@ export function ExampleAccountStrip({
 }) {
   return (
     <p
-      className={`max-w-[68ch] rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStripGuest} ${className}`}
     >
       <b className="font-semibold text-primary">Example account.</b> SalamStay has no accounts
       yet, so nothing on this page is read from one. {children}

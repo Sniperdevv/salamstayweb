@@ -1,3 +1,5 @@
+import { exampleStrip } from "@/components/ui/example-strip";
+
 /**
  * The honesty strip both host verification surfaces render — `/host/verify`
  * (HA-018) and `/host/verify/cnic` (HA-007).
@@ -49,7 +51,7 @@
 export function VerificationStrip({ className = "" }: { readonly className?: string }) {
   return (
     <p
-      className={`max-w-prose rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStrip} ${className}`}
     >
       <b className="font-semibold text-primary">Nothing here has been verified.</b> SalamStay has no
       host verification record, no connection to NADRA Verisys and nowhere to keep a document, so

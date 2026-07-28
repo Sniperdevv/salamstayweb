@@ -3,6 +3,7 @@ import type { ReactNode, RefObject } from "react";
 
 import { ChevronLeftIcon } from "@/components/icons";
 import { inlineAction } from "@/components/ui";
+import { exampleStripGuest } from "@/components/ui/example-strip";
 
 /**
  * The furniture every `/trips/{id}/*` child shares — back link, page head, and
@@ -165,7 +166,7 @@ export function ExampleBookingStrip({
 }) {
   return (
     <p
-      className={`max-w-[68ch] rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStripGuest} ${className}`}
     >
       <b className="font-semibold text-primary">Example booking.</b> SalamStay has no booking
       store yet, so this stay is written into the site rather than made by anyone. {children}

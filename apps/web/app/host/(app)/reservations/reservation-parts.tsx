@@ -6,6 +6,7 @@ import { formatPkr } from "@/lib/money";
 
 import type { Reservation, StatusTone } from "./reservations";
 import { NET_LABEL } from "./reservations";
+import { exampleStrip } from "@/components/ui/example-strip";
 
 /**
  * The furniture `/host/reservations` and `/host/reservations/[id]` both draw.
@@ -45,7 +46,7 @@ import { NET_LABEL } from "./reservations";
 export function SampleDataStrip({ className = "" }: { readonly className?: string }) {
   return (
     <p
-      className={`max-w-prose rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStrip} ${className}`}
     >
       <b className="font-semibold text-primary">Example data.</b> SalamStay has no booking store
       yet, so the reservations on this page are written into it. They are not bookings on your

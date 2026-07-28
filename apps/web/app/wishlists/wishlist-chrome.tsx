@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { exampleStripGuest } from "@/components/ui/example-strip";
 
 /**
  * Wishlist-surface furniture.
@@ -79,7 +80,7 @@ export function ExampleWishlistStrip({
 }) {
   return (
     <p
-      className={`max-w-[68ch] rounded-md bg-raised px-4 py-3 text-bodySm font-regular leading-relaxed text-secondary ${className}`}
+      className={`${exampleStripGuest} ${className}`}
     >
       <b className="font-semibold text-primary">Example wishlist.</b> SalamStay has no wishlist
       store yet, so nothing here was saved by anyone. {children}
