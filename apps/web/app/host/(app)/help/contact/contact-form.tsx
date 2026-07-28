@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { inlineAction } from "@/components/ui";
+import {
+  btnPrimaryPillInert,
+  inlineAction,
+} from "@/components/ui";
 import { Select, type SelectOption } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { sendDisabled } from "../help-chrome";
 
 /**
  * `ha-071`'s compose panel, told the truth.
@@ -137,7 +139,7 @@ export function ContactForm() {
           type="button"
           aria-disabled="true"
           aria-describedby={REASON_ID}
-          className={sendDisabled}
+          className={btnPrimaryPillInert}
         >
           Send ticket
         </button>

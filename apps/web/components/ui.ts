@@ -104,6 +104,52 @@ export const btnPrimaryPill =
   `hover:border-interactive-hover hover:bg-interactive-hover ${focusRing} ${pressable}`;
 
 /**
+ * THE SEND THAT CANNOT SEND — the shape a primary takes when the thing behind
+ * it is not connected, and the most-copied recipe in this codebase.
+ *
+ * Six surfaces reached for it independently and five wrote it byte-for-byte
+ * identically: both message composers, both contact forms, the host help
+ * chrome, and the tourism-licence check. The sixth (`earnings/tax`) differs in
+ * exactly one token — a `md` radius, because a Download is not a primary pill —
+ * which is why there are two exports and not one string with a prop.
+ *
+ * WHAT MAKES IT DIFFERENT FROM A DISABLED BUTTON
+ * ---------------------------------------------
+ * It is worn with `aria-disabled`, **never** `disabled`, and the distinction is
+ * the whole point. A `disabled` button leaves the tab order, so a keyboard user
+ * meets nothing where the Send should be and has no way to learn why. With
+ * `aria-disabled` the control keeps focus, announces itself as unavailable, and
+ * — via `aria-describedby` — reads out the reason it cannot run. Hence the
+ * `focusRing` and `pressable` are ABSENT but the control is not: it is
+ * disabled, visible, in place, and keeping its own label. TASTE §11.7.
+ *
+ * `cursor-default` because there is nothing to click. `select-none` because the
+ * label is a button label, not text to copy.
+ *
+ * WHY THE BORDER IS NOT TRANSPARENT
+ * ---------------------------------
+ * `bg.raised` on `bg.canvas` measures 1.06:1 in light and 1.08:1 in dark, so a
+ * transparent-edged disabled pill is dim text floating with no shape at all.
+ * §11.7 and §1 both require a disabled control to stay VISIBLE; an invisible
+ * one satisfies the letter of "gray fill" and not the rule.
+ *
+ * There is ONE surface that deliberately does not use this and uses real
+ * `disabled` instead — `/host/verify/cnic` — on the argument that a control
+ * which can NEVER enable should not hold a keyboard user on something that
+ * answers nothing. Five surfaces disagree. See GO-LIVE D6: that divergence
+ * wants one ruling, not a sixth file picking a side.
+ */
+const btnInertBody =
+  "inline-flex h-12 shrink-0 cursor-default select-none items-center justify-center gap-2 " +
+  "whitespace-nowrap border border-border-default bg-raised px-6 text-bodyMd font-semibold text-disabled";
+
+/** The pill form — a primary that cannot run. Five call sites. */
+export const btnPrimaryPillInert = `rounded-full ${btnInertBody}`;
+
+/** The `md`-radius form, for an inert control that was never a primary pill. */
+export const btnInertMd = `rounded-md ${btnInertBody}`;
+
+/**
  * The demoted primary — an OUTLINE/INK button, for the one case where a green
  * fill would be the second green CTA on the surface.
  *

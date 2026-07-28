@@ -3,7 +3,10 @@ import type { ReactNode } from "react";
 
 import { iconStroke } from "@salamstay/design-tokens/icons";
 
-import { focusRing, inlineAction } from "@/components/ui";
+import {
+  focusRing,
+  inlineAction,
+} from "@/components/ui";
 import { exampleStrip } from "@/components/ui/example-strip";
 
 /**
@@ -103,10 +106,6 @@ export function HostHelpStrip({ className = "" }: { readonly className?: string 
  * that absence IS the signal — TASTE §1's rule that the press, like the shadow,
  * is what the enabled state spends.
  */
-export const sendDisabled =
-  "inline-flex h-12 shrink-0 cursor-default select-none items-center justify-center gap-2 " +
-  "whitespace-nowrap rounded-full border border-border-default bg-raised px-6 text-bodyMd " +
-  `font-semibold text-disabled ${focusRing}`;
 
 /* ───────────────────────────── topic rows ───────────────────────────────── */
 

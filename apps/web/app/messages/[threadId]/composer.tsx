@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { focusRing, inlineAction } from "@/components/ui";
+import {
+  btnPrimaryPillInert,
+  focusRing,
+  inlineAction,
+} from "@/components/ui";
 import { Textarea } from "@/components/ui/textarea";
 
 /**
@@ -64,10 +68,7 @@ import { Textarea } from "@/components/ui/textarea";
  * that absence IS the signal (TASTE §1: shadow, and here the press, is the
  * enabled signal).
  */
-const sendDisabled =
-  "inline-flex h-12 shrink-0 cursor-default select-none items-center justify-center gap-2 " +
-  "whitespace-nowrap rounded-full border border-border-default bg-raised px-6 text-bodyMd " +
-  `font-semibold text-disabled ${focusRing}`;
+const sendDisabled = btnPrimaryPillInert;
 
 const REASON_ID = "reply-not-connected";
 

@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { focusRing, inlineAction } from "@/components/ui";
+import {
+  btnPrimaryPillInert,
+  focusRing,
+  inlineAction,
+} from "@/components/ui";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { routeByPath } from "@/lib/seo/route-registry";
@@ -177,10 +181,7 @@ const isBeingWritten = (href: string) => routeByPath.get(href)?.status === "stub
  * against; unlike that strip the DIFFERENCE here is nothing at all, so this is
  * flagged for the same fold rather than folded unilaterally from a help page.
  */
-const sendDisabled =
-  "inline-flex h-12 shrink-0 cursor-default select-none items-center justify-center gap-2 " +
-  "whitespace-nowrap rounded-full border border-border-default bg-raised px-6 text-bodyMd " +
-  `font-semibold text-disabled ${focusRing}`;
+const sendDisabled = btnPrimaryPillInert;
 
 const REASON_ID = "ticket-not-connected";
 const CATEGORY_PANEL_ID = "ticket-category-help";

@@ -7,7 +7,13 @@ import { iconStroke } from "@salamstay/design-tokens/icons";
 
 import { AlertCircleIcon, ChevronLeftIcon } from "@/components/icons";
 import { CheckMark } from "@/components/ui/marks";
-import { controlRing, focusRing, inlineAction, tintTransition } from "@/components/ui";
+import {
+  btnPrimaryPillInert,
+  controlRing,
+  focusRing,
+  inlineAction,
+  tintTransition,
+} from "@/components/ui";
 
 /**
  * `/host/verify/tourism-licence`, everything from the first section down —
@@ -210,10 +216,7 @@ const slotNote = "mt-3 max-w-[62ch] text-label font-regular leading-relaxed text
  * disabled pill is dim text floating with no shape at all. TASTE §11.7 and §1
  * both require a disabled control to stay VISIBLE and in place.
  */
-const sendDisabled =
-  "inline-flex h-12 shrink-0 cursor-default select-none items-center justify-center gap-2 " +
-  "whitespace-nowrap rounded-full border border-border-default bg-raised px-6 text-bodyMd " +
-  `font-semibold text-disabled ${focusRing}`;
+const sendDisabled = btnPrimaryPillInert;
 
 /**
  * The four things `COMPLIANCE_MAP.md` §11.5.4 records as the capture — licence

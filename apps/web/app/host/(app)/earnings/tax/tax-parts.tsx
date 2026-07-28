@@ -3,7 +3,12 @@ import Link from "next/link";
 import { FeesReceiptIcon } from "@/components/home-icons";
 import { HostEmpty } from "@/components/host/host-empty";
 import { Num, Phrase } from "@/components/numerals";
-import { btnSecondary, focusRing, inlineAction } from "@/components/ui";
+import {
+  btnInertMd,
+  btnSecondary,
+  focusRing,
+  inlineAction,
+} from "@/components/ui";
 import { exampleStrip, exampleStripLead } from "@/components/ui/example-strip";
 import { formatPkr } from "@/lib/money";
 
@@ -183,10 +188,7 @@ const DOCUMENTS_REASON_ID = "tax-documents-not-generated";
  * NO `pressable`. A control that cannot be pressed does not answer a press, and
  * that absence IS the signal. It keeps `focusRing` because it keeps focus.
  */
-const downloadDisabled =
-  "inline-flex h-12 shrink-0 cursor-default select-none items-center justify-center gap-2 " +
-  "whitespace-nowrap rounded-md border border-border-default bg-raised px-6 text-bodyMd " +
-  `font-medium text-disabled ${focusRing}`;
+const downloadDisabled = btnInertMd;
 
 /**
  * `ha-061`'s document rows and `ha-059`'s per-booking receipt, with the one

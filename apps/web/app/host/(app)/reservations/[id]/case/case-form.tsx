@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { inlineAction } from "@/components/ui";
+import {
+  btnPrimaryPillInert,
+  inlineAction,
+} from "@/components/ui";
 import { Select, type SelectOption } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { sendDisabled } from "../../../help/help-chrome";
 
 /**
  * `ha-072` panel B's compose form, told the truth.
@@ -94,7 +96,7 @@ export function CaseForm({ guest }: { readonly guest: string }) {
           type="button"
           aria-disabled="true"
           aria-describedby={REASON_ID}
-          className={sendDisabled}
+          className={btnPrimaryPillInert}
         >
           Send to SalamStay
         </button>
