@@ -195,7 +195,15 @@ export default function HostInsightsPage() {
            * chosen because they hold the figures this page cannot compute:
            * earnings has what each stay paid, the calendar has which nights are
            * spoken for. `ha-066`'s own two links point at `/host/reviews` and a
-           * seasonal-pricing route, neither of which exists.
+           * seasonal-pricing route.
+           *
+           * **`/host/reviews` now exists** (this comment used to say neither did,
+           * and went stale the day it shipped). It is not promoted into this
+           * ranked pair, because the pair is deliberately two — a §5 gray-fill
+           * secondary and one §8 inline action beside it, the shape
+           * `/host/earnings` and `/host/today` both ship. A third plate here
+           * would flatten the rank. It is linked from the closing paragraph
+           * instead, off the word that already names it.
            */
           <>
             <Link href="/host/earnings" className={btnSecondary}>
@@ -227,11 +235,35 @@ export default function HostInsightsPage() {
         No digits, deliberately — which is also why nothing on this page needs
         `.num` or a `dir="auto"` isolate. The moment a figure arrives here, both
         do.
+
+        THE ONE LINK IN THE PARAGRAPH, added 2026-07-28, and it exists to close
+        a reachability hole rather than to decorate a sentence: an inbound-link
+        sweep of all 75 static routes found `/host/reviews` was the only one
+        NOTHING pointed at. It could be reached by typing its URL and no other
+        way, which also stranded `/host/messages` — the sole link into that
+        inbox is on `/host/reviews`.
+
+        This is `ha-066`'s own link restored, not a new invention: the card
+        points Insights at Reviews, and the actions block above declined it only
+        because the route did not exist yet. It goes on the word `reviews`
+        because the sentence was already naming the record; TASTE §8's inline
+        action is underlined at rest, so it reads as a door without the
+        paragraph having to announce one.
+
+        The nav is NOT the fix and must not become it — `HOST-SHELL.md` §2b
+        fixes six sections in the card's order, so a seventh tab would break the
+        contract. See GO-LIVE D5 for the defect underneath: `ha-046` puts the
+        real entry point in `/host/today`'s KPI row, which the built dashboard
+        cannot draw while it renders a host with no listings.
       */}
       <p className="mt-8 max-w-[68ch] text-bodySm font-regular leading-relaxed text-secondary">
         Occupancy needs a record of which nights each home was open. A summary of what guests say
-        needs reviews. A comparison needs figures from other hosts. SalamStay holds none of the
-        three, and it does not print a figure it cannot show you the working for.
+        needs{" "}
+        <Link className={inlineAction} href="/host/reviews">
+          reviews
+        </Link>
+        . A comparison needs figures from other hosts. SalamStay holds none of the three, and it
+        does not print a figure it cannot show you the working for.
       </p>
     </>
   );

@@ -114,6 +114,26 @@ export default function AccountSettingsPage() {
           title="Personal info"
           hint={personalHint}
         />
+        {/*
+          Added 2026-07-28. `/account/settings/security` had shipped and NOTHING
+          IN THE TREE LINKED TO IT — the page was reachable only by typing its
+          URL. Convention puts login and security immediately after personal
+          info, and that is where it goes.
+
+          The hint is a plain description rather than a derived state, which §5
+          permits for a row with no state to read: there is no account, so there
+          is no password age, no device count and no second factor to report.
+          It deliberately says **password** and stops there. The page itself is
+          explicit that devices and two-step verification are not built, and a
+          hint promising "two-step verification" would be the row lying about
+          the page one tap below it.
+        */}
+        <SettingsRow
+          href="/account/settings/security"
+          icon={<LockIcon className="size-5" />}
+          title="Login and security"
+          hint="The password you sign in with"
+        />
         <SettingsRow
           href="/account/settings/payment"
           icon={<CardIcon className="size-5" />}
