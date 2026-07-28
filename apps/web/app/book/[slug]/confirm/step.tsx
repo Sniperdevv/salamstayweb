@@ -265,6 +265,26 @@ export default function ConfirmStep({ slug }: { readonly slug: string }) {
               <span className={fieldLabel}>{declined ? "Tried with" : "Paying with"}</span>
               <span className="mt-1 block text-bodySm text-primary">{declinedRail}</span>
             </span>
+            {/*
+              The ONLY door into `/book/{slug}/pay`, and it is deliberately not
+              the primary. That surface describes what the chosen rail does with
+              your money and its own hand-off is disabled — no gateway is
+              connected — so repointing this step's primary at it would cut
+              `/confirmation` off entirely and dead-end the booking. §15 also
+              forbids a slot changing its action, and the spine's action is
+              Confirm.
+
+              So the rail row keeps its fact and gains a way to read about it:
+              one back-stack entry, one step back, and the guest returns to the
+              same radiogroup they left. Rendered only when a rail is chosen,
+              because the surface has nothing to describe until then.
+            */}
+            <Link
+              className={`${inlineAction} flex-none self-center text-label font-medium`}
+              href={checkoutHref(slug, "pay")}
+            >
+              How it works
+            </Link>
           </div>
         )
       }

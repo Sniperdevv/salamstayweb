@@ -75,11 +75,17 @@ const stub = (path: string, title: string): RouteEntry => ({
  * `resolvesInternally` therefore needs no change. `/book/is-f7-2bed/dates` is a
  * key in the map like any other path.
  *
- * ONE LISTING IS REGISTERED, AND THAT IS NOT AN OVERSIGHT. `is-f7-2bed` is the
- * only listing with a real page; the other ten are resolver stubs whose bodies
- * carry no Reserve affordance, so nothing on the site links into their
- * checkout. Registering seventy routes nobody can reach would be seventy things
- * for `--all` to fetch and seventy titles nobody has written.
+ * ALL ELEVEN LISTINGS ARE REGISTERED (2026-07-27). This paragraph used to read
+ * "one listing is registered, and that is not an oversight", and the reason it
+ * gave was true at the time: the other ten carried no Reserve affordance, so
+ * nothing linked into their checkout. Repointing all eleven Reserve CTAs at
+ * `/book/{slug}/dates` ended that, and a Reserve button whose checkout is
+ * unregistered is a 404 on the one control the whole catalogue exists to serve.
+ *
+ * The factory is what made it one line each rather than eight rows each — which
+ * is also the cost of a new SEGMENT: adding one to `CHECKOUT_STEPS` mints
+ * eleven routes, eleven titles and eleven things `--all` fetches. That is the
+ * bill a segment has to be worth, and it is why `/pay` argues for itself below.
  */
 interface CheckoutStepEntry {
   readonly segment: string;
@@ -94,6 +100,29 @@ const CHECKOUT_STEPS: readonly CheckoutStepEntry[] = [
   { segment: "verify", card: "gw-023", title: "Verify who is staying" },
   { segment: "price", card: "gw-024", title: "Your price breakdown" },
   { segment: "confirm", card: "gw-025", title: "Review and confirm" },
+  /**
+   * ONE ROUTE FOR SIX RAILS, and a state-neutral title over a specific H1.
+   *
+   * `ga-053`–`ga-058` draw six payment anatomies and `ga-116`/`ga-117` two more
+   * moments; the corpus rules on their shape itself, in its own words — "the
+   * pay moment becomes a state over the confirm step, never a route"
+   * (`ga-053`), "a state layered over this step, never a route" (`gw-025`
+   * panel 7). What is left after the states are removed is one surface that
+   * describes the chosen rail, so the RAIL IS A FACT ABOUT THE DRAFT AND NOT
+   * ABOUT THE ADDRESS: `/pay/raast` typed by a guest who chose JazzCash would
+   * be two sources for one fact needing reconciliation, and it buys nothing,
+   * because the alternate-rail list on web is `/confirm`'s radiogroup.
+   *
+   * The title is state-neutral for the reason `/status`'s is: `rail` is client
+   * state, so the SERVER always renders the no-rail branch, and that branch is
+   * the only HTML G41 and G43 ever see. "Pay with JazzCash" is the H1 after
+   * hydration; it can never be the served `<title>`.
+   *
+   * The stepper does NOT gain a circle. `ga-053`, `ga-116` and `ga-117` all
+   * draw step 4 · Confirm as current, and §3 fixes four circles rather than one
+   * route per circle — `/dates` already proves a route can sit outside them.
+   */
+  { segment: "pay", card: "ga-053/054/055/056/057/058", title: "Pay for your stay" },
   { segment: "confirmation", card: "gw-026", title: "You're booked" },
   /**
    * The one title that is NOT its card's H1. gw-027 renders two outcomes on
