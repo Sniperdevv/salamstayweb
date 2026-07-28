@@ -657,6 +657,46 @@ export const ROUTES: readonly RouteEntry[] = [
    */
   page("/host/verify", "ha-018", "Your verification — SalamStay hosting", "noindex,follow", null),
   page("/host/verify/cnic", "ha-007", "Verify your CNIC — SalamStay hosting", "noindex,follow", null),
+  /**
+   * `ha-010`, 2026-07-28 — and it is the ONLY route out of the seven compliance
+   * cards. The test applied to each was: *after subtracting what this build
+   * cannot assert, is there a surface left, or only a paragraph?*
+   *
+   *  · `ha-010` **survives** — what remains is a real provincial licensing
+   *    regime that nothing on this site explained anywhere (the hub had one
+   *    sentence), plus a document a host physically holds. The upload control
+   *    is a component of the explanation, not its reason to exist.
+   *  · `ha-011` renewal alerts — **no honest body at all.** All six states read
+   *    off an expiry date nothing holds, and the auto-pause was already refused
+   *    once this programme. It survives as ONE CLAUSE in this page's honesty
+   *    strip: nothing here is watching a date, sending a reminder, or changing
+   *    anything about a listing.
+   *  · `ha-012` NTN + `ha-013` filer status — **no document and no control.** An
+   *    NTN is a number, not a thing you hand over, so the only control such a
+   *    page could carry is a text field that looks like it saved a tax number
+   *    and did not. They stay hub rows; `/host/help/fees` says the rest.
+   *  · `ha-014` cantonment NOC — **already shipped** as
+   *    `/host/help/regulations/cantonment-noc`. A second surface would add
+   *    exactly one thing that article lacks: a capture control for a document
+   *    with nowhere to go, one click from that article's own strip saying so.
+   *    Two answers about one document is worse than one.
+   *  · `ha-017` KYB — **no policy behind it, not merely no store.** `ADR-A7`
+   *    (host KYB scope + threshold) is open in `DECISIONS_PENDING.md` pending
+   *    AML/CFT counsel: the trigger listing count, the ownership-disclosure
+   *    threshold and the accepted entity types are all defaults until decided.
+   *    The card renders one of those defaults as settled company law and asks a
+   *    property manager to name every owner above it **with their CNIC
+   *    numbers**. A hub row that states the shape and refuses the policy.
+   *  · `ha-009` rejection — already ships inside `cnic-check.tsx`, in the three
+   *    places it is true.
+   */
+  page(
+    "/host/verify/tourism-licence",
+    "ha-010",
+    "Your tourism licence — SalamStay hosting",
+    "noindex,follow",
+    null,
+  ),
   page("/host/onboarding", "ha-004", "Set up hosting — SalamStay hosting", "noindex,follow", null),
   page("/host/payout-settings", "ha-016", "Payout details — SalamStay hosting", "noindex,follow", null),
   /**

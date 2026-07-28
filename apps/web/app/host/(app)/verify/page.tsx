@@ -55,12 +55,55 @@ import { VerificationStrip } from "./verification-strip";
  *    zero" — and a zero rendered as a metric is still a metric.
  *  · **The all-verified quiet close.** It is the card's terminal state and this
  *    build has no path to it.
+ *  · **A withholding rate, and the multiplier between filer and non-filer.**
+ *    `ha-013` reuses *"roughly double the filer rate"* from `ha-055` and calls
+ *    it a shipped fact; `COMPLIANCE_MAP.md` F2-a says only that the ATL
+ *    distinction "multiplies rate" and names no factor, so the doubling is
+ *    sourced to a design card and nothing else. GO-LIVE A16 already records that
+ *    the one percentage this product publishes is undeclared. No rate and no
+ *    multiplier appears here, and `/host/help/fees` — the page that owns the fee
+ *    schedule — prints neither either.
  *  · **The retired observance vocabulary, and the retired money words with it.**
  *    `REPOSITIONING.md` lists both; `HOST-SHELL.md` §0.2 forbids carrying `ha-*`
  *    content forward unchecked and §12 asks that the strings not be re-typed
  *    even to say they are banned, so they are not. None of it appears here, and
  *    neither does the religious framing the `ha-*` corpus still carries
  *    (GO-LIVE A8).
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ *  THE SEVEN ROWS AFTER THE COMPLIANCE PASS, 2026-07-28
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Seven cards were commissioned to fill in the Not-built rows — HA-009, HA-010,
+ * HA-011, HA-012, HA-013, HA-014, HA-017 — and **one route came out of them**,
+ * `./tourism-licence`. The argument for each is in that route's header; what
+ * changed on THIS page is:
+ *
+ *  · **Tourism licence** is now `open`. It is the only one of the seven with
+ *    both a real permission regime that nothing on this site explains anywhere
+ *    and a document a host physically holds.
+ *  · **Cantonment NOC** stays `Not built` and its body now links the article
+ *    that shipped hours earlier, `/host/help/regulations/cantonment-noc`. A
+ *    second surface would have added exactly one thing that article does not
+ *    have — a capture control for a document with nowhere to go, one click from
+ *    that article's own strip saying the certificate cannot be added here.
+ *  · **NTN and Filer status** stay `Not built` and now link `/host/help/fees`,
+ *    which owns the consequence in full. Neither has a document or a control
+ *    that could exist honestly: an NTN is a number, and the only control such a
+ *    page could carry is a text field that looks like it saved a tax number and
+ *    did not. The NTN row gains one clause naming STRN, which is HA-012's second
+ *    field and all of it that can be said.
+ *  · **Business verification** is a NEW row, and HA-017 is all of it. `ADR-A7 —
+ *    Host KYB scope + threshold` is 🔴 open in `DECISIONS_PENDING.md`: the
+ *    listing count that triggers the upgrade, the ownership-disclosure threshold
+ *    and whether a partnership is accepted are *defaults until decided*, pending
+ *    outside counsel. `ha-017` prints one of those defaults as settled law. A
+ *    form built on it would publish an undecided policy as a rule and collect
+ *    third parties' identity numbers to do it.
+ *  · **HA-011 and HA-009 changed nothing here.** HA-011's whole content is a
+ *    reading off an expiry date, and its auto-pause was refused once already
+ *    this programme; what survives is one clause in the licence route's strip.
+ *    HA-009's register already ships in the three places it is true inside
+ *    `./cnic/cnic-check.tsx`.
  *
  * ═══════════════════════════════════════════════════════════════════════════
  *  HOW "NOT DONE" IS SAID, GIVEN THAT "DONE" CANNOT BE
@@ -76,12 +119,22 @@ import { VerificationStrip } from "./verification-strip";
  * The union is written as a discriminated type so that adding a third state is a
  * type error rather than a copy edit.
  *
+ * A `Not built` row may still carry an inline link INSIDE ITS BODY, and that is
+ * not a third state (added 2026-07-28). The state governs whether the CHECK can
+ * be opened; a link in the prose is a reference to where the RULE is written
+ * down, which is a different object. Two rows use it: the cantonment row points
+ * at `/host/help/regulations/cantonment-noc`, and the two tax rows point at
+ * `/host/help/fees`. A host reading "Not built" with no way to learn anything
+ * more, when a full article sits one link away, is a wayfinding failure this
+ * page was creating.
+ *
  * `<ul>` and NOT `<ol>`. `/host/onboarding` orders its four because identity
- * genuinely comes before a listing and a listing before a payout. These six are
- * not a sequence: the cantonment row applies to some addresses and not others,
- * filer status is a fact rather than a step, and a host whose home is in Gulberg
- * never meets the fourth row at all. An ordered list would assert a run-through
- * that no host performs.
+ * genuinely comes before a listing and a listing before a payout. These seven
+ * are not a sequence: the cantonment row applies to some addresses and not
+ * others, filer status is a fact rather than a step, a host whose home is in
+ * Gulberg never meets the fourth row at all, and the last row applies only to a
+ * host operating as a business. An ordered list would assert a run-through that
+ * no host performs.
  *
  * ═══════════════════════════════════════════════════════════════════════════
  *  ROUTE CONTRACT (`HOST-SHELL.md` §1, not restated)
@@ -215,7 +268,24 @@ function ListingRegisterIcon(props: GlyphProps) {
   );
 }
 
-/* ───────────────────────────── the six ──────────────────────────────────── */
+/**
+ * A premises with floors. A registered entity, drawn as the building it operates
+ * from rather than as a briefcase or a suit — the row is about a company, and
+ * neither of those two says "company" without also saying something about the
+ * person running it.
+ */
+function EntityIcon(props: GlyphProps) {
+  return (
+    <Glyph {...props}>
+      <path d="M4 21V6a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v15" />
+      <path d="M15 10h4a1 1 0 0 1 1 1v10" />
+      <path d="M3 21h18" />
+      <path d="M7.5 9h4M7.5 13h4M9.5 21v-4" />
+    </Glyph>
+  );
+}
+
+/* ──────────────────────────── the seven ─────────────────────────────────── */
 
 /**
  * A check is EITHER openable OR not built. There is deliberately no third
@@ -277,9 +347,19 @@ const HOST_CHECKS: readonly HostCheck[] = [
      * names them; `/legal/corrections` treats "the wrong body named for a
      * registration or licence rule" as a correctable error, so no body is named
      * more precisely than the source supports.
+     *
+     * The only one of the seven compliance cards that became a route
+     * (`./tourism-licence`, 2026-07-28). The last sentence loses "would be
+     * captured here", because it is now captured on that page instead — where
+     * the four fields are listed, and where the document control that cannot
+     * send lives.
      */
-    body: "A short-stay operator holds a licence from the tourism authority of the province the home is in; Gilgit-Baltistan and Azad Jammu and Kashmir each have their own tourism board. The number, the issuing authority and the expiry would be captured here.",
-    state: { kind: "unbuilt" },
+    body: "A short-stay operator holds a licence from the tourism authority of the province the home is in; Gilgit-Baltistan and Azad Jammu and Kashmir each have their own tourism board.",
+    state: {
+      kind: "open",
+      href: "/host/verify/tourism-licence",
+      label: "Open the tourism licence check",
+    },
   },
   {
     title: "Cantonment NOC",
@@ -291,14 +371,46 @@ const HOST_CHECKS: readonly HostCheck[] = [
      * the row states the rule and refuses the determination — the opposite of
      * `ha-018`'s "Not needed for this address", which is a finding made by
      * nothing.
+     *
+     * The link is a reference, not an action: the check is still `Not built`,
+     * and what the article carries is the RULE. It publishes no board fee, no
+     * processing time, no document checklist, no named office and no list of
+     * cantonments, and nothing added here changes that.
      */
-    body: "Some cantonment areas restrict who may stay and ask for a no-objection certificate from the cantonment board first. Whether it applies is a question about one address, and nothing on this site decides that about any address.",
+    body: (
+      <>
+        Some cantonment areas restrict who may stay and ask for a no-objection certificate from the
+        cantonment board first. Whether it applies is a question about one address, and nothing on
+        this site decides that about any address.{" "}
+        <Link href="/host/help/regulations/cantonment-noc" className={inlineAction}>
+          What the certificate changes, and what it does not
+        </Link>
+      </>
+    ),
     state: { kind: "unbuilt" },
   },
   {
     title: "NTN",
     icon: <TaxFormIcon className="size-6" />,
-    body: "Your FBR tax registration number. Tax is withheld from a host payout under Pakistan's income-tax rules, and the registration is what that withholding is filed against.",
+    /*
+     * The STRN clause is HA-012's second field and the whole of what can be said
+     * about it: `COMPLIANCE_MAP.md` F2-b establishes that STRN is registration
+     * for sales tax on services, and that is a definition rather than a claim
+     * about how many hosts hold one. `ha-012`'s "most individual hosts don't
+     * need this" is a statement about a population nobody counted, so the clause
+     * says who it applies to structurally and stops.
+     */
+    body: (
+      <>
+        Your FBR tax registration number. Tax is withheld from a host payout under Pakistan&apos;s
+        income-tax rules, and the registration is what that withholding is filed against. A Sales
+        Tax Registration Number is a separate thing, held where a host is registered for sales tax
+        on services.{" "}
+        <Link href="/host/help/fees" className={inlineAction}>
+          How each payout is calculated
+        </Link>
+      </>
+    ),
     state: { kind: "unbuilt" },
   },
   {
@@ -309,9 +421,44 @@ const HOST_CHECKS: readonly HostCheck[] = [
      * rate than non-filers is a fact about the Income Tax Ordinance and
      * `COMPLIANCE_MAP.md` F2-a carries it; the RATE is a tax position this build
      * has not settled, and GO-LIVE A16 already records that the one percentage
-     * `/become-a-host` publishes is undeclared. No number appears on this page.
+     * `/become-a-host` publishes is undeclared. No number appears on this page —
+     * and no multiplier either, which is where `ha-013` goes further than its
+     * source (see the refusals above).
      */
-    body: "Whether you appear on FBR's Active Taxpayer List. It changes what is withheld from a payout: a host on the list is withheld at a lower rate than one who is not. It is a fact about that list rather than something you fill in.",
+    body: (
+      <>
+        Whether you appear on FBR&apos;s Active Taxpayer List. It changes what is withheld from a
+        payout: a host on the list is withheld at a lower rate than one who is not. It is a fact
+        about that list rather than something you fill in.{" "}
+        <Link href="/host/help/fees" className={inlineAction}>
+          Where withholding sits in a payout
+        </Link>
+      </>
+    ),
+    state: { kind: "unbuilt" },
+  },
+  {
+    title: "Business verification",
+    icon: <EntityIcon className="size-6" />,
+    /*
+     * HA-017, and the row is all of it. `ADR-A7 — Host KYB scope + threshold` is
+     * 🔴 open in `DECISIONS_PENDING.md`, with the trigger, the
+     * ownership-disclosure threshold and the accepted entity types all recorded
+     * as *defaults until decided*, pending AML/CFT counsel. `ha-017` renders one
+     * of those defaults as settled Pakistani company law and asks a property
+     * manager to name every owner above it, with their identity numbers.
+     *
+     * So this row states the SHAPE of the thing — that a business account is a
+     * different object from a host renting their own home — and refuses the
+     * policy, in the register the Liveness row above already set: a decision
+     * nobody has taken, said as such.
+     *
+     * Also refused with it: the "property-manager tier" and its three unlocks
+     * (multiple listings under one account, scoped co-host access, consolidated
+     * tax documents). None of the three exists, and a tier described before it
+     * is built is a roadmap printed as a feature.
+     */
+    body: "A host operating as a registered business, or managing homes on behalf of their owners, is a different kind of account from someone letting their own home, and it is checked differently. What SalamStay asks of one is a decision nobody has taken yet, so nothing on this site describes it and nothing here can start it.",
     state: { kind: "unbuilt" },
   },
 ];
@@ -345,7 +492,7 @@ export default function HostVerificationPage() {
 
             <div className="min-w-0 flex-1">
               {/*
-                `<h2>` at the `bodyMd` rung: the tag carries the outline (six
+                `<h2>` at the `bodyMd` rung: the tag carries the outline (seven
                 named regions under one `h1`, reachable by heading navigation),
                 the class carries the visual rank (TASTE §7, "card titles
                 16/500-600"). `components/host/host-sections.tsx` and
