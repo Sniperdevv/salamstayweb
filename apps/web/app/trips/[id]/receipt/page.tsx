@@ -16,7 +16,13 @@ import { formatPkr } from "@/lib/money";
 import { pageMetadata } from "@/lib/seo/metadata";
 
 import PrintReceiptButton from "./print-button";
-import { ExampleBookingStrip, TripBackLink, TripPageHead, TripSection } from "../trip-chrome";
+import {
+  ExampleBookingStrip,
+  TripBackLink,
+  TripPageHead,
+  TripSection,
+  TripSlot,
+} from "../trip-chrome";
 
 /**
  * GA-134 — `/trips/{id}/receipt`, the receipt for a stay, at web width.
@@ -261,20 +267,16 @@ export default async function TripReceiptRoute({
           last document on which to draft one. So the row says what is missing
           and stops.
         */}
-        <div className="mt-4 max-w-[62ch] rounded-md bg-raised px-4 py-4">
-          <p className="border-b border-hairline pb-3 text-bodySm font-semibold text-secondary">
-            Not issued yet
-          </p>
-          <p className="mt-3 text-bodyMd font-semibold text-primary">
-            A numbered tax invoice for this stay
-          </p>
-          <p className="mt-1.5 text-bodySm font-regular leading-relaxed text-secondary">
-            The sales tax you paid is itemised above and was charged when you paid. A separate
-            numbered invoice, carrying SalamStay&rsquo;s tax registration details, is not issued
-            yet. When it is, it will appear here — the figures will not change, because they are
-            the figures above.
-          </p>
-        </div>
+        <TripSlot
+          className="mt-4"
+          lead="Not issued yet"
+          title="A numbered tax invoice for this stay"
+        >
+          The sales tax you paid is itemised above and was charged when you paid. A separate
+          numbered invoice, carrying SalamStay&rsquo;s tax registration details, is not issued yet.
+          When it is, it will appear here — the figures will not change, because they are the
+          figures above.
+        </TripSlot>
       </TripSection>
 
       {/*

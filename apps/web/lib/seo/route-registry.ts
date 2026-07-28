@@ -408,11 +408,51 @@ export const ROUTES: readonly RouteEntry[] = [
   stub("/trips/requests/is-f7-2bed-aug2026/cancel", "Withdraw your request — Margalla View Apartment"),
   page("/trips/is-f7-2bed-aug2026", "ga-071", "Your trip — Margalla View Apartment", "noindex,follow", null),
   page("/trips/is-f7-2bed-aug2026/receipt", "ga-134", "Receipt — Margalla View Apartment", "noindex,follow", null),
-  stub("/trips/is-f7-2bed-aug2026/change", "Change your booking — Margalla View Apartment"),
+  /**
+   * `/trips/{id}/change` — **RETIRED as a route, 2026-07-28.** It was a stub,
+   * which is a promise that a page is being written, and `ga-067` has now been
+   * ruled not to be a page at all.
+   *
+   * Four things in the card's own sentence do not exist: the new total
+   * (`quote.ts` refuses to derive a fee from anything and ships `coversStay()`
+   * precisely so a step that changes the nights cannot quote one), the card it
+   * charges, host approval (`BUILD-DECISIONS.md` #10 is Instant Book only, and
+   * §1d forbids designing the request lifecycle), and the change itself. What is
+   * left is an answer, not a screen — so it is the disabled `Change your dates
+   * instead` control on `/trips/{id}`, which gives a guest the answer where they
+   * already are instead of sending them to a page to be told no.
+   *
+   * The row is deleted rather than kept as a stub because nothing links it any
+   * more and a "being written" stub for something we have decided not to write
+   * is the one kind of dishonesty the stub mechanism can produce.
+   */
   page("/trips/is-f7-2bed-aug2026/cancel", "ga-105", "Cancel your booking — Margalla View Apartment", "noindex,follow", null),
   // Not previously registered — the review surface is new this wave.
   page("/trips/is-f7-2bed-aug2026/review", "ga-099", "Write a review — Margalla View Apartment", "noindex,follow", null),
-  stub("/trips/is-f7-2bed-aug2026/arrival", "Getting there — Margalla View Apartment"),
+  /**
+   * `ga-072` + `ga-073` as ONE route, 2026-07-28 — "where is it" and "how do I
+   * get in" are one question asked at one moment, standing on a street.
+   *
+   * Promoted from `stub()` keeping its title byte-for-byte: `/trips/{id}` has
+   * LINKED this path since the trip page shipped, so the claim that the surface
+   * exists was made days ago and this is the row catching up with it.
+   *
+   * `ga-093` checkout instructions and `ga-094` itinerary got NO route and no
+   * section. `ga-093`'s keys, gate, rubbish and meter photo are all
+   * host-supplied and none are held; its one real fact is the check-out hour,
+   * which is a row here and a fact row on `/trips/{id}`. `ga-094` is four
+   * day-rows built from two facts `/trips/{id}` already prints — and that page
+   * had already refused its own timeline in these words: *"Its three rows
+   * restate check-in, check-out and the payment, all already in the facts group
+   * above it."* Same refusal, one level up.
+   */
+  page(
+    "/trips/is-f7-2bed-aug2026/arrival",
+    "ga-072/ga-073",
+    "Getting there — Margalla View Apartment",
+    "noindex,follow",
+    null,
+  ),
   stub("/trips/is-f7-2bed-aug2026/booking.ics", "Add to calendar — Margalla View Apartment"),
   // Title changed from the stub's "Message your host" — an instruction, not a
   // page name, and G43's first-word check would miss the <h1> "Messages with Ayesha".

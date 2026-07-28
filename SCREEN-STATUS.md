@@ -1,6 +1,6 @@
 # Screen status — what is built, what is not, and why
 
-**As of 2026-07-28.** 240 design cards · 116 route files · 201 gated routes · 0 HARD failures.
+**As of 2026-07-28.** 240 design cards · 118 route files · 203 gated routes · 0 HARD failures · 0 orphans.
 
 This file answers one question the card registry cannot: **of the 240 approved cards, which
 correspond to a website screen that does not exist yet?**
@@ -47,6 +47,9 @@ The card is not in the registry because the route cites its web-native sibling.
 | `ga-084` | `/help/cantonment-stays` | `gw-020` |
 | `ga-085` | `/legal/terms` | — |
 | `ga-108` | `/help` | `SEO-RULES §3.10` |
+| `ga-072` `ga-073` | `/trips/[id]/arrival` — one route, because *where is it* and *how do I get in* are one question asked at one moment, standing on a street | `ga-072/ga-073` |
+| `ga-100` | `/trips/[id]/review` — a **state**, not a second URL. It is only reachable by filling in the form on the same route, so it can never be cold-loaded with nothing to recap; a separate URL would be the A11 deep-link failure exactly | `ga-099` |
+| `ha-010` | `/host/verify/tourism-licence` | `ha-010` |
 | `gw-015` `gw-016` | `app/not-found.tsx`, `app/error.tsx` — special files, not routes, so they have no registry row by design | — |
 | `ha-019`–`ha-032` | the nine wizard steps at `/host/listings/new/*` | `hw-002`…`hw-006` |
 | `ha-033` | `/host/listings/new/preview` | `hw-006` |
@@ -147,7 +150,14 @@ previous wave deliberately removed, so each one is recorded with its reason.
 | `ga-116` | a redirect-return route | a return URL's meaning is "a third party sends people here", and none does |
 | `ga-117` | a retry route | `/confirm?payment=declined` **is** this card |
 | `ga-109` | attachments, ticket timeline, "routed to our safety team with priority" | no upload endpoint, no tickets, nothing routes |
+| `ga-067` | the whole route — it became the **disabled control on `/trips/[id]`** | four things in the card's own sentence do not exist: the new total (`quote.ts` ships `coversStay()` precisely so a step that changes the nights cannot quote one), the card it charges, host approval (Instant Book only), and the change itself. A guest gets the answer where they already are instead of a page that says no. |
+| `ga-093` | any surface at all | keys, gate, rubbish and the meter photo are all host-supplied and none are held. Its one real fact is the check-out hour, already a row in two places. |
+| `ga-094` | any surface at all | four day-rows built from two facts `/trips/[id]` already prints — and that page had **already refused its own timeline** in these words: *"Its three rows restate check-in, check-out and the payment, all already in the facts group above it."* |
+| `ga-106` | the entire refund tracker | a tracker reads off a refund record and there is none. It is also the only surface in the tree that could **only ever** be cold-loaded, since cancelling saves nothing — so it would tell a reader who cancelled nothing that PKR 25,000 is moving right now. A fabricated receipt says money moved; a fabricated tracker says it **is moving**. |
+| `ga-072`/`ga-073` | gate code `4471`, lockbox code `8290`, the street address, the map, the "Open in Maps" pin | the only coordinates held are the centre of the privacy circle drawn to *withhold* the address. And an invented rating is shrugged at; **an invented gate code is typed into a keypad by someone standing in the dark.** |
 | `ha-011` | auto-pause on licence expiry | nothing reads a licence, holds an expiry or pauses a listing |
+| `ha-012` `ha-013` | a tax-registration surface | an NTN is a number, not a document you hand over, so the only control such a page could carry is a text field that looks like it saved a tax number and did not. Also `ha-013`'s "roughly double the filer rate", which exceeds its own source — that says the ATL distinction multiplies the rate and names no factor. |
+| `ha-017` | the whole KYB flow | **blocked on policy, not on a store.** `ADR-A7` is open pending AML/CFT counsel, and the card renders one of its defaults as settled company law while asking a property manager to name every owner above the threshold **with their CNIC numbers**. |
 | `ha-057` | the withholding rate, the ATL chip, `base × rate` | no tax position settled; `/host/verify` states the direction and prints no number |
 | `ha-059` | invoice numbers, NTN, issue date, e-invoice framing | no document generator |
 | `ha-060` | the failed-payout recovery flow, all masked instruments | an event that has not happened, off a rail that is not connected |

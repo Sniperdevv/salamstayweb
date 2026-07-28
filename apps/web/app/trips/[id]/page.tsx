@@ -16,7 +16,7 @@ import { ShieldCheckIcon } from "@/components/home-icons";
 import { CalendarIcon, LockIcon, PinIcon } from "@/components/icons";
 import { Num, Phrase } from "@/components/numerals";
 import { GUEST_STUB_LINKS, RegistryStub, stubMetadata } from "@/components/registry-stub";
-import { btnSecondary, btnSecondaryMd, inlineAction } from "@/components/ui";
+import { btnSecondary, btnSecondaryMd, focusRing, inlineAction } from "@/components/ui";
 import { CheckMark } from "@/components/ui/marks";
 import { QUOTE } from "@/lib/booking/quote";
 import {
@@ -33,6 +33,8 @@ import { routeByPath } from "@/lib/seo/route-registry";
 import {
   ExampleBookingStrip,
   TripBackLink,
+  TripFactRow,
+  TripFacts,
   TripMain,
   TripPageHead,
   TripSection,
@@ -166,43 +168,36 @@ function ConfirmedChip() {
 }
 
 /**
- * One row of the booking facts — §5's form-group anatomy borrowed for content,
- * which is the same borrow `Facts`, `ActionList` and `TripSection`'s neighbours
- * make, so everything down this column reads as one family.
- *
- * Border, no shadow (§9). The divider is FULL-BLEED, §5's word and the
- * deliberate exception to TASTE §11.9: the group carries no padding of its own,
- * the rows do, so the hairline IS the row edge and stopping it short would draw
- * a floating stroke.
- *
- * Written here rather than imported from `post-flow.tsx` for one reason: `Fact`
- * pins its label column at `w-28 sm:w-32` for a 520px group, and this page's
- * group sits in a 720 column beside values like "Wed 12 Aug 2026, 2:00 PM". The
- * anatomy, the type roles and the divider are identical; only the measure moves.
+ * The reason under the disabled `Change your dates instead`, and the id that
+ * reads it out at the moment a keyboard user lands on the control.
  */
-function FactRow({
-  label,
-  sub,
-  children,
-}: {
-  readonly label: string;
-  readonly sub?: React.ReactNode;
-  readonly children: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-baseline gap-4 border-t border-hairline px-4 py-3 first:border-t-0">
-      <dt className="w-32 max-w-[40%] shrink-0 text-label font-regular text-secondary">{label}</dt>
-      <dd className="min-w-0 flex-1 text-bodyMd text-primary">
-        {children}
-        {sub === undefined ? null : (
-          <span className="mt-0.5 block text-label font-regular leading-normal text-secondary">
-            {sub}
-          </span>
-        )}
-      </dd>
-    </div>
-  );
-}
+const CHANGE_REASON_ID = "change-dates-reason";
+
+/**
+ * `InlineLink`'s type wearing a disabled skin — TASTE §11.7: visible, in place,
+ * same size, same label, and shipped as a `<button>` so it keeps its place in
+ * the tab order.
+ *
+ * DISABLE IN THE SHAPE THE ENABLED CONTROL HAD. This position has always been
+ * §5's ranked pair — one gray-fill secondary beside one inline text action,
+ * *"never two buttons: the pair has a rank, and the rank is what says which one
+ * a guest is expected to reach for"*. `app/host/(app)/earnings/tax/
+ * tax-parts.tsx`'s `downloadDisabled` is bordered and `h-12` because the control
+ * it replaces was a button; this one replaces a link, so it stays type. Turning
+ * it into a second button would spend the rank to say "off".
+ *
+ * **The underline is dropped**, which is `app/book/{slug}/dates/step.tsx`'s
+ * reasoning on its disabled `Clear dates`: TASTE §8's underline-at-rest marks a
+ * thing that acts, and this one has nothing to act on. Dimmed ink and a missing
+ * underline are two signals, never colour alone (`GUEST-SHELL.md` §6).
+ *
+ * Spelled out rather than composed from `inlineAction`, for the reason
+ * `components/ui.ts` records against `btnSecondaryMd`: Tailwind emits utilities
+ * in token order, so appending `text-disabled` to a string that already carries
+ * `text-primary` is decided by the stylesheet rather than by the order written
+ * here. A state is a whole recipe.
+ */
+const changeDisabled = `cursor-default select-none rounded-sm text-bodySm font-medium text-disabled ${focusRing}`;
 
 /**
  * The host block — `ga-071`'s `.host` row.
@@ -354,16 +349,16 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
           written twice is two chances to disagree about something a guest is
           counting money against.
         */}
-        <dl className="mt-4 max-w-[62ch] overflow-hidden rounded-md border border-border-default bg-canvas">
-          <FactRow label="Dates" sub={<Num>{`${TRIP.nights} nights`}</Num>}>
+        <TripFacts className="mt-4">
+          <TripFactRow label="Dates" sub={<Num>{`${TRIP.nights} nights`}</Num>}>
             <Num>{stayRange}</Num>
-          </FactRow>
-          <FactRow label="Check-in">
+          </TripFactRow>
+          <TripFactRow label="Check-in">
             <Num>{formatTripDateTime(TRIP.checkIn)}</Num>
-          </FactRow>
-          <FactRow label="Check-out">
+          </TripFactRow>
+          <TripFactRow label="Check-out">
             <Num>{formatTripDateTime(TRIP.checkOut)}</Num>
-          </FactRow>
+          </TripFactRow>
           {/*
             Guests is the one fact `trip-record.ts` does not carry, so it comes
             from `CANONICAL` — the same object the confirmation this page is
@@ -371,9 +366,9 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
             retyping "6 guests" is the whole reason that constant exists: the two
             screens cannot describe one party two ways.
           */}
-          <FactRow label="Guests" sub={<Num>{CANONICAL.guestBreakdown}</Num>}>
+          <TripFactRow label="Guests" sub={<Num>{CANONICAL.guestBreakdown}</Num>}>
             <Num>{CANONICAL.guests}</Num>
-          </FactRow>
+          </TripFactRow>
           {/*
             The reference the guest read on their confirmation, and the one
             string on this page they would quote to support. `Reference` keeps it
@@ -387,10 +382,10 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
             should agree — either both carry it under the example-booking
             disclosure or neither does — and which way is a call above this file.
           */}
-          <FactRow label="Booking reference">
+          <TripFactRow label="Booking reference">
             <Reference>{CANONICAL.reference}</Reference>
-          </FactRow>
-        </dl>
+          </TripFactRow>
+        </TripFacts>
       </TripSection>
 
       <TripSection id="host" heading="Your host" className="mt-8">
@@ -400,15 +395,27 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
       <TripSection
         id="before"
         heading="Before you go"
-        sub="Directions and a calendar file for these dates."
+        /* Was "Directions and a calendar file…". The arrival page it opens
+           refuses turn-by-turn directions outright, so the section that
+           introduces it stops promising them either. */
+        sub="Getting to the home, and a calendar file for these dates."
         className="mt-8"
       >
         <ActionList>
+          {/*
+            The title and sub now name what the page ACTUALLY holds. Until
+            `/trips/{id}/arrival` was built this row promised "Directions" and
+            led to a registry stub; the built page refuses turn-by-turn
+            directions outright — they are navigation to an address no host has
+            supplied — so the row that opens it stops promising them. A next-step
+            row is a description of its destination, and a description written
+            against a stub goes stale the day the stub becomes a page.
+          */}
           <ActionRow
             href={tripPath("arrival")}
             icon={<PinIcon className="size-5" />}
-            title="Getting there and arrival"
-            sub="Directions, check-in time and house rules"
+            title="Getting there and getting in"
+            sub="Where the home is, check-in times and house rules"
           />
           {/*
             No `download` attribute, for the reason the confirmation records: the
@@ -501,8 +508,73 @@ export default async function TripRoute({ params }: { params: Promise<{ id: stri
           <Link href={tripPath("cancel")} className={`${btnSecondary} no-underline`}>
             Cancel this booking
           </Link>
-          <InlineLink href={tripPath("change")}>Change your dates instead</InlineLink>
+
+          {/*
+            GA-067, and the whole of what that card can honestly become here.
+
+            It draws a change form: a calendar of new dates, a guest stepper, and
+            a literal price delta — "Current total PKR 42,350 → New total · 4
+            nights PKR 54,850 → + PKR 12,500, charged to your HBL •••• 8842, once
+            Ayesha confirms". Four separate things in that sentence do not exist:
+
+             · **The new total.** `lib/booking/quote.ts` refuses to derive a fee
+               from anything — *"a `serviceFee(subtotal)` here would have to
+               invent a multiplier, and an invented multiplier prints an invented
+               number at a guest who is about to be charged it"* — and ships
+               `coversStay()` precisely so a step that changes the nights CANNOT
+               quote a total. A fourth night needs a service fee, an MDR and a
+               sales tax that no published figure produces.
+             · **The card it would be charged to.** `trip-record.ts` lists the
+               payment-method last four among the things deliberately absent.
+             · **Host approval.** `BUILD-DECISIONS.md` #10 rules Instant Book
+               only and `GUEST-SHELL.md` §1d says outright: *"do not design the
+               request lifecycle on web."* A modification awaiting a host IS that
+               lifecycle.
+             · **The change itself.** There is no booking store to write it to.
+
+            So there is no page, and the honest thing is not a route that
+            apologises — it is this control, in place, saying so where the reader
+            already is. `aria-disabled`, NOT `disabled`: a `disabled` button
+            leaves the tab order, so a keyboard or screen-reader user meets the
+            cancel button, finds nothing beside it, and is never told why. This
+            one stays focusable, announces itself as dimmed, and
+            `aria-describedby` reads the reason at the moment it matters. There
+            is no `onClick` — inert by construction, not by an early return
+            somebody could delete.
+
+            It keeps its own label. Renaming it to "Not available" would hide the
+            shape of the feature instead of stating its absence (`tax-parts.tsx`,
+            same idiom).
+          */}
+          <button
+            type="button"
+            aria-disabled="true"
+            aria-describedby={CHANGE_REASON_ID}
+            className={changeDisabled}
+          >
+            Change your dates instead
+          </button>
         </Acts>
+
+        {/*
+          §12's no-dead-end rule: a disabled control names its next action. Both
+          named here are real and already on this page — the free window with its
+          exact hour is in the section's own sub line above, and cancelling is
+          the button this note sits under. The rate is the listing's published
+          `PKR 12,500` a night, stated as a rate rather than as a total, because
+          a total for different dates is the number that cannot be computed.
+        */}
+        <p
+          id={CHANGE_REASON_ID}
+          className="mt-3 max-w-[62ch] text-bodySm font-regular leading-relaxed text-secondary"
+        >
+          <Phrase>
+            Changing the dates on a booking is not built yet, so this does nothing. Inside the free
+            window a cancellation costs you nothing and the home is bookable again at its published
+            rate.{" "}
+            <InlineLink href="/messages/host-margalla-view">Ask {TRIP.host} first</InlineLink>
+          </Phrase>
+        </p>
       </TripSection>
     </TripMain>
   );

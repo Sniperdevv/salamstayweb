@@ -175,6 +175,124 @@ export function ExampleBookingStrip({
 }
 
 /**
+ * A bounded block of facts — TASTE §1's "form boundary": `radius.md`, one
+ * `border.default`, hairline-divided cells, square interior corners
+ * (`overflow-hidden` does that for free), and **no shadow**, because it does not
+ * float over anything.
+ *
+ * HOISTED, NOT INVENTED. `/trips/{id}`, `/trips/{id}/receipt` and the cancel
+ * flow's summary each spelled this same string; `/trips/{id}/arrival` would have
+ * been the fourth. `GUEST-SHELL.md` §15 — *"these primitives exist and are the
+ * vocabulary; adding a parallel one is the defect"* — and `example-strip.ts`
+ * records the same lesson from the other side: eight surfaces had forked one
+ * class string because the only shared thing on offer was a component with the
+ * wrong props.
+ *
+ * Not `fieldGroup` from `components/ui.ts`: that recipe caps at 520px for a
+ * column of inputs, and these are documents' headers at page width.
+ */
+export function TripFacts({
+  children,
+  className = "",
+}: {
+  readonly children: ReactNode;
+  readonly className?: string;
+}) {
+  return (
+    <dl
+      className={`max-w-[62ch] overflow-hidden rounded-md border border-border-default bg-canvas ${className}`}
+    >
+      {children}
+    </dl>
+  );
+}
+
+/**
+ * One row of a `TripFacts` group.
+ *
+ * The divider is FULL-BLEED, `CHECKOUT-SHELL.md` §5's word and the deliberate
+ * exception to TASTE §11.9: the group carries no padding of its own, the rows
+ * do, so the hairline IS the row edge and stopping it short would draw a
+ * floating stroke.
+ *
+ * The label column is `w-32` rather than `post-flow.tsx`'s `Fact` at
+ * `w-28 sm:w-32`, because that one is sized for a 520px group and these sit in a
+ * 720 column beside values like "Wed 12 Aug 2026, 2:00 PM". The anatomy, the
+ * type roles and the divider are identical; only the measure moves.
+ */
+export function TripFactRow({
+  label,
+  sub,
+  children,
+}: {
+  readonly label: string;
+  readonly sub?: ReactNode;
+  readonly children: ReactNode;
+}) {
+  return (
+    <div className="flex items-baseline gap-4 border-t border-hairline px-4 py-3 first:border-t-0">
+      <dt className="w-32 max-w-[40%] shrink-0 text-label font-regular text-secondary">{label}</dt>
+      <dd className="min-w-0 flex-1 text-bodyMd text-primary">
+        {children}
+        {sub === undefined ? null : (
+          <span className="mt-0.5 block text-label font-regular leading-normal text-secondary">
+            {sub}
+          </span>
+        )}
+      </dd>
+    </div>
+  );
+}
+
+/**
+ * A labelled slot — the shape `components/legal/legal-page.tsx` ships for a
+ * clause SalamStay has not settled: *"an empty, labelled row, never plausible
+ * legal text."*
+ *
+ * It is how a trip surface names something a real record would carry and this
+ * build does not hold, WITHOUT drawing a plausible version of it. `PKR —` and
+ * an em-dash placeholder are both ruled out by TASTE §12; a slot that says what
+ * is missing, and why, and what to do instead, is what replaces them.
+ *
+ * **The whole block is the removable unit.** That is what makes it the right
+ * home for a sentence about a gap: when the gap closes the slot is deleted
+ * entire, rather than a future feature turning a clause of surviving body prose
+ * into a lie. Durable facts about the booking stay OUTSIDE it.
+ *
+ * `bg.raised`, `radius.md`, no border and no shadow — TASTE §6, one tint doing
+ * one of its five jobs. Never the warning register: nothing has gone wrong.
+ *
+ * ONE SLOT PER REASON, not one per missing thing. `app/host/(app)/earnings/tax/
+ * tax-parts.tsx` settled that for its two undownloadable documents: *"it is a
+ * single fact about the product … repeating it under each row would read as two
+ * separate problems."*
+ */
+export function TripSlot({
+  lead,
+  title,
+  children,
+  className = "",
+}: {
+  /** What state the slot is in — "Not issued yet", "Not shared yet". */
+  readonly lead: string;
+  /** The thing that is missing, named as the document or fact it would be. */
+  readonly title: string;
+  /** Why it is missing, and what to do instead. */
+  readonly children: ReactNode;
+  readonly className?: string;
+}) {
+  return (
+    <div className={`max-w-[62ch] rounded-md bg-raised px-4 py-4 ${className}`}>
+      <p className="border-b border-hairline pb-3 text-bodySm font-semibold text-secondary">
+        {lead}
+      </p>
+      <p className="mt-3 text-bodyMd font-semibold text-primary">{title}</p>
+      <p className="mt-1.5 text-bodySm font-regular leading-relaxed text-secondary">{children}</p>
+    </div>
+  );
+}
+
+/**
  * A labelled `<section>` — §4b's rhythm: `h2` at the `h5` rung (20/600, no
  * letter-spacing) over an optional 14/400 gray support line at `62ch`.
  *
